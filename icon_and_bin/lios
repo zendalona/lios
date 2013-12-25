@@ -1,0 +1,11 @@
+#!/usr/bin/env python3
+
+from lios.main import *
+if __name__ == '__main__':
+	if (len(sys.argv) == 2):
+		linux_intelligent_ocr_solution(sys.argv[1])
+	else:
+		linux_intelligent_ocr_solution()
+	
+	
+
