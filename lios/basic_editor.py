@@ -78,7 +78,6 @@ class editor():
 		start, end = self.textbuffer.get_bounds()
 		self.textbuffer.delete(start, end)
 		self.textview.grab_focus();
-		self.label.set_text("New");
 
 	def open(self,wedget,data=None):
 		open_file = Gtk.FileChooserDialog("Select the file to open",None,Gtk.FileChooserAction.OPEN,buttons=(Gtk.STOCK_OPEN,Gtk.ResponseType.OK))
@@ -116,7 +115,6 @@ class editor():
 			if response == Gtk.ResponseType.OK:
 				self.save_file_name = "%s"%(save_file.get_filename())
 				open("%s" %(self.save_file_name),'w').write(text)
-				self.label.set_text("Text saved to %s" % self.save_file_name);
 				self.textbuffer.set_modified(False)	
 				save_file.destroy()
 				return True
@@ -125,7 +123,6 @@ class editor():
 				return False
 		else:
 			open("%s" %(self.save_file_name),'w').write(text)
-			self.label.set_text("Text saved to %s" % self.save_file_name);	
 			self.textbuffer.set_modified(False)
 			return True		
 
