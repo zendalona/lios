@@ -20,7 +20,7 @@
 import os
 
 #Where the data is located
-data_dir = "/usr/share/lios";
+data_dir = "/usr/local/share/lios";
 
 #Home folder
 home_dir = os.environ['HOME']

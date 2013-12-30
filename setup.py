@@ -8,5 +8,5 @@ setup(name='lios',
       url='https://github.com/Nalin-x-Linux/',
       license = 'GPL-3',
       packages=['lios'],
-      data_files=[('share/lios',glob('share/lios/ui/*')),('share/lios/Data/',['share/lios/Data/Readme']),('share/applications/',['share/applications/Lios.desktop']),('bin',['bin/lios'])]
+      data_files=[('share/lios/ui/',glob('share/lios/ui/*')),('share/lios/Data/',['share/lios/Data/Readme']),('share/applications/',['share/applications/Lios.desktop']),('bin',['bin/lios'])]
       )
