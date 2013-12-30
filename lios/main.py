@@ -19,6 +19,7 @@
 ###########################################################################
 import os
 import sys
+import shutil
 import enchant
 import configparser
 
@@ -29,23 +30,34 @@ from gi.repository import Gdk
 from gi.repository import Gio
 from gi.repository import GLib
 from gi.repository import Pango
+from gi.repository import GdkPixbuf
+
 
 from lios import converter
-from lios import global_var
+from lios import scanner
 from lios.basic_editor import editor
 from lios.basic_editor import spell_check
 from lios.basic_editor import find
 from lios.basic_editor import find_and_replace
 
 from lios.preferences import lios_preferences
-from lios.global_var import *
+from lios import global_var
+from lios.ocr import *
+
+from multiprocessing import Process
+
+
+Gdk.threads_init()
 
 class linux_intelligent_ocr_solution(editor,lios_preferences):
 	def __init__ (self,filename=None):
 		self.guibuilder = Gtk.Builder()
 		self.guibuilder.add_from_file("%s/ui/ui.glade" %(global_var.data_dir))
 		self.window = self.guibuilder.get_object("window")
+		self.paned = self.guibuilder.get_object("paned")
 		self.textview = self.guibuilder.get_object("textview")
+		self.image_icon_view = self.guibuilder.get_object("iconview")
+		self.combobox_scanner = self.guibuilder.get_object("combobox_scanner")
 		self.textbuffer = self.textview.get_buffer();
 		self.guibuilder.connect_signals(self)
 		
@@ -57,16 +69,27 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		self.read_preferences()
 		self.activate_preferences()
 		
+		self.liststore_images = Gtk.ListStore(GdkPixbuf.Pixbuf, str)
+		self.image_icon_view.set_pixbuf_column(0)
+		self.image_icon_view.set_text_column(1)
+		self.image_icon_view.set_model(self.liststore_images)
 		
-		Gdk.threads_init()
+		#Creating Lios Folder in tmp
+		try:
+			os.mkdir(global_var.temp_dir)
+		except:
+			pass
 
-
+		renderer_text = Gtk.CellRendererText()
+		self.combobox_scanner.pack_start(renderer_text, True)
+		self.combobox_scanner.add_attribute(renderer_text, "text", 0)		
+		self.scanner_refresh(None)
+		
 
 		#Espeak Voice List
 		self.voice_list=[]
 		for item in espeak.list_voices():
 			self.voice_list.append(item.name)
-		#espeak.set_SynthCallback(espeak_event)
 
 		#Preferences signals
 		General_Preferences = self.guibuilder.get_object("General_Preferences")
@@ -82,11 +105,122 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 			 self.textbuffer.set_text(open(filename,"r").read())
 			 self.save_file_name = filename
 		
+		screen = self.window.get_screen()
+		print(screen.get_width())
+		self.paned.set_position(screen.get_width()-100)
+
 		self.window.maximize();
-		self.window.show()
+		
+		self.window.show_all()
 		Gtk.main();
+	
+	def scanner_refresh(self,widget):
+		scanner_store = Gtk.ListStore(str)
+		self.scanner_objects = []
+		scanner_list = scanner.scanner.get_devices()
+		for device in scanner_list:
+			self.scanner_objects.append(scanner.scanner(device))
+			scanner_store.append([device[2]])
+		self.combobox_scanner.set_model(scanner_store)		
+		self.combobox_scanner.set_active(0)
+		
+	def scan_single_image(self,widget):
+		selected_scanner = self.combobox_scanner.get_active()
+		self.scanner_objects[selected_scanner].scan("{0}{1}.png".format(global_var.temp_dir,self.starting_page_number),self.scan_resolution,self.scan_brightness,self.scan_area)
+		self.add_image_to_image_list("{0}{1}.png".format(global_var.temp_dir,self.starting_page_number))
+
+					
 		
 
+	def add_image_to_image_list(self,filename):
+		pixbuff =  GdkPixbuf.Pixbuf.new_from_file(filename)
+		height = pixbuff.get_height()
+		width = pixbuff.get_width()
+		ratio = (width*50)/height
+		buff = pixbuff.scale_simple(50,ratio,GdkPixbuf.InterpType.BILINEAR)
+		self.liststore_images.append([buff, filename])
+
+	def import_image(self,wedget,data=None):
+		open_file = Gtk.FileChooserDialog("Select image file to import",None,Gtk.FileChooserAction.OPEN,buttons=(Gtk.STOCK_OPEN,Gtk.ResponseType.OK))
+		open_file.set_current_folder("%s"%(os.environ['HOME']))
+
+		filter = Gtk.FileFilter()
+		filter.set_name("Images")
+		for pattern in "*.png","*.pnm","*.jpg","*.jpeg","*.tif","*.tiff","*.bmp","*.pbm":
+			filter.add_pattern(pattern)
+		open_file.add_filter(filter)
+
+		response = open_file.run()
+		if response == Gtk.ResponseType.OK:
+			file_name_with_directory = open_file.get_filename()
+			filename = file_name_with_directory.split("/")[-1:][0].split(".")[0]
+			destination = "{0}{1}".format(global_var.temp_dir,filename.replace(' ','-'))
+			shutil.copyfile(file_name_with_directory,destination)
+			self.add_image_to_image_list(destination)
+		open_file.destroy()		
+
+	def import_pdf(self,wedget,data=None):
+		open_file = Gtk.FileChooserDialog("Select Pdf file to import",None,Gtk.FileChooserAction.OPEN,buttons=(Gtk.STOCK_OPEN,Gtk.ResponseType.OK))
+		open_file.set_current_folder("%s"%(os.environ['HOME']))
+		filter = Gtk.FileFilter()
+		filter.set_name("*.Pdf")
+		filter.add_pattern("*.pdf")
+		open_file.add_filter(filter)
+		response = open_file.run()
+		if response == Gtk.ResponseType.OK:
+			pdf_filename_full = open_file.get_filename()
+			directory = open_file.get_current_folder()
+			open_file.destroy()
+			
+			pdf_filename = pdf_filename_full.split("/")[-1:][0]
+			filename = pdf_filename.split(".")[0]
+			destination = "{0}{1}".format(global_var.temp_dir,pdf_filename.replace(' ','-').replace(')','-').replace('(','-'))		
+			shutil.copyfile(pdf_filename_full,destination)
+			os.makedirs(destination.split(".")[0],exist_ok=True)
+			
+			p = Process(target=lambda : os.system("pdfimages {0} {1}/out_image".format(destination,destination.split(".")[0])) , args=())
+			p.start()
+			while(p.is_alive()):
+				print("Converting")
+			#os.system("pdfimages {0} {1}/out_image".format(destination,destination.split(".")[0]))
+			
+			file_list = os.listdir(destination.split(".")[0])			
+			formats = ["png","pnm","jpg","jpeg","tif","tiff","bmp","pbm","ppm"]
+			for image in file_list:
+				try:
+					if image.split(".")[1] in formats:
+						self.add_image_to_image_list("{0}/{1}".format(destination.split(".")[0],image))
+				except IndexError:
+					pass
+		open_file.destroy()
+
+
+
+	def import_folder(self,wedget,data=None):
+		folder = Gtk.FileChooserDialog("Select Folder contains images to import",None,Gtk.FileChooserAction.SELECT_FOLDER,buttons=(Gtk.STOCK_OPEN,Gtk.ResponseType.OK))
+		folder.set_current_folder("%s"%(os.environ['HOME']))
+		filter = Gtk.FileFilter()
+		filter.set_name("Images")
+		for pattern in "*.png","*.pnm","*.jpg","*.jpeg","*.tif","*.tiff","*.bmp","*.pbm":
+			filter.add_pattern(pattern)
+		folder.add_filter(filter)
+		response = folder.run()
+		if response == Gtk.ResponseType.OK:
+			image_directory = folder.get_current_folder()
+			file_list = os.listdir(image_directory)
+			formats = ["png","pnm","jpg","jpeg","tif","tiff","bmp","pbm"]
+			for image in file_list:
+				try:
+					if image.split(".")[1] in formats:
+						destination = "{0}{1}".format(global_var.temp_dir,image.split(".")[0])
+						shutil.copyfile("{0}/{1}".format(image_directory,image),destination)
+						self.add_image_to_image_list(destination)						
+				except IndexError:
+					pass
+		folder.destroy()		
+
+		
+		
 	def go_to_page(self,wedget,data=None):
 		iter,end = self.textbuffer.get_bounds()
 		adj = Gtk.Adjustment(value=1, lower=1, upper=self.starting_page_number-1, step_incr=1, page_incr=5, page_size=0) 
@@ -135,6 +269,9 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		window_about.connect("close", lambda x: print("Hello"))
 		window_about.show()
 
+	def artha(self,wedget,data=None):
+		os.system("artha &")
+
 	def audio_converter(self,widget):
 		try:
 			start,end = self.textbuffer.get_selection_bounds()
@@ -142,12 +279,14 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 			start,end = self.textbuffer.get_bounds()
 		text = self.textbuffer.get_text(start,end,False)		
 		converter.record(text)
-	def spell_check(self,widget):
+	def spell_checker(self,widget):
 		spell_check(self.textview,self.textbuffer,self.language,self.enchant_language)
 	def find(self,widget):
 		find(self.textview,self.textbuffer,self.language).window.show()
 	def find_and_replace(self,widget):
 		find_and_replace(self.textview,self.textbuffer,self.language).window.show()
+	def delete(self,wedget,data=None):
+		self.textbuffer.delete_selection(True, True)		
 
     # Read the text
 	def Read_Stop(self,wedget,data=None):
@@ -165,13 +304,14 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 			self.textview.set_editable(False)
 		else:
 			espeak.cancel()
+			espeak.set_SynthCallback(None)
 			image_read_stop.set_from_file("/usr/share/lios/ui/play")
 			self.textbuffer.remove_tag(self.highlight_tag, self.textbuffer.get_start_iter(),self.textbuffer.get_end_iter())
 			self.textview.set_editable(True)
 			
 		
-	def espeak_event(self,event, pos, length):
-		#Gdk.threads_enter()
+	def espeak_event(self, event, pos, length):
+		Gdk.threads_enter()
 		if event == espeak.core.event_WORD:
 			pos += self.to_count-1
 			s = self.textbuffer.get_iter_at_offset(pos)
@@ -184,7 +324,6 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 			self.point = self.textbuffer.get_iter_at_offset(pos+self.to_count)
 			self.textbuffer.place_cursor(self.point)
 			self.textview.scroll_to_iter(self.point, 0.0, use_align=True, xalign=0.0, yalign=0.2)
-
 							
 					
 		if event == espeak.event_MSG_TERMINATED:
@@ -204,8 +343,14 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 			if (text != ""):
 				espeak.synth(text)
 
-		#Gdk.threads_leave()		
+		Gdk.threads_leave()		
 		return True
+	def quit(self,data):
+		try:
+			shutil.rmtree(global_var.temp_dir)
+		except FileNotFoundError:
+			pass
+		Gtk.main_quit()
 		
 if __name__ == "__main__":
 	linux_intelligent_ocr_solution()
