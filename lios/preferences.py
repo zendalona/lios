@@ -78,7 +78,7 @@ class lios_preferences:
 			shutil.copy2("%s"%(load_preferences.get_filename()),"%s/Lios/.preferences.cfg"%(os.environ['HOME']))
 			self.read_preferences()
 			#self.notify("preferences loaded from %s" % (load_preferences.get_filename()),False,None,True)
-		self.dict = enchant.Dict("%s" % self.key_value[self.language])
+		self.set_dict("%s" % self.key_value[self.language])
 		load_preferences.destroy()
 		
 		
@@ -228,11 +228,16 @@ class lios_preferences:
 		#LANGUAGE
 		self.language_cb = self.preferences_guibuilder.get_object("combobox_language")
 		self.language_cb.connect('changed',self.change_language)
-		#l = 0
-		#for i in self.language_cb.get_model():
-		#	if self.language == i[0]:
-		#		self.language_cb.set_active(l)
-		#	l += 1	
+		renderer_text = Gtk.CellRendererText()
+		self.language_cb.pack_start(renderer_text, True)
+		self.language_cb.add_attribute(renderer_text, "text", 0)
+		
+		#Setting old language  
+		number = 0
+		for item in self.language_cb.get_model():
+			if self.language == item[0]:
+				self.language_cb.set_active(number)
+			number += 1	
 		
 		#ROTATION
 		rotation = self.preferences_guibuilder.get_object("combobox_rotation")
@@ -300,10 +305,7 @@ class lios_preferences:
 							ls.append([lan.split(".")[0]])
 							check_list.append([lan.split(".")[0]])			
 		
-		self.language_cb.set_model(ls)
-		renderer_text = Gtk.CellRendererText()
-		self.language_cb.pack_start(renderer_text, True)
-		self.language_cb.add_attribute(renderer_text, "text", 0)			
+		self.language_cb.set_model(ls)			
 		self.language_cb.set_active(0)					
 
 	def change_language(self,language):
@@ -395,6 +397,16 @@ class lios_preferences:
 		self.textview.modify_font(pangoFont)
 		self.textview.modify_fg(Gtk.StateFlags.NORMAL, Gdk.color_parse(self.font_color))
 		self.textview.modify_bg(Gtk.StateFlags.NORMAL, Gdk.color_parse(self.background_color))
-		self.dict = enchant.Dict("%s" % self.key_value[self.language])
+		self.set_dict("%s" % self.key_value[self.language])
+	
+	def set_dict(self,language):
+		try:
+			self.dict = enchant.Dict(language)
+		except	enchant.errors.DictNotFoundError:
+			self.dict = enchant.Dict("en")
+			dialog = Gtk.MessageDialog(None, 0, Gtk.MessageType.ERROR,Gtk.ButtonsType.OK, "Dict not found!")
+			dialog.format_secondary_text("Please install the aspell dict for your language({0}) and restart Lios.\n Otherwise spellchecker will be disabled and auto-rotation will work with english(fallback) ".format(language))
+			dialog.run()
+			dialog.destroy()				
 		
 		
