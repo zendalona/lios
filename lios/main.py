@@ -69,6 +69,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		self.read_preferences()
 		self.activate_preferences()
 		
+		#Image list store
 		self.liststore_images = Gtk.ListStore(GdkPixbuf.Pixbuf, str)
 		self.image_icon_view.set_pixbuf_column(0)
 		self.image_icon_view.set_text_column(1)
@@ -80,10 +81,11 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		except:
 			pass
 
+		#Scanner combobox
 		renderer_text = Gtk.CellRendererText()
 		self.combobox_scanner.pack_start(renderer_text, True)
 		self.combobox_scanner.add_attribute(renderer_text, "text", 0)		
-		self.scanner_refresh(None)
+		#self.scanner_refresh(None)
 		
 
 		#Espeak Voice List
@@ -257,7 +259,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 
 
 	def open_readme(self,widget,data=None):
-		with open("{0}/Data/Readme".format(data_dir)) as file:
+		with open("{0}/Data/Readme".format(global_var.data_dir)) as file:
 			self.textbuffer.set_text(file.read())
 			start = self.textbuffer.get_start_iter()
 			self.textbuffer.place_cursor(start)

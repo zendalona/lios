@@ -37,13 +37,14 @@ class scanner():
 			if options:
 				self.light_parameter_state = True
 				self.light_parameter = "threshold"
-				if type(options[8]) == types.ListType:
-					min =  options[8][0]
-					max = options[8][-1]
-				else:
-					min =  options[8][0]
-					max = options[8][1]
-				self.vary = max-min
+				self.vary = 100
+				#if type(options[8]) == types.ListType:
+				#	min =  options[8][0]
+				#	max = options[8][-1]
+				#else:
+				#	min =  options[8][0]
+				#	max = options[8][1]
+				#self.vary = max-min
 
 			
 			
