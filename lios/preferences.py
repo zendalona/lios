@@ -61,7 +61,7 @@ class lios_preferences:
 		response = save_preferences.run()		
 		if response == gtk.RESPONSE_OK:
 			shutil.copy2("%s/Lios/.preferences.cfg"%(os.environ['HOME']),"%s.cfg"%(save_preferences.get_filename()))
-			self.notify("preferences saved as %s.cfg" % (save_preferences.get_filename()),False,None,True)
+			#self.notify("preferences saved as %s.cfg" % (save_preferences.get_filename()),False,None,True)
 		save_preferences.destroy()
 
 
@@ -77,7 +77,7 @@ class lios_preferences:
 		if response == gtk.RESPONSE_OK:
 			shutil.copy2("%s"%(load_preferences.get_filename()),"%s/Lios/.preferences.cfg"%(os.environ['HOME']))
 			self.read_preferences()
-			self.notify("preferences loaded from %s" % (load_preferences.get_filename()),False,None,True)
+			#self.notify("preferences loaded from %s" % (load_preferences.get_filename()),False,None,True)
 		self.dict = enchant.Dict("%s" % self.key_value[self.language])
 		load_preferences.destroy()
 		
@@ -92,7 +92,7 @@ class lios_preferences:
 		self.cam_take_time=7;self.cam_waitkey=30;self.cam_device=0;
 		#Writing it to user configuration file
 		self.set_preferences_to_file()				
-		self.notify("preferences restored!",False,None,True)
+		#self.notify("preferences restored!",False,None,True)
 
 	def set_preferences_to_file(self):
 		#Removing old configuration file
@@ -387,9 +387,9 @@ class lios_preferences:
 		espeak.set_voice(espeak.list_voices()[self.voice_message_voice].name)
 		
 		self.highlight_tag = self.textbuffer.create_tag('Reading')
-		#self.highlight_tag.set_property('foreground',Gdk.color_parse(self.highlight_color))
+		self.highlight_tag.set_property('foreground',Gdk.color_parse(self.highlight_color).to_string())
 		self.highlight_tag.set_property('font',self.highlight_font)
-		#self.highlight_tag.set_property('background',Gdk.color_parse(self.background_highlight_color))
+		self.highlight_tag.set_property('background',Gdk.color_parse(self.background_highlight_color).to_string())
 		
 		pangoFont = Pango.FontDescription(self.font)
 		self.textview.modify_font(pangoFont)
