@@ -24,3 +24,5 @@ data_dir = "/usr/share/lios";
 
 #Home folder
 home_dir = os.environ['HOME']
+
+temp_dir = "/tmp/Lios/"
