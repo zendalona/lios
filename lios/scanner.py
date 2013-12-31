@@ -25,21 +25,22 @@ import os
 import multiprocessing
 from multiprocessing import Pipe
 class scanner():
-	def __init__(self,device):
+	def __init__(self,device,scanner_mode_switching):
 		sane_version = sane.init()
 		try:
 			self.scanner = sane.open(device[0])
 		except _sane.error:
 			pass
 		else:
-			#Setting Scanning Mode
-			#option = self.get_scanner_option("mode")
-			#if option:
-			#	print(option)
-			#	for mode in ['Lineart', 'Gray', 'Color']:
-			#		if mode in option[-1:][0]:
-			#			self.scanner.mode = mode
-			#			break
+			if(scanner_mode_switching):
+				#Setting Scanning Mode
+				option = self.get_scanner_option("mode")
+				if option:
+					print(option)
+					for mode in ['Lineart', 'Gray', 'Color']:
+						if mode in option[-1:][0]:
+							self.scanner.mode = mode
+							break
 			
 			#Y Axis for scan Area
 			option = self.get_scanner_option('br-y')
@@ -53,18 +54,23 @@ class scanner():
 			if options:
 				self.light_parameter_state = True
 				self.light_parameter = "brightness"
+				try:
+					self.min =  options[-1][0]
+					self.max = options[-1][1]
+				except:
+					self.min = -100
+					self.max = 100
+
 			options = self.get_scanner_option ('threshold')
 			if options:
 				self.light_parameter_state = True
 				self.light_parameter = "threshold"
-				self.vary = 100
-				#if type(options[8]) == types.ListType:
-				#	min =  options[8][0]
-				#	max = options[8][-1]
-				#else:
-				#	min =  options[8][0]
-				#	max = options[8][1]
-				#self.vary = max-min
+				try:
+					min =  options[-1][0]
+					max = options[-1][1]
+				except:
+					self.min = 0
+					self.max = 255
 
 			
 			
@@ -81,22 +87,18 @@ class scanner():
 	def scan(self,file_name,resolution,brightness,region):
 		#Setting Brightness and Threshold
 		if self.check_brightness_support():
+			value = (((self.max-self.min)/200)*brightness)-abs(self.min)
+			print("Min = {0}, Max = {1}, User Value = {2}, Range = {3}, Value = {4}".format(self.min,self.max,brightness,self.max-self.min,value))  
 			if self.light_parameter == "brightness":
 				try:
-					self.scanner.brightness = brightness
+					self.scanner.brightness = value
 				except AttributeError:
 					print ("ooh")
 			if self.light_parameter == "threshold":
-				if self.vary == 100:
 					try:
-						self.scanner.threshold = brightness
+						self.scanner.threshold = value
 					except AttributeError:
 						print ("Ohhh")
-				else:
-					try:
-						self.scanner.threshold = brightness+100
-					except AttributeError:
-						print ("Ohhh 100")
 		
 		#Setting Resolution
 		self.scanner.resolution = resolution
@@ -121,15 +123,21 @@ class scanner():
 		#else:
 		pil_image.save(file_name)
 
+	def close(self):
+		self.scanner.close()
+
 			
 	def check_brightness_support(self):
 		return self.light_parameter_state
+
 		
 
 	#static method
 	def get_devices():
 		sane.init()
-		return sane.get_devices()			
+		return sane.get_devices()
+
+			
 		
 		
 if __name__ == "__main__":
