@@ -81,7 +81,8 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		except:
 			pass
 
-		#Scanner combobox
+		#Scanner and Scanner combobox
+		self.scanner_objects = []
 		renderer_text = Gtk.CellRendererText()
 		self.combobox_scanner.pack_start(renderer_text, True)
 		self.combobox_scanner.add_attribute(renderer_text, "text", 0)		
@@ -117,11 +118,15 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		Gtk.main();
 	
 	def scanner_refresh(self,widget):
+		for item in self.scanner_objects:
+			item.close()
+			
+		#scanner.scanner.exit()
 		scanner_store = Gtk.ListStore(str)
 		self.scanner_objects = []
 		scanner_list = scanner.scanner.get_devices()
 		for device in scanner_list:
-			self.scanner_objects.append(scanner.scanner(device))
+			self.scanner_objects.append(scanner.scanner(device,self.scanner_mode_switching))
 			scanner_store.append([device[2]])
 		self.combobox_scanner.set_model(scanner_store)		
 		self.combobox_scanner.set_active(0)
@@ -130,6 +135,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		selected_scanner = self.combobox_scanner.get_active()
 		self.scanner_objects[selected_scanner].scan("{0}{1}.png".format(global_var.temp_dir,self.starting_page_number),self.scan_resolution,self.scan_brightness,self.scan_area)
 		self.add_image_to_image_list("{0}{1}.png".format(global_var.temp_dir,self.starting_page_number))
+		self.starting_page_number += 1
 
 					
 		
