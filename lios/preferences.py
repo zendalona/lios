@@ -51,7 +51,7 @@ class lios_preferences:
 				self.mode_of_rotation = int(config.get('cfg',"mode_of_rotation"))
 				self.rotation_angle = int(config.get('cfg',"angle"))		
 				self.page_numbering_type=int(config.get('cfg',"numbering_type"))
-				self.scanner_driver=int(config.get('cfg',"scanner_driver"))						
+				self.scanner_mode_switching=int(config.get('cfg',"scanner_mode_switching"))						
 				self.starting_page_number=int(config.get('cfg',"starting_page_number"))
 				self.background_color=config.get('cfg',"background_color")
 				self.font_color=config.get('cfg',"font_color")
@@ -107,7 +107,7 @@ class lios_preferences:
 		#Setting Default Values
 		self.font="Georgia 14";self.highlight_font="Georgia 14";self.background_color="#000";self.font_color="#fff";self.highlight_color="#1572ffff0000"
 		self.background_highlight_color="#00000bacffff";self.time_between_repeated_scanning=0;self.scan_resolution=300;self.scan_brightness=40;self.scan_area=0;self.ocr_engine="CUNEIFORM";self.language="eng"
-		self.mode_of_rotation=0;self.number_of_pages_to_scan=100;self.page_numbering_type=0;self.starting_page_number=1;self.scanner_driver=1;self.auto_skew=0;self.rotation_angle=00;
+		self.mode_of_rotation=0;self.number_of_pages_to_scan=100;self.page_numbering_type=0;self.starting_page_number=1;self.scanner_mode_switching=1;self.auto_skew=0;self.rotation_angle=00;
 		self.voice_message_state=1;self.voice_message_rate=170;self.voice_message_volume=150;self.voice_message_pitch=50;self.voice_message_voice=9;
 		self.cam_take_time=7;self.cam_waitkey=30;self.cam_device=0;
 		#Writing it to user configuration file
@@ -121,7 +121,7 @@ class lios_preferences:
 		except:
 			pass		
 		config = configparser.ConfigParser()
-		config.read('%s/Lios/.preferences.cfg'%(os.environ['HOME']))
+		config.read('%s/.preferences.cfg'%(global_var.home_dir))
 		config.add_section('cfg')
 		config.set('cfg',"time_between_repeated_scanning",str(self.time_between_repeated_scanning))
 		config.set('cfg',"scan_resolution",str(self.scan_resolution))
@@ -134,7 +134,7 @@ class lios_preferences:
 		config.set('cfg',"mode_of_rotation",str(self.mode_of_rotation))
 		config.set('cfg',"angle",str(self.rotation_angle))
 		config.set('cfg',"numbering_type",str(self.page_numbering_type))
-		config.set('cfg',"scanner_driver",str(self.scanner_driver))				
+		config.set('cfg',"scanner_mode_switching",str(self.scanner_mode_switching))				
 		config.set('cfg',"starting_page_number",str(self.starting_page_number))
 		config.set('cfg',"background_color",str(self.background_color))
 		config.set('cfg',"font_color",str(self.font_color))
@@ -265,9 +265,9 @@ class lios_preferences:
 		rotation.set_active(self.mode_of_rotation)
 		
 
-		#DRIVER
-		self.driver_cb = self.preferences_guibuilder.get_object("combobox_driver")
-		self.driver_cb.set_active(self.scanner_driver)
+		#Mode Switching
+		self.checkbutton_scanner_mode_switching = self.preferences_guibuilder.get_object("checkbutton_scanner_mode_switching")
+		self.checkbutton_scanner_mode_switching.set_active(self.scanner_mode_switching)
 
 		#DRIVER
 		self.checkbutton_skew = self.preferences_guibuilder.get_object("checkbutton_skew")
@@ -391,7 +391,7 @@ class lios_preferences:
 		self.scan_resolution = self.re_spin.get_value_as_int();self.scan_brightness=self.bt_spin.get_value_as_int();self.scan_area=self.index_area;
 		self.ocr_engine=self.model_engine[self.index_engine][0];self.language=language
 		self.mode_of_rotation=self.index_rotation;self.number_of_pages_to_scan=self.pages_spin.get_value_as_int();self.page_numbering_type=self.index_numbering;
-		self.starting_page_number=self.start_spin.get_value_as_int();self.scanner_driver=self.driver_cb.get_active()
+		self.starting_page_number=self.start_spin.get_value_as_int();self.scanner_mode_switching=int(self.checkbutton_scanner_mode_switching.get_active())
 		
 		if self.angle_cb.get_visible() ==True:
 			model_angle = self.angle_cb.get_model()
