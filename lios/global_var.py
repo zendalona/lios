@@ -1,8 +1,8 @@
 # coding: latin-1
 
 ###########################################################################
-#    SBW - Sharada-Braille-Writer
-#    Copyright (C) 2012-2014 Nalin.x.Linux GPL-3
+#    Lios - Linux-Intelligent-Ocr-Solution
+#    Copyright (C) 2011-2014 Nalin.x.Linux GPL-3
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by

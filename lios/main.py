@@ -1,7 +1,7 @@
 # coding: latin-1
 
 ###########################################################################
-#    SBW - Sharada-Braille-Writer
+#    Lios - Sharada-Braille-Writer
 #    Copyright (C) 2012-2014 Nalin.x.Linux GPL-3
 #
 #    This program is free software: you can redistribute it and/or modify
@@ -144,7 +144,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 
 	def import_image(self,wedget,data=None):
 		open_file = Gtk.FileChooserDialog("Select image file to import",None,Gtk.FileChooserAction.OPEN,buttons=(Gtk.STOCK_OPEN,Gtk.ResponseType.OK))
-		open_file.set_current_folder("%s"%(os.environ['HOME']))
+		open_file.set_current_folder(global_var.home_dir)
 
 		filter = Gtk.FileFilter()
 		filter.set_name("Images")
@@ -163,7 +163,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 
 	def import_pdf(self,wedget,data=None):
 		open_file = Gtk.FileChooserDialog("Select Pdf file to import",None,Gtk.FileChooserAction.OPEN,buttons=(Gtk.STOCK_OPEN,Gtk.ResponseType.OK))
-		open_file.set_current_folder("%s"%(os.environ['HOME']))
+		open_file.set_current_folder(global_var.home_dir)
 		filter = Gtk.FileFilter()
 		filter.set_name("*.Pdf")
 		filter.add_pattern("*.pdf")
@@ -200,7 +200,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 
 	def import_folder(self,wedget,data=None):
 		folder = Gtk.FileChooserDialog("Select Folder contains images to import",None,Gtk.FileChooserAction.SELECT_FOLDER,buttons=(Gtk.STOCK_OPEN,Gtk.ResponseType.OK))
-		folder.set_current_folder("%s"%(os.environ['HOME']))
+		folder.set_current_folder(global_var.home_dir)
 		filter = Gtk.FileFilter()
 		filter.set_name("Images")
 		for pattern in "*.png","*.pnm","*.jpg","*.jpeg","*.tif","*.tiff","*.bmp","*.pbm":
@@ -267,9 +267,13 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 	def about(self,wedget,data=None):
 		guibuilder_about = Gtk.Builder()
 		guibuilder_about.add_from_file("%s/ui/about.glade" % (global_var.data_dir))
-		window_about = guibuilder_about.get_object("aboutdialog")
-		window_about.connect("close", lambda x: print("Hello"))
-		window_about.show()
+		self.window_about = guibuilder_about.get_object("aboutdialog")
+		guibuilder_about.connect_signals(self)
+		self.window_about.show()
+
+	def about_close(self,widget,data=None):
+		self.window_about.destroy()
+		
 
 	def artha(self,wedget,data=None):
 		os.system("artha &")

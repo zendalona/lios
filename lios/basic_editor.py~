@@ -1,8 +1,8 @@
 # coding: latin-1
 
 ###########################################################################
-#    Lios - Linux-Intelligent-Ocr-Solution
-#    Copyright (C) 2011-2014 Nalin.x.Linux GPL-3
+#    SBW - Sharada-Braille-Writer
+#    Copyright (C) 2012-2014 Nalin.x.Linux GPL-3
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ from gi.repository import Gio
 from gi.repository import GLib
 from gi.repository import Pango
 
-from lios import global_var
+from sbw_2_0 import global_var
 
 class editor():
 		
@@ -81,7 +81,7 @@ class editor():
 
 	def open(self,wedget,data=None):
 		open_file = Gtk.FileChooserDialog("Select the file to open",None,Gtk.FileChooserAction.OPEN,buttons=(Gtk.STOCK_OPEN,Gtk.ResponseType.OK))
-		open_file.set_current_folder(global_var.home_dir)
+		open_file.set_current_folder("%s"%(os.environ['HOME']))
 		response = open_file.run()
 		if response == Gtk.ResponseType.OK:
 			to_read = open("%s" % (open_file.get_filename()))
@@ -104,7 +104,7 @@ class editor():
 		except AttributeError:
 			save_file = Gtk.FileChooserDialog("Save ",None,Gtk.FileChooserAction.SAVE,
 		                    buttons=(Gtk.STOCK_SAVE,Gtk.ResponseType.OK))    
-			save_file.set_current_folder(global_var.home_dir)
+			save_file.set_current_folder("%s"%(os.environ['HOME']))
 			save_file.set_current_name(text[0:10]);
 			save_file.set_do_overwrite_confirmation(True);
 			filter = Gtk.FileFilter()
@@ -131,7 +131,7 @@ class editor():
 		self.save(self);
 	def append(self,wedget,data=None):
 		append_file_dialog = Gtk.FileChooserDialog("Select the file to append",None,Gtk.FileChooserAction.OPEN,buttons=(Gtk.STOCK_OPEN,Gtk.ResponseType.OK))
-		append_file_dialog.set_current_folder(global_var.home_dir)
+		append_file_dialog.set_current_folder("%s"%(os.environ['HOME']))
 		append_file_dialog.run()
 		with open(append_file_dialog.get_filename()) as file:
 			text_to_append = file.read()
@@ -141,7 +141,7 @@ class editor():
 	
 	def punch(self,wedget,data=None):
 		insert_at_cursor_dialog = Gtk.FileChooserDialog("Select the file to insert at cursor",None,Gtk.FileChooserAction.OPEN,buttons=(Gtk.STOCK_OPEN,Gtk.ResponseType.OK))
-		insert_at_cursor_dialog.set_current_folder(global_var.home_dir)
+		insert_at_cursor_dialog.set_current_folder("%s"%(os.environ['HOME']))
 		insert_at_cursor_dialog.run()
 		with open(insert_at_cursor_dialog.get_filename()) as file:
 			text_to_insert_at_cursor = file.read()
