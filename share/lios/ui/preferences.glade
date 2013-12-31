@@ -2,8 +2,7 @@
 <interface>
   <!-- interface-requires gtk+ 3.0 -->
   <object class="GtkAdjustment" id="adjustment_brightness">
-    <property name="lower">-100</property>
-    <property name="upper">255</property>
+    <property name="upper">200</property>
     <property name="value">200</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
@@ -394,12 +393,10 @@
                             </child>
                             <child>
                               <object class="GtkColorButton" id="colorbutton_font">
-                                <property name="use_action_appearance">False</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
                                 <property name="hexpand">True</property>
-                                <property name="use_action_appearance">False</property>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
@@ -410,12 +407,10 @@
                             </child>
                             <child>
                               <object class="GtkColorButton" id="colorbutton_background">
-                                <property name="use_action_appearance">False</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
                                 <property name="hexpand">True</property>
-                                <property name="use_action_appearance">False</property>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
@@ -426,12 +421,10 @@
                             </child>
                             <child>
                               <object class="GtkFontButton" id="fontbutton">
-                                <property name="use_action_appearance">False</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
                                 <property name="hexpand">True</property>
-                                <property name="use_action_appearance">False</property>
                                 <property name="font">Sans 12</property>
                                 <property name="preview_text"/>
                                 <property name="show_preview_entry">False</property>
@@ -527,12 +520,10 @@
                             </child>
                             <child>
                               <object class="GtkColorButton" id="colorbutton_highlight">
-                                <property name="use_action_appearance">False</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
                                 <property name="hexpand">True</property>
-                                <property name="use_action_appearance">False</property>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
@@ -543,12 +534,10 @@
                             </child>
                             <child>
                               <object class="GtkColorButton" id="colorbutton_highlight_background">
-                                <property name="use_action_appearance">False</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
                                 <property name="hexpand">True</property>
-                                <property name="use_action_appearance">False</property>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
@@ -559,12 +548,10 @@
                             </child>
                             <child>
                               <object class="GtkFontButton" id="fontbutton_highlight">
-                                <property name="use_action_appearance">False</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
                                 <property name="hexpand">True</property>
-                                <property name="use_action_appearance">False</property>
                                 <property name="font">Sans 12</property>
                                 <property name="preview_text"/>
                                 <property name="show_preview_entry">False</property>
@@ -685,11 +672,9 @@
                             <child>
                               <object class="GtkCheckButton" id="checkbutton_say">
                                 <property name="label" translatable="yes">Say</property>
-                                <property name="use_action_appearance">False</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
-                                <property name="use_action_appearance">False</property>
                                 <property name="xalign">0</property>
                                 <property name="draw_indicator">True</property>
                               </object>
@@ -854,14 +839,12 @@
                 <child>
                   <object class="GtkCheckButton" id="checkbutton_skew">
                     <property name="label" translatable="yes">Run automatic Skew-Correcter before recognationcheckbutton</property>
-                    <property name="use_action_appearance">False</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
                     <property name="hexpand">True</property>
                     <property name="vexpand">True</property>
                     <property name="border_width">20</property>
-                    <property name="use_action_appearance">False</property>
                     <property name="xalign">0</property>
                     <property name="draw_indicator">True</property>
                   </object>
@@ -977,23 +960,6 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <child>
-                  <object class="GtkLabel" id="label24">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="hexpand">True</property>
-                    <property name="label" translatable="yes">&lt;span size="large"&gt;&lt;b&gt;Scanner Driver  &lt;/b&gt;&lt;/span&gt;</property>
-                    <property name="use_markup">True</property>
-                    <property name="use_underline">True</property>
-                    <property name="mnemonic_widget">combobox_driver</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">0</property>
-                    <property name="top_attach">0</property>
-                    <property name="width">1</property>
-                    <property name="height">1</property>
-                  </packing>
-                </child>
-                <child>
                   <object class="GtkLabel" id="label25">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
@@ -1006,7 +972,7 @@
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
-                    <property name="top_attach">1</property>
+                    <property name="top_attach">0</property>
                     <property name="width">1</property>
                     <property name="height">1</property>
                   </packing>
@@ -1024,7 +990,7 @@
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
-                    <property name="top_attach">2</property>
+                    <property name="top_attach">1</property>
                     <property name="width">1</property>
                     <property name="height">1</property>
                   </packing>
@@ -1041,7 +1007,7 @@
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
-                    <property name="top_attach">3</property>
+                    <property name="top_attach">2</property>
                     <property name="width">1</property>
                     <property name="height">1</property>
                   </packing>
@@ -1065,27 +1031,6 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkComboBox" id="combobox_driver">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="hexpand">True</property>
-                    <property name="border_width">60</property>
-                    <property name="model">liststore_driver</property>
-                    <child>
-                      <object class="GtkCellRendererText" id="cellrenderertext6"/>
-                      <attributes>
-                        <attribute name="text">0</attribute>
-                      </attributes>
-                    </child>
-                  </object>
-                  <packing>
-                    <property name="left_attach">1</property>
-                    <property name="top_attach">0</property>
-                    <property name="width">1</property>
-                    <property name="height">1</property>
-                  </packing>
-                </child>
-                <child>
                   <object class="GtkComboBox" id="combobox_scan_area">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
@@ -1101,7 +1046,7 @@
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
-                    <property name="top_attach">3</property>
+                    <property name="top_attach">2</property>
                     <property name="width">1</property>
                     <property name="height">1</property>
                   </packing>
@@ -1117,7 +1062,7 @@
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
-                    <property name="top_attach">1</property>
+                    <property name="top_attach">0</property>
                     <property name="width">1</property>
                     <property name="height">1</property>
                   </packing>
@@ -1133,7 +1078,7 @@
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
-                    <property name="top_attach">2</property>
+                    <property name="top_attach">1</property>
                     <property name="width">1</property>
                     <property name="height">1</property>
                   </packing>
@@ -1151,6 +1096,32 @@
                     <property name="left_attach">1</property>
                     <property name="top_attach">4</property>
                     <property name="width">1</property>
+                    <property name="height">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkCheckButton" id="checkbutton_scanner_mode_switching">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="receives_default">False</property>
+                    <property name="hexpand">True</property>
+                    <property name="border_width">20</property>
+                    <property name="xalign">0.5</property>
+                    <property name="draw_indicator">True</property>
+                    <child>
+                      <object class="GtkLabel" id="label23">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">&lt;span size="large"&gt;&lt;b&gt;Change to Lineart or Binary if possible
+(Disable this if scanner not working)&lt;/b&gt;&lt;/span&gt;</property>
+                        <property name="use_markup">True</property>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">3</property>
+                    <property name="width">2</property>
                     <property name="height">1</property>
                   </packing>
                 </child>
@@ -1310,11 +1281,9 @@
             <child>
               <object class="GtkButton" id="button_close">
                 <property name="label" translatable="yes">_Continue-With-Existing-Preferences</property>
-                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <property name="use_action_appearance">False</property>
                 <property name="use_underline">True</property>
                 <signal name="clicked" handler="close_preferences" swapped="no"/>
               </object>
@@ -1327,11 +1296,9 @@
             <child>
               <object class="GtkButton" id="button2">
                 <property name="label" translatable="yes">_Apply-New-Preferences</property>
-                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <property name="use_action_appearance">False</property>
                 <property name="use_underline">True</property>
                 <signal name="clicked" handler="apply_preferences" swapped="no"/>
               </object>
