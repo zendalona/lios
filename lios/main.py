@@ -44,10 +44,17 @@ from lios.preferences import lios_preferences
 from lios import global_var
 from lios.ocr import *
 
-from multiprocessing import Process
-
+import multiprocessing
+import threading
 
 Gdk.threads_init()
+
+
+def on_thread(function):
+	def inner(*args):
+		threading.Thread(target=function,args=args).start()
+	return inner
+
 
 class linux_intelligent_ocr_solution(editor,lios_preferences):
 	def __init__ (self,filename=None):
@@ -56,8 +63,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		self.window = self.guibuilder.get_object("window")
 		self.paned = self.guibuilder.get_object("paned")
 		self.textview = self.guibuilder.get_object("textview")
-		self.image_icon_view = self.guibuilder.get_object("iconview")
-		self.combobox_scanner = self.guibuilder.get_object("combobox_scanner")
+		
 		self.textbuffer = self.textview.get_buffer();
 		self.guibuilder.connect_signals(self)
 		
@@ -69,7 +75,10 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		self.read_preferences()
 		self.activate_preferences()
 		
-		#Image list store
+		#Image iconview and store
+		self.image_icon_view = self.guibuilder.get_object("iconview")
+		self.image_icon_view.set_selection_mode(Gtk.SelectionMode.MULTIPLE)
+		
 		self.liststore_images = Gtk.ListStore(GdkPixbuf.Pixbuf, str)
 		self.image_icon_view.set_pixbuf_column(0)
 		self.image_icon_view.set_text_column(1)
@@ -82,12 +91,22 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 			pass
 
 		#Scanner and Scanner combobox
+		self.combobox_scanner = self.guibuilder.get_object("combobox_scanner")
+		self.spinner = self.guibuilder.get_object("spinner")
+		self.button_scan = self.guibuilder.get_object("button_scan")
+		self.button_refresh = self.guibuilder.get_object("button_refresh")
+		self.scan_submenu = self.guibuilder.get_object("Scan_Submenu")
+		
+		self.spinner.hide()
 		self.scanner_objects = []
 		renderer_text = Gtk.CellRendererText()
 		self.combobox_scanner.pack_start(renderer_text, True)
 		self.combobox_scanner.add_attribute(renderer_text, "text", 0)		
 		#self.scanner_refresh(None)
 		
+		#OCR Wedgets
+		self.ocr_submenu = self.guibuilder.get_object("OCR_Submenu")
+		self.button_ocr_selected_images = self.guibuilder.get_object("button_ocr_selected_images")
 
 		#Espeak Voice List
 		self.voice_list=[]
@@ -114,9 +133,38 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 
 		self.window.maximize();
 		
-		self.window.show_all()
+		self.window.show()
 		Gtk.main();
 	
+	def make_ocr_widgets_inactive(self):
+		self.ocr_submenu.set_sensitive(False)
+		self.spinner.show()
+		self.button_ocr_selected_images.set_sensitive(False)
+		self.spinner.set_state(True)
+
+	def make_ocr_widgets_active(self):
+		self.ocr_submenu.set_sensitive(True)
+		self.spinner.hide()
+		self.button_ocr_selected_images.set_sensitive(True)
+		self.spinner.set_state(False)
+	
+	def make_scanner_wigets_inactive(self):
+		self.combobox_scanner.set_sensitive(False)
+		self.spinner.set_state(True)
+		self.button_scan.set_sensitive(False)
+		self.button_refresh.set_sensitive(False)
+		self.scan_submenu.set_sensitive(False)
+		self.spinner.show()
+	
+	def make_scanner_wigets_active(self):
+		self.combobox_scanner.set_sensitive(True)
+		self.spinner.set_state(False)
+		self.button_scan.set_sensitive(True)
+		self.button_refresh.set_sensitive(True)
+		self.scan_submenu.set_sensitive(True)
+		self.spinner.hide()
+	
+	@on_thread
 	def scanner_refresh(self,widget):
 		for item in self.scanner_objects:
 			item.close()
@@ -124,21 +172,77 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		#scanner.scanner.exit()
 		scanner_store = Gtk.ListStore(str)
 		self.scanner_objects = []
-		scanner_list = scanner.scanner.get_devices()
-		for device in scanner_list:
+		
+		self.make_scanner_wigets_inactive()
+		
+		#Tuple - List Convertion is used to get all items in devices list 
+		q = multiprocessing.Queue()
+		p = multiprocessing.Process(target=(lambda q :q.put(tuple(scanner.scanner.get_devices()))), args=(q,))
+		p.start()
+		while(p.is_alive()):
+			pass
+		
+		for device in list(q.get()):
 			self.scanner_objects.append(scanner.scanner(device,self.scanner_mode_switching))
 			scanner_store.append([device[2]])
+			
+			
 		self.combobox_scanner.set_model(scanner_store)		
 		self.combobox_scanner.set_active(0)
-		
+		self.make_scanner_wigets_active()
+
 	def scan_single_image(self,widget):
+		threading.Thread(target=self.scan).start()
+
+	@on_thread
+	def scan_image_repeatedly(self,widget):
+		for i in range(0,self.number_of_pages_to_scan):
+			t = threading.Thread(target=self.scan)
+			t.start()
+			while(t.is_alive()):
+				pass
+
+	def scan(self):
 		selected_scanner = self.combobox_scanner.get_active()
-		self.scanner_objects[selected_scanner].scan("{0}{1}.png".format(global_var.temp_dir,self.starting_page_number),self.scan_resolution,self.scan_brightness,self.scan_area)
+		self.make_scanner_wigets_inactive()
+		p = multiprocessing.Process(target=(self.scanner_objects[selected_scanner].scan), args=("{0}{1}.png".format(global_var.temp_dir,self.starting_page_number),self.scan_resolution,self.scan_brightness,self.scan_area))
+		p.start()
+		while(p.is_alive()):
+			pass			
 		self.add_image_to_image_list("{0}{1}.png".format(global_var.temp_dir,self.starting_page_number))
 		self.starting_page_number += 1
+		self.make_scanner_wigets_active()
+
+	@on_thread			
+	def ocr_selected_images(self,widget):
+		self.make_ocr_widgets_inactive()
+		for item in self.image_icon_view.get_selected_items():
+			self.textbuffer.insert_at_cursor(self.ocr(self.liststore_images[item[0]][1]))
+		self.make_ocr_widgets_active()
+					
+	
+	def ocr(self,file_name):
+		q = multiprocessing.Queue()
+		p = multiprocessing.Process(target=(lambda q,file_name : q.put(ocr_image_to_text(file_name,self.ocr_engine,self.language))), args=(q,file_name))
+		p.start()
+		while(p.is_alive()):
+			pass
+		return q.get();
+	
+	@on_thread	
+	def scan_and_ocr(self,widget):
+		t = threading.Thread(target=self.scan)
+		t.start()
+		while(t.is_alive()):
+			pass
+		self.textbuffer.insert_at_cursor(self.ocr("{0}{1}.png".format(global_var.temp_dir,self.starting_page_number-1)))
+		
+			
+			
+	def scan_and_ocr_repeatedly(self,widget):
+		pass
 
 					
-		
 
 	def add_image_to_image_list(self,filename):
 		pixbuff =  GdkPixbuf.Pixbuf.new_from_file(filename)
@@ -207,11 +311,6 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 	def import_folder(self,wedget,data=None):
 		folder = Gtk.FileChooserDialog("Select Folder contains images to import",None,Gtk.FileChooserAction.SELECT_FOLDER,buttons=(Gtk.STOCK_OPEN,Gtk.ResponseType.OK))
 		folder.set_current_folder(global_var.home_dir)
-		filter = Gtk.FileFilter()
-		filter.set_name("Images")
-		for pattern in "*.png","*.pnm","*.jpg","*.jpeg","*.tif","*.tiff","*.bmp","*.pbm":
-			filter.add_pattern(pattern)
-		folder.add_filter(filter)
 		response = folder.run()
 		if response == Gtk.ResponseType.OK:
 			image_directory = folder.get_current_folder()
@@ -220,7 +319,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 			for image in file_list:
 				try:
 					if image.split(".")[1] in formats:
-						destination = "{0}{1}".format(global_var.temp_dir,image.split(".")[0])
+						destination = "{0}{1}".format(global_var.temp_dir,image.split(".")[0].replace(' ','-'))
 						shutil.copyfile("{0}/{1}".format(image_directory,image),destination)
 						self.add_image_to_image_list(destination)						
 				except IndexError:
