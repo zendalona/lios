@@ -19,13 +19,20 @@
 ###########################################################################
 
 import os
-def ocr_image_to_text_file(name,engine,language):
-	os.system("convert %s.pnm image"%(name))
-	if self.engine == "CUNEIFORM":
-		os.system("convert -compress none %s.pnm %s.bmp"%(name,name))
-		os.system("cuneiform -f text -l %s -o %s.txt %s.bmp"%(language,name,name))		
-	elif self.engine == "TESSERACT":
-		os.system("convert %s.pnm %s.png"%(name,name))
-		os.system("tesseract %s.png %s -l %s"%(name,name,language))
+from lios import global_var
+
+
+def ocr_image_to_text(name,engine,language):
+	if engine == "CUNEIFORM":
+		os.system("convert -compress none {0} {1}test.bmp"%(name,global_var.temp_dir))
+		os.system("cuneiform -f text -l {0} -o {1}output.txt {1}test.bmp"%(language,global_var.temp_dir))		
+	elif engine == "TESSERACT":
+		os.system("convert {0} {1}test.png".format(name,global_var.temp_dir))
+		os.system("tesseract {0}test.png {0}output -l {1}".format(global_var.temp_dir,language))
 	else:
 		pass
+	with open("output.txt") as file:
+		text = file.read()
+		return text
+	return None
+	
