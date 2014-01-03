@@ -216,18 +216,46 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 	@on_thread			
 	def ocr_selected_images(self,widget):
 		self.make_ocr_widgets_inactive()
+		
+		
+		#if self.mode_of_rotation == 1#self.rotation_angle
 		for item in self.image_icon_view.get_selected_items():
-			self.textbuffer.insert_at_cursor(self.ocr(self.liststore_images[item[0]][1]))
+			self.textbuffer.insert_at_cursor(self.ocr(self.liststore_images[item[0]][1])[0])
+		
 		self.make_ocr_widgets_active()
 					
 	
-	def ocr(self,file_name):
+	# ************** Core OCR  Process Start **********************************************
+	def ocr(self,file_name,mode,angle):
+		if mode == 2:	#Manual
+			text = self.ocr_with_multiprocessing(file_name,angle)
+			return (text,angle)
+		else: #Full_Automatic or Partial_Automatic
+			list_ = []
+			for angle in [00,90,180,270]:
+				text = self.ocr_with_multiprocessing(file_name,angle)
+				count = self.count_dict_words(text)
+				list_.append((text,count,angle))
+			list_ = sorted(list_, key=lambda item: item[1],reverse=True)
+		return (list_[0][0],list_[0][2])
+				
+	
+	def count_dict_words(self,text):
+		count = 0
+		for word in text.split(" "):
+			if (len(word) > 1):
+				if (self.dict.check(word) == True):
+					count += 1
+		return count
+		
+	def ocr_with_multiprocessing(self,file_name,angle):
 		q = multiprocessing.Queue()
-		p = multiprocessing.Process(target=(lambda q,file_name : q.put(ocr_image_to_text(file_name,self.ocr_engine,self.language))), args=(q,file_name))
+		p = multiprocessing.Process(target=(lambda q,file_name : q.put(ocr_image_to_text(file_name,self.ocr_engine,self.language,angle))), args=(q,file_name))
 		p.start()
 		while(p.is_alive()):
 			pass
-		return q.get();
+		return q.get();		
+	# ************** Core OCR  Process End**********************************************
 	
 	@on_thread	
 	def scan_and_ocr(self,widget):
