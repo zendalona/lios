@@ -49,28 +49,28 @@ class scanner():
 			
 			
 			#Brightness and Threshold
-			self.light_parameter_state = False 
-			options = self.get_scanner_option ('brightness')
-			if options:
-				self.light_parameter_state = True
-				self.light_parameter = "brightness"
-				try:
-					self.min =  options[-1][0]
-					self.max = options[-1][1]
-				except:
-					self.min = -100
-					self.max = 100
+			#self.light_parameter_state = False 
+			#options = self.get_scanner_option ('brightness')
+			#if options:
+			#	self.light_parameter_state = True
+			#	self.light_parameter = "brightness"
+			#	try:
+			#		self.min =  options[-1][0]
+			#		self.max = options[-1][1]
+			#	except:
+			#		self.min = -100
+			#		self.max = 100
 
-			options = self.get_scanner_option ('threshold')
-			if options:
-				self.light_parameter_state = True
-				self.light_parameter = "threshold"
-				try:
-					min =  options[-1][0]
-					max = options[-1][1]
-				except:
-					self.min = 0
-					self.max = 255
+			#options = self.get_scanner_option ('threshold')
+			#if options:
+			#	self.light_parameter_state = True
+			#	self.light_parameter = "threshold"
+			#	try:
+			#		min =  options[-1][0]
+			#		max = options[-1][1]
+			#	except:
+			#		self.min = 0
+			#		self.max = 255
 
 			
 			
@@ -86,19 +86,19 @@ class scanner():
 
 	def scan(self,file_name,resolution,brightness,region):
 		#Setting Brightness and Threshold
-		if self.check_brightness_support():
-			value = (((self.max-self.min)/200)*brightness)-abs(self.min)
-			print("Min = {0}, Max = {1}, User Value = {2}, Range = {3}, Value = {4}".format(self.min,self.max,brightness,self.max-self.min,value))  
-			if self.light_parameter == "brightness":
-				try:
-					self.scanner.brightness = value
-				except AttributeError:
-					print ("ooh")
-			if self.light_parameter == "threshold":
-					try:
-						self.scanner.threshold = value
-					except AttributeError:
-						print ("Ohhh")
+		#if self.check_brightness_support():
+			#value = (((self.max-self.min)/200)*brightness)-abs(self.min)
+			#print("Min = {0}, Max = {1}, User Value = {2}, Range = {3}, Value = {4}".format(self.min,self.max,brightness,self.max-self.min,value))  
+			#if self.light_parameter == "brightness":
+			#	try:
+			#		self.scanner.brightness = value
+			#	except AttributeError:
+			#		print ("ooh")
+			#if self.light_parameter == "threshold":
+			#		try:
+			#			self.scanner.threshold = value
+			#		except AttributeError:
+		#				print ("Ohhh")
 		
 		#Setting Resolution
 		self.scanner.resolution = resolution
