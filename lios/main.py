@@ -63,7 +63,6 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		self.window = self.guibuilder.get_object("window")
 		self.paned = self.guibuilder.get_object("paned")
 		self.textview = self.guibuilder.get_object("textview")
-		
 		self.textbuffer = self.textview.get_buffer();
 		self.guibuilder.connect_signals(self)
 		
@@ -102,7 +101,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		renderer_text = Gtk.CellRendererText()
 		self.combobox_scanner.pack_start(renderer_text, True)
 		self.combobox_scanner.add_attribute(renderer_text, "text", 0)		
-		#self.scanner_refresh(None)
+		self.scanner_refresh(None)
 		
 		#OCR Wedgets
 		self.ocr_submenu = self.guibuilder.get_object("OCR_Submenu")
@@ -127,14 +126,12 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 			 self.textbuffer.set_text(open(filename,"r").read())
 			 self.save_file_name = filename
 		
-		screen = self.window.get_screen()
-		print(screen.get_width())
-		self.paned.set_position(screen.get_width()-100)
-
 		self.window.maximize();
-		
 		self.window.show()
 		Gtk.main();
+	
+	def configure_event(self,widget,event):
+		self.paned.set_position(event.width-200)
 	
 	def make_ocr_widgets_inactive(self):
 		self.ocr_submenu.set_sensitive(False)
@@ -216,16 +213,35 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 	@on_thread			
 	def ocr_selected_images(self,widget):
 		self.make_ocr_widgets_inactive()
-		
-		
-		#if self.mode_of_rotation == 1#self.rotation_angle
+		mode = self.mode_of_rotation
+		angle = self.rotation_angle
 		for item in self.image_icon_view.get_selected_items():
-			self.textbuffer.insert_at_cursor(self.ocr(self.liststore_images[item[0]][1])[0])
-		
+			if mode == 1:
+				text,angle = self.ocr(self.liststore_images[item[0]][1],mode,00)
+				mode = 2
+				i = i + 1
+				self.put_text_to_buffer(text)
+				continue
+			text,angle = self.ocr(self.liststore_images[item[0]][1],mode,angle)
+			self.put_text_to_buffer(text)
 		self.make_ocr_widgets_active()
+	
+
+	def put_text_to_buffer(self,text):
+		if (self.insert_position == 0):
+			iter = self.textbuffer.get_start_iter()
+		elif (self.insert_position == 1):
+			mark = self.textbuffer.get_insert()
+			iter = self.textbuffer.get_iter_at_mark(mark)
+		else:
+			iter = self.textbuffer.get_start_iter()
+		self.textbuffer.insert(iter,text)
+		
+				
+		
 					
 	
-	# ************** Core OCR  Process Start **********************************************
+	############## Core OCR  Process Start ################################
 	def ocr(self,file_name,mode,angle):
 		if mode == 2:	#Manual
 			text = self.ocr_with_multiprocessing(file_name,angle)
@@ -255,7 +271,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		while(p.is_alive()):
 			pass
 		return q.get();		
-	# ************** Core OCR  Process End**********************************************
+	############## Core OCR  Process End ################################
 	
 	@on_thread	
 	def scan_and_ocr(self,widget):
@@ -263,13 +279,17 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		t.start()
 		while(t.is_alive()):
 			pass
-		self.textbuffer.insert_at_cursor(self.ocr("{0}{1}.png".format(global_var.temp_dir,self.starting_page_number-1)))
+		self.put_text_to_buffer(self.ocr("{0}{1}.png".format(global_var.temp_dir,self.starting_page_number-1),self.mode_of_rotation,self.rotation_angle)[0])
 		
 			
-			
+	@on_thread			
 	def scan_and_ocr_repeatedly(self,widget):
-		pass
-
+		for i in range(0,self.number_of_pages_to_scan):
+			t = threading.Thread(target=self.scan)
+			t.start()
+			while(t.is_alive()):
+				pass
+			self.put_text_to_buffer(self.ocr("{0}{1}.png".format(global_var.temp_dir,self.starting_page_number-1),self.mode_of_rotation,self.rotation_angle)[0])
 					
 
 	def add_image_to_image_list(self,filename):
