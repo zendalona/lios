@@ -45,6 +45,7 @@ class lios_preferences:
 				self.scan_brightness=int(config.get('cfg',"scan_brightness"))
 				self.ocr_engine=config.get('cfg',"ocr_engine")
 				self.scan_area=int(config.get('cfg',"scan_area"))
+				self.insert_position=int(config.get('cfg',"insert_position"))
 				self.auto_skew=int(config.get('cfg',"auto_skew"))			
 				self.language=config.get('cfg',"language")
 				self.number_of_pages_to_scan=int(config.get('cfg',"number_of_pages_to_scan"))#pages
@@ -106,7 +107,7 @@ class lios_preferences:
 	def on_Restore_preferences_activate(self,wedget,data=None):
 		#Setting Default Values
 		self.font="Georgia 14";self.highlight_font="Georgia 14";self.background_color="#000";self.font_color="#fff";self.highlight_color="#1572ffff0000"
-		self.background_highlight_color="#00000bacffff";self.time_between_repeated_scanning=0;self.scan_resolution=300;self.scan_brightness=40;self.scan_area=0;self.ocr_engine="CUNEIFORM";self.language="eng"
+		self.background_highlight_color="#00000bacffff";self.time_between_repeated_scanning=0;self.scan_resolution=300;self.scan_brightness=40;self.scan_area=0;self.insert_position=0;self.ocr_engine="CUNEIFORM";self.language="eng"
 		self.mode_of_rotation=0;self.number_of_pages_to_scan=100;self.page_numbering_type=0;self.starting_page_number=1;self.scanner_mode_switching=1;self.auto_skew=0;self.rotation_angle=00;
 		self.voice_message_state=1;self.voice_message_rate=170;self.voice_message_volume=150;self.voice_message_pitch=50;self.voice_message_voice=9;
 		self.cam_take_time=7;self.cam_waitkey=30;self.cam_device=0;
@@ -127,6 +128,7 @@ class lios_preferences:
 		config.set('cfg',"scan_resolution",str(self.scan_resolution))
 		config.set('cfg',"scan_brightness",str(self.scan_brightness))
 		config.set('cfg',"ocr_engine",str(self.ocr_engine))
+		config.set('cfg',"insert_position",str(self.insert_position))
 		config.set('cfg',"scan_area",str(self.scan_area))
 		config.set('cfg',"auto_skew",str(self.auto_skew))
 		config.set('cfg',"language",str(self.language))
@@ -231,6 +233,11 @@ class lios_preferences:
 		area = self.preferences_guibuilder.get_object("combobox_scan_area")
 		area.connect('changed', self.change_area)
 		area.set_active(self.scan_area)
+
+		#insert_position						      
+		insert_position = self.preferences_guibuilder.get_object("combobox_insert_position")
+		insert_position.connect('changed', self.change_insert_position)
+		insert_position.set_active(self.insert_position)
 		
 		
 		#ENGINE
@@ -301,6 +308,11 @@ class lios_preferences:
 	def change_area(self, area):
 		self.model_area = area.get_model()
 		self.index_area = area.get_active()
+
+	def change_insert_position(self, insert_position):
+		self.model_insert_position = insert_position.get_model()
+		self.index_insert_position = insert_position.get_active()
+		
 	
 	def change_engine(self, engine):
 		self.model_engine = engine.get_model()
@@ -388,7 +400,7 @@ class lios_preferences:
 		self.background_color=self.background_color_button.get_color().to_string();self.font_color=self.font_color_button.get_color().to_string();
 		self.highlight_color=self.highlight_color_button.get_color().to_string();self.time_between_repeated_scanning=self.time_spin.get_value_as_int();
 		self.background_highlight_color=self.highlight_background_color_button.get_color().to_string();
-		self.scan_resolution = self.re_spin.get_value_as_int();self.scan_brightness=self.bt_spin.get_value_as_int();self.scan_area=self.index_area;
+		self.scan_resolution = self.re_spin.get_value_as_int();self.scan_brightness=self.bt_spin.get_value_as_int();self.scan_area=self.index_area;self.insert_position=self.index_insert_position;
 		self.ocr_engine=self.model_engine[self.index_engine][0];self.language=language
 		self.mode_of_rotation=self.index_rotation;self.number_of_pages_to_scan=self.pages_spin.get_value_as_int();self.page_numbering_type=self.index_numbering;
 		self.starting_page_number=self.start_spin.get_value_as_int();self.scanner_mode_switching=int(self.checkbutton_scanner_mode_switching.get_active())
