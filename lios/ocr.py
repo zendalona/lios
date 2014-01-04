@@ -26,15 +26,17 @@ def ocr_image_to_text(name,engine,language,angle):
 	if angle != 00:
 		os.system("convert -rotate {0} {1} {1}".format(angle,name))
 	if engine == "CUNEIFORM":
-		os.system("convert -compress none {0} {1}test.bmp"%(name,global_var.temp_dir))
-		os.system("cuneiform -f text -l {0} -o {1}output.txt {1}test.bmp"%(language,global_var.temp_dir))		
+		os.system("convert -compress none {0} {1}test.bmp".format(name,global_var.temp_dir))
+		os.system("cuneiform -f text -l {0} -o {1}output.txt {1}test.bmp".format(language,global_var.temp_dir))		
 	elif engine == "TESSERACT":
 		os.system("convert {0} {1}test.png".format(name,global_var.temp_dir))
 		os.system("tesseract {0}test.png {0}output -l {1}".format(global_var.temp_dir,language))
 	else:
 		pass
-	with open("{0}output.txt".format(global_var.temp_dir)) as file:
-		text = file.read()
-		return text
-	return None
+	try:
+		with open("{0}output.txt".format(global_var.temp_dir),encoding="utf-8") as file:
+			text = file.read()
+			return text
+	except:
+		return ""
 	
