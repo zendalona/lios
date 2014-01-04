@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <!-- interface-requires gtk+ 3.0 -->
-  <object class="GtkImage" id="image10">
+  <object class="GtkImage" id="image23">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="stock">gtk-revert-to-saved</property>
+    <property name="stock">gtk-dialog-info</property>
   </object>
-  <object class="GtkImage" id="image11">
+  <object class="GtkImage" id="image25">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="stock">gtk-preferences</property>
+    <property name="stock">gtk-ok</property>
   </object>
-  <object class="GtkImage" id="image12">
+  <object class="GtkImage" id="image27">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="stock">gtk-preferences</property>
+    <property name="stock">gtk-sort-descending</property>
   </object>
-  <object class="GtkImage" id="image13">
+  <object class="GtkImage" id="image28">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="stock">gtk-preferences</property>
+    <property name="stock">gtk-media-record</property>
   </object>
   <object class="GtkImage" id="image14">
     <property name="visible">True</property>
@@ -46,6 +46,26 @@
     <property name="can_focus">False</property>
     <property name="stock">gtk-jump-to</property>
   </object>
+  <object class="GtkImage" id="image10">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-revert-to-saved</property>
+  </object>
+  <object class="GtkImage" id="image11">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-preferences</property>
+  </object>
+  <object class="GtkImage" id="image12">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-preferences</property>
+  </object>
+  <object class="GtkImage" id="image13">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-preferences</property>
+  </object>
   <object class="GtkImage" id="image2">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -55,26 +75,6 @@
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="icon_name">scanner</property>
-  </object>
-  <object class="GtkImage" id="image23">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="stock">gtk-dialog-info</property>
-  </object>
-  <object class="GtkImage" id="image25">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="stock">gtk-ok</property>
-  </object>
-  <object class="GtkImage" id="image27">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="stock">gtk-sort-descending</property>
-  </object>
-  <object class="GtkImage" id="image28">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="stock">gtk-media-record</property>
   </object>
   <object class="GtkImage" id="image29">
     <property name="visible">True</property>
@@ -155,6 +155,7 @@
     <property name="role">Lios</property>
     <property name="icon">lios</property>
     <signal name="destroy" handler="quit" swapped="no"/>
+    <signal name="configure-event" handler="configure_event" swapped="no"/>
     <child>
       <object class="GtkTable" id="Main_table">
         <property name="visible">True</property>
