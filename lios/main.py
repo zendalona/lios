@@ -141,9 +141,9 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		self.treeview_image.set_reorderable(True)
 		self.on_select = False
 		self.drawingarea.set_events(Gdk.EventMask.ALL_EVENTS_MASK)
+		self.zoom_level = 1
 		self.drawingarea_load_image("{0}/ui/lios".format(global_var.data_dir))		
 		
-
 		if (filename):
 			 self.textbuffer.set_text(open(filename,"r").read())
 			 self.save_file_name = filename
@@ -153,8 +153,6 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		Gtk.main();
 		
 
-
-######################################################################################
 	def drawingarea_draw(self, widget, cr):
 		   Gdk.cairo_set_source_pixbuf(cr, self.pb, 0, 0)
 		   cr.paint()
@@ -175,15 +173,14 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 			   cr.set_source_rgb(0, 0, 1.0)
 			   cr.set_line_width (5.0);
 			   cr.stroke()
-			
-			
-		   
-		   print("Looping ")
 		   return True
 	
 	def drawingarea_load_image(self,filename):
 		   self.pb = GdkPixbuf.Pixbuf.new_from_file(filename)
-		   self.drawingarea.set_size_request(self.pb.get_width(),self.pb.get_height())
+		   self.pb_file_name = filename
+		   self.drawingarea.set_size_request(self.pb.get_width()*self.zoom_level,self.pb.get_height()*self.zoom_level)
+		   if (self.zoom_level != 1):
+			   self.pb = self.pb.scale_simple(self.pb.get_width()*self.zoom_level,self.pb.get_height()*self.zoom_level,GdkPixbuf.InterpType.HYPER)
 		   self.treeview_image_clear(self)
 	
 	def drawingarea_button_release_event(self, widget, event):
@@ -225,8 +222,9 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 			item[4] = False
 		item = self.treeview_image.get_selection()
 		model,iter = item.get_selected()
-		self.rectangle_store.set(iter,4,True)
-		self.drawingarea.queue_draw()
+		if iter:
+			self.rectangle_store.set(iter,4,True)
+			self.drawingarea.queue_draw()
         
         
 	def drawingarea_button_press_event(self, widget, event):
@@ -239,103 +237,55 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		if (self.on_select):
 			self.temp_finish_x,self.temp_finish_y = event.get_coords()
 			self.drawingarea.queue_draw()
-
-
-############################################################################################
-
-
-
-
-		
 	
-	def configure_event(self,widget,event):
-		self.paned.set_position(event.width-200)
-		self.paned_drawing.set_position(event.width-400)
-	
-	def make_ocr_widgets_inactive(self):
-		self.ocr_submenu.set_sensitive(False)
-		self.spinner.show()
-		self.button_ocr_selected_images.set_sensitive(False)
-		self.spinner.set_state(True)
+	@on_thread			
+	def ocr_selected_areas(self,widget):
+		self.make_ocr_widgets_inactive()
+		mode = self.mode_of_rotation
+		angle = self.rotation_angle
+		pb = GdkPixbuf.Pixbuf.new_from_file(self.pb_file_name)
+		for item in self.rectangle_store:
+			#pb.copy_area(item[0]*self.zoom_level,item[1]*self.zoom_level,item[2]*self.zoom_level,item[3]*self.zoom_level,dest,item[2]*self.zoom_level,item[3]*self.zoom_level)
+			dest = pb.new_subpixbuf(item[0]/self.zoom_level,item[1]/self.zoom_level,item[2]/self.zoom_level,item[3]/self.zoom_level)
+			dest.savev("{0}temp".format(global_var.temp_dir), "png",[],[])
+			if mode == 1:
+				text,angle = self.ocr("temp",mode,00)
+				mode = 2
+				i = i + 1
+				self.put_text_to_buffer(text)
+				continue
+			text,angle = self.ocr("{0}temp".format(global_var.temp_dir),mode,angle)
+			self.put_text_to_buffer(text)
+		self.make_ocr_widgets_active()
 
-	def make_ocr_widgets_active(self):
-		self.ocr_submenu.set_sensitive(True)
-		self.spinner.hide()
-		self.button_ocr_selected_images.set_sensitive(True)
-		self.spinner.set_state(False)
-	
-	def make_scanner_wigets_inactive(self):
-		self.combobox_scanner.set_sensitive(False)
-		self.spinner.set_state(True)
-		self.button_scan.set_sensitive(False)
-		self.button_refresh.set_sensitive(False)
-		self.scan_submenu.set_sensitive(False)
-		self.spinner.show()
-	
-	def make_scanner_wigets_active(self):
-		self.combobox_scanner.set_sensitive(True)
-		self.spinner.set_state(False)
-		self.button_scan.set_sensitive(True)
-		self.button_refresh.set_sensitive(True)
-		self.scan_submenu.set_sensitive(True)
-		self.spinner.hide()
-		
-	def notebook_switch_page(self,notbook,child,page_num):
-		if page_num == 1:
-			items = self.image_icon_view.get_selected_items()
-			if len(items) == 1:
-				self.drawingarea_load_image(self.liststore_images[items[0]][1])
-			
-	
-	@on_thread
-	def scanner_refresh(self,widget):
-		for item in self.scanner_objects:
-			item.close()
-			
-		#scanner.scanner.exit()
-		scanner_store = Gtk.ListStore(str)
-		self.scanner_objects = []
-		
-		self.make_scanner_wigets_inactive()
-		
-		#Tuple - List Convertion is used to get all items in devices list 
-		q = multiprocessing.Queue()
-		p = multiprocessing.Process(target=(lambda q :q.put(tuple(scanner.scanner.get_devices()))), args=(q,))
-		p.start()
-		while(p.is_alive()):
-			pass
-		
-		for device in list(q.get()):
-			self.scanner_objects.append(scanner.scanner(device,self.scanner_mode_switching))
-			scanner_store.append([device[2]])
-			
-		self.combobox_scanner.set_model(scanner_store)		
-		self.combobox_scanner.set_active(0)
-		#if (len(scanner_store) == 0):
-		self.make_scanner_wigets_active()
-					
+	def zoom_in(self,widget):
+		self.zoom_level = self.zoom_level * 4/3
+		self.drawingarea_load_image(self.pb_file_name)
 
-	def scan_single_image(self,widget):
-		threading.Thread(target=self.scan).start()
+	def zoom_out(self,widget):
+		self.zoom_level = self.zoom_level * 3/4
+		self.drawingarea_load_image(self.pb_file_name)
 
-	@on_thread
-	def scan_image_repeatedly(self,widget):
-		for i in range(0,self.number_of_pages_to_scan):
-			t = threading.Thread(target=self.scan)
-			t.start()
-			while(t.is_alive()):
-				pass
+	def zoom_fit(self,widget):
+		self.zoom_level = 1
+		self.drawingarea_load_image(self.pb_file_name)
 
-	def scan(self):
-		selected_scanner = self.combobox_scanner.get_active()
-		self.make_scanner_wigets_inactive()
-		p = multiprocessing.Process(target=(self.scanner_objects[selected_scanner].scan), args=("{0}{1}.png".format(global_var.temp_dir,self.starting_page_number),self.scan_resolution,self.scan_brightness,self.scan_area))
-		p.start()
-		while(p.is_alive()):
-			pass			
-		self.add_image_to_image_list("{0}{1}.png".format(global_var.temp_dir,self.starting_page_number))
-		self.starting_page_number += 1
-		self.make_scanner_wigets_active()
+
+	def iconview_selection_changed(self,widget):
+		items = self.image_icon_view.get_selected_items()
+		if (items):
+			self.drawingarea_load_image(self.liststore_images[items[0]][1])
+
+
+	def iconview_image_delete(self,widget):
+		for item in self.image_icon_view.get_selected_items():
+			iter = self.liststore_images.get_iter_from_string(item.to_string())
+			self.liststore_images.remove(iter)
+		self.drawingarea_load_image("{0}/ui/lios".format(global_var.data_dir))	
+
+	def iconview_image_clear(self,widget):
+		self.liststore_images.clear()
+		self.drawingarea_load_image("{0}/ui/lios".format(global_var.data_dir))
 
 	@on_thread			
 	def ocr_selected_images(self,widget):
@@ -352,72 +302,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 			text,angle = self.ocr(self.liststore_images[item[0]][1],mode,angle)
 			self.put_text_to_buffer(text)
 		self.make_ocr_widgets_active()
-	
 
-	def put_text_to_buffer(self,text):
-		if (self.insert_position == 0):
-			iter = self.textbuffer.get_start_iter()
-		elif (self.insert_position == 1):
-			mark = self.textbuffer.get_insert()
-			iter = self.textbuffer.get_iter_at_mark(mark)
-		else:
-			iter = self.textbuffer.get_start_iter()
-		self.textbuffer.insert(iter,text)
-		
-				
-		
-					
-	
-	############## Core OCR  Process Start ################################
-	def ocr(self,file_name,mode,angle):
-		if mode == 2:	#Manual
-			text = self.ocr_with_multiprocessing(file_name,angle)
-			return (text,angle)
-		else: #Full_Automatic or Partial_Automatic
-			list_ = []
-			for angle in [00,90,180,270]:
-				text = self.ocr_with_multiprocessing(file_name,angle)
-				count = self.count_dict_words(text)
-				list_.append((text,count,angle))
-			list_ = sorted(list_, key=lambda item: item[1],reverse=True)
-		return (list_[0][0],list_[0][2])
-				
-	
-	def count_dict_words(self,text):
-		count = 0
-		for word in text.split(" "):
-			if (len(word) > 1):
-				if (self.dict.check(word) == True):
-					count += 1
-		return count
-		
-	def ocr_with_multiprocessing(self,file_name,angle):
-		q = multiprocessing.Queue()
-		p = multiprocessing.Process(target=(lambda q,file_name : q.put(ocr_image_to_text(file_name,self.ocr_engine,self.language,angle))), args=(q,file_name))
-		p.start()
-		while(p.is_alive()):
-			pass
-		return q.get();		
-	############## Core OCR  Process End ################################
-	
-	@on_thread	
-	def scan_and_ocr(self,widget):
-		t = threading.Thread(target=self.scan)
-		t.start()
-		while(t.is_alive()):
-			pass
-		self.put_text_to_buffer(self.ocr("{0}{1}.png".format(global_var.temp_dir,self.starting_page_number-1),self.mode_of_rotation,self.rotation_angle)[0])
-		
-			
-	@on_thread			
-	def scan_and_ocr_repeatedly(self,widget):
-		for i in range(0,self.number_of_pages_to_scan):
-			t = threading.Thread(target=self.scan)
-			t.start()
-			while(t.is_alive()):
-				pass
-			self.put_text_to_buffer(self.ocr("{0}{1}.png".format(global_var.temp_dir,self.starting_page_number-1),self.mode_of_rotation,self.rotation_angle)[0])
-					
 
 	def add_image_to_image_list(self,filename):
 		pixbuff =  GdkPixbuf.Pixbuf.new_from_file(filename)
@@ -501,6 +386,154 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 					pass
 		folder.destroy()		
 
+	def configure_event(self,widget,event):
+		self.paned.set_position(event.width-200)
+		self.paned_drawing.set_position(event.width-370)
+	
+	def make_ocr_widgets_inactive(self):
+		self.ocr_submenu.set_sensitive(False)
+		self.spinner.show()
+		self.button_ocr_selected_images.set_sensitive(False)
+		self.spinner.set_state(True)
+
+	def make_ocr_widgets_active(self):
+		self.ocr_submenu.set_sensitive(True)
+		self.spinner.hide()
+		self.button_ocr_selected_images.set_sensitive(True)
+		self.spinner.set_state(False)
+	
+	def make_scanner_wigets_inactive(self):
+		self.combobox_scanner.set_sensitive(False)
+		self.spinner.set_state(True)
+		self.button_scan.set_sensitive(False)
+		self.button_refresh.set_sensitive(False)
+		self.scan_submenu.set_sensitive(False)
+		self.spinner.show()
+	
+	def make_scanner_wigets_active(self):
+		self.combobox_scanner.set_sensitive(True)
+		self.spinner.set_state(False)
+		self.button_scan.set_sensitive(True)
+		self.button_refresh.set_sensitive(True)
+		self.scan_submenu.set_sensitive(True)
+		self.spinner.hide()
+
+	
+	@on_thread
+	def scanner_refresh(self,widget):
+		for item in self.scanner_objects:
+			item.close()
+			
+		#scanner.scanner.exit()
+		scanner_store = Gtk.ListStore(str)
+		self.scanner_objects = []
+		
+		self.make_scanner_wigets_inactive()
+		
+		#Tuple - List Convertion is used to get all items in devices list 
+		q = multiprocessing.Queue()
+		p = multiprocessing.Process(target=(lambda q :q.put(tuple(scanner.scanner.get_devices()))), args=(q,))
+		p.start()
+		while(p.is_alive()):
+			pass
+		
+		for device in list(q.get()):
+			self.scanner_objects.append(scanner.scanner(device,self.scanner_mode_switching))
+			scanner_store.append([device[2]])
+			
+		self.combobox_scanner.set_model(scanner_store)		
+		self.combobox_scanner.set_active(0)
+		#if (len(scanner_store) == 0):
+		self.make_scanner_wigets_active()
+					
+
+	def scan_single_image(self,widget):
+		threading.Thread(target=self.scan).start()
+
+	@on_thread
+	def scan_image_repeatedly(self,widget):
+		for i in range(0,self.number_of_pages_to_scan):
+			t = threading.Thread(target=self.scan)
+			t.start()
+			while(t.is_alive()):
+				pass
+
+	def scan(self):
+		selected_scanner = self.combobox_scanner.get_active()
+		self.make_scanner_wigets_inactive()
+		p = multiprocessing.Process(target=(self.scanner_objects[selected_scanner].scan), args=("{0}{1}.png".format(global_var.temp_dir,self.starting_page_number),self.scan_resolution,self.scan_brightness,self.scan_area))
+		p.start()
+		while(p.is_alive()):
+			pass			
+		self.add_image_to_image_list("{0}{1}.png".format(global_var.temp_dir,self.starting_page_number))
+		self.starting_page_number += 1
+		self.make_scanner_wigets_active()
+	
+
+	def put_text_to_buffer(self,text):
+		if (self.insert_position == 0):
+			iter = self.textbuffer.get_start_iter()
+		elif (self.insert_position == 1):
+			mark = self.textbuffer.get_insert()
+			iter = self.textbuffer.get_iter_at_mark(mark)
+		else:
+			iter = self.textbuffer.get_end_iter()
+		self.textbuffer.insert(iter,text)
+		
+				
+		
+					
+	
+	############## Core OCR  Process Start ################################
+	def ocr(self,file_name,mode,angle):
+		if mode == 2:	#Manual
+			text = self.ocr_with_multiprocessing(file_name,angle)
+			return (text,angle)
+		else: #Full_Automatic or Partial_Automatic
+			list_ = []
+			for angle in [00,90,180,270]:
+				text = self.ocr_with_multiprocessing(file_name,angle)
+				count = self.count_dict_words(text)
+				list_.append((text,count,angle))
+			list_ = sorted(list_, key=lambda item: item[1],reverse=True)
+		return (list_[0][0],list_[0][2])
+				
+	
+	def count_dict_words(self,text):
+		count = 0
+		for word in text.split(" "):
+			if (len(word) > 1):
+				if (self.dict.check(word) == True):
+					count += 1
+		return count
+		
+	def ocr_with_multiprocessing(self,file_name,angle):
+		q = multiprocessing.Queue()
+		p = multiprocessing.Process(target=(lambda q,file_name : q.put(ocr_image_to_text(file_name,self.ocr_engine,self.language,angle))), args=(q,file_name))
+		p.start()
+		while(p.is_alive()):
+			pass
+		return q.get();		
+	############## Core OCR  Process End ################################
+	
+	@on_thread	
+	def scan_and_ocr(self,widget):
+		t = threading.Thread(target=self.scan)
+		t.start()
+		while(t.is_alive()):
+			pass
+		self.put_text_to_buffer(self.ocr("{0}{1}.png".format(global_var.temp_dir,self.starting_page_number-1),self.mode_of_rotation,self.rotation_angle)[0])
+		
+			
+	@on_thread			
+	def scan_and_ocr_repeatedly(self,widget):
+		for i in range(0,self.number_of_pages_to_scan):
+			t = threading.Thread(target=self.scan)
+			t.start()
+			while(t.is_alive()):
+				pass
+			self.put_text_to_buffer(self.ocr("{0}{1}.png".format(global_var.temp_dir,self.starting_page_number-1),self.mode_of_rotation,self.rotation_angle)[0])
+					
 		
 		
 	def go_to_page(self,wedget,data=None):
