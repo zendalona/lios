@@ -19,6 +19,7 @@
 ###########################################################################
 import os
 import sys
+import cairo
 import shutil
 import enchant
 import configparser
@@ -120,7 +121,28 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		Preferences_Scanning = self.guibuilder.get_object("Preferences_Scanning")
 		Preferences_Scanning.connect("activate",self.preferences,2)
 		Preferences_CamaraWebcam = self.guibuilder.get_object("Preferences_CamaraWebcam")
-		Preferences_CamaraWebcam.connect("activate",self.preferences,3)		
+		Preferences_CamaraWebcam.connect("activate",self.preferences,3)
+		
+		#Drawing Area and it's TreeView
+		self.drawingarea = self.guibuilder.get_object("drawingarea")
+		self.paned_drawing = self.guibuilder.get_object("paned_drawing")
+		self.rectangle_store = Gtk.ListStore(int,int,int,int,int)
+		self.treeview_image = self.guibuilder.get_object("treeview_image")
+		self.treeview_image.set_model(self.rectangle_store);
+		cell = Gtk.CellRendererText()
+		col = Gtk.TreeViewColumn("X", cell, text=0)
+		self.treeview_image.append_column(col)
+		col = Gtk.TreeViewColumn("Y", cell, text=1)
+		self.treeview_image.append_column(col)
+		col = Gtk.TreeViewColumn("Width", cell, text=2)
+		self.treeview_image.append_column(col)
+		col = Gtk.TreeViewColumn("Height", cell, text=3)
+		self.treeview_image.append_column(col)
+		self.treeview_image.set_reorderable(True)
+		self.on_select = False
+		self.drawingarea.set_events(Gdk.EventMask.ALL_EVENTS_MASK)
+		self.drawingarea_load_image("{0}/ui/lios".format(global_var.data_dir))		
+		
 
 		if (filename):
 			 self.textbuffer.set_text(open(filename,"r").read())
@@ -129,9 +151,106 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		self.window.maximize();
 		self.window.show()
 		Gtk.main();
+		
+
+
+######################################################################################
+	def drawingarea_draw(self, widget, cr):
+		   Gdk.cairo_set_source_pixbuf(cr, self.pb, 0, 0)
+		   cr.paint()
+		   
+		   for item in self.rectangle_store:
+			   cr.move_to(10, 90)
+			   cr.rectangle(item[0], item[1], item[2], item[3])
+			   if item[4] == True:
+				   cr.set_source_rgb(0.9, 0.1, 0.1)
+			   else:
+				   cr.set_source_rgb(1, 0, 1)
+			   cr.set_line_width (5.0);
+			   #cr.fill()
+			   cr.stroke()
+		   
+		   if (self.on_select == True):
+			   cr.rectangle(self.start_x,self.start_y,self.temp_finish_x-self.start_x,self.temp_finish_y-self.start_y)
+			   cr.set_source_rgb(0, 0, 1.0)
+			   cr.set_line_width (5.0);
+			   cr.stroke()
+			
+			
+		   
+		   print("Looping ")
+		   return True
+	
+	def drawingarea_load_image(self,filename):
+		   self.pb = GdkPixbuf.Pixbuf.new_from_file(filename)
+		   self.drawingarea.set_size_request(self.pb.get_width(),self.pb.get_height())
+		   self.treeview_image_clear(self)
+	
+	def drawingarea_button_release_event(self, widget, event):
+		self.finish_x,self.finish_y=event.get_coords()
+		self.on_select = False
+		print("Finish X - {0}, Y - {1}".format(self.finish_x,self.finish_y))
+		overlaped = False
+		for item in self.rectangle_store:
+			start_x = item[0]
+			start_y = item[1]
+			finish_x = item[2]+item[0]
+			finish_y = item[3]+item[1]
+			if ((start_x <= self.start_x <= finish_x or start_x <= self.finish_x <= finish_x) and (start_y <= self.start_y <= finish_y or start_y <= self.finish_y <= finish_y)):
+				overlaped = True
+				
+		if (overlaped):
+			dialog = Gtk.MessageDialog(None, 0, Gtk.MessageType.INFO,Gtk.ButtonsType.OK, "Rectangle Overlaped!")
+			dialog.format_secondary_text("Rectangle overlaped with Start - ({0},{1})  End - ({2},{3})".format(start_x,start_y,finish_x,finish_y))
+			dialog.run()
+			dialog.destroy()
+		else:
+			self.rectangle_store.append((self.start_x,self.start_y,self.finish_x-self.start_x,self.finish_y-self.start_y,0))
+		
+		self.drawingarea.queue_draw()
+		return True
+
+	def treeview_image_delete(self,widget):
+		item = self.treeview_image.get_selection()
+		model,iter = item.get_selected()
+		self.rectangle_store.remove(iter)
+		self.drawingarea.queue_draw()
+
+	def treeview_image_clear(self,widget):
+		self.rectangle_store.clear()
+		self.drawingarea.queue_draw()
+
+	def treeview_image_cursor_changed(self,widget):
+		for item in self.rectangle_store:
+			item[4] = False
+		item = self.treeview_image.get_selection()
+		model,iter = item.get_selected()
+		self.rectangle_store.set(iter,4,True)
+		self.drawingarea.queue_draw()
+        
+        
+	def drawingarea_button_press_event(self, widget, event):
+		self.start_x,self.start_y=event.get_coords()
+		print("Start  X - {0}, Y - {1}".format(self.start_x,self.start_y))
+		self.on_select = True
+		return True
+    
+	def drawingarea_motion_notify_event(self, widget, event):
+		if (self.on_select):
+			self.temp_finish_x,self.temp_finish_y = event.get_coords()
+			self.drawingarea.queue_draw()
+
+
+############################################################################################
+
+
+
+
+		
 	
 	def configure_event(self,widget,event):
 		self.paned.set_position(event.width-200)
+		self.paned_drawing.set_position(event.width-400)
 	
 	def make_ocr_widgets_inactive(self):
 		self.ocr_submenu.set_sensitive(False)
@@ -160,6 +279,13 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		self.button_refresh.set_sensitive(True)
 		self.scan_submenu.set_sensitive(True)
 		self.spinner.hide()
+		
+	def notebook_switch_page(self,notbook,child,page_num):
+		if page_num == 1:
+			items = self.image_icon_view.get_selected_items()
+			if len(items) == 1:
+				self.drawingarea_load_image(self.liststore_images[items[0]][1])
+			
 	
 	@on_thread
 	def scanner_refresh(self,widget):
@@ -183,10 +309,11 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 			self.scanner_objects.append(scanner.scanner(device,self.scanner_mode_switching))
 			scanner_store.append([device[2]])
 			
-			
 		self.combobox_scanner.set_model(scanner_store)		
 		self.combobox_scanner.set_active(0)
+		#if (len(scanner_store) == 0):
 		self.make_scanner_wigets_active()
+					
 
 	def scan_single_image(self,widget):
 		threading.Thread(target=self.scan).start()
