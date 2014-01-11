@@ -992,15 +992,16 @@
               </packing>
             </child>
             <child>
-              <object class="GtkGrid" id="grid6">
+              <object class="GtkGrid" id="grid_scanning">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="row_spacing">70</property>
                 <child>
                   <object class="GtkLabel" id="label25">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="hexpand">True</property>
-                    <property name="vexpand">True</property>
+                    <property name="ypad">37</property>
                     <property name="label" translatable="yes">&lt;span size="large"&gt;&lt;b&gt;Resolution &lt;/b&gt;&lt;/span&gt;</property>
                     <property name="use_markup">True</property>
                     <property name="use_underline">True</property>
@@ -1018,7 +1019,6 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="hexpand">True</property>
-                    <property name="vexpand">True</property>
                     <property name="label" translatable="yes">&lt;span size="large"&gt;&lt;b&gt;Brightness &lt;/b&gt;&lt;/span&gt;</property>
                     <property name="use_markup">True</property>
                     <property name="use_underline">True</property>
@@ -1035,7 +1035,6 @@
                   <object class="GtkLabel" id="label27">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="hexpand">True</property>
                     <property name="label" translatable="yes">&lt;span size="large"&gt;&lt;b&gt;Scan-Area &lt;/b&gt;&lt;/span&gt;</property>
                     <property name="use_markup">True</property>
                     <property name="use_underline">True</property>
@@ -1053,7 +1052,6 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="hexpand">True</property>
-                    <property name="vexpand">True</property>
                     <property name="label" translatable="yes">&lt;span size="large"&gt;&lt;b&gt;Time Bitween Repeted Scanning &lt;/b&gt;&lt;/span&gt;</property>
                     <property name="use_markup">True</property>
                     <property name="use_underline">True</property>
@@ -1061,7 +1059,7 @@
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
-                    <property name="top_attach">4</property>
+                    <property name="top_attach">5</property>
                     <property name="width">1</property>
                     <property name="height">1</property>
                   </packing>
@@ -1070,8 +1068,8 @@
                   <object class="GtkComboBox" id="combobox_scan_area">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="hexpand">True</property>
-                    <property name="border_width">60</property>
+                    <property name="margin_right">1</property>
+                    <property name="border_width">20</property>
                     <property name="model">liststore_Area</property>
                     <child>
                       <object class="GtkCellRendererText" id="cellrenderertext7"/>
@@ -1092,7 +1090,6 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="hexpand">True</property>
-                    <property name="vexpand">True</property>
                     <property name="invisible_char">•</property>
                     <property name="adjustment">adjustment_resolution</property>
                   </object>
@@ -1108,7 +1105,6 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="hexpand">True</property>
-                    <property name="vexpand">True</property>
                     <property name="invisible_char">•</property>
                     <property name="adjustment">adjustment_brightness</property>
                   </object>
@@ -1124,13 +1120,12 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="hexpand">True</property>
-                    <property name="vexpand">True</property>
                     <property name="invisible_char">•</property>
                     <property name="adjustment">adjustment_time_bitween_repeated_scanning</property>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
-                    <property name="top_attach">4</property>
+                    <property name="top_attach">5</property>
                     <property name="width">1</property>
                     <property name="height">1</property>
                   </packing>
@@ -1141,7 +1136,7 @@
                     <property name="can_focus">False</property>
                     <property name="receives_default">False</property>
                     <property name="hexpand">True</property>
-                    <property name="border_width">20</property>
+                    <property name="border_width">7</property>
                     <property name="xalign">0.5</property>
                     <property name="draw_indicator">True</property>
                     <child>
@@ -1156,8 +1151,44 @@
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
-                    <property name="top_attach">3</property>
+                    <property name="top_attach">4</property>
                     <property name="width">2</property>
+                    <property name="height">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="label32">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label" translatable="yes">&lt;span size="large"&gt;&lt;b&gt;Driver &lt;/b&gt;&lt;/span&gt;</property>
+                    <property name="use_markup">True</property>
+                    <property name="use_underline">True</property>
+                    <property name="mnemonic_widget">combobox_scan_driver</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">3</property>
+                    <property name="width">1</property>
+                    <property name="height">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkComboBox" id="combobox_scan_driver">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="border_width">20</property>
+                    <property name="model">liststore_driver</property>
+                    <child>
+                      <object class="GtkCellRendererText" id="cellrenderertext9"/>
+                      <attributes>
+                        <attribute name="text">0</attribute>
+                      </attributes>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="left_attach">1</property>
+                    <property name="top_attach">3</property>
+                    <property name="width">1</property>
                     <property name="height">1</property>
                   </packing>
                 </child>
