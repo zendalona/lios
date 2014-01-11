@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <!-- interface-requires gtk+ 3.0 -->
-  <object class="GtkImage" id="image25">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="stock">gtk-ok</property>
-  </object>
   <object class="GtkImage" id="image10">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -65,6 +60,11 @@
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="stock">gtk-dialog-info</property>
+  </object>
+  <object class="GtkImage" id="image25">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-ok</property>
   </object>
   <object class="GtkImage" id="image27">
     <property name="visible">True</property>
@@ -1075,6 +1075,7 @@
                           <object class="GtkToolButton" id="toolbutton2">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
+                            <property name="tooltip_text" translatable="yes">Rotate Right</property>
                             <property name="label" translatable="yes">toolbutton2</property>
                             <property name="use_underline">True</property>
                             <property name="icon_name">object-rotate-right</property>
@@ -1093,6 +1094,21 @@
                             <property name="use_underline">True</property>
                             <property name="icon_name">zoom-in</property>
                             <signal name="clicked" handler="zoom_in" swapped="no"/>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="homogeneous">True</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkToolButton" id="toolbutton3">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="tooltip_text" translatable="yes">Rotate Twice</property>
+                            <property name="label" translatable="yes">toolbutton3</property>
+                            <property name="use_underline">True</property>
+                            <property name="icon_name">object-flip-vertical</property>
+                            <signal name="clicked" handler="rotate_twice" swapped="no"/>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -1131,6 +1147,7 @@
                           <object class="GtkToolButton" id="toolbutton1">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
+                            <property name="tooltip_text" translatable="yes">Rotate Left</property>
                             <property name="use_underline">True</property>
                             <property name="icon_name">object-rotate-left</property>
                             <signal name="clicked" handler="rotate_left" swapped="no"/>
