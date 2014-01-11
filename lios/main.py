@@ -245,7 +245,6 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		angle = self.rotation_angle
 		pb = GdkPixbuf.Pixbuf.new_from_file(self.pb_file_name)
 		for item in self.rectangle_store:
-			#pb.copy_area(item[0]*self.zoom_level,item[1]*self.zoom_level,item[2]*self.zoom_level,item[3]*self.zoom_level,dest,item[2]*self.zoom_level,item[3]*self.zoom_level)
 			dest = pb.new_subpixbuf(item[0]/self.zoom_level,item[1]/self.zoom_level,item[2]/self.zoom_level,item[3]/self.zoom_level)
 			dest.savev("{0}temp".format(global_var.temp_dir), "png",[],[])
 			if mode == 1:
@@ -269,6 +268,36 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 	def zoom_fit(self,widget):
 		self.zoom_level = 1
 		self.drawingarea_load_image(self.pb_file_name)
+	
+	def rotate_right(self,widget):
+		self.rotate(270)
+
+	def rotate_left(self,widget):
+		self.rotate(90)
+
+	def rotate_twice(self,widget):
+		self.rotate(180)
+
+	@on_thread
+	def rotate(self,angle):
+		pb = GdkPixbuf.Pixbuf.new_from_file(self.pb_file_name)
+		pb = pb.rotate_simple(angle)
+		pb.savev(self.pb_file_name, "png",[],[])
+		self.drawingarea_load_image(self.pb_file_name)
+		self.iconview_image_reload(self.pb_file_name)
+
+		
+	def iconview_image_reload(self,filename):
+		for item in self.liststore_images:
+			if (item[1] == filename):
+				pixbuff =  GdkPixbuf.Pixbuf.new_from_file(filename)
+				height = pixbuff.get_height()
+				width = pixbuff.get_width()
+				ratio = (width*50)/height
+				buff = pixbuff.scale_simple(50,ratio,GdkPixbuf.InterpType.BILINEAR)
+				item[0] = buff
+				
+		
 
 
 	def iconview_selection_changed(self,widget):
@@ -329,6 +358,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 			destination = "{0}{1}".format(global_var.temp_dir,filename.replace(' ','-'))
 			shutil.copyfile(file_name_with_directory,destination)
 			self.add_image_to_image_list(destination)
+			self.drawingarea_load_image(destination)
 		open_file.destroy()		
 
 	def import_pdf(self,wedget,data=None):
