@@ -418,7 +418,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 
 	def configure_event(self,widget,event):
 		self.paned.set_position(event.width-200)
-		self.paned_drawing.set_position(event.width-370)
+		self.paned_drawing.set_position(200)
 	
 	def make_ocr_widgets_inactive(self):
 		self.ocr_submenu.set_sensitive(False)
@@ -468,7 +468,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 			pass
 		
 		for device in list(q.get()):
-			self.scanner_objects.append(scanner.scanner(device,self.scanner_mode_switching))
+			self.scanner_objects.append(scanner.scanner(device,self.scan_driver,self.scanner_mode_switching)) #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 			scanner_store.append([device[2]])
 			
 		self.combobox_scanner.set_model(scanner_store)		
