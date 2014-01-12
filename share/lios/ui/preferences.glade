@@ -198,6 +198,7 @@
   </object>
   <object class="GtkWindow" id="window">
     <property name="can_focus">False</property>
+    <property name="title" translatable="yes">Lios-Preferences</property>
     <child>
       <object class="GtkBox" id="box1">
         <property name="visible">True</property>
@@ -780,13 +781,15 @@
               </packing>
             </child>
             <child>
-              <object class="GtkGrid" id="grid5">
+              <object class="GtkGrid" id="grid_recognition">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="row_spacing">60</property>
                 <child>
                   <object class="GtkLabel" id="label20">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="vexpand">True</property>
                     <property name="label" translatable="yes">&lt;span size="large"&gt;&lt;b&gt;Engine &lt;/b&gt;&lt;/span&gt;</property>
                     <property name="use_markup">True</property>
                     <property name="use_underline">True</property>
@@ -803,6 +806,7 @@
                   <object class="GtkLabel" id="label21">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="vexpand">True</property>
                     <property name="label" translatable="yes">&lt;span size="large"&gt;&lt;b&gt;Language &lt;/b&gt;&lt;/span&gt;</property>
                     <property name="use_markup">True</property>
                     <property name="use_underline">True</property>
@@ -819,6 +823,7 @@
                   <object class="GtkLabel" id="label22">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="vexpand">True</property>
                     <property name="label" translatable="yes">&lt;span size="large"&gt;&lt;b&gt;Mode Of Rotation &lt;/b&gt;&lt;/span&gt;</property>
                     <property name="use_markup">True</property>
                     <property name="use_underline">True</property>
@@ -835,6 +840,7 @@
                   <object class="GtkLabel" id="label_angle">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="vexpand">True</property>
                     <property name="label" translatable="yes">&lt;span size="large"&gt;&lt;b&gt;Angle &lt;/b&gt;&lt;/span&gt;</property>
                     <property name="use_markup">True</property>
                     <property name="use_underline">True</property>
@@ -851,7 +857,6 @@
                   <object class="GtkComboBox" id="combobox_engine">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="border_width">60</property>
                     <property name="model">liststore_engine</property>
                     <child>
                       <object class="GtkCellRendererText" id="cellrenderertext2"/>
@@ -871,7 +876,6 @@
                   <object class="GtkComboBox" id="combobox_language">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="border_width">60</property>
                     <child>
                       <object class="GtkCellRendererText" id="cellrenderertext3"/>
                     </child>
@@ -887,7 +891,6 @@
                   <object class="GtkComboBox" id="combobox_rotation">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="border_width">60</property>
                     <property name="model">liststore_mode_of_rotation</property>
                     <child>
                       <object class="GtkCellRendererText" id="cellrenderertext4"/>
@@ -907,7 +910,6 @@
                   <object class="GtkComboBox" id="combobox_angle">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="border_width">60</property>
                     <property name="model">liststore_angle</property>
                     <child>
                       <object class="GtkCellRendererText" id="cellrenderertext5"/>
@@ -929,7 +931,6 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
-                    <property name="border_width">20</property>
                     <property name="xalign">0</property>
                     <property name="draw_indicator">True</property>
                   </object>
@@ -944,6 +945,7 @@
                   <object class="GtkLabel" id="label24">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="vexpand">True</property>
                     <property name="label" translatable="yes">&lt;span size="large"&gt;&lt;b&gt;Insert Position  &lt;/b&gt;&lt;/span&gt;</property>
                     <property name="use_markup">True</property>
                     <property name="use_underline">True</property>
@@ -995,13 +997,12 @@
               <object class="GtkGrid" id="grid_scanning">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="row_spacing">70</property>
+                <property name="row_spacing">60</property>
                 <child>
                   <object class="GtkLabel" id="label25">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="hexpand">True</property>
-                    <property name="ypad">37</property>
                     <property name="label" translatable="yes">&lt;span size="large"&gt;&lt;b&gt;Resolution &lt;/b&gt;&lt;/span&gt;</property>
                     <property name="use_markup">True</property>
                     <property name="use_underline">True</property>
@@ -1059,7 +1060,7 @@
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
-                    <property name="top_attach">5</property>
+                    <property name="top_attach">4</property>
                     <property name="width">1</property>
                     <property name="height">1</property>
                   </packing>
@@ -1069,7 +1070,6 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="margin_right">1</property>
-                    <property name="border_width">20</property>
                     <property name="model">liststore_Area</property>
                     <child>
                       <object class="GtkCellRendererText" id="cellrenderertext7"/>
@@ -1125,7 +1125,7 @@
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
-                    <property name="top_attach">5</property>
+                    <property name="top_attach">4</property>
                     <property name="width">1</property>
                     <property name="height">1</property>
                   </packing>
@@ -1133,10 +1133,9 @@
                 <child>
                   <object class="GtkCheckButton" id="checkbutton_scanner_mode_switching">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
+                    <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
                     <property name="hexpand">True</property>
-                    <property name="border_width">7</property>
                     <property name="xalign">0.5</property>
                     <property name="draw_indicator">True</property>
                     <child>
@@ -1151,7 +1150,7 @@
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
-                    <property name="top_attach">4</property>
+                    <property name="top_attach">5</property>
                     <property name="width">2</property>
                     <property name="height">1</property>
                   </packing>
@@ -1176,7 +1175,6 @@
                   <object class="GtkComboBox" id="combobox_scan_driver">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="border_width">20</property>
                     <property name="model">liststore_driver</property>
                     <child>
                       <object class="GtkCellRendererText" id="cellrenderertext9"/>
@@ -1209,9 +1207,10 @@
               </packing>
             </child>
             <child>
-              <object class="GtkGrid" id="grid7">
+              <object class="GtkGrid" id="grid_cam">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="row_spacing">150</property>
                 <child>
                   <object class="GtkLabel" id="label29">
                     <property name="visible">True</property>
@@ -1253,6 +1252,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="hexpand">True</property>
+                    <property name="vexpand">True</property>
                     <property name="label" translatable="yes">&lt;span size="large"&gt;&lt;b&gt;Device&lt;/b&gt;&lt;/span&gt;</property>
                     <property name="use_markup">True</property>
                     <property name="use_underline">True</property>
@@ -1302,7 +1302,6 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="hexpand">True</property>
-                    <property name="border_width">60</property>
                     <property name="model">liststore_Device</property>
                     <child>
                       <object class="GtkCellRendererText" id="cellrenderertext8"/>
