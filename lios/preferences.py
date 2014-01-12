@@ -38,7 +38,7 @@ class lios_preferences:
 	# FUNCTION TO Read PREFERENCES #
 	def read_preferences(self):
 		config = configparser.ConfigParser()
-		if config.read('%s/Lios/.preferences.cfg'%(os.environ['HOME'])) != []:
+		if config.read('{0}/.lios_preferences.cfg'.format(global_var.home_dir)) != []:
 			try:
 				self.time_between_repeated_scanning=int(config.get('cfg',"time_between_repeated_scanning"))
 				self.scan_resolution=int(config.get('cfg',"scan_resolution"))
@@ -82,7 +82,7 @@ class lios_preferences:
 		save_preferences.set_current_folder("%s/Lios"%(os.environ['HOME']))
 		response = save_preferences.run()		
 		if response == gtk.RESPONSE_OK:
-			shutil.copy2("%s/Lios/.preferences.cfg"%(os.environ['HOME']),"%s.cfg"%(save_preferences.get_filename()))
+			shutil.copy2('{0}/.lios_preferences.cfg'.format(global_var.home_dir),"%s.cfg"%(save_preferences.get_filename()))
 			#self.notify("preferences saved as %s.cfg" % (save_preferences.get_filename()),False,None,True)
 		save_preferences.destroy()
 
@@ -97,7 +97,7 @@ class lios_preferences:
 		load_preferences.add_filter(filter)
 		response = load_preferences.run()
 		if response == gtk.RESPONSE_OK:
-			shutil.copy2("%s"%(load_preferences.get_filename()),"%s/Lios/.preferences.cfg"%(os.environ['HOME']))
+			shutil.copy2("%s"%(load_preferences.get_filename()),'{0}/.lios_preferences.cfg'.format(global_var.home_dir))
 			self.read_preferences()
 			#self.notify("preferences loaded from %s" % (load_preferences.get_filename()),False,None,True)
 		self.set_dict("%s" % self.key_value[self.language])
@@ -119,11 +119,11 @@ class lios_preferences:
 	def set_preferences_to_file(self):
 		#Removing old configuration file
 		try:
-			os.remove('%s/Lios/.preferences.cfg'%(os.environ['HOME']))
+			os.remove('{0}/.lios_preferences.cfg'.format(global_var.home_dir))
 		except:
 			pass		
 		config = configparser.ConfigParser()
-		config.read('%s/.preferences.cfg'%(global_var.home_dir))
+		config.read('{0}/.lios_preferences.cfg'.format(global_var.home_dir))
 		config.add_section('cfg')
 		config.set('cfg',"time_between_repeated_scanning",str(self.time_between_repeated_scanning))
 		config.set('cfg',"scan_resolution",str(self.scan_resolution))
@@ -154,7 +154,7 @@ class lios_preferences:
 		config.set('cfg',"cam_take_time",str(self.cam_take_time))
 		config.set('cfg',"cam_waitkey",str(self.cam_waitkey))
 		config.set('cfg',"cam_device",str(self.cam_device))
-		with open('{0}/Lios/.preferences.cfg'.format(os.environ['HOME']), 'w') as configfile:
+		with open('{0}/.lios_preferences.cfg'.format(global_var.home_dir), 'w') as configfile:
 			config.write(configfile)
 	
 	
