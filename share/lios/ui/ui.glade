@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <!-- interface-requires gtk+ 3.0 -->
+  <object class="GtkImage" id="image25">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-ok</property>
+  </object>
   <object class="GtkImage" id="image27">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -10,16 +15,6 @@
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="stock">gtk-media-record</property>
-  </object>
-  <object class="GtkImage" id="image29">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="stock">gtk-cancel</property>
-  </object>
-  <object class="GtkImage" id="image3">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="stock">gtk-file</property>
   </object>
   <object class="GtkImage" id="image10">
     <property name="visible">True</property>
@@ -81,10 +76,15 @@
     <property name="can_focus">False</property>
     <property name="stock">gtk-dialog-info</property>
   </object>
-  <object class="GtkImage" id="image25">
+  <object class="GtkImage" id="image29">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="stock">gtk-ok</property>
+    <property name="stock">gtk-cancel</property>
+  </object>
+  <object class="GtkImage" id="image3">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-file</property>
   </object>
   <object class="GtkImage" id="image30">
     <property name="visible">True</property>
@@ -931,6 +931,8 @@
                       <object class="GtkTextView" id="textview">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
+                        <property name="vscroll_policy">natural</property>
+                        <property name="accepts_tab">False</property>
                       </object>
                     </child>
                   </object>
@@ -978,7 +980,7 @@
                               <object class="GtkButton" id="button1">
                                 <property name="label" translatable="yes">Ocr</property>
                                 <property name="visible">True</property>
-                                <property name="can_focus">False</property>
+                                <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
                                 <signal name="clicked" handler="ocr_selected_areas" swapped="no"/>
                               </object>
@@ -992,7 +994,7 @@
                               <object class="GtkButton" id="button2">
                                 <property name="label" translatable="yes">Delete</property>
                                 <property name="visible">True</property>
-                                <property name="can_focus">False</property>
+                                <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
                                 <signal name="clicked" handler="treeview_image_delete" swapped="no"/>
                               </object>
@@ -1006,7 +1008,7 @@
                               <object class="GtkButton" id="button3">
                                 <property name="label" translatable="yes">Clear</property>
                                 <property name="visible">True</property>
-                                <property name="can_focus">False</property>
+                                <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
                                 <signal name="clicked" handler="treeview_image_clear" swapped="no"/>
                               </object>
@@ -1166,6 +1168,9 @@
                       </packing>
                     </child>
                   </object>
+                  <packing>
+                    <property name="position">1</property>
+                  </packing>
                 </child>
                 <child type="tab">
                   <object class="GtkLabel" id="label2">
@@ -1217,7 +1222,7 @@
                       <object class="GtkButton" id="button_ocr_selected_images">
                         <property name="label" translatable="yes">OCR</property>
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
+                        <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
                         <signal name="clicked" handler="ocr_selected_images" swapped="no"/>
                       </object>
@@ -1231,7 +1236,7 @@
                       <object class="GtkButton" id="button4">
                         <property name="label" translatable="yes">Delete</property>
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
+                        <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
                         <signal name="clicked" handler="iconview_image_delete" swapped="no"/>
                       </object>
@@ -1245,7 +1250,7 @@
                       <object class="GtkButton" id="button5">
                         <property name="label" translatable="yes">Clear</property>
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
+                        <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
                         <signal name="clicked" handler="iconview_image_clear" swapped="no"/>
                       </object>
@@ -1278,7 +1283,7 @@
         <child>
           <object class="GtkComboBox" id="combobox_scanner">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
+            <property name="can_focus">True</property>
           </object>
           <packing>
             <property name="left_attach">5</property>
@@ -1293,7 +1298,7 @@
           <object class="GtkButton" id="button_refresh">
             <property name="label" translatable="yes">Refresh</property>
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
+            <property name="can_focus">True</property>
             <property name="receives_default">True</property>
             <signal name="clicked" handler="scanner_refresh" swapped="no"/>
           </object>
@@ -1310,7 +1315,7 @@
           <object class="GtkButton" id="button_scan">
             <property name="label" translatable="yes">Scan</property>
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
+            <property name="can_focus">True</property>
             <property name="receives_default">True</property>
             <signal name="clicked" handler="scan_single_image" swapped="no"/>
           </object>
