@@ -70,6 +70,7 @@ class lios_preferences:
 				self.cam_waitkey=int(config.get('cfg',"cam_waitkey"))
 				self.cam_device=int(config.get('cfg',"cam_device"))				
 				self.mode_switch = True
+				self.require_scanner_refresh = True
 			except:
 				self.on_Restore_preferences_activate(self,data=None)
 		else:
@@ -99,6 +100,8 @@ class lios_preferences:
 		if response == gtk.RESPONSE_OK:
 			shutil.copy2("%s"%(load_preferences.get_filename()),'{0}/.lios_preferences.cfg'.format(global_var.home_dir))
 			self.read_preferences()
+			self.require_scanner_refresh = True
+			self.activate_preferences()
 			#self.notify("preferences loaded from %s" % (load_preferences.get_filename()),False,None,True)
 		self.set_dict("%s" % self.key_value[self.language])
 		load_preferences.destroy()
@@ -115,6 +118,7 @@ class lios_preferences:
 		#Writing it to user configuration file
 		self.set_preferences_to_file()				
 		#self.notify("preferences restored!",False,None,True)
+		self.require_scanner_refresh = True
 
 	def set_preferences_to_file(self):
 		#Removing old configuration file
@@ -164,6 +168,7 @@ class lios_preferences:
 		self.preferences_guibuilder.add_from_file("%s/ui/preferences.glade" %(global_var.data_dir))
 		self.preferences_window = self.preferences_guibuilder.get_object("window")
 		self.preferences_guibuilder.connect_signals(self)
+		self.require_scanner_refresh = False
 
 
 		#General
@@ -236,7 +241,8 @@ class lios_preferences:
 		area.connect('changed', self.change_area)
 		area.set_active(self.scan_area)
 
-		#Driver						      
+		#Driver
+		self.scan_driver_old = self.scan_driver						      
 		driver = self.preferences_guibuilder.get_object("combobox_scan_driver")
 		driver.connect('changed', self.change_driver)
 		driver.set_active(self.scan_driver)
@@ -280,10 +286,11 @@ class lios_preferences:
 		
 
 		#Mode Switching
+		self.scanner_mode_switching_old = self.scanner_mode_switching
 		self.checkbutton_scanner_mode_switching = self.preferences_guibuilder.get_object("checkbutton_scanner_mode_switching")
 		self.checkbutton_scanner_mode_switching.set_active(self.scanner_mode_switching)
 
-		#DRIVER
+		#Skew
 		self.checkbutton_skew = self.preferences_guibuilder.get_object("checkbutton_skew")
 		self.checkbutton_skew.set_active(self.auto_skew)
 		
@@ -421,9 +428,15 @@ class lios_preferences:
 			self.rotation_angle = model_angle[self.angle_cb.get_active()][0]
 		
 		self.auto_skew = int(self.checkbutton_skew.get_active())
+		if (self.scan_driver_old != self.scan_driver or self.scanner_mode_switching_old != self.scanner_mode_switching ):
+			self.require_scanner_refresh = True
+			self.scan_driver_old = self.scan_driver
+			self.scanner_mode_switching_old = self.scanner_mode_switching
+			
 		self.activate_preferences()
 		self.set_preferences_to_file()
 		self.preferences_window.destroy()
+
 	
 	def activate_preferences(self):
 		espeak.set_parameter(espeak.Parameter.Rate,self.voice_message_rate)
@@ -441,6 +454,10 @@ class lios_preferences:
 		self.textview.modify_fg(Gtk.StateFlags.NORMAL, Gdk.color_parse(self.font_color))
 		self.textview.modify_bg(Gtk.StateFlags.NORMAL, Gdk.color_parse(self.background_color))
 		self.set_dict("%s" % self.key_value[self.language])
+		if (self.require_scanner_refresh):
+			self.scanner_refresh(self)
+		
+
 	
 	def set_dict(self,language):
 		try:

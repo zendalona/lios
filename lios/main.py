@@ -73,7 +73,6 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 
 		#Getting Preferences Values
 		self.read_preferences()
-		self.activate_preferences()
 		
 		#Image iconview and store
 		self.image_icon_view = self.guibuilder.get_object("iconview")
@@ -102,7 +101,6 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		renderer_text = Gtk.CellRendererText()
 		self.combobox_scanner.pack_start(renderer_text, True)
 		self.combobox_scanner.add_attribute(renderer_text, "text", 0)		
-		self.scanner_refresh(None)
 		
 		#OCR Wedgets
 		self.ocr_submenu = self.guibuilder.get_object("OCR_Submenu")
@@ -143,6 +141,10 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		self.drawingarea.set_events(Gdk.EventMask.ALL_EVENTS_MASK)
 		self.zoom_level = 1
 		self.drawingarea_load_image("{0}/ui/lios".format(global_var.data_dir))		
+		
+		#Activating Preference
+		self.activate_preferences()
+
 		
 		if (filename):
 			 self.textbuffer.set_text(open(filename,"r").read())
