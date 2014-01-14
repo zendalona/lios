@@ -1,15 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <!-- interface-requires gtk+ 3.0 -->
+  <object class="GtkImage" id="image23">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-dialog-info</property>
+  </object>
+  <object class="GtkImage" id="image25">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-ok</property>
+  </object>
+  <object class="GtkImage" id="image27">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-sort-descending</property>
+  </object>
   <object class="GtkImage" id="image28">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="stock">gtk-media-record</property>
   </object>
-  <object class="GtkImage" id="image23">
+  <object class="GtkImage" id="image1">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="stock">gtk-dialog-info</property>
+    <property name="stock">gtk-missing-image</property>
   </object>
   <object class="GtkImage" id="image10">
     <property name="visible">True</property>
@@ -66,16 +81,6 @@
     <property name="can_focus">False</property>
     <property name="icon_name">scanner</property>
   </object>
-  <object class="GtkImage" id="image25">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="stock">gtk-ok</property>
-  </object>
-  <object class="GtkImage" id="image27">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="stock">gtk-sort-descending</property>
-  </object>
   <object class="GtkImage" id="image29">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -101,11 +106,6 @@
     <property name="can_focus">False</property>
     <property name="stock">gtk-orientation-portrait</property>
   </object>
-  <object class="GtkImage" id="image34">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="stock">gtk-index</property>
-  </object>
   <object class="GtkImage" id="image36">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -130,6 +130,11 @@
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="stock">gtk-directory</property>
+  </object>
+  <object class="GtkImage" id="image6">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-missing-image</property>
   </object>
   <object class="GtkImage" id="image8">
     <property name="visible">True</property>
@@ -468,17 +473,6 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <child>
-                      <object class="GtkImageMenuItem" id="ocr_current_image">
-                        <property name="label" translatable="yes">OCR-Current-Image</property>
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="image">image34</property>
-                        <property name="use_stock">False</property>
-                        <accelerator key="F3" signal="activate"/>
-                        <signal name="activate" handler="ocr_current_image" swapped="no"/>
-                      </object>
-                    </child>
-                    <child>
                       <object class="GtkImageMenuItem" id="ocr_all_images">
                         <property name="label" translatable="yes">OCR-All-Images</property>
                         <property name="visible">True</property>
@@ -489,13 +483,33 @@
                       </object>
                     </child>
                     <child>
+                      <object class="GtkImageMenuItem" id="imagemenuitem1">
+                        <property name="label" translatable="yes">OCR-All-Images-Without-Rotating</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="image">image6</property>
+                        <property name="use_stock">False</property>
+                        <signal name="activate" handler="ocr_all_images_without_rotating" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
                       <object class="GtkImageMenuItem" id="ocr_selected_images">
-                        <property name="label" translatable="yes">OCR-Selected</property>
+                        <property name="label" translatable="yes">OCR-Selected-Images</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="image">image32</property>
                         <property name="use_stock">False</property>
                         <signal name="activate" handler="ocr_selected_images" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkImageMenuItem" id="imagemenuitem2">
+                        <property name="label" translatable="yes">OCR-Selected-Images-Without-Rotating</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="image">image1</property>
+                        <property name="use_stock">False</property>
+                        <signal name="activate" handler="ocr_selected_images_without_rotating" swapped="no"/>
                       </object>
                     </child>
                     <child>
@@ -930,7 +944,6 @@
               <object class="GtkNotebook" id="notebook">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <signal name="switch-page" handler="notebook_switch_page" swapped="no"/>
                 <child>
                   <object class="GtkScrolledWindow" id="scrolledwindow2">
                     <property name="visible">True</property>
@@ -941,6 +954,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="vscroll_policy">natural</property>
+                        <property name="wrap_mode">word</property>
                         <property name="accepts_tab">False</property>
                       </object>
                     </child>
@@ -1275,21 +1289,22 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkBox" id="box5">
+                  <object class="GtkGrid" id="grid1">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <child>
                       <object class="GtkButton" id="button_ocr_selected_images">
-                        <property name="label" translatable="yes">OCR</property>
+                        <property name="label" translatable="yes">OCR Selected Images</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
-                        <property name="receives_default">False</property>
+                        <property name="receives_default">True</property>
                         <signal name="clicked" handler="ocr_selected_images" swapped="no"/>
                       </object>
                       <packing>
-                        <property name="expand">True</property>
-                        <property name="fill">True</property>
-                        <property name="position">0</property>
+                        <property name="left_attach">0</property>
+                        <property name="top_attach">0</property>
+                        <property name="width">1</property>
+                        <property name="height">1</property>
                       </packing>
                     </child>
                     <child>
@@ -1297,13 +1312,14 @@
                         <property name="label" translatable="yes">Delete</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
-                        <property name="receives_default">False</property>
+                        <property name="receives_default">True</property>
                         <signal name="clicked" handler="iconview_image_delete" swapped="no"/>
                       </object>
                       <packing>
-                        <property name="expand">True</property>
-                        <property name="fill">True</property>
-                        <property name="position">1</property>
+                        <property name="left_attach">1</property>
+                        <property name="top_attach">0</property>
+                        <property name="width">1</property>
+                        <property name="height">1</property>
                       </packing>
                     </child>
                     <child>
@@ -1311,13 +1327,30 @@
                         <property name="label" translatable="yes">Clear</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
-                        <property name="receives_default">False</property>
+                        <property name="receives_default">True</property>
                         <signal name="clicked" handler="iconview_image_clear" swapped="no"/>
                       </object>
                       <packing>
-                        <property name="expand">True</property>
-                        <property name="fill">True</property>
-                        <property name="position">2</property>
+                        <property name="left_attach">2</property>
+                        <property name="top_attach">0</property>
+                        <property name="width">1</property>
+                        <property name="height">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="button8">
+                        <property name="label" translatable="yes">OCR Selected Images Without Rotating</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="receives_default">True</property>
+                        <property name="hexpand">True</property>
+                        <signal name="clicked" handler="ocr_selected_images_without_rotating" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="left_attach">0</property>
+                        <property name="top_attach">1</property>
+                        <property name="width">3</property>
+                        <property name="height">1</property>
                       </packing>
                     </child>
                   </object>
