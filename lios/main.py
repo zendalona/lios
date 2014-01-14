@@ -503,7 +503,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		folder.destroy()		
 
 	def configure_event(self,widget,event):
-		self.paned.set_position(event.width-200)
+		self.paned.set_position(event.width-230)
 		self.paned_drawing.set_position(200)
 	
 	def make_ocr_widgets_inactive(self):

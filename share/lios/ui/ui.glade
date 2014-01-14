@@ -1,26 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <!-- interface-requires gtk+ 3.0 -->
-  <object class="GtkImage" id="image23">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="stock">gtk-dialog-info</property>
-  </object>
-  <object class="GtkImage" id="image25">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="stock">gtk-ok</property>
-  </object>
-  <object class="GtkImage" id="image27">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="stock">gtk-sort-descending</property>
-  </object>
-  <object class="GtkImage" id="image28">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="stock">gtk-media-record</property>
-  </object>
   <object class="GtkImage" id="image1">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -80,6 +60,26 @@
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="icon_name">scanner</property>
+  </object>
+  <object class="GtkImage" id="image23">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-dialog-info</property>
+  </object>
+  <object class="GtkImage" id="image25">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-ok</property>
+  </object>
+  <object class="GtkImage" id="image27">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-sort-descending</property>
+  </object>
+  <object class="GtkImage" id="image28">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-media-record</property>
   </object>
   <object class="GtkImage" id="image29">
     <property name="visible">True</property>
@@ -1294,7 +1294,7 @@
                     <property name="can_focus">False</property>
                     <child>
                       <object class="GtkButton" id="button_ocr_selected_images">
-                        <property name="label" translatable="yes">OCR Selected Images</property>
+                        <property name="label" translatable="yes">OCR Selected</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
@@ -1339,7 +1339,7 @@
                     </child>
                     <child>
                       <object class="GtkButton" id="button8">
-                        <property name="label" translatable="yes">OCR Selected Images Without Rotating</property>
+                        <property name="label" translatable="yes">OCR Selected Without Rotating</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="receives_default">True</property>
