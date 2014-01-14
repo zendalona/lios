@@ -127,6 +127,9 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		#OCR Wedgets
 		self.ocr_submenu = self.guibuilder.get_object("OCR_Submenu")
 		self.button_ocr_selected_images = self.guibuilder.get_object("button_ocr_selected_images")
+		
+		#Breaker
+		self.process_breaker = False
 
 		#Espeak Voice List
 		self.voice_list=[]
@@ -201,9 +204,12 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 	
 	def cam_take(self,widget):
 	    window = self.drawingarea.get_window()
-	    pixbuf = Gdk.pixbuf_get_from_window(window, 0, 0,1280, 720)
+	    x = window.get_width()
+	    y = window.get_height()
+	    pixbuf = Gdk.pixbuf_get_from_window(window, 0, 0,x, y)
 	    pixbuf.savev("{0}{1}.png".format(global_var.temp_dir,self.starting_page_number), 'png', [], [])
 	    self.add_image_to_image_list("{0}{1}.png".format(global_var.temp_dir,self.starting_page_number))
+	    self.starting_page_number = self.starting_page_number + 1
 	    
 	def cam_on_sync_message(self, bus, msg):
 		if msg.get_structure().get_name() == 'prepare-window-handle':
@@ -305,6 +311,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 	
 	@on_thread			
 	def ocr_selected_areas(self,widget):
+		self.process_breaker = False
 		self.make_ocr_widgets_inactive()
 		mode = self.mode_of_rotation
 		angle = self.rotation_angle
@@ -312,14 +319,11 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		for item in self.rectangle_store:
 			dest = pb.new_subpixbuf(item[0]/self.zoom_level,item[1]/self.zoom_level,item[2]/self.zoom_level,item[3]/self.zoom_level)
 			dest.savev("{0}temp".format(global_var.temp_dir), "png",[],[])
-			if mode == 1:
-				text,angle = self.ocr("temp",mode,00)
-				mode = 2
-				i = i + 1
-				self.put_text_to_buffer(text)
-				continue
-			text,angle = self.ocr("{0}temp".format(global_var.temp_dir),mode,angle)
+			#Will always be Manual with no rotation
+			text,angle = self.ocr("{0}temp".format(global_var.temp_dir),2,00)
 			self.put_text_to_buffer(text)
+			if(self.process_breaker):
+				break;
 		self.make_ocr_widgets_active()
 
 	def zoom_in(self,widget):
@@ -344,12 +348,14 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		self.rotate(180)
 
 	@on_thread
-	def rotate(self,angle):
-		pb = GdkPixbuf.Pixbuf.new_from_file(self.pb_file_name)
+	def rotate(self,angle,file_name = None):
+		if (file_name == None):
+			file_name = self.pb_file_name
+		pb = GdkPixbuf.Pixbuf.new_from_file(file_name)
 		pb = pb.rotate_simple(angle)
-		pb.savev(self.pb_file_name, "png",[],[])
-		self.drawingarea_load_image(self.pb_file_name)
-		self.iconview_image_reload(self.pb_file_name)
+		pb.savev(file_name, "png",[],[])
+		self.drawingarea_load_image(file_name)
+		self.iconview_image_reload(file_name)
 
 		
 	def iconview_image_reload(self,filename):
@@ -387,16 +393,31 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		mode = self.mode_of_rotation
 		angle = self.rotation_angle
 		for item in self.image_icon_view.get_selected_items():
-			if mode == 1:
-				text,angle = self.ocr(self.liststore_images[item[0]][1],mode,00)
-				mode = 2
-				i = i + 1
-				self.put_text_to_buffer(text)
-				continue
 			text,angle = self.ocr(self.liststore_images[item[0]][1],mode,angle)
 			self.put_text_to_buffer(text)
+			self.rotate(angle,self.liststore_images[item[0]][1])
+			if mode == 1:#Changing partial automatic to Manual
+				mode = 2				
 		self.make_ocr_widgets_active()
 
+	@on_thread
+	def ocr_selected_images_without_rotating(self,widget):
+		self.make_ocr_widgets_inactive()
+		for item in self.image_icon_view.get_selected_items():
+			text,angle = self.ocr(self.liststore_images[item[0]][1],2,00)
+			self.put_text_to_buffer(text)
+		self.make_ocr_widgets_active()
+			
+	def ocr_all_images_without_rotating(self,widget):
+		self.iconview_image.select_all()
+		self.ocr_selected_images_without_rotating(self,None)
+		
+	def ocr_all_images(self,widget):
+		self.iconview_image.select_all()
+		self.ocr_selected_images(None)
+		
+		
+						
 
 	def add_image_to_image_list(self,filename):
 		pixbuff =  GdkPixbuf.Pixbuf.new_from_file(filename)
@@ -547,11 +568,14 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 
 	@on_thread
 	def scan_image_repeatedly(self,widget):
+		self.process_breaker = False
 		for i in range(0,self.number_of_pages_to_scan):
 			t = threading.Thread(target=self.scan)
 			t.start()
 			while(t.is_alive()):
 				pass
+			if(self.process_breaker):
+				break
 
 	def scan(self):
 		selected_scanner = self.combobox_scanner.get_active()
@@ -559,11 +583,14 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		p = multiprocessing.Process(target=(self.scanner_objects[selected_scanner].scan), args=("{0}{1}.png".format(global_var.temp_dir,self.starting_page_number),self.scan_resolution,self.scan_brightness,self.scan_area))
 		p.start()
 		while(p.is_alive()):
-			pass			
+			pass
+		if(self.process_breaker):
+			return			
 		self.add_image_to_image_list("{0}{1}.png".format(global_var.temp_dir,self.starting_page_number))
 		self.starting_page_number += 1
 		self.make_scanner_wigets_active()
-	
+		if(self.process_breaker):
+			return	
 
 	def put_text_to_buffer(self,text):
 		if (self.insert_position == 0):
@@ -586,7 +613,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 			return (text,angle)
 		else: #Full_Automatic or Partial_Automatic
 			list_ = []
-			for angle in [00,90,180,270]:
+			for angle in [00,270,180,90]:
 				text = self.ocr_with_multiprocessing(file_name,angle)
 				count = self.count_dict_words(text)
 				list_.append((text,count,angle))
@@ -613,21 +640,40 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 	
 	@on_thread	
 	def scan_and_ocr(self,widget):
+		self.process_breaker = False
 		t = threading.Thread(target=self.scan)
 		t.start()
 		while(t.is_alive()):
 			pass
-		self.put_text_to_buffer(self.ocr("{0}{1}.png".format(global_var.temp_dir,self.starting_page_number-1),self.mode_of_rotation,self.rotation_angle)[0])
+		if(self.process_breaker):
+			return			
+		text,angle = self.ocr("{0}{1}.png".format(global_var.temp_dir,self.starting_page_number-1),self.mode_of_rotation,self.rotation_angle)
+		self.put_text_to_buffer(text)
+		self.rotate(angle,"{0}{1}.png".format(global_var.temp_dir,self.starting_page_number-1))
 		
 			
 	@on_thread			
 	def scan_and_ocr_repeatedly(self,widget):
+		mode = self.mode_of_rotation
+		angle = self.rotation_angle
+		self.process_breaker = False
 		for i in range(0,self.number_of_pages_to_scan):
 			t = threading.Thread(target=self.scan)
 			t.start()
 			while(t.is_alive()):
 				pass
-			self.put_text_to_buffer(self.ocr("{0}{1}.png".format(global_var.temp_dir,self.starting_page_number-1),self.mode_of_rotation,self.rotation_angle)[0])		
+			if(self.process_breaker):
+				break
+			text,angle = self.ocr("{0}{1}.png".format(global_var.temp_dir,self.starting_page_number-1),mode,angle)	
+			self.put_text_to_buffer(text)
+			self.rotate(angle,"{0}{1}.png".format(global_var.temp_dir,self.starting_page_number-1))
+			if mode == 1: #Change the mode partial automatic to Manual
+				mode = 2
+							
+			if(self.process_breaker):
+				break
+	def stop_process(self,widget):
+		self.process_breaker = True
 		
 	def go_to_page(self,wedget,data=None):
 		iter,end = self.textbuffer.get_bounds()
