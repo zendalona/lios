@@ -20,17 +20,19 @@
 
 import os
 from lios import global_var
+from gi.repository import GdkPixbuf
 
 
 def ocr_image_to_text(name,engine,language,angle):
-	if angle != 00:
-		os.system("convert -rotate {0} {1} {1}".format(angle,name))
+	pb = GdkPixbuf.Pixbuf.new_from_file(name)
+	pb = pb.rotate_simple(angle)
+	pb.savev("{0}for_ocr.png".format(global_var.temp_dir), "png",[],[])
 	if engine == "CUNEIFORM":
-		os.system("convert -compress none {0} {1}test.bmp".format(name,global_var.temp_dir))
-		os.system("cuneiform -f text -l {0} -o {1}output.txt {1}test.bmp".format(language,global_var.temp_dir))		
+		pb = GdkPixbuf.Pixbuf.new_from_file("{0}for_ocr.png".format(global_var.temp_dir))
+		pb.savev("{0}for_ocr.bmp".format(global_var.temp_dir), "bmp",[],[])
+		os.system("cuneiform -f text -l {0} -o {1}output.txt {1}for_ocr.bmp".format(language,global_var.temp_dir))		
 	elif engine == "TESSERACT":
-		os.system("convert {0} {1}test.png".format(name,global_var.temp_dir))
-		os.system("tesseract {0}test.png {0}output -l {1}".format(global_var.temp_dir,language))
+		os.system("tesseract {0}for_ocr.png {0}output -l {1}".format(global_var.temp_dir,language))
 	else:
 		pass
 	try:
