@@ -28,11 +28,15 @@ from espeak import espeak
 
 from gi.repository import Gtk
 from gi.repository import Gdk
+from gi.repository import GdkX11, GstVideo
 from gi.repository import Gio
+from gi.repository import Gst
 from gi.repository import GLib
 from gi.repository import Pango
 from gi.repository import GdkPixbuf
 
+import gi
+gi.require_version('Gst', '1.0')
 
 from lios import converter
 from lios import scanner
@@ -48,6 +52,7 @@ from lios.ocr import *
 import multiprocessing
 import threading
 
+Gst.init(None)
 Gdk.threads_init()
 
 
@@ -64,6 +69,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		self.window = self.guibuilder.get_object("window")
 		self.paned = self.guibuilder.get_object("paned")
 		self.textview = self.guibuilder.get_object("textview")
+		self.notebook = self.guibuilder.get_object("notebook")
 		self.textbuffer = self.textview.get_buffer();
 		self.guibuilder.connect_signals(self)
 		
@@ -100,7 +106,23 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		self.scanner_objects = []
 		renderer_text = Gtk.CellRendererText()
 		self.combobox_scanner.pack_start(renderer_text, True)
-		self.combobox_scanner.add_attribute(renderer_text, "text", 0)		
+		self.combobox_scanner.add_attribute(renderer_text, "text", 0)
+		
+		
+		#Webcam
+		self.box_drawing_area_tree_and_buttons = self.guibuilder.get_object("box_drawing_area_tree_and_buttons")
+		self.box_cam_buttons = self.guibuilder.get_object("box_cam_buttons")
+		# Create GStreamer pipeline
+		self.pipeline = Gst.Pipeline()
+		# Create bus to get events from GStreamer pipeline
+		self.bus = self.pipeline.get_bus()
+		self.bus.add_signal_watch()
+		self.bus.connect('message::error', self.cam_on_error)
+		# This is needed to make the video output in our DrawingArea:
+		self.bus.enable_sync_message_emission()
+		self.bus.connect('sync-message::element', self.cam_on_sync_message)
+		self.box_cam_buttons.hide()
+				
 		
 		#OCR Wedgets
 		self.ocr_submenu = self.guibuilder.get_object("OCR_Submenu")
@@ -153,6 +175,47 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		self.window.maximize();
 		self.window.show()
 		Gtk.main();
+	
+	def scan_using_cam(self,widget):		
+		self.src = Gst.ElementFactory.make('v4l2src', None)
+		self.src.set_property("device", "/dev/video0")
+		self.pipeline.add(self.src)		
+		
+		self.sink = Gst.ElementFactory.make('autovideosink', None)
+		self.pipeline.add(self.sink)		
+		self.src.link(self.sink)
+		
+		self.box_drawing_area_tree_and_buttons.set_sensitive(False)
+		self.box_cam_buttons.show()
+		self.notebook.set_current_page(1)
+		
+		self.drawingarea.set_size_request(1280,720)
+		self.xid = self.drawingarea.get_property('window').get_xid()
+		self.pipeline.set_state(Gst.State.PLAYING)
+		
+	
+	def cam_close(self, window):
+		self.pipeline.set_state(Gst.State.NULL)
+		self.box_drawing_area_tree_and_buttons.set_sensitive(True)
+		self.box_cam_buttons.hide()
+	
+	def cam_take(self,widget):
+	    window = self.drawingarea.get_window()
+	    pixbuf = Gdk.pixbuf_get_from_window(window, 0, 0,1280, 720)
+	    pixbuf.savev("{0}{1}.png".format(global_var.temp_dir,self.starting_page_number), 'png', [], [])
+	    self.add_image_to_image_list("{0}{1}.png".format(global_var.temp_dir,self.starting_page_number))
+	    
+	def cam_on_sync_message(self, bus, msg):
+		if msg.get_structure().get_name() == 'prepare-window-handle':
+			print('prepare-window-handle')
+			msg.src.set_property('force-aspect-ratio', True)
+			msg.src.set_window_handle(self.xid)
+		print(msg.get_structure().get_name())
+
+	def cam_on_error(self, bus, msg):
+		print('on_error():', msg.parse_error())
+        		
+		
 		
 
 	def drawingarea_draw(self, widget, cr):
@@ -470,7 +533,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 			pass
 		
 		for device in list(q.get()):
-			self.scanner_objects.append(scanner.scanner(device,self.scan_driver,self.scanner_mode_switching)) #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+			self.scanner_objects.append(scanner.scanner(device,self.scan_driver,self.scanner_mode_switching))
 			scanner_store.append([device[2]])
 			
 		self.combobox_scanner.set_model(scanner_store)		
@@ -564,9 +627,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 			t.start()
 			while(t.is_alive()):
 				pass
-			self.put_text_to_buffer(self.ocr("{0}{1}.png".format(global_var.temp_dir,self.starting_page_number-1),self.mode_of_rotation,self.rotation_angle)[0])
-					
-		
+			self.put_text_to_buffer(self.ocr("{0}{1}.png".format(global_var.temp_dir,self.starting_page_number-1),self.mode_of_rotation,self.rotation_angle)[0])		
 		
 	def go_to_page(self,wedget,data=None):
 		iter,end = self.textbuffer.get_bounds()
