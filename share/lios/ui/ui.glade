@@ -1,20 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <!-- interface-requires gtk+ 3.0 -->
-  <object class="GtkImage" id="image25">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="stock">gtk-ok</property>
-  </object>
-  <object class="GtkImage" id="image27">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="stock">gtk-sort-descending</property>
-  </object>
   <object class="GtkImage" id="image28">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="stock">gtk-media-record</property>
+  </object>
+  <object class="GtkImage" id="image23">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-dialog-info</property>
   </object>
   <object class="GtkImage" id="image10">
     <property name="visible">True</property>
@@ -71,10 +66,15 @@
     <property name="can_focus">False</property>
     <property name="icon_name">scanner</property>
   </object>
-  <object class="GtkImage" id="image23">
+  <object class="GtkImage" id="image25">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="stock">gtk-dialog-info</property>
+    <property name="stock">gtk-ok</property>
+  </object>
+  <object class="GtkImage" id="image27">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-sort-descending</property>
   </object>
   <object class="GtkImage" id="image29">
     <property name="visible">True</property>
@@ -574,6 +574,15 @@
                         <signal name="activate" handler="audio_converter" swapped="no"/>
                       </object>
                     </child>
+                    <child>
+                      <object class="GtkMenuItem" id="Scan-Using-Cam">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">Scan-Using-Cam</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="scan_using_cam" swapped="no"/>
+                      </object>
+                    </child>
                   </object>
                 </child>
               </object>
@@ -707,7 +716,7 @@
         <child>
           <object class="GtkToolbar" id="toolbar">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
+            <property name="can_focus">True</property>
             <child>
               <object class="GtkToolButton" id="new">
                 <property name="visible">True</property>
@@ -1140,26 +1149,77 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkScrolledWindow" id="scrolledwindow_image">
+                      <object class="GtkBox" id="box2">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="hexpand">True</property>
-                        <property name="vexpand">True</property>
+                        <property name="orientation">vertical</property>
                         <child>
-                          <object class="GtkViewport" id="viewport_image">
+                          <object class="GtkScrolledWindow" id="scrolledwindow_image">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
+                            <property name="hexpand">True</property>
+                            <property name="vexpand">True</property>
                             <child>
-                              <object class="GtkDrawingArea" id="drawingarea">
+                              <object class="GtkViewport" id="viewport_image">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <signal name="draw" handler="drawingarea_draw" swapped="no"/>
-                                <signal name="button-press-event" handler="drawingarea_button_press_event" swapped="no"/>
-                                <signal name="button-release-event" handler="drawingarea_button_release_event" swapped="no"/>
-                                <signal name="motion-notify-event" handler="drawingarea_motion_notify_event" swapped="no"/>
+                                <child>
+                                  <object class="GtkDrawingArea" id="drawingarea">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <signal name="draw" handler="drawingarea_draw" swapped="no"/>
+                                    <signal name="button-press-event" handler="drawingarea_button_press_event" swapped="no"/>
+                                    <signal name="button-release-event" handler="drawingarea_button_release_event" swapped="no"/>
+                                    <signal name="motion-notify-event" handler="drawingarea_motion_notify_event" swapped="no"/>
+                                  </object>
+                                </child>
                               </object>
                             </child>
                           </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkBox" id="box_cam_buttons">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <child>
+                              <object class="GtkButton" id="button6">
+                                <property name="label" translatable="yes">Take</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="receives_default">True</property>
+                                <signal name="clicked" handler="cam_take" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="expand">True</property>
+                                <property name="fill">True</property>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkButton" id="button7">
+                                <property name="label" translatable="yes">Close</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="receives_default">True</property>
+                                <signal name="clicked" handler="cam_close" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="expand">True</property>
+                                <property name="fill">True</property>
+                                <property name="position">1</property>
+                              </packing>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">1</property>
+                          </packing>
                         </child>
                       </object>
                       <packing>
@@ -1223,7 +1283,7 @@
                         <property name="label" translatable="yes">OCR</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
-                        <property name="receives_default">True</property>
+                        <property name="receives_default">False</property>
                         <signal name="clicked" handler="ocr_selected_images" swapped="no"/>
                       </object>
                       <packing>
@@ -1237,7 +1297,7 @@
                         <property name="label" translatable="yes">Delete</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
-                        <property name="receives_default">True</property>
+                        <property name="receives_default">False</property>
                         <signal name="clicked" handler="iconview_image_delete" swapped="no"/>
                       </object>
                       <packing>
@@ -1251,7 +1311,7 @@
                         <property name="label" translatable="yes">Clear</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
-                        <property name="receives_default">True</property>
+                        <property name="receives_default">False</property>
                         <signal name="clicked" handler="iconview_image_clear" swapped="no"/>
                       </object>
                       <packing>
@@ -1299,7 +1359,8 @@
             <property name="label" translatable="yes">Refresh</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
+            <property name="receives_default">False</property>
+            <accelerator key="r" signal="clicked" modifiers="GDK_CONTROL_MASK"/>
             <signal name="clicked" handler="scanner_refresh" swapped="no"/>
           </object>
           <packing>
@@ -1316,7 +1377,7 @@
             <property name="label" translatable="yes">Scan</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
+            <property name="receives_default">False</property>
             <signal name="clicked" handler="scan_single_image" swapped="no"/>
           </object>
           <packing>
