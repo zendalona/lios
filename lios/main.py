@@ -201,7 +201,9 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		self.pipeline.set_state(Gst.State.NULL)
 		self.box_drawing_area_tree_and_buttons.set_sensitive(True)
 		self.box_cam_buttons.hide()
-		self.drawingarea.queue_draw()
+		self.pipeline.remove(self.src)
+		self.pipeline.remove(self.sink)	
+		self.drawingarea_load_image("{0}/ui/lios".format(global_var.data_dir))
 	
 	def cam_take(self,widget):
 	    window = self.drawingarea.get_window()
