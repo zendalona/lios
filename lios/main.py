@@ -181,7 +181,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 	
 	def scan_using_cam(self,widget):		
 		self.src = Gst.ElementFactory.make('v4l2src', None)
-		self.src.set_property("device", "/dev/video0")
+		self.src.set_property("device", "/dev/video{0}".format(self.cam_device))
 		self.pipeline.add(self.src)		
 		
 		self.sink = Gst.ElementFactory.make('autovideosink', None)
@@ -192,7 +192,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		self.box_cam_buttons.show()
 		self.notebook.set_current_page(1)
 		
-		self.drawingarea.set_size_request(1280,720)
+		self.drawingarea.set_size_request(self.cam_x,self.cam_y)
 		self.xid = self.drawingarea.get_property('window').get_xid()
 		self.pipeline.set_state(Gst.State.PLAYING)
 		
@@ -201,6 +201,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		self.pipeline.set_state(Gst.State.NULL)
 		self.box_drawing_area_tree_and_buttons.set_sensitive(True)
 		self.box_cam_buttons.hide()
+		self.drawingarea.queue_draw()
 	
 	def cam_take(self,widget):
 	    window = self.drawingarea.get_window()
