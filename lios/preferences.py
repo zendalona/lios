@@ -66,8 +66,8 @@ class lios_preferences:
 				self.voice_message_rate=int(config.get('cfg',"voice_message_rate"))
 				self.voice_message_volume=int(config.get('cfg',"voice_message_volume"))
 				self.voice_message_pitch=int(config.get('cfg',"voice_message_pitch"))
-				self.cam_take_time=int(config.get('cfg',"cam_take_time"))
-				self.cam_waitkey=int(config.get('cfg',"cam_waitkey"))
+				self.cam_x=int(config.get('cfg',"cam_x"))
+				self.cam_y=int(config.get('cfg',"cam_y"))
 				self.cam_device=int(config.get('cfg',"cam_device"))				
 				self.mode_switch = True
 				self.require_scanner_refresh = True
@@ -114,7 +114,7 @@ class lios_preferences:
 		self.background_highlight_color="#00000bacffff";self.time_between_repeated_scanning=0;self.scan_resolution=300;self.scan_brightness=40;self.scan_area=0;self.insert_position=0;self.ocr_engine="CUNEIFORM";self.language="eng"
 		self.mode_of_rotation=0;self.number_of_pages_to_scan=100;self.page_numbering_type=0;self.starting_page_number=1;self.scanner_mode_switching=1;self.auto_skew=0;self.rotation_angle=00;
 		self.voice_message_state=1;self.voice_message_rate=170;self.voice_message_volume=150;self.voice_message_pitch=50;self.voice_message_voice=9;self.scan_driver=0;
-		self.cam_take_time=7;self.cam_waitkey=30;self.cam_device=0;
+		self.cam_x=7;self.cam_y=30;self.cam_device=0;
 		#Writing it to user configuration file
 		self.set_preferences_to_file()				
 		#self.notify("preferences restored!",False,None,True)
@@ -155,8 +155,8 @@ class lios_preferences:
 		config.set('cfg',"voice_message_rate",str(self.voice_message_rate))
 		config.set('cfg',"voice_message_volume",str(self.voice_message_volume))
 		config.set('cfg',"voice_message_pitch",str(self.voice_message_pitch))
-		config.set('cfg',"cam_take_time",str(self.cam_take_time))
-		config.set('cfg',"cam_waitkey",str(self.cam_waitkey))
+		config.set('cfg',"cam_x",str(self.cam_x))
+		config.set('cfg',"cam_y",str(self.cam_y))
 		config.set('cfg',"cam_device",str(self.cam_device))
 		with open('{0}/.lios_preferences.cfg'.format(global_var.home_dir), 'w') as configfile:
 			config.write(configfile)
@@ -303,10 +303,14 @@ class lios_preferences:
 		
 		
 		#Cam_and_Webcam
-		self.spinbutton_cam_time = self.preferences_guibuilder.get_object("spinbutton_cam_time")
-		self.spinbutton_cam_time.set_value(self.cam_take_time)
-		self.spinbutton_fps = self.preferences_guibuilder.get_object("spinbutton_fps")
-		self.spinbutton_fps.set_value(self.cam_waitkey)
+		self.combobox_cam_resolution = self.preferences_guibuilder.get_object("combobox_cam_resolution")
+		self.liststore_cam_resolution = self.preferences_guibuilder.get_object("liststore_cam_resolution")
+		for intex,item in enumerate(self.liststore_cam_resolution):
+			if (self.cam_x == item[1] and self.cam_y == item[2]):
+				self.combobox_cam_resolution.set_active(intex)
+						
+		
+		
 		self.combobox_cam_device = self.preferences_guibuilder.get_object("combobox_cam_device")
 		self.combobox_cam_device.set_active(self.cam_device)
 		
@@ -399,8 +403,9 @@ class lios_preferences:
 		else:
 			pass
 		
-		self.cam_take_time=self.spinbutton_cam_time.get_value_as_int()
-		self.cam_waitkey=self.spinbutton_fps.get_value_as_int()
+		value=self.combobox_cam_resolution.get_active()
+		self.cam_x = self.liststore_cam_resolution[value][1]
+		self.cam_y = self.liststore_cam_resolution[value][2]
 		self.cam_device=self.combobox_cam_device.get_active()
 		
 		
