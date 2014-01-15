@@ -111,10 +111,10 @@ class lios_preferences:
 	def on_Restore_preferences_activate(self,wedget,data=None):
 		#Setting Default Values
 		self.font="Georgia 14";self.highlight_font="Georgia 14";self.background_color="#000";self.font_color="#fff";self.highlight_color="#1572ffff0000"
-		self.background_highlight_color="#00000bacffff";self.time_between_repeated_scanning=0;self.scan_resolution=300;self.scan_brightness=40;self.scan_area=0;self.insert_position=0;self.ocr_engine="CUNEIFORM";self.language="eng"
+		self.background_highlight_color="#00000bacffff";self.time_between_repeated_scanning=0;self.scan_resolution=300;self.scan_brightness=100;self.scan_area=0;self.insert_position=2;self.ocr_engine="CUNEIFORM";self.language="eng"
 		self.mode_of_rotation=0;self.number_of_pages_to_scan=100;self.page_numbering_type=0;self.starting_page_number=1;self.scanner_mode_switching=1;self.auto_skew=0;self.rotation_angle=00;
-		self.voice_message_state=1;self.voice_message_rate=170;self.voice_message_volume=150;self.voice_message_pitch=50;self.voice_message_voice=9;self.scan_driver=0;
-		self.cam_x=7;self.cam_y=30;self.cam_device=0;
+		self.voice_message_state=1;self.voice_message_rate=170;self.voice_message_volume=150;self.voice_message_pitch=50;self.voice_message_voice=11;self.scan_driver=1;
+		self.cam_x=1280;self.cam_y=800;self.cam_device=0;
 		#Writing it to user configuration file
 		self.set_preferences_to_file()				
 		#self.notify("preferences restored!",False,None,True)
