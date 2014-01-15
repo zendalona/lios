@@ -19,6 +19,7 @@
 ###########################################################################
 import os
 import sys
+import time
 import cairo
 import shutil
 import enchant
@@ -383,10 +384,13 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 	def iconview_image_delete(self,widget):
 		for item in self.image_icon_view.get_selected_items():
 			iter = self.liststore_images.get_iter_from_string(item.to_string())
+			os.remove(self.liststore_images.get_value(iter, 1))
 			self.liststore_images.remove(iter)
 		self.drawingarea_load_image("{0}/ui/lios".format(global_var.data_dir))	
 
 	def iconview_image_clear(self,widget):
+		for item in self.liststore_images:
+			os.remove(item[1])
 		self.liststore_images.clear()
 		self.drawingarea_load_image("{0}/ui/lios".format(global_var.data_dir))
 
@@ -579,6 +583,9 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 				pass
 			if(self.process_breaker):
 				break
+			time.sleep(self.time_between_repeated_scanning)
+			if(self.process_breaker):
+				break
 
 	def scan(self):
 		selected_scanner = self.combobox_scanner.get_active()
@@ -596,6 +603,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 			return	
 
 	def put_text_to_buffer(self,text):
+		print("Puttig text into buffer")
 		if (self.insert_position == 0):
 			iter = self.textbuffer.get_start_iter()
 		elif (self.insert_position == 1):
@@ -667,6 +675,9 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 				pass
 			if(self.process_breaker):
 				break
+			time.sleep(self.time_between_repeated_scanning)	
+			if(self.process_breaker):
+				break				
 			text,angle = self.ocr("{0}{1}.png".format(global_var.temp_dir,self.starting_page_number-1),mode,angle)	
 			self.put_text_to_buffer(text)
 			self.rotate(angle,"{0}{1}.png".format(global_var.temp_dir,self.starting_page_number-1))
@@ -753,7 +764,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 	def Read_Stop(self,wedget,data=None):
 		image_read_stop = self.guibuilder.get_object("image_read_stop")
 		if espeak.is_playing() == False:
-			image_read_stop.set_from_file("/usr/share/lios/ui/stop")
+			image_read_stop.set_from_file("{0}/ui/stop".format(global_var.data_dir))
 			self.textbuffer.remove_tag(self.highlight_tag, self.textbuffer.get_start_iter(),self.textbuffer.get_end_iter())
 			mark = self.textbuffer.get_insert()
 			start = self.textbuffer.get_iter_at_mark(mark)
@@ -766,7 +777,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		else:
 			espeak.cancel()
 			espeak.set_SynthCallback(None)
-			image_read_stop.set_from_file("/usr/share/lios/ui/play")
+			image_read_stop.set_from_file("{0}/ui/play".format(global_var.data_dir))
 			self.textbuffer.remove_tag(self.highlight_tag, self.textbuffer.get_start_iter(),self.textbuffer.get_end_iter())
 			self.textview.set_editable(True)
 			
