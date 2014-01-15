@@ -131,14 +131,34 @@
     </columns>
     <data>
       <row>
-        <col id="0" translatable="yes">1024 x 768</col>
-        <col id="1">1024</col>
-        <col id="2">768</col>
+        <col id="0" translatable="yes">320 x 240</col>
+        <col id="1">320</col>
+        <col id="2">240</col>
       </row>
       <row>
         <col id="0" translatable="yes">640 x 480</col>
         <col id="1">640</col>
         <col id="2">480</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">800 x 600</col>
+        <col id="1">800</col>
+        <col id="2">600</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">1024 x 768</col>
+        <col id="1">1024</col>
+        <col id="2">768</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">1280 x 720</col>
+        <col id="1">1280</col>
+        <col id="2">720</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">1280 x 800</col>
+        <col id="1">1280</col>
+        <col id="2">800</col>
       </row>
       <row>
         <col id="0" translatable="yes">1280 x 1024</col>
