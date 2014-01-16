@@ -590,8 +590,9 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 			pass
 		
 		for device in list(q.get()):
-			self.scanner_objects.append(scanner.scanner(device,self.scan_driver,self.scanner_mode_switching))
-			scanner_store.append([device[2]])
+			if "scanner" in device[3]:
+				self.scanner_objects.append(scanner.scanner(device,self.scan_driver,self.scanner_mode_switching))
+				scanner_store.append([device[2]])
 			
 		self.combobox_scanner.set_model(scanner_store)		
 		self.combobox_scanner.set_active(0)
