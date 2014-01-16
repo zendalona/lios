@@ -620,7 +620,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 			return	
 
 	def put_text_to_buffer(self,text):
-		print("Puttig text into buffer")
+		Gdk.threads_enter()
 		if (self.insert_position == 0):
 			iter = self.textbuffer.get_start_iter()
 		elif (self.insert_position == 1):
@@ -629,6 +629,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		else:
 			iter = self.textbuffer.get_end_iter()
 		self.textbuffer.insert(iter,text)
+		Gdk.threads_leave()
 		
 				
 		
