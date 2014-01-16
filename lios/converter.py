@@ -30,7 +30,7 @@ from lios import global_var
 
 class record:
 	def __init__(self,text):
-		to_convert = open("temp.txt",'w')
+		to_convert = open("tmp.txt",'w')
 		to_convert.write(text)
 		to_convert.close()
 		
@@ -84,5 +84,5 @@ class record:
                
 		
 	def record_to_wave(self):
-		os.system('espeak -a %s -v %s -f temp.txt -w %s.wav --split=%s -p %s -s %s' % (self.spinbutton_vloume.get_value(),self.model_voice[self.index_voice][0],self.file_to_output,self.spinbutton_split.get_value(),self.spinbutton_pitch.get_value(),self.spinbutton_speed.get_value()))
+		os.system('espeak -a %s -v %s -f tmp.txt -w %s.wav --split=%s -p %s -s %s' % (self.spinbutton_vloume.get_value(),self.model_voice[self.index_voice][0],self.file_to_output,self.spinbutton_split.get_value(),self.spinbutton_pitch.get_value(),self.spinbutton_speed.get_value()))
 		os.system('espeak "Conversion finish and saved to %s"' % (self.file_to_output))

@@ -92,7 +92,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		
 		#Creating Lios Folder in tmp
 		try:
-			os.mkdir(global_var.temp_dir)
+			os.mkdir(global_var.tmp_dir)
 		except:
 			pass
 
@@ -211,8 +211,8 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 	    x = window.get_width()
 	    y = window.get_height()
 	    pixbuf = Gdk.pixbuf_get_from_window(window, 0, 0,x, y)
-	    pixbuf.savev("{0}{1}.png".format(global_var.temp_dir,self.starting_page_number), 'png', [], [])
-	    self.add_image_to_image_list("{0}{1}.png".format(global_var.temp_dir,self.starting_page_number))
+	    pixbuf.savev("{0}{1}.png".format(global_var.tmp_dir,self.starting_page_number), 'png', [], [])
+	    self.add_image_to_image_list("{0}{1}.png".format(global_var.tmp_dir,self.starting_page_number))
 	    self.starting_page_number = self.starting_page_number + 1
 	    
 	def cam_on_sync_message(self, bus, msg):
@@ -244,7 +244,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 			   cr.stroke()
 		   
 		   if (self.on_select == True):
-			   cr.rectangle(self.start_x,self.start_y,self.temp_finish_x-self.start_x,self.temp_finish_y-self.start_y)
+			   cr.rectangle(self.start_x,self.start_y,self.tmp_finish_x-self.start_x,self.tmp_finish_y-self.start_y)
 			   cr.set_source_rgb(0, 0, 1.0)
 			   cr.set_line_width (5.0);
 			   cr.stroke()
@@ -310,7 +310,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
     
 	def drawingarea_motion_notify_event(self, widget, event):
 		if (self.on_select):
-			self.temp_finish_x,self.temp_finish_y = event.get_coords()
+			self.tmp_finish_x,self.tmp_finish_y = event.get_coords()
 			self.drawingarea.queue_draw()
 	
 	@on_thread			
@@ -322,9 +322,9 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		pb = GdkPixbuf.Pixbuf.new_from_file(self.pb_file_name)
 		for item in self.rectangle_store:
 			dest = pb.new_subpixbuf(item[0]/self.zoom_level,item[1]/self.zoom_level,item[2]/self.zoom_level,item[3]/self.zoom_level)
-			dest.savev("{0}temp".format(global_var.temp_dir), "png",[],[])
+			dest.savev("{0}tmp".format(global_var.tmp_dir), "png",[],[])
 			#Will always be Manual with no rotation
-			text,angle = self.ocr("{0}temp".format(global_var.temp_dir),2,00)
+			text,angle = self.ocr("{0}tmp".format(global_var.tmp_dir),2,00)
 			self.put_text_to_buffer(text)
 			if(self.process_breaker):
 				break;
@@ -462,7 +462,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		if response == Gtk.ResponseType.OK:
 			file_name_with_directory = open_file.get_filename()
 			filename = file_name_with_directory.split("/")[-1:][0].split(".")[0]
-			destination = "{0}{1}".format(global_var.temp_dir,filename.replace(' ','-'))
+			destination = "{0}{1}".format(global_var.tmp_dir,filename.replace(' ','-'))
 			shutil.copyfile(file_name_with_directory,destination)
 			self.add_image_to_image_list(destination)
 			self.drawingarea_load_image(destination)
@@ -483,7 +483,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 			
 			pdf_filename = pdf_filename_full.split("/")[-1:][0]
 			filename = pdf_filename.split(".")[0]
-			destination = "{0}{1}".format(global_var.temp_dir,pdf_filename.replace(' ','-').replace(')','-').replace('(','-'))		
+			destination = "{0}{1}".format(global_var.tmp_dir,pdf_filename.replace(' ','-').replace(')','-').replace('(','-'))		
 			shutil.copyfile(pdf_filename_full,destination)
 			os.makedirs(destination.split(".")[0],exist_ok=True)
 			
@@ -516,7 +516,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 			for image in file_list:
 				try:
 					if image.split(".")[1] in formats:
-						destination = "{0}{1}".format(global_var.temp_dir,image.split(".")[0].replace(' ','-'))
+						destination = "{0}{1}".format(global_var.tmp_dir,image.split(".")[0].replace(' ','-'))
 						shutil.copyfile("{0}/{1}".format(image_directory,image),destination)
 						self.add_image_to_image_list(destination)						
 				except IndexError:
@@ -604,13 +604,13 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 	def scan(self):
 		selected_scanner = self.combobox_scanner.get_active()
 		self.make_scanner_wigets_inactive()
-		p = multiprocessing.Process(target=(self.scanner_objects[selected_scanner].scan), args=("{0}{1}.png".format(global_var.temp_dir,self.starting_page_number),self.scan_resolution,self.scan_brightness,self.scan_area))
+		p = multiprocessing.Process(target=(self.scanner_objects[selected_scanner].scan), args=("{0}{1}.png".format(global_var.tmp_dir,self.starting_page_number),self.scan_resolution,self.scan_brightness,self.scan_area))
 		p.start()
 		while(p.is_alive()):
 			pass
 		if(self.process_breaker):
 			return			
-		self.add_image_to_image_list("{0}{1}.png".format(global_var.temp_dir,self.starting_page_number))
+		self.add_image_to_image_list("{0}{1}.png".format(global_var.tmp_dir,self.starting_page_number))
 		self.starting_page_number += 1
 		self.make_scanner_wigets_active()
 		if(self.process_breaker):
@@ -672,9 +672,9 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 			pass
 		if(self.process_breaker):
 			return			
-		text,angle = self.ocr("{0}{1}.png".format(global_var.temp_dir,self.starting_page_number-1),self.mode_of_rotation,self.rotation_angle)
+		text,angle = self.ocr("{0}{1}.png".format(global_var.tmp_dir,self.starting_page_number-1),self.mode_of_rotation,self.rotation_angle)
 		self.put_text_to_buffer(text)
-		self.rotate(angle,"{0}{1}.png".format(global_var.temp_dir,self.starting_page_number-1))
+		self.rotate(angle,"{0}{1}.png".format(global_var.tmp_dir,self.starting_page_number-1))
 		
 			
 	@on_thread			
@@ -692,9 +692,9 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 			time.sleep(self.time_between_repeated_scanning)	
 			if(self.process_breaker):
 				break				
-			text,angle = self.ocr("{0}{1}.png".format(global_var.temp_dir,self.starting_page_number-1),mode,angle)	
+			text,angle = self.ocr("{0}{1}.png".format(global_var.tmp_dir,self.starting_page_number-1),mode,angle)	
 			self.put_text_to_buffer(text)
-			self.rotate(angle,"{0}{1}.png".format(global_var.temp_dir,self.starting_page_number-1))
+			self.rotate(angle,"{0}{1}.png".format(global_var.tmp_dir,self.starting_page_number-1))
 			if mode == 1: #Change the mode partial automatic to Manual
 				mode = 2
 							
@@ -833,7 +833,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		return True
 	def quit(self,data):
 		try:
-			shutil.rmtree(global_var.temp_dir)
+			shutil.rmtree(global_var.tmp_dir)
 		except FileNotFoundError:
 			pass
 		Gtk.main_quit()
