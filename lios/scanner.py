@@ -39,7 +39,7 @@ class scanner():
 				option = self.get_scanner_option("mode")
 				if option:
 					print(option)
-					for mode in ['Lineart', 'Gray', 'Color']:
+					for mode in ['Lineart', 'Binary','Gray', 'Color']:
 						if mode in option[-1:][0]:
 							self.scanner.mode = mode
 							self.scanner_mode = mode
@@ -99,7 +99,7 @@ class scanner():
 	def scan(self,file_name,resolution,brightness,region):
 		#Setting Brightness and Threshold
 		if self.check_brightness_support():
-			brightness_value = ((self.max-self.min)/200)*brightness
+			brightness_value = int(((self.max-self.min)/200)*brightness)
 			if (self.min < 0):
 				brightness_value = brightness_value - 100
 			print("Scanner Max = {0},  Scanner Min = {1}, User Value (200) = {2}, Corected Value {3}".format(self.max,self.min,brightness,brightness_value))  
