@@ -30,14 +30,20 @@ def ocr_image_to_text(name,engine,language,angle):
 	if engine == "CUNEIFORM":
 		pb = GdkPixbuf.Pixbuf.new_from_file("{0}for_ocr.png".format(global_var.temp_dir))
 		pb.savev("{0}for_ocr.bmp".format(global_var.temp_dir), "bmp",[],[])
-		os.system("cuneiform -f text -l {0} -o {1}output.txt {1}for_ocr.bmp".format(language,global_var.temp_dir))		
+		os.system("cuneiform -f text -l {0} -o {1}output.txt {1}for_ocr.bmp".format(language,global_var.temp_dir))
+		os.remove("{0}for_ocr.bmp".format(global_var.temp_dir))		
 	elif engine == "TESSERACT":
 		os.system("tesseract {0}for_ocr.png {0}output -l {1}".format(global_var.temp_dir,language))
 	else:
 		pass
+	
+	#Remove tmp file
+	os.remove("{0}for_ocr.png".format(global_var.temp_dir))
+		
 	try:
 		with open("{0}output.txt".format(global_var.temp_dir),encoding="utf-8") as file:
 			text = file.read()
+			os.remove("{0}output.txt".format(global_var.temp_dir))
 			return text
 	except:
 		return ""
