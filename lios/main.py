@@ -416,13 +416,27 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		self.make_ocr_widgets_active()
 			
 	def ocr_all_images_without_rotating(self,widget):
-		self.iconview_image.select_all()
+		self.image_icon_view.select_all()
 		self.ocr_selected_images_without_rotating(self,None)
 		
 	def ocr_all_images(self,widget):
-		self.iconview_image.select_all()
+		self.image_icon_view.select_all()
 		self.ocr_selected_images(None)
-		
+	
+	def save_selected_images(self,widget):
+		dialog = Gtk.FileChooserDialog("Select Folder to save images",None,Gtk.FileChooserAction.SELECT_FOLDER,buttons=(Gtk.STOCK_SAVE,Gtk.ResponseType.OK))
+		dialog.set_current_folder(global_var.home_dir)
+		response = dialog.run()
+		if response == Gtk.ResponseType.OK:
+			directory = dialog.get_current_folder()
+			for item in self.image_icon_view.get_selected_items():
+				shutil.copy(self.liststore_images[item[0]][1],directory)
+		dialog.destroy()			
+
+
+	def save_all_images(self,widget):
+		self.image_icon_view.select_all()
+		self.save_selected_images(None)
 		
 						
 
