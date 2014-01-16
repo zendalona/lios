@@ -385,17 +385,29 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 
 
 	def iconview_image_delete(self,widget):
-		for item in self.image_icon_view.get_selected_items():
-			iter = self.liststore_images.get_iter_from_string(item.to_string())
-			os.remove(self.liststore_images.get_value(iter, 1))
-			self.liststore_images.remove(iter)
-		self.drawingarea_load_image("{0}/ui/lios".format(global_var.data_dir))	
+		dialog = Gtk.MessageDialog(None, 0, Gtk.MessageType.WARNING,None,"Deleting !")
+		dialog.add_buttons("Cancel",Gtk.ResponseType.CANCEL,"Yes Delete", Gtk.ResponseType.OK)
+		dialog.format_secondary_text("Are you sure you want to delete selected images ?")
+		response = dialog.run()
+		dialog.destroy()
+		if (response == Gtk.ResponseType.OK):
+			for item in self.image_icon_view.get_selected_items():
+				iter = self.liststore_images.get_iter_from_string(item.to_string())
+				os.remove(self.liststore_images.get_value(iter, 1))
+				self.liststore_images.remove(iter)
+			self.drawingarea_load_image("{0}/ui/lios".format(global_var.data_dir))	
 
 	def iconview_image_clear(self,widget):
-		for item in self.liststore_images:
-			os.remove(item[1])
-		self.liststore_images.clear()
-		self.drawingarea_load_image("{0}/ui/lios".format(global_var.data_dir))
+		dialog = Gtk.MessageDialog(None, 0, Gtk.MessageType.WARNING,None,"Deleting !")
+		dialog.add_buttons("Cancel",Gtk.ResponseType.CANCEL,"Yes Delete All", Gtk.ResponseType.OK)
+		dialog.format_secondary_text("Are you sure you want to delete all images ?")
+		response = dialog.run()
+		dialog.destroy()
+		if (response == Gtk.ResponseType.OK):
+			for item in self.liststore_images:
+				os.remove(item[1])
+			self.liststore_images.clear()
+			self.drawingarea_load_image("{0}/ui/lios".format(global_var.data_dir))
 
 	@on_thread			
 	def ocr_selected_images(self,widget):
