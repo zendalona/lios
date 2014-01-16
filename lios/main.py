@@ -34,6 +34,7 @@ from gi.repository import Gio
 from gi.repository import Gst
 from gi.repository import GLib
 from gi.repository import Pango
+from gi.repository import GObject
 from gi.repository import GdkPixbuf
 
 import gi
@@ -55,6 +56,8 @@ import threading
 
 Gst.init(None)
 Gdk.threads_init()
+GObject.threads_init()
+
 
 
 def on_thread(function):
@@ -700,6 +703,77 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 							
 			if(self.process_breaker):
 				break
+
+	@on_thread
+	def optimize_brightness(self,wedget):
+		selected_scanner = self.combobox_scanner.get_active()
+		self.process_breaker = False
+		mode = self.mode_of_rotation
+		angle = self.rotation_angle
+		if (mode == 0 or mode == 1):
+			p = multiprocessing.Process(target=(self.scanner_objects[selected_scanner].scan), args=("{0}test.png".format(global_var.tmp_dir),self.scan_resolution,100,self.scan_area))
+			p.start()
+			while(p.is_alive()):
+				pass
+			text,angle = self.ocr("{0}test.png".format(global_var.tmp_dir),mode,angle)
+			print(angle)		
+		mid_value = 100; distance = 10; vary = 50;
+		result_text = "<b><span size = 'xx-large'> Result Text </span> </b>" 
+		while(1):
+			Gdk.threads_enter()
+			guibuilder = Gtk.Builder()
+			guibuilder.add_from_file("%s/ui/optimise_brightness_dialog.glade"%(global_var.data_dir))
+			dialog = guibuilder.get_object("dialog")
+			spinbutton_value = guibuilder.get_object("spinbutton_value")
+			spinbutton_distance = guibuilder.get_object("spinbutton_distance")
+			spinbutton_vary = guibuilder.get_object("spinbutton_vary")
+			label_result = guibuilder.get_object("label_result")
+			label_result.set_label(result_text)
+			spinbutton_value.set_value(mid_value)
+			spinbutton_distance.set_value(distance)
+			spinbutton_vary.set_value(vary)
+			guibuilder.get_object("button_cancel").connect("clicked",lambda x : dialog.response(Gtk.ResponseType.CANCEL))
+			guibuilder.get_object("button_apply").connect("clicked",lambda x : dialog.response(Gtk.ResponseType.APPLY))
+			guibuilder.get_object("button_forward").connect("clicked",lambda x : dialog.response(Gtk.ResponseType.ACCEPT))
+			response = dialog.run()
+			dialog.destroy()
+			Gdk.threads_leave()				
+			if (response == Gtk.ResponseType.APPLY):
+				self.scan_brightness = mid_value
+				return True
+			elif (response == Gtk.ResponseType.ACCEPT):
+				mid_value = spinbutton_value.get_value()
+				distance = spinbutton_distance.get_value()
+				vary = spinbutton_vary.get_value()
+				self.scan_brightness = mid_value
+			else:
+				return True
+							
+			count, mid_value = self.optimize_with_model(mid_value,distance,vary,angle)
+			result_text = "<b><span size = 'xx-large'> Got {} Words at brightness {} </span> </b>".format(count, mid_value)  
+			distance = distance / 2;
+			vary = vary / 2 ;
+			
+		
+	def optimize_with_model(self,mid_value,distance,vary,angle):
+		selected_scanner = self.combobox_scanner.get_active()
+		list = []
+		pos = mid_value - vary
+		while(pos <= mid_value + vary):
+			p = multiprocessing.Process(target=(self.scanner_objects[selected_scanner].scan), args=("{0}test.png".format(global_var.tmp_dir,self.starting_page_number),self.scan_resolution,pos,self.scan_area))
+			p.start()
+			while(p.is_alive()):
+				pass
+			if(self.process_breaker):
+				return
+			text = self.ocr_with_multiprocessing("{0}test.png".format(global_var.tmp_dir),angle)
+			count = self.count_dict_words(text)
+			list.append((text,count,pos))
+			pos = pos + distance
+			
+		list = sorted(list, key=lambda item: item[1],reverse=True)
+		return (list[0][1],list[0][2])
+
 	def stop_process(self,widget):
 		self.process_breaker = True
 		
