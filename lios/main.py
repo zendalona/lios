@@ -462,6 +462,17 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		ratio = (width*50)/height
 		buff = pixbuff.scale_simple(50,ratio,GdkPixbuf.InterpType.BILINEAR)
 		self.liststore_images.append([buff, filename])
+		
+	def load_image(self,file_name_with_directory,destination,move):
+		if os.path.exists(destination):
+			#Exist
+			self.load_image(file_name_with_directory,destination+"#",move)		
+		else:
+			if (move):
+				shutil.move(file_name_with_directory,destination)
+			else:
+				shutil.copyfile(file_name_with_directory,destination)
+			self.add_image_to_image_list(destination)
 
 	def import_image(self,wedget,data=None):
 		open_file = Gtk.FileChooserDialog("Select image file to import",None,Gtk.FileChooserAction.OPEN,buttons=(Gtk.STOCK_OPEN,Gtk.ResponseType.OK))
@@ -478,9 +489,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 			file_name_with_directory = open_file.get_filename()
 			filename = file_name_with_directory.split("/")[-1:][0].split(".")[0]
 			destination = "{0}{1}".format(global_var.tmp_dir,filename.replace(' ','-'))
-			shutil.copyfile(file_name_with_directory,destination)
-			self.add_image_to_image_list(destination)
-			self.drawingarea_load_image(destination)
+			self.load_image(file_name_with_directory,destination,False)			
 		open_file.destroy()		
 
 	def import_pdf(self,wedget,data=None):
@@ -498,24 +507,26 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 			
 			pdf_filename = pdf_filename_full.split("/")[-1:][0]
 			filename = pdf_filename.split(".")[0]
-			destination = "{0}{1}".format(global_var.tmp_dir,pdf_filename.replace(' ','-').replace(')','-').replace('(','-'))		
+			pdf_filename = pdf_filename.replace(' ','-').replace(')','-').replace('(','-')
+			destination = "{0}{1}".format(global_var.tmp_dir,pdf_filename)		
 			shutil.copyfile(pdf_filename_full,destination)
 			os.makedirs(destination.split(".")[0],exist_ok=True)
 			
-			p = Process(target=lambda : os.system("pdfimages {0} {1}/out_image".format(destination,destination.split(".")[0])) , args=())
+			p = multiprocessing.Process(target=lambda : os.system("pdfimages {} {}/{}".format(destination,destination.split(".")[0],pdf_filename.split(".")[0])) , args=())
 			p.start()
 			while(p.is_alive()):
-				print("Converting")
-			#os.system("pdfimages {0} {1}/out_image".format(destination,destination.split(".")[0]))
+				pass
+			os.remove(destination)
 			
 			file_list = os.listdir(destination.split(".")[0])			
 			formats = ["png","pnm","jpg","jpeg","tif","tiff","bmp","pbm","ppm"]
 			for image in file_list:
 				try:
 					if image.split(".")[1] in formats:
-						self.add_image_to_image_list("{0}/{1}".format(destination.split(".")[0],image))
+						self.load_image("{}/{}".format(destination.split(".")[0],image),"{}{}".format(global_var.tmp_dir,image),True)
 				except IndexError:
 					pass
+			os.rmdir(destination.split(".")[0])			
 		open_file.destroy()
 
 
@@ -532,8 +543,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 				try:
 					if image.split(".")[1] in formats:
 						destination = "{0}{1}".format(global_var.tmp_dir,image.split(".")[0].replace(' ','-'))
-						shutil.copyfile("{0}/{1}".format(image_directory,image),destination)
-						self.add_image_to_image_list(destination)						
+						self.load_image("{0}/{1}".format(image_directory,image),destination,False)					
 				except IndexError:
 					pass
 		folder.destroy()		
