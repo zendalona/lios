@@ -26,3 +26,5 @@ data_dir = "/usr/local/share/lios";
 home_dir = os.environ['HOME']
 
 tmp_dir = "/tmp/Lios/"
+
+tesseract_data = '/usr/share/tesseract-ocr/tessdata/'

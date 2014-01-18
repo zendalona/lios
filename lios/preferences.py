@@ -348,7 +348,7 @@ class lios_preferences:
 		if self.model_engine[self.index_engine][0] == "TESSERACT":
 			list = "afr","ara","aze","bel","ben","bul","cat","ces","chi-sim","chi-tra","chr","dan","deu","deu-frk","ell","eng","enm","epo","est","eus","fin","fra","frk","frm","glg","heb","hin","hrv","hun","ind","isl","ita","ita-old","jpn","kan","kor","lav","lit","mal","mkd","mlt","msa","nld","nor","pol","ron","rus","slk","slk-frak","slv","spa","spa-old","sqi","srp","swa","swe","tam","tel","tgl","tha","tur","ukr","vie"
 			check_list = []
-			check = subprocess.Popen(['ls', '/usr/share/tesseract-ocr/tessdata/'],stdout=subprocess.PIPE)
+			check = subprocess.Popen(['ls',global_var.tesseract_data],stdout=subprocess.PIPE)
 			for lan in check.stdout:
 				lan = lan.decode('utf-8')
 				if "." in lan:
