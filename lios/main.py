@@ -591,7 +591,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		
 		for device in list(q.get()):
 			if "scanner" in device[3]:
-				self.scanner_objects.append(scanner.scanner(device,self.scan_driver,self.scanner_mode_switching))
+				self.scanner_objects.append(scanner.scanner(device,self.scan_driver,self.scanner_mode_switching,self.scanner_cache_calibration))
 				scanner_store.append([device[2]])
 			
 		self.combobox_scanner.set_model(scanner_store)		
@@ -625,10 +625,12 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		while(p.is_alive()):
 			pass
 		if(self.process_breaker):
+			self.make_scanner_wigets_active()
 			return			
 		self.add_image_to_image_list("{0}{1}.png".format(global_var.tmp_dir,self.get_page_number_as_string()))
 		self.make_scanner_wigets_active()
 		if(self.process_breaker):
+			self.make_scanner_wigets_active()
 			return	
 
 	def put_text_to_buffer(self,text,place_cursor = False,give_page_number = False):
@@ -793,9 +795,10 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 				return True
 							
 			count, mid_value = self.optimize_with_model(mid_value,distance,vary,angle)
-			result_text = "<b><span size = 'xx-large'> Got {} Words at brightness {} </span> </b>".format(count, mid_value)  
+			result_text = "<b><span size = 'xx-large'> Got {} Words at brightness {} </span> </b>".format(count, mid_value) 
+			vary = distance; 
 			distance = distance / 2;
-			vary = vary / 2 ;
+			
 			
 		
 	def optimize_with_model(self,mid_value,distance,vary,angle):
@@ -924,9 +927,9 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 			self.textbuffer.apply_tag(self.highlight_tag, s, e)
 
 		if event == espeak.event_END:
-			self.point = self.textbuffer.get_iter_at_offset(pos+self.to_count)
-			self.textbuffer.place_cursor(self.point)
-			self.textview.scroll_to_iter(self.point, 0.0, use_align=True, xalign=0.0, yalign=0.2)
+			point = self.textbuffer.get_iter_at_offset(pos+self.to_count)
+			self.textbuffer.place_cursor(point)
+			self.textview.scroll_to_iter(point, 0.0, use_align=True, xalign=0.0, yalign=0.2)
 							
 					
 		if event == espeak.event_MSG_TERMINATED:
