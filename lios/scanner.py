@@ -25,7 +25,7 @@ import os
 import multiprocessing
 from multiprocessing import Pipe
 class scanner():
-	def __init__(self,device,driver,scanner_mode_switching):
+	def __init__(self,device,driver,scanner_mode_switching,scanner_cache_calibration):
 		self.driver = driver
 		self.device = device
 		sane_version = sane.init()
@@ -46,6 +46,12 @@ class scanner():
 							break
 			else:
 				self.scanner_mode = 'Color'
+			
+			self.calibration_cache = False
+			option = self.get_scanner_option('calibration-cache')
+			if(option and scanner_cache_calibration):
+				self.scanner.calibration_cache = True
+				self.calibration_cache = True
 
 			#X Axis for scan Area
 			option = self.get_scanner_option('br-x')
@@ -157,15 +163,19 @@ class scanner():
 				self.scanner_br_y = self.br_y_pass/4
 			else:
 				pass
+				
+			command = "scanimage --device-name='{}' --resolution {} --mode {} -x {} -y {}".format(self.device[0],resolution,self.scanner_mode,self.scanner_br_x,self.scanner_br_y)
 			
-			print(self.device[0])
+			if (self.calibration_cache):
+				command += (" --calibration-cache=yes")
+			
 			if (self.check_brightness_support()):
-				print("scanimage --device-name='{0}' --resolution {1} --mode {2} -x {3} -y {4} --{5}={6} > {7}".format(self.device[0],resolution,self.scanner_mode,self.scanner_br_x,self.scanner_br_y,self.light_parameter,brightness_value,file_name))	
-				os.system("scanimage --device-name='{0}' --resolution {1} --mode {2} -x {3} -y {4} --{5}={6} > {7}".format(self.device[0],resolution,self.scanner_mode,self.scanner_br_x,self.scanner_br_y,self.light_parameter,brightness_value,file_name))	
-			else:
-				print("scanimage --device-name='{0}' --resolution {1} --mode {2} -x {3} -y {4} > {5}".format(self.device[0],resolution,self.scanner_mode,self.scanner_br_x,self.scanner_br_y,file_name))	
-				os.system("scanimage --device-name='{0}' --resolution {1} --mode {2} -x {3} -y {4} > {5}".format(self.device[0],resolution,self.scanner_mode,self.scanner_br_x,self.scanner_br_y,file_name))	
-
+				command += (" --{}={}".format(self.light_parameter,brightness_value))	
+				
+			command += (" > {}".format(file_name))
+			
+			print(command)
+			os.system(command)	
 
 
 

@@ -53,7 +53,8 @@ class lios_preferences:
 				self.mode_of_rotation = int(config.get('cfg',"mode_of_rotation"))
 				self.rotation_angle = int(config.get('cfg',"angle"))		
 				self.page_numbering_type=int(config.get('cfg',"numbering_type"))
-				self.scanner_mode_switching=int(config.get('cfg',"scanner_mode_switching"))						
+				self.scanner_mode_switching=int(config.get('cfg',"scanner_mode_switching"))
+				self.scanner_cache_calibration=int(config.get('cfg',"scanner_cache_calibration"))						
 				self.starting_page_number=int(config.get('cfg',"starting_page_number"))
 				self.background_color=config.get('cfg',"background_color")
 				self.font_color=config.get('cfg',"font_color")
@@ -69,7 +70,6 @@ class lios_preferences:
 				self.cam_x=int(config.get('cfg',"cam_x"))
 				self.cam_y=int(config.get('cfg',"cam_y"))
 				self.cam_device=int(config.get('cfg',"cam_device"))				
-				self.mode_switch = True
 				self.require_scanner_refresh = True
 			except:
 				self.on_Restore_preferences_activate(self,data=None)
@@ -112,7 +112,7 @@ class lios_preferences:
 		#Setting Default Values
 		self.font="Georgia 14";self.highlight_font="Georgia 14";self.background_color="#000";self.font_color="#fff";self.highlight_color="#1572ffff0000"
 		self.background_highlight_color="#00000bacffff";self.time_between_repeated_scanning=0;self.scan_resolution=300;self.scan_brightness=100;self.scan_area=0;self.insert_position=2;self.ocr_engine="CUNEIFORM";self.language="eng"
-		self.mode_of_rotation=0;self.number_of_pages_to_scan=100;self.page_numbering_type=0;self.starting_page_number=1;self.scanner_mode_switching=1;self.auto_skew=0;self.rotation_angle=00;
+		self.mode_of_rotation=0;self.number_of_pages_to_scan=100;self.page_numbering_type=0;self.starting_page_number=1;self.scanner_mode_switching=1;self.scanner_cache_calibration=1;self.auto_skew=0;self.rotation_angle=00;
 		self.voice_message_state=1;self.voice_message_rate=170;self.voice_message_volume=150;self.voice_message_pitch=50;self.voice_message_voice=11;self.scan_driver=1;
 		self.cam_x=1280;self.cam_y=800;self.cam_device=0;
 		#Writing it to user configuration file
@@ -142,7 +142,8 @@ class lios_preferences:
 		config.set('cfg',"mode_of_rotation",str(self.mode_of_rotation))
 		config.set('cfg',"angle",str(self.rotation_angle))
 		config.set('cfg',"numbering_type",str(self.page_numbering_type))
-		config.set('cfg',"scanner_mode_switching",str(self.scanner_mode_switching))				
+		config.set('cfg',"scanner_mode_switching",str(self.scanner_mode_switching))
+		config.set('cfg',"scanner_cache_calibration",str(self.scanner_cache_calibration))				
 		config.set('cfg',"starting_page_number",str(self.starting_page_number))
 		config.set('cfg',"background_color",str(self.background_color))
 		config.set('cfg',"font_color",str(self.font_color))
@@ -289,6 +290,11 @@ class lios_preferences:
 		self.scanner_mode_switching_old = self.scanner_mode_switching
 		self.checkbutton_scanner_mode_switching = self.preferences_guibuilder.get_object("checkbutton_scanner_mode_switching")
 		self.checkbutton_scanner_mode_switching.set_active(self.scanner_mode_switching)
+		
+		#Cache Calibration
+		self.scanner_cache_calibration_old = self.scanner_cache_calibration
+		self.checkbutton_scanner_cache_calibration = self.preferences_guibuilder.get_object("checkbutton_scanner_cache_calibration")
+		self.checkbutton_scanner_cache_calibration.set_active(self.scanner_cache_calibration)
 
 		#Skew
 		self.checkbutton_skew = self.preferences_guibuilder.get_object("checkbutton_skew")
@@ -427,16 +433,18 @@ class lios_preferences:
 		self.ocr_engine=self.model_engine[self.index_engine][0];self.language=language
 		self.mode_of_rotation=self.index_rotation;self.number_of_pages_to_scan=self.pages_spin.get_value_as_int();self.page_numbering_type=self.index_numbering;
 		self.starting_page_number=self.start_spin.get_value_as_int();self.scanner_mode_switching=int(self.checkbutton_scanner_mode_switching.get_active())
+		self.scanner_cache_calibration=int(self.checkbutton_scanner_cache_calibration.get_active())
 		
 		if self.angle_cb.get_visible() ==True:
 			model_angle = self.angle_cb.get_model()
 			self.rotation_angle = model_angle[self.angle_cb.get_active()][0]
 		
 		self.auto_skew = int(self.checkbutton_skew.get_active())
-		if (self.scan_driver_old != self.scan_driver or self.scanner_mode_switching_old != self.scanner_mode_switching ):
+		if (self.scan_driver_old != self.scan_driver or self.scanner_mode_switching_old != self.scanner_mode_switching or self.scanner_cache_calibration_old != self.scanner_cache_calibration ):
 			self.require_scanner_refresh = True
 			self.scan_driver_old = self.scan_driver
 			self.scanner_mode_switching_old = self.scanner_mode_switching
+			self.scanner_cache_calibration_old = self.scanner_cache_calibration
 			
 		self.activate_preferences()
 		self.set_preferences_to_file()
