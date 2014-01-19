@@ -1,41 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <!-- interface-requires gtk+ 3.0 -->
-  <object class="GtkImage" id="image15">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="stock">gtk-goto-last</property>
-  </object>
-  <object class="GtkImage" id="image16">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="stock">gtk-find</property>
-  </object>
-  <object class="GtkImage" id="image17">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="stock">gtk-jump-to</property>
-  </object>
-  <object class="GtkImage" id="image18">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="stock">gtk-jump-to</property>
-  </object>
-  <object class="GtkImage" id="image2">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="stock">gtk-missing-image</property>
-  </object>
-  <object class="GtkImage" id="image29">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="stock">gtk-cancel</property>
-  </object>
-  <object class="GtkImage" id="image3">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="stock">gtk-file</property>
-  </object>
   <object class="GtkImage" id="image1">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -66,35 +31,80 @@
     <property name="can_focus">False</property>
     <property name="stock">gtk-go-down</property>
   </object>
-  <object class="GtkImage" id="image22">
+  <object class="GtkImage" id="image15">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="icon_name">scanner</property>
+    <property name="stock">gtk-goto-last</property>
   </object>
-  <object class="GtkImage" id="image27">
+  <object class="GtkImage" id="image16">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="stock">gtk-sort-descending</property>
+    <property name="stock">gtk-find</property>
   </object>
-  <object class="GtkImage" id="image30">
+  <object class="GtkImage" id="image17">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="icon_name">media-playback-stop</property>
+    <property name="stock">gtk-jump-to</property>
+  </object>
+  <object class="GtkImage" id="image18">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-jump-to</property>
+  </object>
+  <object class="GtkImage" id="image19">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="pixbuf">image.png</property>
+  </object>
+  <object class="GtkImage" id="image2">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-missing-image</property>
+  </object>
+  <object class="GtkImage" id="image20">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="pixbuf">folder.png</property>
+  </object>
+  <object class="GtkImage" id="image29">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-cancel</property>
   </object>
   <object class="GtkImage" id="image23">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="stock">gtk-dialog-info</property>
   </object>
+  <object class="GtkImage" id="image22">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="icon_name">scanner</property>
+  </object>
   <object class="GtkImage" id="image25">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="stock">gtk-ok</property>
   </object>
+  <object class="GtkImage" id="image27">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-sort-descending</property>
+  </object>
   <object class="GtkImage" id="image28">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="stock">gtk-media-record</property>
+  </object>
+  <object class="GtkImage" id="image3">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-file</property>
+  </object>
+  <object class="GtkImage" id="image30">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="icon_name">media-playback-stop</property>
   </object>
   <object class="GtkImage" id="image32">
     <property name="visible">True</property>
@@ -135,6 +145,11 @@
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="stock">gtk-missing-image</property>
+  </object>
+  <object class="GtkImage" id="image7">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="pixbuf">pdf.svg</property>
   </object>
   <object class="GtkImage" id="image8">
     <property name="visible">True</property>
@@ -796,14 +811,13 @@
               </packing>
             </child>
             <child>
-              <object class="GtkToolButton" id="toolbutton4">
+              <object class="GtkToolButton" id="toolbutton_pdf">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="tooltip_text" translatable="yes">Go to line</property>
-                <property name="label" translatable="yes">toolbutton4</property>
+                <property name="label" translatable="yes">Import-Pdf</property>
                 <property name="use_underline">True</property>
-                <property name="stock_id">gtk-jump-to</property>
-                <signal name="clicked" handler="go_to_line" swapped="no"/>
+                <property name="icon_widget">image7</property>
+                <signal name="clicked" handler="import_pdf" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -811,14 +825,27 @@
               </packing>
             </child>
             <child>
-              <object class="GtkToolButton" id="Punc">
+              <object class="GtkToolButton" id="toolbutton11">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="tooltip_text" translatable="yes">Punch File</property>
-                <property name="label" translatable="yes">Punch</property>
+                <property name="label" translatable="yes">Import-Image</property>
                 <property name="use_underline">True</property>
-                <property name="icon_name">go-down</property>
-                <signal name="clicked" handler="punch" swapped="no"/>
+                <property name="icon_widget">image19</property>
+                <signal name="clicked" handler="import_image" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkToolButton" id="Import-Folder1">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Import-Folder</property>
+                <property name="use_underline">True</property>
+                <property name="icon_widget">image20</property>
+                <signal name="clicked" handler="import_folder" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -834,21 +861,6 @@
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-spell-check</property>
                 <signal name="clicked" handler="spell_checker" swapped="no"/>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="homogeneous">True</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkToolButton" id="toolbutton7">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="tooltip_text" translatable="yes">Find</property>
-                <property name="label" translatable="yes">Find</property>
-                <property name="use_underline">True</property>
-                <property name="stock_id">gtk-find</property>
-                <signal name="clicked" handler="find" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -886,13 +898,14 @@
               </packing>
             </child>
             <child>
-              <object class="GtkToolButton" id="Read_button">
+              <object class="GtkToolButton" id="toolbutton7">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Read</property>
+                <property name="tooltip_text" translatable="yes">Find</property>
+                <property name="label" translatable="yes">Find</property>
                 <property name="use_underline">True</property>
-                <property name="icon_widget">image_read_stop</property>
-                <signal name="clicked" handler="Read_Stop" swapped="no"/>
+                <property name="stock_id">gtk-find</property>
+                <signal name="clicked" handler="find" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -900,14 +913,13 @@
               </packing>
             </child>
             <child>
-              <object class="GtkToolButton" id="Abou">
+              <object class="GtkToolButton" id="Read_button">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="tooltip_text" translatable="yes">About-Lios</property>
-                <property name="label" translatable="yes">About Lios</property>
+                <property name="label" translatable="yes">Read</property>
                 <property name="use_underline">True</property>
-                <property name="stock_id">gtk-about</property>
-                <signal name="clicked" handler="about" swapped="no"/>
+                <property name="icon_widget">image_read_stop</property>
+                <signal name="clicked" handler="Read_Stop" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -1312,38 +1324,8 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <child>
-                      <object class="GtkButton" id="button_ocr_selected_images">
-                        <property name="label" translatable="yes">OCR Selected</property>
-                        <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="receives_default">True</property>
-                        <signal name="clicked" handler="ocr_selected_images" swapped="no"/>
-                      </object>
-                      <packing>
-                        <property name="left_attach">0</property>
-                        <property name="top_attach">0</property>
-                        <property name="width">1</property>
-                        <property name="height">1</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkButton" id="button_delete_selected_images">
-                        <property name="label" translatable="yes">Delete</property>
-                        <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="receives_default">True</property>
-                        <signal name="clicked" handler="iconview_image_delete" swapped="no"/>
-                      </object>
-                      <packing>
-                        <property name="left_attach">1</property>
-                        <property name="top_attach">0</property>
-                        <property name="width">1</property>
-                        <property name="height">1</property>
-                      </packing>
-                    </child>
-                    <child>
                       <object class="GtkButton" id="button_delete_all_images">
-                        <property name="label" translatable="yes">Clear</property>
+                        <property name="label" translatable="yes">Delete All Images</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
@@ -1373,6 +1355,36 @@
                       </packing>
                     </child>
                     <child>
+                      <object class="GtkButton" id="button_save_all_images">
+                        <property name="label" translatable="yes">Save All</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="receives_default">True</property>
+                        <signal name="clicked" handler="save_all_images" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="left_attach">1</property>
+                        <property name="top_attach">1</property>
+                        <property name="width">2</property>
+                        <property name="height">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="button_delete_selected_images">
+                        <property name="label" translatable="yes">Delete</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">True</property>
+                        <signal name="clicked" handler="iconview_image_delete" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="left_attach">1</property>
+                        <property name="top_attach">0</property>
+                        <property name="width">1</property>
+                        <property name="height">1</property>
+                      </packing>
+                    </child>
+                    <child>
                       <object class="GtkButton" id="button_save_selected_images">
                         <property name="label" translatable="yes">Save selected</property>
                         <property name="visible">True</property>
@@ -1388,17 +1400,17 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkButton" id="button_save_all_images">
-                        <property name="label" translatable="yes">Save All</property>
+                      <object class="GtkButton" id="button_ocr_selected_images">
+                        <property name="label" translatable="yes">OCR Selected</property>
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
+                        <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
-                        <signal name="clicked" handler="save_all_images" swapped="no"/>
+                        <signal name="clicked" handler="ocr_selected_images" swapped="no"/>
                       </object>
                       <packing>
-                        <property name="left_attach">1</property>
-                        <property name="top_attach">1</property>
-                        <property name="width">2</property>
+                        <property name="left_attach">0</property>
+                        <property name="top_attach">0</property>
+                        <property name="width">1</property>
                         <property name="height">1</property>
                       </packing>
                     </child>
