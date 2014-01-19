@@ -414,20 +414,24 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		self.make_ocr_widgets_inactive()
 		mode = self.mode_of_rotation
 		angle = self.rotation_angle
-		for item in self.image_icon_view.get_selected_items():
+		for item in reversed(self.image_icon_view.get_selected_items()):
 			text,angle = self.ocr(self.liststore_images[item[0]][1],mode,angle)
 			self.put_text_to_buffer(text,False,False)
 			self.rotate(angle,self.liststore_images[item[0]][1])
 			if mode == 1:#Changing partial automatic to Manual
-				mode = 2				
+				mode = 2
+			if(self.process_breaker):
+				break
 		self.make_ocr_widgets_active()
 
 	@on_thread
 	def ocr_selected_images_without_rotating(self,widget):
 		self.make_ocr_widgets_inactive()
-		for item in self.image_icon_view.get_selected_items():
+		for item in reversed(self.image_icon_view.get_selected_items()):
 			text,angle = self.ocr(self.liststore_images[item[0]][1],2,00)
 			self.put_text_to_buffer(text,False,False)
+			if(self.process_breaker):
+				break
 		self.make_ocr_widgets_active()
 			
 	def ocr_all_images_without_rotating(self,widget):
@@ -518,7 +522,9 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 				pass
 			os.remove(destination)
 			
-			file_list = os.listdir(destination.split(".")[0])			
+			file_list = os.listdir(destination.split(".")[0])
+			file_list = sorted(file_list)
+						
 			formats = ["png","pnm","jpg","jpeg","tif","tiff","bmp","pbm","ppm"]
 			for image in file_list:
 				try:
