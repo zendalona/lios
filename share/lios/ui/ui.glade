@@ -1,16 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <!-- interface-requires gtk+ 3.0 -->
-  <object class="GtkImage" id="image22">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="icon_name">scanner</property>
-  </object>
-  <object class="GtkImage" id="image23">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="stock">gtk-dialog-info</property>
-  </object>
   <object class="GtkImage" id="image1">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -75,6 +65,16 @@
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="pixbuf">folder.png</property>
+  </object>
+  <object class="GtkImage" id="image22">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="icon_name">scanner</property>
+  </object>
+  <object class="GtkImage" id="image23">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-dialog-info</property>
   </object>
   <object class="GtkImage" id="image25">
     <property name="visible">True</property>
@@ -1104,6 +1104,7 @@
                         <property name="vscroll_policy">natural</property>
                         <property name="wrap_mode">word</property>
                         <property name="accepts_tab">False</property>
+                        <signal name="button-press-event" handler="textview_button_press_event" swapped="no"/>
                       </object>
                     </child>
                   </object>

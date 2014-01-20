@@ -188,7 +188,28 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		item.connect("activate",self.import_folder)
 		self.iconview_popup_menu_zero_items.append(item)
 
+		
+		#TextView Popup Menu
+		self.textview_popup_menu = Gtk.Menu()
 
+		item = Gtk.MenuItem("Cut")
+		item.connect("activate",self.cut)
+		self.textview_popup_menu.append(item)
+
+		item = Gtk.MenuItem("Copy")
+		item.connect("activate",self.copy)
+		self.textview_popup_menu.append(item)
+
+		item = Gtk.MenuItem("Paste")
+		item.connect("activate",self.paste)
+		self.textview_popup_menu.append(item)
+		
+		self.textview_popup_menu_no_selection = Gtk.Menu()
+		item = Gtk.MenuItem("Paste")
+		item.connect("activate",self.paste)
+		self.textview_popup_menu_no_selection.append(item)
+
+		
 		#Creating Lios Folder in tmp
 		try:
 			os.mkdir(global_var.tmp_dir)
@@ -977,6 +998,20 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 	def stop_process(self,widget):
 		self.process_breaker = True
 		
+	def textview_button_press_event(self, treeview, event):
+		if event.button == 3:
+			x = int(event.x)
+			y = int(event.y)
+			time = event.time
+			if self.textbuffer.get_has_selection():
+				self.textview_popup_menu.popup(None, None, None, None,event.button,time)
+				self.textview_popup_menu.show_all()
+			else:
+				self.textview_popup_menu_no_selection.popup(None, None, None, None,event.button,time)
+				self.textview_popup_menu_no_selection.show_all()
+			return True	
+	
+
 	def go_to_page(self,wedget,data=None):
 		iter,end = self.textbuffer.get_bounds()
 		adj = Gtk.Adjustment(value=1, lower=1, upper=self.starting_page_number-1, step_incr=1, page_incr=5, page_size=0) 
