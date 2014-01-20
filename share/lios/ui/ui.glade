@@ -1,16 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <!-- interface-requires gtk+ 3.0 -->
-  <object class="GtkImage" id="image1">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="stock">gtk-missing-image</property>
-  </object>
-  <object class="GtkImage" id="image10">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="stock">gtk-revert-to-saved</property>
-  </object>
   <object class="GtkImage" id="image11">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -66,20 +56,25 @@
     <property name="can_focus">False</property>
     <property name="pixbuf">folder.png</property>
   </object>
-  <object class="GtkImage" id="image29">
+  <object class="GtkImage" id="image22">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="stock">gtk-cancel</property>
+    <property name="icon_name">scanner</property>
   </object>
   <object class="GtkImage" id="image23">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="stock">gtk-dialog-info</property>
   </object>
-  <object class="GtkImage" id="image22">
+  <object class="GtkImage" id="image1">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="icon_name">scanner</property>
+    <property name="stock">gtk-missing-image</property>
+  </object>
+  <object class="GtkImage" id="image10">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-revert-to-saved</property>
   </object>
   <object class="GtkImage" id="image25">
     <property name="visible">True</property>
@@ -95,6 +90,11 @@
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="stock">gtk-media-record</property>
+  </object>
+  <object class="GtkImage" id="image29">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-cancel</property>
   </object>
   <object class="GtkImage" id="image3">
     <property name="visible">True</property>
@@ -241,6 +241,37 @@
                       </object>
                     </child>
                     <child>
+                      <object class="GtkSeparatorMenuItem" id="separatormenuitem1">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkImageMenuItem" id="qui">
+                        <property name="label">gtk-quit</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="use_underline">True</property>
+                        <property name="use_stock">True</property>
+                        <accelerator key="q" signal="activate" modifiers="GDK_CONTROL_MASK"/>
+                        <signal name="activate" handler="quit" swapped="no"/>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkMenuItem" id="Image">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Image</property>
+                <property name="use_underline">True</property>
+                <child type="submenu">
+                  <object class="GtkMenu" id="image">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <child>
                       <object class="GtkImageMenuItem" id="import-image">
                         <property name="label" translatable="yes">Import-Image</property>
                         <property name="visible">True</property>
@@ -271,7 +302,7 @@
                       </object>
                     </child>
                     <child>
-                      <object class="GtkMenuItem" id="Save Selected Images">
+                      <object class="GtkMenuItem" id="Save-Selected-Images">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">Save-Selected-Images</property>
@@ -280,7 +311,7 @@
                       </object>
                     </child>
                     <child>
-                      <object class="GtkMenuItem" id="menuitem2">
+                      <object class="GtkMenuItem" id="Save-All-Images">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">Save-All-Images</property>
@@ -289,20 +320,21 @@
                       </object>
                     </child>
                     <child>
-                      <object class="GtkSeparatorMenuItem" id="separatormenuitem1">
+                      <object class="GtkMenuItem" id="Delete-selected-Images">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">Delete-selected-Images</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="iconview_image_delete" swapped="no"/>
                       </object>
                     </child>
                     <child>
-                      <object class="GtkImageMenuItem" id="qui">
-                        <property name="label">gtk-quit</property>
+                      <object class="GtkMenuItem" id="Delete-All-Images">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">Delete-All-Images</property>
                         <property name="use_underline">True</property>
-                        <property name="use_stock">True</property>
-                        <accelerator key="q" signal="activate" modifiers="GDK_CONTROL_MASK"/>
-                        <signal name="activate" handler="quit" swapped="no"/>
+                        <signal name="activate" handler="iconview_image_clear" swapped="no"/>
                       </object>
                     </child>
                   </object>
@@ -799,7 +831,7 @@
               <object class="GtkToolButton" id="open">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="tooltip_text" translatable="yes">Open text or image file</property>
+                <property name="tooltip_text" translatable="yes">Open text file</property>
                 <property name="label" translatable="yes">Open</property>
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-open</property>
@@ -814,6 +846,7 @@
               <object class="GtkToolButton" id="toolbutton_pdf">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="tooltip_text" translatable="yes">Import images from pdf</property>
                 <property name="label" translatable="yes">Import-Pdf</property>
                 <property name="use_underline">True</property>
                 <property name="icon_widget">image7</property>
@@ -828,6 +861,7 @@
               <object class="GtkToolButton" id="toolbutton11">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="tooltip_text" translatable="yes">Import image</property>
                 <property name="label" translatable="yes">Import-Image</property>
                 <property name="use_underline">True</property>
                 <property name="icon_widget">image19</property>
@@ -842,6 +876,7 @@
               <object class="GtkToolButton" id="Import-Folder1">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="tooltip_text" translatable="yes">Import images from folder</property>
                 <property name="label" translatable="yes">Import-Folder</property>
                 <property name="use_underline">True</property>
                 <property name="icon_widget">image20</property>
@@ -930,7 +965,7 @@
               <object class="GtkToolButton" id="quit">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="tooltip_text" translatable="yes">Quit From Lios</property>
+                <property name="tooltip_text" translatable="yes">Quit from Lios</property>
                 <property name="label" translatable="yes">Quit</property>
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-quit</property>
@@ -1309,6 +1344,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="reorderable">True</property>
+                        <signal name="button-press-event" handler="iconview_button_press_event" swapped="no"/>
                         <signal name="selection-changed" handler="iconview_selection_changed" swapped="no"/>
                       </object>
                     </child>
