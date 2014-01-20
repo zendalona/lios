@@ -93,6 +93,102 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		self.image_icon_view.set_text_column(1)
 		self.image_icon_view.set_model(self.liststore_images)
 		
+		#Iconview Popup menu
+		self.iconview_popup_menu_selected = Gtk.Menu()
+		
+		item = Gtk.MenuItem("Save-Selected-Images")
+		item.connect("activate",self.save_selected_images)
+		self.iconview_popup_menu_selected.append(item)
+		
+		item = Gtk.MenuItem("Delete-selected-Images")
+		item.connect("activate",self.iconview_image_delete)
+		self.iconview_popup_menu_selected.append(item)
+
+		item = Gtk.MenuItem("OCR-Selected-Images")
+		item.connect("activate",self.ocr_selected_images)
+		self.iconview_popup_menu_selected.append(item)
+
+		item = Gtk.MenuItem("OCR-Selected-Images-Without-Rotating")
+		item.connect("activate",self.ocr_selected_images_without_rotating)
+		self.iconview_popup_menu_selected.append(item)
+
+		item = Gtk.MenuItem("Rotate-selected-Images")
+		submenu = Gtk.Menu()
+		rotate_item = Gtk.MenuItem("Right")
+		rotate_item.connect("activate",self.rotate_selected_images_to_right)
+		submenu.append(rotate_item)
+		rotate_item = Gtk.MenuItem("Left")
+		rotate_item.connect("activate",self.rotate_selected_images_to_left)
+		submenu.append(rotate_item)
+		rotate_item = Gtk.MenuItem("Twice")
+		rotate_item.connect("activate",self.rotate_selected_images_to_twice)
+		submenu.append(rotate_item)
+		item.set_submenu(submenu)
+		self.iconview_popup_menu_selected.append(item)
+		
+
+		#Nothing selected and iconview is not empty
+		self.iconview_popup_menu_none_selected = Gtk.Menu()
+		
+		item = Gtk.MenuItem("import-image")
+		item.connect("activate",self.import_image)
+		self.iconview_popup_menu_none_selected.append(item)
+		
+		self.iconview_popup_menu_zero_items = Gtk.Menu()
+		item = Gtk.MenuItem("import-pdf")
+		item.connect("activate",self.import_pdf)
+		self.iconview_popup_menu_none_selected.append(item)
+		
+		item = Gtk.MenuItem("Import-Folder")
+		item.connect("activate",self.import_folder)
+		self.iconview_popup_menu_none_selected.append(item)
+		
+		item = Gtk.MenuItem("Save-All-Images")
+		item.connect("activate",self.save_selected_images)
+		self.iconview_popup_menu_none_selected.append(item)
+
+		item = Gtk.MenuItem("OCR-All-Images")
+		item.connect("activate",self.ocr_all_images)
+		self.iconview_popup_menu_none_selected.append(item)
+
+		item = Gtk.MenuItem("OCR-All-Images-Without-Rotating")
+		item.connect("activate",self.ocr_all_images_without_rotating)
+		self.iconview_popup_menu_none_selected.append(item)		
+
+		item = Gtk.MenuItem("Rotate-All-Images")
+		submenu = Gtk.Menu()
+		rotate_item = Gtk.MenuItem("Right")
+		rotate_item.connect("activate",self.rotate_all_images_to_right)
+		submenu.append(rotate_item)
+		rotate_item = Gtk.MenuItem("Left")
+		rotate_item.connect("activate",self.rotate_all_images_to_left)
+		submenu.append(rotate_item)
+		rotate_item = Gtk.MenuItem("Twice")
+		rotate_item.connect("activate",self.rotate_all_images_to_twice)
+		submenu.append(rotate_item)
+		item.set_submenu(submenu)
+		self.iconview_popup_menu_none_selected.append(item)
+		
+		item = Gtk.MenuItem("Delete-All-Images")
+		item.connect("activate",self.save_selected_images)
+		self.iconview_popup_menu_none_selected.append(item)
+		
+		#ICONVIEW IS EMPTY
+		self.iconview_popup_menu_zero_items = Gtk.Menu()
+
+		item = Gtk.MenuItem("import-image")
+		item.connect("activate",self.import_image)
+		self.iconview_popup_menu_zero_items.append(item)
+		
+		item = Gtk.MenuItem("import-pdf")
+		item.connect("activate",self.import_pdf)
+		self.iconview_popup_menu_zero_items.append(item)
+		
+		item = Gtk.MenuItem("Import-Folder")
+		item.connect("activate",self.import_folder)
+		self.iconview_popup_menu_zero_items.append(item)
+
+
 		#Creating Lios Folder in tmp
 		try:
 			os.mkdir(global_var.tmp_dir)
@@ -374,8 +470,23 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 				ratio = (width*50)/height
 				buff = pixbuff.scale_simple(50,ratio,GdkPixbuf.InterpType.BILINEAR)
 				item[0] = buff
-				
-		
+	
+	def iconview_button_press_event(self, treeview, event):
+		if event.button == 3:
+			x = int(event.x)
+			y = int(event.y)
+			time = event.time
+			if (len(self.image_icon_view.get_selected_items()) != 0):
+				self.iconview_popup_menu_selected.popup(None, None, None, None,event.button,time)
+				self.iconview_popup_menu_selected.show_all()
+			else:
+				if (len(self.liststore_images) == 0):
+					self.iconview_popup_menu_zero_items.popup(None, None, None, None,event.button,time)
+					self.iconview_popup_menu_zero_items.show_all()
+				else:
+					self.iconview_popup_menu_none_selected.popup(None, None, None, None,event.button,time)
+					self.iconview_popup_menu_none_selected.show_all()
+			return True
 
 
 	def iconview_selection_changed(self,widget):
@@ -423,6 +534,33 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 			if(self.process_breaker):
 				break
 		self.make_ocr_widgets_active()
+	
+	def rotate_selected_images_to_right(self,widget):
+		for item in reversed(self.image_icon_view.get_selected_items()):
+			self.rotate(90,self.liststore_images[item[0]][1])
+
+	def rotate_selected_images_to_left(self,widget):
+		for item in reversed(self.image_icon_view.get_selected_items()):
+			self.rotate(270,self.liststore_images[item[0]][1])	
+
+	def rotate_selected_images_to_twice(self,widget):
+		for item in reversed(self.image_icon_view.get_selected_items()):
+			self.rotate(180,self.liststore_images[item[0]][1])
+
+	def rotate_all_images_to_right(self,widget):
+		self.image_icon_view.select_all()
+		self.rotate_selected_images_to_right(None)
+
+	def rotate_all_images_to_left(self,widget):
+		self.image_icon_view.select_all()
+		self.rotate_selected_images_to_left(None)
+
+	def rotate_all_images_to_twice(self,widget):
+		self.image_icon_view.select_all()
+		self.rotate_selected_images_to_twice(None)
+
+
+
 
 	@on_thread
 	def ocr_selected_images_without_rotating(self,widget):
