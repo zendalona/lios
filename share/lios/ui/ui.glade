@@ -61,6 +61,11 @@
     <property name="can_focus">False</property>
     <property name="stock">gtk-missing-image</property>
   </object>
+  <object class="GtkImage" id="image27">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-sort-descending</property>
+  </object>
   <object class="GtkImage" id="image20">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -80,11 +85,6 @@
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="stock">gtk-ok</property>
-  </object>
-  <object class="GtkImage" id="image27">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="stock">gtk-sort-descending</property>
   </object>
   <object class="GtkImage" id="image28">
     <property name="visible">True</property>
@@ -317,6 +317,24 @@
                         <property name="label" translatable="yes">Save-All-Images</property>
                         <property name="use_underline">True</property>
                         <signal name="activate" handler="save_all_images" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkMenuItem" id="Save-Selected-Images-As-Pdf">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">Save-Selected-Images-As-Pdf</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="save_selected_images_as_pdf" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkMenuItem" id="Save-All-Images-As-Pdf">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">Save-All-Images-As-Pdf</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="save_all_images_as_pdf" swapped="no"/>
                       </object>
                     </child>
                     <child>

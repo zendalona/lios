@@ -99,6 +99,10 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		item = Gtk.MenuItem("Save-Selected-Images")
 		item.connect("activate",self.save_selected_images)
 		self.iconview_popup_menu_selected.append(item)
+
+		item = Gtk.MenuItem("Save-Selected-Images-As-Pdf")
+		item.connect("activate",self.save_selected_images_as_pdf)
+		self.iconview_popup_menu_selected.append(item)
 		
 		item = Gtk.MenuItem("Delete-selected-Images")
 		item.connect("activate",self.iconview_image_delete)
@@ -145,6 +149,10 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		
 		item = Gtk.MenuItem("Save-All-Images")
 		item.connect("activate",self.save_selected_images)
+		self.iconview_popup_menu_none_selected.append(item)
+
+		item = Gtk.MenuItem("Save-All-Images-As-Pdf")
+		item.connect("activate",self.save_all_images_as_pdf)
 		self.iconview_popup_menu_none_selected.append(item)
 
 		item = Gtk.MenuItem("OCR-All-Images")
@@ -607,7 +615,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		response = dialog.run()
 		if response == Gtk.ResponseType.OK:
 			directory = dialog.get_current_folder()
-			for item in self.image_icon_view.get_selected_items():
+			for item in reversed(self.image_icon_view.get_selected_items()):
 				shutil.copy(self.liststore_images[item[0]][1],directory)
 		dialog.destroy()			
 
@@ -616,7 +624,23 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		self.image_icon_view.select_all()
 		self.save_selected_images(None)
 		
-						
+	def save_selected_images_as_pdf(self,widget):
+		dialog = Gtk.FileChooserDialog("Give pdf filename(with extention) to save images",None,Gtk.FileChooserAction.SAVE,buttons=(Gtk.STOCK_SAVE,Gtk.ResponseType.OK))
+		dialog.set_current_folder(global_var.home_dir)
+		response = dialog.run()
+		if response == Gtk.ResponseType.OK:
+			file_name = dialog.get_filename()
+			command = "convert " 
+			for item in reversed(self.image_icon_view.get_selected_items()):
+				command += self.liststore_images[item[0]][1] + " "
+			command += file_name
+			os.system(command)
+		dialog.destroy()
+
+	def save_all_images_as_pdf(self,widget):
+		self.image_icon_view.select_all()
+		self.save_selected_images_as_pdf(None)		
+								
 
 	def add_image_to_image_list(self,filename):
 		pixbuff =  GdkPixbuf.Pixbuf.new_from_file(filename)
