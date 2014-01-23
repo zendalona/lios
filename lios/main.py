@@ -307,6 +307,13 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		if (filename):
 			 self.textbuffer.set_text(open(filename,"r").read())
 			 self.save_file_name = filename
+		else:
+			try:
+				file = open("{}/.lios_recent".format(global_var.home_dir),encoding="utf-8")
+				self.textbuffer.set_text(file.read())
+			except:
+				pass
+				
 		
 		self.window.maximize();
 		self.window.show()
@@ -855,6 +862,10 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		if(place_cursor):
 			self.textbuffer.place_cursor(cursor)
 		Gdk.threads_leave()
+		start,end = self.textbuffer.get_bounds()
+		text = self.textbuffer.get_text(start,end,False)
+		with open("{}/.lios_recent".format(global_var.home_dir),"w",encoding="utf-8") as file:
+			file.write(text)		
 		
 	def get_page_number_as_string(self):
 		if (self.page_numbering_type == 0):
