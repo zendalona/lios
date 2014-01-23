@@ -34,6 +34,7 @@ from gi.repository import Gio
 from gi.repository import Gst
 from gi.repository import GLib
 from gi.repository import Pango
+from gi.repository import PangoCairo
 from gi.repository import GObject
 from gi.repository import GdkPixbuf
 
@@ -259,6 +260,9 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		
 		#Breaker
 		self.process_breaker = False
+		
+		#Printing
+		self.print_settings = None
 
 		#Espeak Voice List
 		self.voice_list=[]
@@ -1021,6 +1025,125 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 
 	def stop_process(self,widget):
 		self.process_breaker = True
+
+	def print_with_action(self, action=None,filename = None):
+		if (self.textbuffer.get_has_selection()):
+			start,end = self.textbuffer.get_selection_bounds()
+		else:
+			start,end = self.textbuffer.get_bounds()
+		self.print_text = self.textbuffer.get_text(start,end,False)		
+		self.layout = None
+		self.page_breaks = None
+		self.font_size=12
+		if action==None:
+			action = Gtk.PrintOperationAction.PREVIEW
+		
+		#paper_size = Gtk.PaperSize(Gtk.PAPER_NAME_A4)
+		#paper_size = Gtk.PaperSize.get_default()
+		#paper_size = Gtk.PaperSize(paper_size)
+		
+		setup = Gtk.PageSetup()
+		#setup.set_paper_size(paper_size)
+		
+		# PrintOperation
+		print_ = Gtk.PrintOperation()
+		print_.set_default_page_setup(setup)
+		print_.set_unit(Gtk.Unit.MM)
+		
+		print_.connect("begin_print", self.begin_print)
+		print_.connect("draw_page", self.draw_page)
+		
+		if action == Gtk.PrintOperationAction.EXPORT:
+			print_.set_export_filename(filename)
+		res = print_.run(action,self.window)
+    
+	def begin_print(self, operation, context):
+		width = context.get_width()
+		height = context.get_height()
+		print (height)
+		self.layout = context.create_pango_layout()
+		self.layout.set_font_description(Pango.FontDescription("Sans " + str(self.font_size)))
+		self.layout.set_width(int(width*Pango.SCALE))
+
+		self.layout.set_text(self.print_text,len(self.print_text))
+
+		num_lines = self.layout.get_line_count()
+		print ("num_lines: ", num_lines)
+		
+		page_breaks = []
+		page_height = 0
+		
+		for line in range(num_lines):
+			layout_line = self.layout.get_line(line)
+			ink_rect, logical_rect = layout_line.get_extents()
+			
+			x_bearing, y_bearing, lwidth, lheight = logical_rect.x,logical_rect.y,logical_rect.width,logical_rect.height;
+			
+			line_height = lheight / 1024.0 # 1024.0 is float(pango.SCALE)
+			page_height += line_height
+			
+			print ("page_height ", page_height)
+			if page_height + line_height > height:
+				page_breaks.append(line)
+				page_height = 0
+				page_height += line_height
+		operation.set_n_pages(len(page_breaks) + 1)
+		self.page_breaks = page_breaks
+    
+	def draw_page (self, operation, context, page_number):
+		assert isinstance(self.page_breaks, list)
+		#print page_number
+		if page_number == 0:
+			start = 0
+		else:
+			start = self.page_breaks[page_number - 1]
+		try:
+			end = self.page_breaks[page_number]
+		except IndexError:
+			end = self.layout.get_line_count()
+		
+		cr = context.get_cairo_context()
+		cr.set_source_rgb(0, 0, 0)
+		i = 0
+		start_pos = 0
+		iter = self.layout.get_iter()
+		while 1:
+			if i >= start:
+				line = iter.get_line()
+				_, logical_rect = iter.get_line_extents()
+				x_bearing, y_bearing, lwidth, lheight = logical_rect.x,logical_rect.y,logical_rect.width,logical_rect.height;
+				baseline = iter.get_baseline()
+				if i == start:
+					start_pos = y_bearing / 1024.0 # 1024.0 is float(pango.SCALE)
+				cr.move_to(x_bearing / 1024.0, baseline / 1024.0 - start_pos)
+				PangoCairo.show_layout_line(cr, line)
+			i += 1
+			if not (i < end and iter.next_line()):
+				break
+
+
+	def print_preview(self,widget):
+		action = Gtk.PrintOperationAction.PREVIEW
+		printer = self.print_with_action(action)
+			
+	def print_text(self,widget):
+		action = Gtk.PrintOperationAction.PRINT_DIALOG
+		printer = self.print_with_action(action)
+
+	def print_to_pdf(self,widget):
+		dialog = Gtk.FileChooserDialog("Save Text as Pdf",None,Gtk.FileChooserAction.SAVE,buttons=(Gtk.STOCK_SAVE,Gtk.ResponseType.OK))    
+		dialog.set_current_folder(global_var.home_dir)
+		dialog.set_do_overwrite_confirmation(True);
+		filter = Gtk.FileFilter()
+		filter.add_pattern("*.pdf")
+		dialog.add_filter(filter)
+		response = dialog.run()
+		if response == Gtk.ResponseType.OK:
+			save_file_name = "%s"%(dialog.get_filename())
+			action = Gtk.PrintOperationAction.EXPORT
+			printer = self.print_with_action(action,save_file_name)
+			dialog.destroy()
+
 		
 	def textview_button_press_event(self, treeview, event):
 		if event.button == 3:

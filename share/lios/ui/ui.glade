@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <!-- interface-requires gtk+ 3.0 -->
+  <object class="GtkImage" id="image2">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-missing-image</property>
+  </object>
   <object class="GtkImage" id="image1">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -56,20 +61,15 @@
     <property name="can_focus">False</property>
     <property name="pixbuf">image.png</property>
   </object>
-  <object class="GtkImage" id="image2">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="stock">gtk-missing-image</property>
-  </object>
-  <object class="GtkImage" id="image27">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="stock">gtk-sort-descending</property>
-  </object>
   <object class="GtkImage" id="image20">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="pixbuf">folder.png</property>
+  </object>
+  <object class="GtkImage" id="image21">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-save-as</property>
   </object>
   <object class="GtkImage" id="image22">
     <property name="visible">True</property>
@@ -85,6 +85,11 @@
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="stock">gtk-ok</property>
+  </object>
+  <object class="GtkImage" id="image27">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-sort-descending</property>
   </object>
   <object class="GtkImage" id="image28">
     <property name="visible">True</property>
@@ -238,6 +243,36 @@
                         <property name="use_stock">True</property>
                         <accelerator key="s" signal="activate" modifiers="GDK_SHIFT_MASK | GDK_CONTROL_MASK"/>
                         <signal name="activate" handler="save_as" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkImageMenuItem" id="Export_as_pdf">
+                        <property name="label" translatable="yes">Export-as-pdf</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="image">image21</property>
+                        <property name="use_stock">False</property>
+                        <signal name="activate" handler="print_to_pdf" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkImageMenuItem" id="Print">
+                        <property name="label">gtk-print</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="use_underline">True</property>
+                        <property name="use_stock">True</property>
+                        <signal name="activate" handler="print_text" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkImageMenuItem" id="imagemenuitem3">
+                        <property name="label">gtk-print-preview</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="use_underline">True</property>
+                        <property name="use_stock">True</property>
+                        <signal name="activate" handler="print_preview" swapped="no"/>
                       </object>
                     </child>
                     <child>
