@@ -2,9 +2,9 @@
 Version=1.0
 Type=Application
 Terminal=false
-Exec=lios
+Exec=lios %U
 Name=Lios
 Comment=Scan & Read
-Icon=/usr/share/lios/ui/lios
+Icon=/usr/local/share/lios/lios
 Categories=Graphics;
-MimeType=text/plain;
+MimeType=text/plain;image/bmp;image/tiff;image/jpeg;image/png;application/pdf;image/jpeg2000;

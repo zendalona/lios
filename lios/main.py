@@ -68,7 +68,7 @@ def on_thread(function):
 
 
 class linux_intelligent_ocr_solution(editor,lios_preferences):
-	def __init__ (self,filename=None):
+	def __init__ (self,file_list=None):
 		self.guibuilder = Gtk.Builder()
 		self.guibuilder.add_from_file("%s/ui/ui.glade" %(global_var.data_dir))
 		self.window = self.guibuilder.get_object("window")
@@ -256,7 +256,6 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		
 		#OCR Wedgets
 		self.ocr_submenu = self.guibuilder.get_object("OCR_Submenu")
-		self.button_ocr_selected_images = self.guibuilder.get_object("button_ocr_selected_images")
 		
 		#Breaker
 		self.process_breaker = False
@@ -303,10 +302,23 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		#Activating Preference
 		self.activate_preferences()
 
-		
-		if (filename):
-			 self.textbuffer.set_text(open(filename,"r").read())
-			 self.save_file_name = filename
+		if (file_list):
+			for file in file_list:
+				try:
+					form = file.split(".")[1]
+				except:
+					pass
+				else:
+					if form == "txt":
+						self.textbuffer.set_text(open(file,"r").read())
+						self.save_file_name = file
+				
+					elif form in ["png","pnm","jpg","jpeg","tif","tiff","bmp","pbm"]:
+						filename = file.split("/")[-1:][0].split(".")[0]
+						destination = "{0}{1}".format(global_var.tmp_dir,filename.replace(' ','-'))
+						self.load_image(file,destination,False)
+					elif form == "pdf":
+						self.import_images_from_pdf(file)	
 		else:
 			try:
 				file = open("{}/.lios_recent".format(global_var.home_dir),encoding="utf-8")
@@ -700,34 +712,35 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		response = open_file.run()
 		if response == Gtk.ResponseType.OK:
 			pdf_filename_full = open_file.get_filename()
-			directory = open_file.get_current_folder()
+			self.import_images_from_pdf(pdf_filename_full)
 			open_file.destroy()
+	
+	@on_thread
+	def import_images_from_pdf(self,pdf_filename_full):
+		pdf_filename = pdf_filename_full.split("/")[-1:][0]
+		filename = pdf_filename.split(".")[0]
+		pdf_filename = pdf_filename.replace(' ','-').replace(')','-').replace('(','-')
+		destination = "{0}{1}".format(global_var.tmp_dir,pdf_filename)		
+		shutil.copyfile(pdf_filename_full,destination)
+		os.makedirs(destination.split(".")[0],exist_ok=True)
 			
-			pdf_filename = pdf_filename_full.split("/")[-1:][0]
-			filename = pdf_filename.split(".")[0]
-			pdf_filename = pdf_filename.replace(' ','-').replace(')','-').replace('(','-')
-			destination = "{0}{1}".format(global_var.tmp_dir,pdf_filename)		
-			shutil.copyfile(pdf_filename_full,destination)
-			os.makedirs(destination.split(".")[0],exist_ok=True)
-			
-			p = multiprocessing.Process(target=lambda : os.system("pdfimages {} {}/{}".format(destination,destination.split(".")[0],pdf_filename.split(".")[0])) , args=())
-			p.start()
-			while(p.is_alive()):
-				pass
-			os.remove(destination)
-			
-			file_list = os.listdir(destination.split(".")[0])
-			file_list = sorted(file_list)
+		p = multiprocessing.Process(target=lambda : os.system("pdfimages {} {}/{}".format(destination,destination.split(".")[0],pdf_filename.split(".")[0])) , args=())
+		p.start()
+		while(p.is_alive()):
+			pass
+		os.remove(destination)
+		
+		file_list = os.listdir(destination.split(".")[0])
+		file_list = sorted(file_list)
 						
-			formats = ["png","pnm","jpg","jpeg","tif","tiff","bmp","pbm","ppm"]
-			for image in file_list:
-				try:
-					if image.split(".")[1] in formats:
-						self.load_image("{}/{}".format(destination.split(".")[0],image),"{}{}".format(global_var.tmp_dir,image),True)
-				except IndexError:
-					pass
-			os.rmdir(destination.split(".")[0])			
-		open_file.destroy()
+		formats = ["png","pnm","jpg","jpeg","tif","tiff","bmp","pbm","ppm"]
+		for image in file_list:
+			try:
+				if image.split(".")[1] in formats:
+					self.load_image("{}/{}".format(destination.split(".")[0],image),"{}{}".format(global_var.tmp_dir,image),True)
+			except IndexError:
+				pass
+		os.rmdir(destination.split(".")[0])			
 
 
 
@@ -755,13 +768,11 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 	def make_ocr_widgets_inactive(self):
 		self.ocr_submenu.set_sensitive(False)
 		self.spinner.show()
-		self.button_ocr_selected_images.set_sensitive(False)
 		self.spinner.set_state(True)
 
 	def make_ocr_widgets_active(self):
 		self.ocr_submenu.set_sensitive(True)
 		self.spinner.hide()
-		self.button_ocr_selected_images.set_sensitive(True)
 		self.spinner.set_state(False)
 	
 	def make_scanner_wigets_inactive(self):
