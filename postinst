@@ -1,0 +1,9 @@
+#! /bin/sh
+sudo ldconfig
+if [ -x "`which update-menus 2>/dev/null`" ]; then
+sudo update-menus
+fi
+
+if [ -x "`which update-desktop-database 2>/dev/null`" ]; then
+sudo update-desktop-database
+fi

@@ -1,0 +1,11 @@
+#! /bin/sh
+sudo rm -rf /usr/share/lios/
+
+if [ -x "`which update-menus 2>/dev/null`" ]; then
+sudo update-menus
+fi
+
+if [ -x "`which update-desktop-database 2>/dev/null`" ]; then
+sudo update-desktop-database
+fi
+
