@@ -356,7 +356,16 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 			self.progressbar.set_show_text(True)
 		if (fraction):
 			self.progressbar.set_fraction(fraction)
-			self.activity_mode = False		
+			self.activity_mode = False
+
+	def announce(self,text,interrupt=True):
+		if (self.voice_message_state):
+			if(interrupt):
+				espeak.cancel()
+			else:
+				while(espeak.is_playing()):
+					pass
+			espeak.synth(text)	
 
 	def scan_using_cam(self,widget):		
 		self.src = Gst.ElementFactory.make('v4l2src', None)
@@ -919,15 +928,17 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 			iter = self.textbuffer.get_iter_at_mark(mark)
 		else:
 			iter = self.textbuffer.get_end_iter()
-		cursor = iter.copy()
+		
+		start = self.textbuffer.get_start_iter()
+		length = len(self.textbuffer.get_text(start,iter,False))
 		
 		if (give_page_number):
 			text = "Page-{}\n{}".format(self.get_page_number_as_string(),text)
 			
 		self.textbuffer.insert(iter,text)
-		
 		if(place_cursor):
-			self.textbuffer.place_cursor(cursor)
+			iter = self.textbuffer.get_iter_at_offset(length)
+			self.textbuffer.place_cursor(iter)
 		Gdk.threads_leave()
 		start,end = self.textbuffer.get_bounds()
 		text = self.textbuffer.get_text(start,end,False)
@@ -998,6 +1009,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		text,angle = self.ocr("{0}{1}.png".format(global_var.tmp_dir,self.get_page_number_as_string()),self.mode_of_rotation,self.rotation_angle)
 		self.put_text_to_buffer(text,True,True)
 		self.rotate(angle,"{0}{1}.png".format(global_var.tmp_dir,self.get_page_number_as_string()))
+		self.announce("Page {}".format(self.get_page_number_as_string()))
 		self.update_page_number()
 		
 			
@@ -1022,6 +1034,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 				self.put_text_to_buffer(text,True,True)
 			else:
 				self.put_text_to_buffer(text,False,True)
+			self.announce("Page {}".format(self.get_page_number_as_string()))
 				
 			self.rotate(angle,"{0}{1}.png".format(global_var.tmp_dir,self.get_page_number_as_string()))
 			self.update_page_number()
