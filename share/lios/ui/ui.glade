@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <!-- interface-requires gtk+ 3.0 -->
-  <object class="GtkImage" id="image2">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="stock">gtk-missing-image</property>
-  </object>
   <object class="GtkImage" id="image1">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -60,6 +55,11 @@
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="pixbuf">image.png</property>
+  </object>
+  <object class="GtkImage" id="image2">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-missing-image</property>
   </object>
   <object class="GtkImage" id="image20">
     <property name="visible">True</property>
@@ -1475,8 +1475,9 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="reorderable">True</property>
-                    <signal name="button-press-event" handler="iconview_button_press_event" swapped="no"/>
+                    <signal name="button-press-event" handler="iconview_press_event" swapped="no"/>
                     <signal name="selection-changed" handler="iconview_selection_changed" swapped="no"/>
+                    <signal name="key-press-event" handler="iconview_press_event" swapped="no"/>
                   </object>
                 </child>
               </object>
@@ -1495,7 +1496,7 @@
         <child>
           <object class="GtkComboBox" id="combobox_scanner">
             <property name="visible">True</property>
-            <property name="can_focus">True</property>
+            <property name="can_focus">False</property>
           </object>
           <packing>
             <property name="left_attach">5</property>

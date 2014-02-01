@@ -563,11 +563,12 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 				buff = pixbuff.scale_simple(50,ratio,GdkPixbuf.InterpType.BILINEAR)
 				item[0] = buff
 	
-	def iconview_button_press_event(self, treeview, event):
-		if event.button == 3:
-			x = int(event.x)
-			y = int(event.y)
+	def iconview_press_event(self, treeview, event):
+		if ((event.type == Gdk.EventType.BUTTON_PRESS and event.button == 3) or (event.type == Gdk.EventType.KEY_PRESS and event.hardware_keycode == 135)):
 			time = event.time
+			if (event.type == Gdk.EventType.KEY_PRESS):
+				event.button = 0
+					
 			if (len(self.image_icon_view.get_selected_items()) != 0):
 				self.iconview_popup_menu_selected.popup(None, None, None, None,event.button,time)
 				self.iconview_popup_menu_selected.show_all()
@@ -579,7 +580,6 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 					self.iconview_popup_menu_none_selected.popup(None, None, None, None,event.button,time)
 					self.iconview_popup_menu_none_selected.show_all()
 			return True
-
 
 	def iconview_selection_changed(self,widget):
 		items = self.image_icon_view.get_selected_items()
