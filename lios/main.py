@@ -179,7 +179,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		self.iconview_popup_menu_none_selected.append(item)
 		
 		item = Gtk.MenuItem("Delete-All-Images")
-		item.connect("activate",self.save_selected_images)
+		item.connect("activate",self.iconview_image_clear)
 		self.iconview_popup_menu_none_selected.append(item)
 		
 		#ICONVIEW IS EMPTY
@@ -1047,7 +1047,8 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 			text,angle = self.ocr("{0}test.png".format(global_var.tmp_dir),mode,angle)
 			print(angle)		
 		mid_value = 100; distance = 10; vary = 50;
-		result_text = "<b><span size = 'xx-large'> Result Text </span> </b>" 
+		count = None
+		result_text = "<b><span size = 'xx-large'> Click 'Forward' to start optimisation </span> </b>" 
 		while(1):
 			Gdk.threads_enter()
 			guibuilder = Gtk.Builder()
@@ -1078,32 +1079,34 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 			else:
 				return True
 							
-			count, mid_value = self.optimize_with_model(mid_value,distance,vary,angle)
+			count, mid_value = self.optimize_with_model(mid_value,distance,vary,angle,count)			
 			result_text = "<b><span size = 'xx-large'> Got {} Words at brightness {} </span> </b>".format(count, mid_value) 
-			vary = distance; 
 			distance = distance / 2;
+			vary = distance;
 			
 			
 		
-	def optimize_with_model(self,mid_value,distance,vary,angle):
+	def optimize_with_model(self,mid_value,distance,vary,angle,previous_optimised_count=None):
 		selected_scanner = self.combobox_scanner.get_active()
-		list = []
+		list = []		
 		pos = mid_value - vary
 		while(pos <= mid_value + vary):
-			self.set_progress_bar("Scanning with resolution={} brightness={}".format(self.scan_resolution,pos),None,0.0030)
-			p = multiprocessing.Process(target=(self.scanner_objects[selected_scanner].scan), args=("{0}test.png".format(global_var.tmp_dir,self.get_page_number_as_string()),self.scan_resolution,pos,self.scan_area))
-			p.start()
-			while(p.is_alive()):
-				pass
-			if(self.process_breaker):
-				return
-			text = self.ocr_with_multiprocessing("{0}test.png".format(global_var.tmp_dir),angle)
-			count = self.count_dict_words(text)
-			list.append((text,count,pos))
+			if (pos == mid_value and previous_optimised_count != None):
+				list.append((mid_value,previous_optimised_count))
+			else:
+				self.set_progress_bar("Scanning with resolution={} brightness={}".format(self.scan_resolution,pos),None,0.0030)
+				p = multiprocessing.Process(target=(self.scanner_objects[selected_scanner].scan), args=("{0}test.png".format(global_var.tmp_dir,self.get_page_number_as_string()),self.scan_resolution,pos,self.scan_area))
+				p.start()
+				while(p.is_alive()):
+					pass
+				if(self.process_breaker):
+					return
+				text = self.ocr_with_multiprocessing("{0}test.png".format(global_var.tmp_dir),angle)
+				count = self.count_dict_words(text)
+				list.append((count,pos))
 			pos = pos + distance
-			
-		list = sorted(list, key=lambda item: item[1],reverse=True)
-		return (list[0][1],list[0][2])
+		list = sorted(list, key=lambda item: item[0],reverse=True)
+		return (list[0][0],list[0][1])
 
 	def stop_process(self,widget):
 		self.process_breaker = True
