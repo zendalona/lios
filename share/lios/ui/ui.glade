@@ -611,7 +611,7 @@
                         <property name="can_focus">False</property>
                         <property name="image">image36</property>
                         <property name="use_stock">False</property>
-                        <accelerator key="F6" signal="activate"/>
+                        <accelerator key="F8" signal="activate"/>
                         <signal name="activate" handler="scan_single_image" swapped="no"/>
                       </object>
                     </child>
@@ -622,6 +622,7 @@
                         <property name="can_focus">False</property>
                         <property name="image">image2</property>
                         <property name="use_stock">False</property>
+                        <accelerator key="F8" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                         <signal name="activate" handler="scan_image_repeatedly" swapped="no"/>
                       </object>
                     </child>
