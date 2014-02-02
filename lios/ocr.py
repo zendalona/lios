@@ -42,7 +42,7 @@ def ocr_image_to_text(name,engine,language,angle):
 		
 	try:
 		with open("{0}output.txt".format(global_var.tmp_dir),encoding="utf-8") as file:
-			text = file.read()
+			text = file.read().strip()
 			os.remove("{0}output.txt".format(global_var.tmp_dir))
 			return text
 	except:
