@@ -149,7 +149,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		self.iconview_popup_menu_none_selected.append(item)
 		
 		item = Gtk.MenuItem("Save-All-Images")
-		item.connect("activate",self.save_selected_images)
+		item.connect("activate",self.save_all_images)
 		self.iconview_popup_menu_none_selected.append(item)
 
 		item = Gtk.MenuItem("Save-All-Images-As-Pdf")
@@ -398,8 +398,8 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 	    x = window.get_width()
 	    y = window.get_height()
 	    pixbuf = Gdk.pixbuf_get_from_window(window, 0, 0,x, y)
-	    pixbuf.savev("{0}{1}.png".format(global_var.tmp_dir,self.get_page_number_as_string()), 'png', [], [])
-	    self.add_image_to_image_list("{0}{1}.png".format(global_var.tmp_dir,self.get_page_number_as_string()))
+	    pixbuf.savev("{0}{1}.pnm".format(global_var.tmp_dir,self.get_page_number_as_string()), 'pnm', [], [])
+	    self.add_image_to_image_list("{0}{1}.pnm".format(global_var.tmp_dir,self.get_page_number_as_string()))
 	    self.update_page_number()
 	    
 	def cam_on_sync_message(self, bus, msg):
@@ -718,12 +718,16 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 								
 
 	def add_image_to_image_list(self,filename):
-		pixbuff =  GdkPixbuf.Pixbuf.new_from_file(filename)
-		height = pixbuff.get_height()
-		width = pixbuff.get_width()
-		ratio = (width*50)/height
-		buff = pixbuff.scale_simple(50,ratio,GdkPixbuf.InterpType.BILINEAR)
-		self.liststore_images.append([buff, filename])
+		try:
+			pixbuff =  GdkPixbuf.Pixbuf.new_from_file(filename)
+		except:
+			pass
+		else:
+			height = pixbuff.get_height()
+			width = pixbuff.get_width()
+			ratio = (width*50)/height
+			buff = pixbuff.scale_simple(50,ratio,GdkPixbuf.InterpType.BILINEAR)
+			self.liststore_images.append([buff, filename])
 		
 	def load_image(self,file_name_with_directory,destination,move):
 		if os.path.exists(destination):
@@ -745,13 +749,14 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		for pattern in "*.png","*.pnm","*.jpg","*.jpeg","*.tif","*.tiff","*.bmp","*.pbm":
 			filter.add_pattern(pattern)
 		open_file.add_filter(filter)
+		open_file.set_select_multiple(True)
 
 		response = open_file.run()
 		if response == Gtk.ResponseType.OK:
-			file_name_with_directory = open_file.get_filename()
-			filename = file_name_with_directory.split("/")[-1:][0].split(".")[0]
-			destination = "{0}{1}".format(global_var.tmp_dir,filename.replace(' ','-'))
-			self.load_image(file_name_with_directory,destination,False)			
+			for file_name_with_directory in open_file.get_filenames():
+				filename = file_name_with_directory.split("/")[-1:][0].split(".")[0]
+				destination = "{0}{1}".format(global_var.tmp_dir,filename.replace(' ','-'))
+				self.load_image(file_name_with_directory,destination,False)			
 		open_file.destroy()		
 
 	def import_pdf(self,wedget,data=None):
@@ -885,6 +890,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 
 	def scan_single_image(self,widget):
 		threading.Thread(target=self.scan).start()
+		self.update_page_number()
 
 	@on_thread
 	def scan_image_repeatedly(self,widget):
@@ -894,6 +900,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 			t.start()
 			while(t.is_alive()):
 				pass
+			self.update_page_number()
 			if(self.process_breaker):
 				break
 			time.sleep(self.time_between_repeated_scanning)
@@ -903,8 +910,8 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 	def scan(self):
 		selected_scanner = self.combobox_scanner.get_active()
 		self.make_scanner_wigets_inactive()
-		self.set_progress_bar("Scanning {}{}.png with resolution={} brightness={}".format(global_var.tmp_dir,self.get_page_number_as_string(),self.scan_resolution,self.scan_brightness),None,0.0030)
-		p = multiprocessing.Process(target=(self.scanner_objects[selected_scanner].scan), args=("{0}{1}.png".format(global_var.tmp_dir,self.get_page_number_as_string()),self.scan_resolution,self.scan_brightness,self.scan_area))
+		self.set_progress_bar("Scanning {}{}.pnm with resolution={} brightness={}".format(global_var.tmp_dir,self.get_page_number_as_string(),self.scan_resolution,self.scan_brightness),None,0.0030)
+		p = multiprocessing.Process(target=(self.scanner_objects[selected_scanner].scan), args=("{0}{1}.pnm".format(global_var.tmp_dir,self.get_page_number_as_string()),self.scan_resolution,self.scan_brightness,self.scan_area))
 		p.start()
 		while(p.is_alive()):
 			pass
@@ -913,7 +920,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		if(self.process_breaker):
 			self.make_scanner_wigets_active()
 			return			
-		self.add_image_to_image_list("{0}{1}.png".format(global_var.tmp_dir,self.get_page_number_as_string()))
+		self.add_image_to_image_list("{0}{1}.pnm".format(global_var.tmp_dir,self.get_page_number_as_string()))
 		self.make_scanner_wigets_active()
 		if(self.process_breaker):
 			self.make_scanner_wigets_active()
@@ -1006,9 +1013,9 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 			pass
 		if(self.process_breaker):
 			return			
-		text,angle = self.ocr("{0}{1}.png".format(global_var.tmp_dir,self.get_page_number_as_string()),self.mode_of_rotation,self.rotation_angle)
+		text,angle = self.ocr("{0}{1}.pnm".format(global_var.tmp_dir,self.get_page_number_as_string()),self.mode_of_rotation,self.rotation_angle)
 		self.put_text_to_buffer(text,True,True)
-		self.rotate(angle,"{0}{1}.png".format(global_var.tmp_dir,self.get_page_number_as_string()))
+		self.rotate(angle,"{0}{1}.pnm".format(global_var.tmp_dir,self.get_page_number_as_string()))
 		self.announce("Page {}".format(self.get_page_number_as_string()))
 		self.update_page_number()
 		
@@ -1028,7 +1035,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 			time.sleep(self.time_between_repeated_scanning)	
 			if(self.process_breaker):
 				break				
-			text,angle = self.ocr("{0}{1}.png".format(global_var.tmp_dir,self.get_page_number_as_string()),mode,angle)	
+			text,angle = self.ocr("{0}{1}.pnm".format(global_var.tmp_dir,self.get_page_number_as_string()),mode,angle)	
 			
 			if (i == 0):
 				self.put_text_to_buffer(text,True,True)
@@ -1036,11 +1043,12 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 				self.put_text_to_buffer(text,False,True)
 			self.announce("Page {}".format(self.get_page_number_as_string()))
 				
-			self.rotate(angle,"{0}{1}.png".format(global_var.tmp_dir,self.get_page_number_as_string()))
+			self.rotate(angle,"{0}{1}.pnm".format(global_var.tmp_dir,self.get_page_number_as_string()))
 			self.update_page_number()
 			
 			if mode == 1: #Change the mode partial automatic to Manual
 				mode = 2
+				self.announce("Angle to be rotated = {}".format(angle))
 							
 			if(self.process_breaker):
 				break
@@ -1053,11 +1061,11 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		angle = self.rotation_angle
 		if (mode == 0 or mode == 1):
 			self.set_progress_bar("Scanning with resolution={} brightness={}".format(self.scan_resolution,100),None,0.0030)
-			p = multiprocessing.Process(target=(self.scanner_objects[selected_scanner].scan), args=("{0}test.png".format(global_var.tmp_dir),self.scan_resolution,100,self.scan_area))
+			p = multiprocessing.Process(target=(self.scanner_objects[selected_scanner].scan), args=("{0}test.pnm".format(global_var.tmp_dir),self.scan_resolution,100,self.scan_area))
 			p.start()
 			while(p.is_alive()):
 				pass
-			text,angle = self.ocr("{0}test.png".format(global_var.tmp_dir),mode,angle)
+			text,angle = self.ocr("{0}test.pnm".format(global_var.tmp_dir),mode,angle)
 			print(angle)		
 		mid_value = 100; distance = 10; vary = 50;
 		count = None
@@ -1108,13 +1116,13 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 				list.append((mid_value,previous_optimised_count))
 			else:
 				self.set_progress_bar("Scanning with resolution={} brightness={}".format(self.scan_resolution,pos),None,0.0030)
-				p = multiprocessing.Process(target=(self.scanner_objects[selected_scanner].scan), args=("{0}test.png".format(global_var.tmp_dir,self.get_page_number_as_string()),self.scan_resolution,pos,self.scan_area))
+				p = multiprocessing.Process(target=(self.scanner_objects[selected_scanner].scan), args=("{0}test.pnm".format(global_var.tmp_dir,self.get_page_number_as_string()),self.scan_resolution,pos,self.scan_area))
 				p.start()
 				while(p.is_alive()):
 					pass
 				if(self.process_breaker):
 					return
-				text = self.ocr_with_multiprocessing("{0}test.png".format(global_var.tmp_dir),angle)
+				text = self.ocr_with_multiprocessing("{0}test.pnm".format(global_var.tmp_dir),angle)
 				count = self.count_dict_words(text)
 				list.append((count,pos))
 			pos = pos + distance
