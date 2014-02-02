@@ -937,15 +937,15 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		length = len(self.textbuffer.get_text(start,iter,False))
 		
 		if (give_page_number):
-			text = "Page-{}\n{}".format(self.get_page_number_as_string(),text)
+			text = "\nPage-{}\n{}".format(self.get_page_number_as_string(),text)
 			
 		self.textbuffer.insert(iter,text)
 		if(place_cursor):
 			iter = self.textbuffer.get_iter_at_offset(length)
 			self.textbuffer.place_cursor(iter)
-		Gdk.threads_leave()
 		start,end = self.textbuffer.get_bounds()
 		text = self.textbuffer.get_text(start,end,False)
+		Gdk.threads_leave()
 		with open("{}/.lios_recent".format(global_var.home_dir),"w",encoding="utf-8") as file:
 			file.write(text)		
 		
