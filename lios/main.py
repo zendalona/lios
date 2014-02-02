@@ -361,11 +361,8 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 	def announce(self,text,interrupt=True):
 		if (self.voice_message_state):
 			if(interrupt):
-				espeak.cancel()
-			else:
-				while(espeak.is_playing()):
-					pass
-			espeak.synth(text)	
+				os.system("pkill paplay")
+			os.system("espeak -v {} -a {} -s {} -p {} '{}' --stdout|paplay &".format(self.voice_list[self.voice_message_voice],self.voice_message_volume,self.voice_message_rate,self.voice_message_pitch,text.replace("'",'"')))	
 
 	def scan_using_cam(self,widget):		
 		self.src = Gst.ElementFactory.make('v4l2src', None)
@@ -398,8 +395,8 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 	    x = window.get_width()
 	    y = window.get_height()
 	    pixbuf = Gdk.pixbuf_get_from_window(window, 0, 0,x, y)
-	    pixbuf.savev("{0}{1}.pnm".format(global_var.tmp_dir,self.get_page_number_as_string()), 'pnm', [], [])
-	    self.add_image_to_image_list("{0}{1}.pnm".format(global_var.tmp_dir,self.get_page_number_as_string()))
+	    pixbuf.savev("{0}{1}.png".format(global_var.tmp_dir,self.get_page_number_as_string()), 'png', [], [])
+	    self.add_image_to_image_list("{0}{1}.png".format(global_var.tmp_dir,self.get_page_number_as_string()))
 	    self.update_page_number()
 	    
 	def cam_on_sync_message(self, bus, msg):
@@ -812,7 +809,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 			file_list = os.listdir(image_directory)
 			progress_step = len(file_list)/(10^len(file_list));progress = 0;			
 			formats = ["png","pnm","jpg","jpeg","tif","tiff","bmp","pbm"]
-			for image in file_list:
+			for image in sorted(file_list):
 				try:
 					if image.split(".")[1] in formats:
 						destination = "{0}{1}".format(global_var.tmp_dir,image.split(".")[0].replace(' ','-'))
