@@ -1,8 +1,8 @@
 # coding: latin-1
 
 ###########################################################################
-#    Lios - Sharada-Braille-Writer
-#    Copyright (C) 2012-2014 Nalin.x.Linux GPL-3
+#    Lios - Linux-Intelligent-Ocr-Solution
+#    Copyright (C) 2011-2014 Nalin.x.Linux GPL-3
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -609,23 +609,6 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 			self.liststore_images.clear()
 			self.drawingarea_load_image("{0}/ui/lios".format(global_var.data_dir))
 
-	@on_thread			
-	def ocr_selected_images(self,widget):
-		self.make_ocr_widgets_inactive()
-		progress_step = len(self.image_icon_view.get_selected_items())/(10^len(self.image_icon_view.get_selected_items()));progress = 0;
-		mode = self.mode_of_rotation
-		angle = self.rotation_angle
-		for item in reversed(self.image_icon_view.get_selected_items()):
-			self.set_progress_bar("Running OCR on selected image {}".format(self.liststore_images[item[0]][1]),progress,None)
-			progress = progress + progress_step;			
-			text,angle = self.ocr(self.liststore_images[item[0]][1],mode,angle)
-			self.put_text_to_buffer(text,False,False)
-			self.rotate(angle,self.liststore_images[item[0]][1])
-			if mode == 1:#Changing partial automatic to Manual
-				mode = 2
-			if(self.process_breaker):
-				break
-		self.make_ocr_widgets_active()
 	
 	def rotate_selected_images_to_right(self,widget):
 		self.rotate_selected_images_to_angle(90)
@@ -665,6 +648,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		progress_step = len(self.image_icon_view.get_selected_items())/(10^len(self.image_icon_view.get_selected_items()));progress = 0;
 		for item in reversed(self.image_icon_view.get_selected_items()):
 			self.set_progress_bar("Running OCR on selected image {} (without rotating)".format(self.liststore_images[item[0]][1]),progress,None)
+			self.announce("Recognising {} without rotating".format(self.liststore_images[item[0]][1]))
 			progress = progress + progress_step;
 			text,angle = self.ocr(self.liststore_images[item[0]][1],2,00)
 			self.put_text_to_buffer(text,False,False)
@@ -672,11 +656,32 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 				break
 		self.make_ocr_widgets_active()
 		self.set_progress_bar("completed!",None,0.01)
+		self.announce("Completed!")
 			
 	def ocr_all_images_without_rotating(self,widget):
 		self.image_icon_view.select_all()
 		self.ocr_selected_images_without_rotating(self,None)
-		
+
+	@on_thread			
+	def ocr_selected_images(self,widget):
+		self.make_ocr_widgets_inactive()
+		progress_step = len(self.image_icon_view.get_selected_items())/(10^len(self.image_icon_view.get_selected_items()));progress = 0;
+		mode = self.mode_of_rotation
+		angle = self.rotation_angle
+		for item in reversed(self.image_icon_view.get_selected_items()):
+			self.set_progress_bar("Running OCR on selected image {}".format(self.liststore_images[item[0]][1]),progress,None)
+			self.announce("Recognising {}".format(self.liststore_images[item[0]][1]))
+			progress = progress + progress_step;			
+			text,angle = self.ocr(self.liststore_images[item[0]][1],mode,angle)
+			self.put_text_to_buffer(text,False,False)
+			self.rotate(angle,self.liststore_images[item[0]][1])
+			if mode == 1:#Changing partial automatic to Manual
+				mode = 2
+				self.announce("Angle to be rotated = {}".format(angle))
+			if(self.process_breaker):
+				break
+		self.make_ocr_widgets_active()
+				
 	def ocr_all_images(self,widget):
 		self.image_icon_view.select_all()
 		self.ocr_selected_images(None)
@@ -753,7 +758,8 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 			for file_name_with_directory in open_file.get_filenames():
 				filename = file_name_with_directory.split("/")[-1:][0].split(".")[0]
 				destination = "{0}{1}".format(global_var.tmp_dir,filename.replace(' ','-'))
-				self.load_image(file_name_with_directory,destination,False)			
+				self.load_image(file_name_with_directory,destination,False)
+			self.announce("Images imported!")			
 		open_file.destroy()		
 
 	def import_pdf(self,wedget,data=None):
@@ -778,7 +784,8 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		shutil.copyfile(pdf_filename_full,destination)
 		os.makedirs(destination.split(".")[0],exist_ok=True)
 		
-		self.set_progress_bar("Extracting images from Pdf",None,0.001)	
+		self.set_progress_bar("Extracting images from Pdf",None,0.001)
+		self.announce("Extracting images from Pdf please wait!")	
 		p = multiprocessing.Process(target=lambda : os.system("pdfimages {} {}/{}".format(destination,destination.split(".")[0],pdf_filename.split(".")[0])) , args=())
 		p.start()
 		while(p.is_alive()):
@@ -796,7 +803,8 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 			except IndexError:
 				pass
 		os.rmdir(destination.split(".")[0])
-		self.set_progress_bar("Completed!",None,0.01)				
+		self.set_progress_bar("Completed!",None,0.01)
+		self.announce("Images imported!")				
 
 
 
@@ -818,7 +826,8 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 				except IndexError:
 					pass
 				progress = progress + progress_step;
-			self.set_progress_bar("Completed!",None,0.01)		
+			self.set_progress_bar("Completed!",None,0.01)
+			self.announce("Images imported!")		
 		folder.destroy()		
 
 	def configure_event(self,widget,event):
@@ -864,6 +873,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		self.make_scanner_wigets_inactive()
 		
 		self.set_progress_bar("Geting devices",None,0.001)
+		self.announce("Getting devices")
 		#Tuple - List Convertion is used to get all items in devices list 
 		q = multiprocessing.Queue()
 		p = multiprocessing.Process(target=(lambda q :q.put(tuple(scanner.scanner.get_devices()))), args=(q,))
@@ -875,6 +885,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		for device in list_:
 			if "scanner" in device[3]:
 				self.set_progress_bar("Setting Scanner {}".format(device),None,0.0030)
+				self.announce("Setting Scanner {}".format(device[2]))
 				self.scanner_objects.append(scanner.scanner(device,self.scan_driver,self.scanner_mode_switching,self.scanner_cache_calibration))
 				scanner_store.append([device[2]])
 		self.set_progress_bar("Completed!",None,0.01)	
@@ -903,10 +914,12 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 			time.sleep(self.time_between_repeated_scanning)
 			if(self.process_breaker):
 				break
+		self.announce("Job completed!")
 
 	def scan(self):
 		selected_scanner = self.combobox_scanner.get_active()
 		self.make_scanner_wigets_inactive()
+		self.announce("Scanning!")
 		self.set_progress_bar("Scanning {}{}.pnm with resolution={} brightness={}".format(global_var.tmp_dir,self.get_page_number_as_string(),self.scan_resolution,self.scan_brightness),None,0.0030)
 		p = multiprocessing.Process(target=(self.scanner_objects[selected_scanner].scan), args=("{0}{1}.pnm".format(global_var.tmp_dir,self.get_page_number_as_string()),self.scan_resolution,self.scan_brightness,self.scan_area))
 		p.start()
@@ -1049,6 +1062,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 							
 			if(self.process_breaker):
 				break
+		self.announce("Job completed!")
 
 	@on_thread
 	def optimize_brightness(self,wedget):
@@ -1111,6 +1125,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		while(pos <= mid_value + vary):
 			if (pos == mid_value and previous_optimised_count != None):
 				list.append((mid_value,previous_optimised_count))
+				self.announce("Got {} words at brightness {}.".format(previous_optimised_count,mid_value))
 			else:
 				self.set_progress_bar("Scanning with resolution={} brightness={}".format(self.scan_resolution,pos),None,0.0030)
 				p = multiprocessing.Process(target=(self.scanner_objects[selected_scanner].scan), args=("{0}test.pnm".format(global_var.tmp_dir,self.get_page_number_as_string()),self.scan_resolution,pos,self.scan_area))
@@ -1122,6 +1137,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 				text = self.ocr_with_multiprocessing("{0}test.pnm".format(global_var.tmp_dir),angle)
 				count = self.count_dict_words(text)
 				list.append((count,pos))
+				self.announce("Got {} words at brightness {}.".format(count,pos))
 			pos = pos + distance
 		list = sorted(list, key=lambda item: item[0],reverse=True)
 		return (list[0][0],list[0][1])
