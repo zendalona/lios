@@ -24,7 +24,10 @@ from gi.repository import GdkPixbuf
 
 
 def ocr_image_to_text(name,engine,language,angle):
-	pb = GdkPixbuf.Pixbuf.new_from_file(name)
+	try:
+		pb = GdkPixbuf.Pixbuf.new_from_file(name)
+	except:
+		return ""
 	pb = pb.rotate_simple(angle)
 	pb.savev("{0}for_ocr.png".format(global_var.tmp_dir), "png",[],[])
 	if engine == "CUNEIFORM":
