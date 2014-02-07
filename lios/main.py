@@ -57,7 +57,6 @@ import threading
 
 Gst.init(None)
 Gdk.threads_init()
-GObject.threads_init()
 
 
 
@@ -97,35 +96,35 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		#Iconview Popup menu
 		self.iconview_popup_menu_selected = Gtk.Menu()
 		
-		item = Gtk.MenuItem("Save-Selected-Images")
+		item = Gtk.MenuItem.new_with_label("Save-Selected-Images")
 		item.connect("activate",self.save_selected_images)
 		self.iconview_popup_menu_selected.append(item)
 
-		item = Gtk.MenuItem("Save-Selected-Images-As-Pdf")
+		item = Gtk.MenuItem.new_with_label("Save-Selected-Images-As-Pdf")
 		item.connect("activate",self.save_selected_images_as_pdf)
 		self.iconview_popup_menu_selected.append(item)
 		
-		item = Gtk.MenuItem("Delete-selected-Images")
+		item = Gtk.MenuItem.new_with_label("Delete-selected-Images")
 		item.connect("activate",self.iconview_image_delete)
 		self.iconview_popup_menu_selected.append(item)
 
-		item = Gtk.MenuItem("OCR-Selected-Images")
+		item = Gtk.MenuItem.new_with_label("OCR-Selected-Images")
 		item.connect("activate",self.ocr_selected_images)
 		self.iconview_popup_menu_selected.append(item)
 
-		item = Gtk.MenuItem("OCR-Selected-Images-Without-Rotating")
+		item = Gtk.MenuItem.new_with_label("OCR-Selected-Images-Without-Rotating")
 		item.connect("activate",self.ocr_selected_images_without_rotating)
 		self.iconview_popup_menu_selected.append(item)
 
-		item = Gtk.MenuItem("Rotate-selected-Images")
+		item = Gtk.MenuItem.new_with_label("Rotate-selected-Images")
 		submenu = Gtk.Menu()
-		rotate_item = Gtk.MenuItem("Right")
+		rotate_item = Gtk.MenuItem.new_with_label("Right")
 		rotate_item.connect("activate",self.rotate_selected_images_to_right)
 		submenu.append(rotate_item)
-		rotate_item = Gtk.MenuItem("Left")
+		rotate_item = Gtk.MenuItem.new_with_label("Left")
 		rotate_item.connect("activate",self.rotate_selected_images_to_left)
 		submenu.append(rotate_item)
-		rotate_item = Gtk.MenuItem("Twice")
+		rotate_item = Gtk.MenuItem.new_with_label("Twice")
 		rotate_item.connect("activate",self.rotate_selected_images_to_twice)
 		submenu.append(rotate_item)
 		item.set_submenu(submenu)
@@ -135,65 +134,65 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		#Nothing selected and iconview is not empty
 		self.iconview_popup_menu_none_selected = Gtk.Menu()
 		
-		item = Gtk.MenuItem("import-image")
+		item = Gtk.MenuItem.new_with_label("import-image")
 		item.connect("activate",self.import_image)
 		self.iconview_popup_menu_none_selected.append(item)
 		
 		self.iconview_popup_menu_zero_items = Gtk.Menu()
-		item = Gtk.MenuItem("import-pdf")
+		item = Gtk.MenuItem.new_with_label("import-pdf")
 		item.connect("activate",self.import_pdf)
 		self.iconview_popup_menu_none_selected.append(item)
 		
-		item = Gtk.MenuItem("Import-Folder")
+		item = Gtk.MenuItem.new_with_label("Import-Folder")
 		item.connect("activate",self.import_folder)
 		self.iconview_popup_menu_none_selected.append(item)
 		
-		item = Gtk.MenuItem("Save-All-Images")
+		item = Gtk.MenuItem.new_with_label("Save-All-Images")
 		item.connect("activate",self.save_all_images)
 		self.iconview_popup_menu_none_selected.append(item)
 
-		item = Gtk.MenuItem("Save-All-Images-As-Pdf")
+		item = Gtk.MenuItem.new_with_label("Save-All-Images-As-Pdf")
 		item.connect("activate",self.save_all_images_as_pdf)
 		self.iconview_popup_menu_none_selected.append(item)
 
-		item = Gtk.MenuItem("OCR-All-Images")
+		item = Gtk.MenuItem.new_with_label("OCR-All-Images")
 		item.connect("activate",self.ocr_all_images)
 		self.iconview_popup_menu_none_selected.append(item)
 
-		item = Gtk.MenuItem("OCR-All-Images-Without-Rotating")
+		item = Gtk.MenuItem.new_with_label("OCR-All-Images-Without-Rotating")
 		item.connect("activate",self.ocr_all_images_without_rotating)
 		self.iconview_popup_menu_none_selected.append(item)		
 
-		item = Gtk.MenuItem("Rotate-All-Images")
+		item = Gtk.MenuItem.new_with_label("Rotate-All-Images")
 		submenu = Gtk.Menu()
-		rotate_item = Gtk.MenuItem("Right")
+		rotate_item = Gtk.MenuItem.new_with_label("Right")
 		rotate_item.connect("activate",self.rotate_all_images_to_right)
 		submenu.append(rotate_item)
-		rotate_item = Gtk.MenuItem("Left")
+		rotate_item = Gtk.MenuItem.new_with_label("Left")
 		rotate_item.connect("activate",self.rotate_all_images_to_left)
 		submenu.append(rotate_item)
-		rotate_item = Gtk.MenuItem("Twice")
+		rotate_item = Gtk.MenuItem.new_with_label("Twice")
 		rotate_item.connect("activate",self.rotate_all_images_to_twice)
 		submenu.append(rotate_item)
 		item.set_submenu(submenu)
 		self.iconview_popup_menu_none_selected.append(item)
 		
-		item = Gtk.MenuItem("Delete-All-Images")
+		item = Gtk.MenuItem.new_with_label("Delete-All-Images")
 		item.connect("activate",self.iconview_image_clear)
 		self.iconview_popup_menu_none_selected.append(item)
 		
 		#ICONVIEW IS EMPTY
 		self.iconview_popup_menu_zero_items = Gtk.Menu()
 
-		item = Gtk.MenuItem("import-image")
+		item = Gtk.MenuItem.new_with_label("import-image")
 		item.connect("activate",self.import_image)
 		self.iconview_popup_menu_zero_items.append(item)
 		
-		item = Gtk.MenuItem("import-pdf")
+		item = Gtk.MenuItem.new_with_label("import-pdf")
 		item.connect("activate",self.import_pdf)
 		self.iconview_popup_menu_zero_items.append(item)
 		
-		item = Gtk.MenuItem("Import-Folder")
+		item = Gtk.MenuItem.new_with_label("Import-Folder")
 		item.connect("activate",self.import_folder)
 		self.iconview_popup_menu_zero_items.append(item)
 
@@ -201,20 +200,20 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		#TextView Popup Menu
 		self.textview_popup_menu = Gtk.Menu()
 
-		item = Gtk.MenuItem("Cut")
+		item = Gtk.MenuItem.new_with_label("Cut")
 		item.connect("activate",self.cut)
 		self.textview_popup_menu.append(item)
 
-		item = Gtk.MenuItem("Copy")
+		item = Gtk.MenuItem.new_with_label("Copy")
 		item.connect("activate",self.copy)
 		self.textview_popup_menu.append(item)
 
-		item = Gtk.MenuItem("Paste")
+		item = Gtk.MenuItem.new_with_label("Paste")
 		item.connect("activate",self.paste)
 		self.textview_popup_menu.append(item)
 		
 		self.textview_popup_menu_no_selection = Gtk.Menu()
-		item = Gtk.MenuItem("Paste")
+		item = Gtk.MenuItem.new_with_label("Paste")
 		item.connect("activate",self.paste)
 		self.textview_popup_menu_no_selection.append(item)
 
@@ -303,7 +302,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		self.activate_preferences()
 		
 		self.progressbar = self.guibuilder.get_object("progressbar")
-		self.timeout_id = GObject.timeout_add(20, self.progressbar_timeout, None)
+		self.timeout_id = GLib.timeout_add(20, self.progressbar_timeout, None)
 		self.activity_mode = True
 		self.set_progress_bar("Welcome to Lios 1.8",False,0.01)
 
@@ -557,7 +556,9 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 				height = pixbuff.get_height()
 				width = pixbuff.get_width()
 				ratio = (width*50)/height
+				Gdk.threads_enter()
 				buff = pixbuff.scale_simple(50,ratio,GdkPixbuf.InterpType.BILINEAR)
+				Gdk.threads_leave()
 				item[0] = buff
 	
 	def iconview_press_event(self, treeview, event):
@@ -728,8 +729,10 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 			height = pixbuff.get_height()
 			width = pixbuff.get_width()
 			ratio = (width*50)/height
+			Gdk.threads_enter()
 			buff = pixbuff.scale_simple(50,ratio,GdkPixbuf.InterpType.BILINEAR)
 			self.liststore_images.append([buff, filename])
+			Gdk.threads_leave()
 		
 	def load_image(self,file_name_with_directory,destination,move):
 		if os.path.exists(destination):
@@ -920,6 +923,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		selected_scanner = self.combobox_scanner.get_active()
 		self.make_scanner_wigets_inactive()
 		self.announce("Scanning!")
+		print("Scanning from scan")
 		self.set_progress_bar("Scanning {}{}.pnm with resolution={} brightness={}".format(global_var.tmp_dir,self.get_page_number_as_string(),self.scan_resolution,self.scan_brightness),None,0.0030)
 		p = multiprocessing.Process(target=(self.scanner_objects[selected_scanner].scan), args=("{0}{1}.pnm".format(global_var.tmp_dir,self.get_page_number_as_string()),self.scan_resolution,self.scan_brightness,self.scan_area))
 		p.start()
@@ -929,9 +933,11 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 			
 		if(self.process_breaker):
 			self.make_scanner_wigets_active()
-			return			
+			return
+		print("Adding image to list")			
 		self.add_image_to_image_list("{0}{1}.pnm".format(global_var.tmp_dir,self.get_page_number_as_string()))
 		self.make_scanner_wigets_active()
+		print("Image added")
 		if(self.process_breaker):
 			self.make_scanner_wigets_active()
 			return	
@@ -1005,12 +1011,14 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		
 	def ocr_with_multiprocessing(self,file_name,angle):
 		q = multiprocessing.Queue()
+		print("Running ocr with multi proc")
 		self.set_progress_bar("Running OCR on {} with Engine = {} Language = {} Angle = {}".format(file_name,self.ocr_engine,self.language,angle),None,0.001)
 		p = multiprocessing.Process(target=(lambda q,file_name : q.put(ocr_image_to_text(file_name,self.ocr_engine,self.language,angle))), args=(q,file_name))
 		p.start()
 		while(p.is_alive()):
 			pass
 		self.set_progress_bar("Recognition Completed!",None,0.01)
+		print("Getting text from queue")
 		return q.get();		
 	############## Core OCR  Process End ################################
 	
@@ -1036,23 +1044,26 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		angle = self.rotation_angle
 		self.process_breaker = False
 		for i in range(0,self.number_of_pages_to_scan):
+			print("calling scan")
 			t = threading.Thread(target=self.scan)
 			t.start()
 			while(t.is_alive()):
 				pass
 			if(self.process_breaker):
 				break
+			print("Sleeping")
 			time.sleep(self.time_between_repeated_scanning)	
 			if(self.process_breaker):
-				break				
+				break
+			print("Running Ocr")					
 			text,angle = self.ocr("{0}{1}.pnm".format(global_var.tmp_dir,self.get_page_number_as_string()),mode,angle)	
-			
+			print("Placing text and cursor")
 			if (i == 0):
 				self.put_text_to_buffer(text,True,True)
 			else:
 				self.put_text_to_buffer(text,False,True)
 			self.announce("Page {}".format(self.get_page_number_as_string()))
-				
+			print("Rotating image")	
 			self.rotate(angle,"{0}{1}.pnm".format(global_var.tmp_dir,self.get_page_number_as_string()))
 			self.update_page_number()
 			
@@ -1062,6 +1073,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 							
 			if(self.process_breaker):
 				break
+			print("Compleated ",i);
 		self.announce("Job completed!")
 
 	@on_thread
