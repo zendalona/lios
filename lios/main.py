@@ -1123,8 +1123,12 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 			else:
 				return True
 							
-			count, mid_value = self.optimize_with_model(mid_value,distance,vary,angle,count)			
-			result_text = "<b><span size = 'xx-large'> Got {} Words at brightness {} </span> </b>".format(count, mid_value) 
+			list = self.optimize_with_model(mid_value,distance,vary,angle,count)
+			count, mid_value = list[0][0],list[0][1];
+			result_text = "<b><span size = 'xx-large'>Optimisation Result "
+			for item in list:
+				result_text += "\nGot {} Words at brightness {}".format(item[0], item[1])
+			result_text += "</span> </b>" 
 			distance = distance / 2;
 			vary = distance;
 			
@@ -1132,14 +1136,18 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		
 	def optimize_with_model(self,mid_value,distance,vary,angle,previous_optimised_count=None):
 		selected_scanner = self.combobox_scanner.get_active()
-		list = []		
+		list = []
+		count = -1		
 		pos = mid_value - vary
 		while(pos <= mid_value + vary):
 			if (pos == mid_value and previous_optimised_count != None):
 				list.append((mid_value,previous_optimised_count))
 				self.announce("Got {} words at brightness {}.".format(previous_optimised_count,mid_value))
 			else:
-				self.set_progress_bar("Scanning with resolution={} brightness={}".format(self.scan_resolution,pos),None,0.0030)
+				if (count != -1):
+					self.set_progress_bar("Got {} words at brightness {}. Scanning with resolution={} brightness={}".format(count,pos-distance,self.scan_resolution,pos),None,0.0030)
+				else:
+					self.set_progress_bar("Scanning with resolution={} brightness={}".format(self.scan_resolution,pos),None,0.0030)
 				p = multiprocessing.Process(target=(self.scanner_objects[selected_scanner].scan), args=("{0}test.pnm".format(global_var.tmp_dir,self.get_page_number_as_string()),self.scan_resolution,pos,self.scan_area))
 				p.start()
 				while(p.is_alive()):
@@ -1152,7 +1160,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 				self.announce("Got {} words at brightness {}.".format(count,pos))
 			pos = pos + distance
 		list = sorted(list, key=lambda item: item[0],reverse=True)
-		return (list[0][0],list[0][1])
+		return (list)
 
 	def stop_process(self,widget):
 		self.process_breaker = True
