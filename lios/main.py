@@ -445,6 +445,13 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		self.finish_x,self.finish_y=event.get_coords()
 		self.on_select = False
 		print("Finish X - {0}, Y - {1}".format(self.finish_x,self.finish_y))
+		
+		out_of_range = False
+		max_width = self.pb.get_width()
+		max_height = self.pb.get_height()
+		if (self.start_x > max_width or self.start_y > max_height or self.finish_x > max_width or self.finish_y > max_height ):
+			out_of_range = True
+		
 		overlaped = False
 		for item in self.rectangle_store:
 			start_x = item[0]
@@ -457,6 +464,11 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		if (overlaped):
 			dialog = Gtk.MessageDialog(None, 0, Gtk.MessageType.INFO,Gtk.ButtonsType.OK, "Rectangle Overlaped!")
 			dialog.format_secondary_text("Rectangle overlaped with Start - ({0},{1})  End - ({2},{3})".format(start_x,start_y,finish_x,finish_y))
+			dialog.run()
+			dialog.destroy()
+		elif (out_of_range):
+			dialog = Gtk.MessageDialog(None, 0, Gtk.MessageType.INFO,Gtk.ButtonsType.OK, "Selection out of range!")
+			dialog.format_secondary_text("Selection out of range! Please select area inside the image")
 			dialog.run()
 			dialog.destroy()
 		else:
@@ -732,6 +744,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 			Gdk.threads_enter()
 			buff = pixbuff.scale_simple(50,ratio,GdkPixbuf.InterpType.BILINEAR)
 			self.liststore_images.append([buff, filename])
+			self.image_icon_view.queue_draw()
 			Gdk.threads_leave()
 		
 	def load_image(self,file_name_with_directory,destination,move):
