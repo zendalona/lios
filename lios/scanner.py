@@ -31,8 +31,8 @@ class scanner():
 		sane_version = sane.init()
 		try:
 			self.scanner = sane.open(device[0])
-		except _sane.error:
-			pass
+		except sane._sane.error:
+			print("sane error!")
 		else:
 			if(scanner_mode_switching):
 				#Setting Scanning Mode
