@@ -967,17 +967,20 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 				self.announce("Setting Scanner {}".format(device[2]))
 				self.scanner_objects.append(scanner.scanner(device,self.scan_driver,self.scanner_mode_switching,self.scanner_cache_calibration))
 				scanner_store.append([device[2]])
-		self.set_progress_bar("Completed!",None,0.01)	
+			
 			
 		self.combobox_scanner.set_model(scanner_store)		
 		
 		if (len(scanner_store) != 0):
 			self.combobox_scanner.set_active(0)
 			self.make_scanner_wigets_active()
+			self.set_progress_bar("Completed!",None,0.01)
 		else:
 			self.button_refresh.set_sensitive(True)
 			self.spinner.set_state(False)
 			self.spinner.hide()
+			self.announce("No Scanner Detected!")
+			self.set_progress_bar("No Scanner Detected!",None,0.01)
 		self.make_preferences_widgets_active()
 					
 	@on_thread
