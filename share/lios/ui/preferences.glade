@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated with glade 3.16.1 -->
 <interface>
-  <!-- interface-requires gtk+ 3.0 -->
+  <requires lib="gtk+" version="3.0"/>
   <object class="GtkAdjustment" id="adjustment_brightness">
     <property name="upper">200</property>
     <property name="value">200</property>
@@ -736,7 +737,7 @@
                             </child>
                             <child>
                               <object class="GtkCheckButton" id="checkbutton_say">
-                                <property name="label" translatable="yes">Say</property>
+                                <property name="label" translatable="yes">Announce events</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
@@ -975,8 +976,8 @@
                 <child>
                   <object class="GtkCheckButton" id="checkbutton_skew">
                     <property name="label" translatable="yes">Run automatic Skew-Correcter before recognationcheckbutton</property>
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
+                    <property name="sensitive">False</property>
+                    <property name="can_focus">False</property>
                     <property name="receives_default">False</property>
                     <property name="xalign">0</property>
                     <property name="draw_indicator">True</property>
