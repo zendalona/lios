@@ -255,6 +255,18 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		
 		#OCR Wedgets
 		self.ocr_submenu = self.guibuilder.get_object("OCR_Submenu")
+
+		#Preference Wedgets
+		self.toolbutton_preferences = self.guibuilder.get_object("toolbutton_preferences")
+		self.preferences_menu = self.guibuilder.get_object("preferences_menu")
+
+		#Image Wedgets
+		self.image_submenu = self.guibuilder.get_object("ImageMenu")
+		self.toolbutton_import_pdf = self.guibuilder.get_object("toolbutton_import_pdf")
+		self.toolbutton_import_images = self.guibuilder.get_object("toolbutton_import_images")
+		self.toolbutton_import_folder = self.guibuilder.get_object("toolbutton_import_folder")
+		self.box_drawing_area_buttons = self.guibuilder.get_object("box_drawing_area_buttons")
+		self.toolbar_image = self.guibuilder.get_object("toolbar_image")
 		
 		#Breaker
 		self.process_breaker = False
@@ -375,6 +387,9 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		self.box_drawing_area_tree_and_buttons.set_sensitive(False)
 		self.box_cam_buttons.show()
 		self.notebook.set_current_page(1)
+		self.make_preferences_widgets_inactive()
+		self.make_ocr_widgets_inactive()
+		self.make_image_widgets_inactive()		
 		
 		self.drawingarea.set_size_request(self.cam_x,self.cam_y)
 		self.xid = self.drawingarea.get_property('window').get_xid()
@@ -385,6 +400,9 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		self.pipeline.set_state(Gst.State.NULL)
 		self.box_drawing_area_tree_and_buttons.set_sensitive(True)
 		self.box_cam_buttons.hide()
+		self.make_preferences_widgets_active()
+		self.make_ocr_widgets_active()
+		self.make_image_widgets_active()		
 		self.pipeline.remove(self.src)
 		self.pipeline.remove(self.sink)	
 		self.drawingarea_load_image("{0}/ui/lios".format(global_var.data_dir))
@@ -445,6 +463,12 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		self.finish_x,self.finish_y=event.get_coords()
 		self.on_select = False
 		print("Finish X - {0}, Y - {1}".format(self.finish_x,self.finish_y))
+		
+		#Swap coordinate if selected in reverse direction
+		if(self.start_x >= self.finish_x):
+			self.start_x,self.finish_x = self.finish_x,self.start_x
+		if(self.start_y >= self.finish_y):
+			self.start_y,self.finish_y = self.finish_y,self.start_y
 		
 		out_of_range = False
 		max_width = self.pb.get_width()
@@ -511,7 +535,9 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 	@on_thread			
 	def ocr_selected_areas(self,widget):
 		self.process_breaker = False
+		self.make_preferences_widgets_inactive()
 		self.make_ocr_widgets_inactive()
+		self.make_image_widgets_inactive()
 		mode = self.mode_of_rotation
 		angle = self.rotation_angle
 		pb = GdkPixbuf.Pixbuf.new_from_file(self.pb_file_name)
@@ -527,7 +553,9 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 			if(self.process_breaker):
 				break;
 		self.set_progress_bar("completed!",None,0.01)
+		self.make_preferences_widgets_active()
 		self.make_ocr_widgets_active()
+		self.make_image_widgets_active()
 
 	def zoom_in(self,widget):
 		self.zoom_level = self.zoom_level * 4/3
@@ -658,6 +686,8 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 	@on_thread
 	def ocr_selected_images_without_rotating(self,widget):
 		self.make_ocr_widgets_inactive()
+		self.make_preferences_widgets_inactive()
+		self.make_image_widgets_inactive()
 		progress_step = len(self.image_icon_view.get_selected_items())/(10^len(self.image_icon_view.get_selected_items()));progress = 0;
 		for item in reversed(self.image_icon_view.get_selected_items()):
 			self.set_progress_bar("Running OCR on selected image {} (without rotating)".format(self.liststore_images[item[0]][1]),progress,None)
@@ -667,17 +697,21 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 			self.put_text_to_buffer(text,False,False)
 			if(self.process_breaker):
 				break
-		self.make_ocr_widgets_active()
 		self.set_progress_bar("completed!",None,0.01)
 		self.announce("Completed!")
+		self.make_ocr_widgets_active()
+		self.make_preferences_widgets_active()
+		self.make_image_widgets_active()
 			
 	def ocr_all_images_without_rotating(self,widget):
 		self.image_icon_view.select_all()
-		self.ocr_selected_images_without_rotating(self,None)
+		self.ocr_selected_images_without_rotating(self)
 
 	@on_thread			
 	def ocr_selected_images(self,widget):
 		self.make_ocr_widgets_inactive()
+		self.make_preferences_widgets_inactive()
+		self.make_image_widgets_inactive()
 		progress_step = len(self.image_icon_view.get_selected_items())/(10^len(self.image_icon_view.get_selected_items()));progress = 0;
 		mode = self.mode_of_rotation
 		angle = self.rotation_angle
@@ -694,6 +728,8 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 			if(self.process_breaker):
 				break
 		self.make_ocr_widgets_active()
+		self.make_preferences_widgets_active()
+		self.make_image_widgets_active()
 				
 	def ocr_all_images(self,widget):
 		self.image_icon_view.select_all()
@@ -741,11 +777,11 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 			height = pixbuff.get_height()
 			width = pixbuff.get_width()
 			ratio = (width*50)/height
-			Gdk.threads_enter()
+			#Gdk.threads_enter()
 			buff = pixbuff.scale_simple(50,ratio,GdkPixbuf.InterpType.BILINEAR)
 			self.liststore_images.append([buff, filename])
 			self.image_icon_view.queue_draw()
-			Gdk.threads_leave()
+			#Gdk.threads_leave()
 		
 	def load_image(self,file_name_with_directory,destination,move):
 		if os.path.exists(destination):
@@ -759,6 +795,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 			self.add_image_to_image_list(destination)
 
 	def import_image(self,wedget,data=None):
+		self.make_image_widgets_inactive()
 		open_file = Gtk.FileChooserDialog("Select image file to import",None,Gtk.FileChooserAction.OPEN,buttons=(Gtk.STOCK_OPEN,Gtk.ResponseType.OK))
 		open_file.set_current_folder(global_var.home_dir)
 
@@ -776,7 +813,8 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 				destination = "{0}{1}".format(global_var.tmp_dir,filename.replace(' ','-'))
 				self.load_image(file_name_with_directory,destination,False)
 			self.announce("Images imported!")			
-		open_file.destroy()		
+		open_file.destroy()
+		self.make_image_widgets_active()		
 
 	def import_pdf(self,wedget,data=None):
 		open_file = Gtk.FileChooserDialog("Select Pdf file to import",None,Gtk.FileChooserAction.OPEN,buttons=(Gtk.STOCK_OPEN,Gtk.ResponseType.OK))
@@ -793,6 +831,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 	
 	@on_thread
 	def import_images_from_pdf(self,pdf_filename_full):
+		self.make_image_widgets_inactive()
 		pdf_filename = pdf_filename_full.split("/")[-1:][0]
 		filename = pdf_filename.split(".")[0]
 		pdf_filename = pdf_filename.replace(' ','-').replace(')','-').replace('(','-')
@@ -820,11 +859,13 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 				pass
 		os.rmdir(destination.split(".")[0])
 		self.set_progress_bar("Completed!",None,0.01)
-		self.announce("Images imported!")				
+		self.announce("Images imported!")
+		self.make_image_widgets_active()				
 
 
 
 	def import_folder(self,wedget,data=None):
+		self.make_image_widgets_inactive()
 		folder = Gtk.FileChooserDialog("Select Folder contains images to import",None,Gtk.FileChooserAction.SELECT_FOLDER,buttons=(Gtk.STOCK_OPEN,Gtk.ResponseType.OK))
 		folder.set_current_folder(global_var.home_dir)
 		response = folder.run()
@@ -844,22 +885,43 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 				progress = progress + progress_step;
 			self.set_progress_bar("Completed!",None,0.01)
 			self.announce("Images imported!")		
-		folder.destroy()		
+		folder.destroy()
+		self.make_image_widgets_active()		
 
 	def configure_event(self,widget,event):
 		self.paned.set_position(event.width-230)
 		self.paned_drawing.set_position(200)
 	
+	def make_preferences_widgets_inactive(self):
+		self.toolbutton_preferences.set_sensitive(False)
+		self.preferences_menu.set_sensitive(False)
+
+	def make_preferences_widgets_active(self):
+		self.toolbutton_preferences.set_sensitive(True)
+		self.preferences_menu.set_sensitive(True)
+
 	def make_ocr_widgets_inactive(self):
 		self.ocr_submenu.set_sensitive(False)
-		self.spinner.show()
-		self.spinner.set_state(True)
 
 	def make_ocr_widgets_active(self):
 		self.ocr_submenu.set_sensitive(True)
-		self.spinner.hide()
-		self.spinner.set_state(False)
-	
+
+	def make_image_widgets_inactive(self):
+		self.image_submenu.set_sensitive(False)
+		self.toolbutton_import_images.set_sensitive(False)
+		self.toolbutton_import_pdf.set_sensitive(False)
+		self.toolbutton_import_folder.set_sensitive(False)
+		self.box_drawing_area_buttons.set_sensitive(False)
+		self.toolbar_image.set_sensitive(False)
+
+	def make_image_widgets_active(self):
+		self.image_submenu.set_sensitive(True)
+		self.toolbutton_import_images.set_sensitive(True)
+		self.toolbutton_import_pdf.set_sensitive(True)
+		self.toolbutton_import_folder.set_sensitive(True)
+		self.box_drawing_area_buttons.set_sensitive(True)
+		self.toolbar_image.set_sensitive(True)
+			
 	def make_scanner_wigets_inactive(self):
 		self.combobox_scanner.set_sensitive(False)
 		self.spinner.set_state(True)
@@ -886,6 +948,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		scanner_store = Gtk.ListStore(str)
 		self.scanner_objects = []
 		
+		self.make_preferences_widgets_inactive()
 		self.make_scanner_wigets_inactive()
 		
 		self.set_progress_bar("Geting devices",None,0.001)
@@ -907,17 +970,33 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		self.set_progress_bar("Completed!",None,0.01)	
 			
 		self.combobox_scanner.set_model(scanner_store)		
-		self.combobox_scanner.set_active(0)
-		#if (len(scanner_store) == 0):
-		self.make_scanner_wigets_active()
+		
+		if (len(scanner_store) != 0):
+			self.combobox_scanner.set_active(0)
+			self.make_scanner_wigets_active()
+		else:
+			self.button_refresh.set_sensitive(True)
+			self.spinner.set_state(False)
+			self.spinner.hide()
+		self.make_preferences_widgets_active()
 					
-
+	@on_thread
 	def scan_single_image(self,widget):
-		threading.Thread(target=self.scan).start()
+		self.make_scanner_wigets_inactive()
+		self.make_preferences_widgets_inactive()		
+		t = threading.Thread(target=self.scan)
+		t.start()
+		while(t.is_alive()):
+			pass
 		self.update_page_number()
+		self.make_scanner_wigets_active()
+		self.make_preferences_widgets_active()
+
 
 	@on_thread
 	def scan_image_repeatedly(self,widget):
+		self.make_scanner_wigets_inactive()
+		self.make_preferences_widgets_inactive()
 		self.process_breaker = False
 		for i in range(0,self.number_of_pages_to_scan):
 			t = threading.Thread(target=self.scan)
@@ -931,10 +1010,11 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 			if(self.process_breaker):
 				break
 		self.announce("Job completed!")
+		self.make_scanner_wigets_active()
+		self.make_preferences_widgets_active()
 
 	def scan(self):
 		selected_scanner = self.combobox_scanner.get_active()
-		self.make_scanner_wigets_inactive()
 		self.announce("Scanning!")
 		print("Scanning from scan")
 		self.set_progress_bar("Scanning {}{}.pnm with resolution={} brightness={}".format(global_var.tmp_dir,self.get_page_number_as_string(),self.scan_resolution,self.scan_brightness),None,0.0030)
@@ -945,14 +1025,11 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		self.set_progress_bar("Scan Completed!",None,0.01)
 			
 		if(self.process_breaker):
-			self.make_scanner_wigets_active()
 			return
 		print("Adding image to list")			
 		self.add_image_to_image_list("{0}{1}.pnm".format(global_var.tmp_dir,self.get_page_number_as_string()))
-		self.make_scanner_wigets_active()
 		print("Image added")
 		if(self.process_breaker):
-			self.make_scanner_wigets_active()
 			return	
 
 	def put_text_to_buffer(self,text,place_cursor = False,give_page_number = False):
@@ -1037,22 +1114,35 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 	
 	@on_thread	
 	def scan_and_ocr(self,widget):
+		self.make_scanner_wigets_inactive()
+		self.make_preferences_widgets_inactive()
+		self.make_ocr_widgets_inactive()
 		self.process_breaker = False
 		t = threading.Thread(target=self.scan)
 		t.start()
 		while(t.is_alive()):
 			pass
 		if(self.process_breaker):
+			self.make_scanner_wigets_active()
+			self.make_ocr_widgets_active()
+			self.make_preferences_widgets_active()
 			return			
 		text,angle = self.ocr("{0}{1}.pnm".format(global_var.tmp_dir,self.get_page_number_as_string()),self.mode_of_rotation,self.rotation_angle)
 		self.put_text_to_buffer(text,True,True)
 		self.rotate(angle,"{0}{1}.pnm".format(global_var.tmp_dir,self.get_page_number_as_string()))
 		self.announce("Page {}".format(self.get_page_number_as_string()))
 		self.update_page_number()
+		self.make_scanner_wigets_active()
+		self.make_ocr_widgets_active()
+		self.make_preferences_widgets_active()
+
 		
 			
 	@on_thread			
 	def scan_and_ocr_repeatedly(self,widget):
+		self.make_scanner_wigets_inactive()
+		self.make_preferences_widgets_inactive()
+		self.make_ocr_widgets_inactive()
 		mode = self.mode_of_rotation
 		angle = self.rotation_angle
 		self.process_breaker = False
@@ -1088,9 +1178,17 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 				break
 			print("Compleated ",i);
 		self.announce("Job completed!")
+		self.make_scanner_wigets_active()
+		self.make_ocr_widgets_active()
+		self.make_preferences_widgets_active()
+
 
 	@on_thread
 	def optimize_brightness(self,wedget):
+		self.make_scanner_wigets_inactive()
+		self.make_ocr_widgets_inactive()
+		self.make_preferences_widgets_inactive()
+
 		selected_scanner = self.combobox_scanner.get_active()
 		self.process_breaker = False
 		mode = self.mode_of_rotation
@@ -1127,6 +1225,8 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 			Gdk.threads_leave()				
 			if (response == Gtk.ResponseType.APPLY):
 				self.scan_brightness = mid_value
+				self.make_scanner_wigets_active()
+				self.make_ocr_widgets_inactive()
 				return True
 			elif (response == Gtk.ResponseType.ACCEPT):
 				mid_value = spinbutton_value.get_value()
@@ -1134,9 +1234,17 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 				vary = spinbutton_vary.get_value()
 				self.scan_brightness = mid_value
 			else:
+				self.make_scanner_wigets_active()
+				self.make_ocr_widgets_active()
+				self.make_preferences_widgets_active()
 				return True
 							
 			list = self.optimize_with_model(mid_value,distance,vary,angle,count)
+			if (not list):
+				self.make_scanner_wigets_active()
+				self.make_ocr_widgets_active()
+				self.make_preferences_widgets_active()
+				return True
 			count, mid_value = list[0][0],list[0][1];
 			result_text = "<b><span size = 'xx-large'>Optimisation Result "
 			for item in list:
