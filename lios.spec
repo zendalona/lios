@@ -16,13 +16,13 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/
 
 Name:           lios
-Version:        1.8
-Release:        1.8
+Version:        1.9
+Release:        1.9
 License:        GPL-3.0+
 Summary:        Linux-Intelligent-Ocr-Solution
-Url:            https://launchpad.net/python-espeak
+Url:            http://sourceforge.net/projects/lios/
 Group:          Graphics
-Source0:        lios-1.8.tar.gz
+Source0:        lios-1.9.tar.gz
 BuildArch:      noarch
 Requires:       espeak 
 Requires:       python3-gobject
@@ -35,7 +35,7 @@ Requires:       python3-espeak
 
 
 %description
-Lios is a free and open source software for converting print in to text using either scanner or a camera, It can also produce text out of scanned images from other sources such as Pdf, Image or Folder containing Images. Program is given total accessibility for visually impaired. Lios is written in python, and we release it under GPL3 license. Lios will work with Debian based operating systems. There are great many possibilities for this program, Feedback is the key to it, Expecting your feedback Nalin.x.linux@gmail.com,sath.linux@gmail.com
+Lios is a free and open source software for converting print in to text using either scanner or a camera, It can also produce text out of scanned images from other sources such as Pdf, Image or Folder containing Images. Program is given total accessibility for visually impaired. Lios is written in python3, and we release it under GPL-3 license. There are great many possibilities for this program, Feedback is the key to it, Expecting your feedback Nalin.x.Linux@gmail.com
 
 %prep
 %setup -q

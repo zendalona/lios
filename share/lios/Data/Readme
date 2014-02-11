@@ -1,95 +1,48 @@
 Linux-intelligent-ocr-solution
 
-Lios is a free and open source software for converting print in to text using either scanner or a camera,
-It can also produce text out of scanned images from other sources such as Pdf,
-Image or Folder containing Images. Program is given total accessibility for visually impaired. Lios is written in python,
-and we release it under GPL3 license. Lios will work with Debian based operating systems. There are great many possibilities for this program,
-Feedback is the key to it, Expecting your feedback Nalin.x.Linux@Gmail.com
-
-What is new in Lios-1.7
-
-1. Skew-Correcter,
-2. Find and Replace,
-3. Exact code structure,
-4. Temporary files will be handled in home directory,
-5. All the reported bug's fixed.
+Lios is a free and open source software for converting print in to text using either scanner or a camera, It can also produce text out of scanned images from other sources such as Pdf, Image or Folder containing Images. Program is given total accessibility for visually impaired. Lios is written in python3, and we release it under GPL-3 license. There are great many possibilities for this program, Feedback is the key to it, Expecting your feedback Nalin.x.Linux@gmail.com
 
 Features.
 
-1. Single scan & Repeated Scanning,
-2. Ocr Folder, Ocr Pdf and Ocr image only,
-3. 2 OCR Engines (CUNEIFORM,TESSERACT),
-4. 24 Language support (Given at the end), 30 more languages can be installed in Tesseract,
-5. Full GUI environment, scan to user interface, ocr user interface image, and extra user interface options including image rotation, zoom options, Re-O,C,R the current image and feedback.,
-6. Brightness optimizer,
-7. OCR Selected Image Area,
-8. Skew-Correcter(Can be enabled from recognition page in preferences),
-9. Full Auto Rotation for any Language(If aspell installed for the language, Eg : "sudo apt-get install aspell-hi" for Hindi,
-10. Text Reading with Highlighting, With user selected Colour, Font, and Background Colour,
-11. Display Preferences for Low vision,
-12. Audio converter,
-13. Dictionary Support for English(Artha)
-14. Spell-checker,
+1. Acquire image from Scanner
+2. Import images from PDFs,Folder
+3. Scan using Web-cam(beta)
+4. Support two OCR Engines (CUNEIFORM,TESSERACT),
+5. 24 Language support (Given at the end), 30 more languages can be installed in Tesseract,
+6. OCR Selected images(With or without rotation)
+7. Full Auto Rotation for any Language(If aspell installed for the language, Eg : "sudo apt-get install aspell-hi" for Hindi,
+8. OCR Selected Areas(Rectangle selection),
+9. Output Insert position(Where the output is to be inserted)
+10. Scan and OCR directly.
+11. Selection of Scan area, brightness, resolution and time between repeated scanning,
+12. Advanced Brightness optimizer,
+13. Cache calibration
 15. Selection of starting page number, page numbering mode and number of pages to scan,
-16. Selection of Scan area, brightness, resolution and time between repeated scanning,
-17. Options for save, load and reset settings,
-18. Good text manipulation with Find, Find-and-Replace, Go-To-Page, Go-To-Line, Append file, and Punch File,
-19. Provision for submitting issues,
-20. And more features are in the preferences.
-
-How to start using Lios.
-
-1. Scan&Ocr : In order to start new scan, first press ctrl+n for new, and then press f9 for single scan or ctrl+f9 for repeated scanning. To set the scanning preferences press ctrl+p and set the starting page number, Mode of page numbering, double page mode if you intend to keep 2 pages at a time, rotation to select the way in which you want the program to rotate the images before conversion. In full automatic rotation mode, one can keep the book in 00 90 180 and 270 degree angle. In partial rotation mode program will scan once to find out the position of the book and then the rotation will be kept. In manual mode one should select the angle while selecting Rotation-Mode in preferences.  Partial and manual mode is faster than full auto rotation mode in ocr process. One can select the number of pages to be scanned at a stretch by setting number of pages in the case of repeated scanning. One can stop all scanning process by pressing ctrl+f4.
-
-2. Ocr-Image : Lios can convert image file to text which is in jpg, tif, tiff, pbm, ppm, png, pnm and bmp.
-
-3. Ocr-folder : To convert the images in a folder, select scan from folder option from ocr menu and then select the input folder.
-
-4. Ocr-Pdf file : Select Ocr pdf from ocr menu and then select the input file. It is recommended to test both engine to get more efficiency in pdf conversion.
-
-5. Brightness checker : To set a n exact value of brightness or threshold is the best way to ensure maximum efficiency out of ocr engines. To find out the best value, go to tools menu and select brightness checker. This utility will scan for 15 or 17 times to complete the process. After the process, number of words detected at different values will be shone in tabs. If you want to know the precise value only, shift tab and then tab to apply the value.
-
-6. square selection of image.
-This feature helps one to select the area of the image on the screen and convert it in to text.
-
-7. Skew-corrector.
-This feature can be enabled from recognition page in the preferences so that one may get  an exact image for ocr process even if he makes ten to twenty degree mistake in keeping the book in the scanner.Note that the skewing may take a few extra seconds.
-
-8. Text Reader : Now we have facilitated better quality of reading with text hi-lighting. After the appearance of the first page on the screen one can use f5 key to start and stop reading from the cursor(ctrl+home may be pressed before start reading). Also one can opt for the colour, fond-size and background of the high-lighted text from the preferences. 
-
-9. Text Manipulation : To go to page, press ctrl+g spin the count and press enter. One can go to any line by pressing ctrl+l and ctrl+f will help to find any word in the document.
-
-10. Spell-checker : Press ctrl+f7 and all the misspelled words will appear and one can change, ignore, ignore-all or change-all. also one can hit the enter to say the context of the word, Now there is facility to see the context, choose from the suggestions, change and ignore et.Please be careful to ignore if the first word is a blank one.
-
-11. Find and replace.
-This is an important feature in text manipulation. Ocr process can create many unwanted signs and words. such signs and words may be replaced or eliminated at a stretch, using this feature.
-
-12. Artha : (Must be installed "sudo apt-get install artha").  In order to find out the meaning of English words, first select the word and then press alt+ctrl+w and tab to find the meaning. Caution for the first time one has to press alt+control+w twice so as to switch on artha.
-
-13. Audio-conversion : Lios can convert the text opened in Lios to wav files. To convert the text in to speech, go to tools menu and select audio converter.
-
-14. Scanner-drivers : There are 2 scanner drivers if the default driver fails to detect your scanner, one can opt for 
-the second driver from the Lios preferences. For your special notice. in the second driver, stop the scanner by pressing control+f4 while the scanner retrieves only, 
-otherwise there is a possibility that scanner getting struck. and one should then re-pin the scanner.
-
-15. Hindi ocr (Must be installed "sudo apt-get install tesseract-ocr-hin aspell-hi").
-in order to scan Hindi books, one can select tesseract engine and language from Hindi from Lios preferences. 
-
+16. Side by side view of image and output
+17. Basic user interface options including image rotation and zoom options
+19. Print text(beta)
+20. Export as pdf(beta)
+21. Audio converter,
+22. Spell-checker,
+23. Good text manipulation with Find, Find-and-Replace, Go-To-Page, Go-To-Line, Append file, and Punch File,
+24. Options for save, load and reset settings,
+25. Text Reading with Highlighting, With user selected Color, Font, and Background Color,
+26. Display Preferences for Low vision,
+27. Dictionary Support for English(Artha)
+28. And more features are in the preferences.
 
 Short-cut Keys.
 Scan and ocr F9,
 Scan and ocr Repeatedly Ctrl+F9,
 Stop all process Ctrl+F4,
 New Ctrl+N,
-Open file or Image Ctrl+O,
+Open file Ctrl+O,
 Save Ctrl+S,
-Scan to user interface F6,
-Ocr Current or User interface Image F3,
+Scan Image F8,
+Scan Image Repeatedly Ctrl+F8,
 Lios Preferences Ctrl+P,
-Show/Hide Image Ctrl+H,
 Artha Alt+Ctrl+W,
 Spell Checker Ctrl+F7,
-Feedback Ctrl+Alt+F,
 Find Ctrl+F,
 Read/Stop F5,
 Go To Line Ctrl+L,
@@ -102,7 +55,7 @@ Installed Languages List : Bulgarian, Croatian, Czech, Danish, Dutch, English, E
 
 Disclaimer
 
-    Copyright (c) 2008-2012 Lios Development Team 
+    Copyright (c) 2011-2014 Lios Development Team 
 
     All rights reserved . Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met: 
 
