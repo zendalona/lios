@@ -21,6 +21,8 @@ import os
 
 #Where the data is located
 data_dir = "/usr/share/lios";
+#data_dir = "/usr/local/share/lios";
+
 
 #Home folder
 home_dir = os.environ['HOME']
@@ -29,3 +31,5 @@ tmp_dir = "/tmp/Lios/"
 
 tesseract_data = '/usr/share/tesseract/tessdata/'
 #tesseract_data = '/usr/share/tesseract-ocr/tessdata/'
+
+image_formats = ["png","pnm","jpg","jpeg","tif","tiff","bmp","pbm","ppm"]

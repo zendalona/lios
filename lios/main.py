@@ -329,10 +329,11 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 						self.textbuffer.set_text(open(file,"r").read())
 						self.save_file_name = file
 				
-					elif form in ["png","pnm","jpg","jpeg","tif","tiff","bmp","pbm"]:
-						filename = file.split("/")[-1:][0].split(".")[0]
+					elif form in global_var.image_formats:
+						filename = file.split("/")[-1:][0]
 						destination = "{0}{1}".format(global_var.tmp_dir,filename.replace(' ','-'))
-						self.load_image(file,destination,False)
+						destination = self.get_feesible_filename_from_filename(destination)
+						self.add_image_to_list(file,destination,False)
 					elif form == "pdf":
 						self.import_images_from_pdf(file)	
 		else:
@@ -660,13 +661,17 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 	def rotate_selected_images_to_twice(self,widget):
 		self.rotate_selected_images_to_angle(180)
 
+	@on_thread
 	def rotate_selected_images_to_angle(self,angle):
 		progress_step = len(self.image_icon_view.get_selected_items())/(10^len(self.image_icon_view.get_selected_items()));progress = 0;
 		for item in reversed(self.image_icon_view.get_selected_items()):
-			self.rotate(angle,self.liststore_images[item[0]][1])
-			self.set_progress_bar("Rotating selected image {} to {}".format(self.liststore_images[item[0]][1],angle),progress,None)
-			progress = progress + progress_step;
-		self.set_progress_bar("completed!",None,0.01)
+			t = threading.Thread(target=self.rotate,args=(angle,self.liststore_images[item[0]][1]))
+			t.start()
+			while(t.is_alive()):
+				pass			
+			#self.set_progress_bar("Rotating selected image {} to {}".format(self.liststore_images[item[0]][1],angle),progress,None)
+			#progress = progress + progress_step;
+		#self.set_progress_bar("completed!",None,0.01)
 
 	def rotate_all_images_to_right(self,widget):
 		self.image_icon_view.select_all()
@@ -765,12 +770,21 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 
 	def save_all_images_as_pdf(self,widget):
 		self.image_icon_view.select_all()
-		self.save_selected_images_as_pdf(None)		
-								
+		self.save_selected_images_as_pdf(None)
+	
+	def get_feesible_filename_from_filename(self,filename):
+		if (os.path.exists(filename)):
+			return self.get_feesible_filename_from_filename(filename.replace('.','#.'))
+		else:
+			return filename 
 
-	def add_image_to_image_list(self,filename):
+	def add_image_to_list(self,file_name_with_directory,destination,move):
+		if (move):
+			shutil.move(file_name_with_directory,destination)
+		else:
+			shutil.copyfile(file_name_with_directory,destination)
 		try:
-			pixbuff =  GdkPixbuf.Pixbuf.new_from_file(filename)
+			pixbuff =  GdkPixbuf.Pixbuf.new_from_file(destination)
 		except:
 			pass
 		else:
@@ -779,20 +793,9 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 			ratio = (width*50)/height
 			#Gdk.threads_enter()
 			buff = pixbuff.scale_simple(50,ratio,GdkPixbuf.InterpType.BILINEAR)
-			self.liststore_images.append([buff, filename])
+			self.liststore_images.append([buff, destination])
 			self.image_icon_view.queue_draw()
 			#Gdk.threads_leave()
-		
-	def load_image(self,file_name_with_directory,destination,move):
-		if os.path.exists(destination):
-			#Exist
-			self.load_image(file_name_with_directory,destination+"#",move)		
-		else:
-			if (move):
-				shutil.move(file_name_with_directory,destination)
-			else:
-				shutil.copyfile(file_name_with_directory,destination)
-			self.add_image_to_image_list(destination)
 
 	def import_image(self,wedget,data=None):
 		self.make_image_widgets_inactive()
@@ -801,17 +804,18 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 
 		filter = Gtk.FileFilter()
 		filter.set_name("Images")
-		for pattern in "*.png","*.pnm","*.jpg","*.jpeg","*.tif","*.tiff","*.bmp","*.pbm":
-			filter.add_pattern(pattern)
+		for pattern in global_var.image_formats:
+			filter.add_pattern("*"+pattern)
 		open_file.add_filter(filter)
 		open_file.set_select_multiple(True)
 
 		response = open_file.run()
 		if response == Gtk.ResponseType.OK:
 			for file_name_with_directory in open_file.get_filenames():
-				filename = file_name_with_directory.split("/")[-1:][0].split(".")[0]
+				filename = file_name_with_directory.split("/")[-1:][0]
 				destination = "{0}{1}".format(global_var.tmp_dir,filename.replace(' ','-'))
-				self.load_image(file_name_with_directory,destination,False)
+				destination = self.get_feesible_filename_from_filename(destination)
+				self.add_image_to_list(file_name_with_directory,destination,False)
 			self.announce("Images imported!")			
 		open_file.destroy()
 		self.make_image_widgets_active()		
@@ -850,11 +854,12 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		file_list = os.listdir(destination.split(".")[0])
 		file_list = sorted(file_list)
 						
-		formats = ["png","pnm","jpg","jpeg","tif","tiff","bmp","pbm","ppm"]
 		for image in file_list:
 			try:
-				if image.split(".")[1] in formats:
-					self.load_image("{}/{}".format(destination.split(".")[0],image),"{}{}".format(global_var.tmp_dir,image),True)
+				if image.split(".")[1] in global_var.image_formats:
+					filename = "{}{}".format(global_var.tmp_dir,image)
+					filename = self.get_feesible_filename_from_filename(filename)					
+					self.add_image_to_list("{}/{}".format(destination.split(".")[0],image),filename,True)
 			except IndexError:
 				pass
 		os.rmdir(destination.split(".")[0])
@@ -873,13 +878,13 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 			image_directory = folder.get_current_folder()
 			file_list = os.listdir(image_directory)
 			progress_step = len(file_list)/(10^len(file_list));progress = 0;			
-			formats = ["png","pnm","jpg","jpeg","tif","tiff","bmp","pbm"]
 			for image in sorted(file_list):
 				try:
-					if image.split(".")[1] in formats:
-						destination = "{0}{1}".format(global_var.tmp_dir,image.split(".")[0].replace(' ','-'))
+					if image.split(".")[1] in global_var.image_formats:
+						destination = "{0}{1}".format(global_var.tmp_dir,image.replace(' ','-'))
 						self.set_progress_bar("Importing image {}".format(destination),progress,None)
-						self.load_image("{0}/{1}".format(image_directory,image),destination,False)					
+						destination = self.get_feesible_filename_from_filename(destination)
+						self.add_image_to_list("{0}/{1}".format(image_directory,image),destination,False)					
 				except IndexError:
 					pass
 				progress = progress + progress_step;
@@ -986,8 +991,10 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 	@on_thread
 	def scan_single_image(self,widget):
 		self.make_scanner_wigets_inactive()
-		self.make_preferences_widgets_inactive()		
-		t = threading.Thread(target=self.scan)
+		self.make_preferences_widgets_inactive()
+		destination = "{0}{1}.pnm".format(global_var.tmp_dir,self.get_page_number_as_string())
+		destination = self.get_feesible_filename_from_filename(destination)
+		t = threading.Thread(target=self.scan,args=(destination,))
 		t.start()
 		while(t.is_alive()):
 			pass
@@ -1002,7 +1009,9 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		self.make_preferences_widgets_inactive()
 		self.process_breaker = False
 		for i in range(0,self.number_of_pages_to_scan):
-			t = threading.Thread(target=self.scan)
+			destination = "{0}{1}.pnm".format(global_var.tmp_dir,self.get_page_number_as_string())
+			destination = self.get_feesible_filename_from_filename(destination)
+			t = threading.Thread(target=self.scan,args=(destination,))
 			t.start()
 			while(t.is_alive()):
 				pass
@@ -1016,12 +1025,12 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		self.make_scanner_wigets_active()
 		self.make_preferences_widgets_active()
 
-	def scan(self):
+	def scan(self,filename):
 		selected_scanner = self.combobox_scanner.get_active()
 		self.announce("Scanning!")
 		print("Scanning from scan")
-		self.set_progress_bar("Scanning {}{}.pnm with resolution={} brightness={}".format(global_var.tmp_dir,self.get_page_number_as_string(),self.scan_resolution,self.scan_brightness),None,0.0030)
-		p = multiprocessing.Process(target=(self.scanner_objects[selected_scanner].scan), args=("{0}{1}.pnm".format(global_var.tmp_dir,self.get_page_number_as_string()),self.scan_resolution,self.scan_brightness,self.scan_area))
+		self.set_progress_bar("Scanning with resolution={} brightness={}".format(global_var.tmp_dir,self.get_page_number_as_string(),self.scan_resolution,self.scan_brightness),None,0.0030)
+		p = multiprocessing.Process(target=(self.scanner_objects[selected_scanner].scan), args=("{}lios_tmp.pnm".format(global_var.tmp_dir),self.scan_resolution,self.scan_brightness,self.scan_area))
 		p.start()
 		while(p.is_alive()):
 			pass
@@ -1030,10 +1039,16 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		if(self.process_breaker):
 			return
 		print("Adding image to list")			
-		self.add_image_to_image_list("{0}{1}.pnm".format(global_var.tmp_dir,self.get_page_number_as_string()))
+		self.add_image_to_list("{}lios_tmp.pnm".format(global_var.tmp_dir),filename,True)
+		
 		print("Image added")
 		if(self.process_breaker):
-			return	
+			return
+
+#		destination = "{0}{1}.pnm".format(global_var.tmp_dir,self.get_page_number_as_string())
+#		destination = self.get_feesible_filename_from_filename(destination)
+		
+						
 
 	def put_text_to_buffer(self,text,place_cursor = False,give_page_number = False):
 		Gdk.threads_enter()
@@ -1121,7 +1136,9 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		self.make_preferences_widgets_inactive()
 		self.make_ocr_widgets_inactive()
 		self.process_breaker = False
-		t = threading.Thread(target=self.scan)
+		destination = "{0}{1}.pnm".format(global_var.tmp_dir,self.get_page_number_as_string())
+		destination = self.get_feesible_filename_from_filename(destination)
+		t = threading.Thread(target=self.scan,args=(destination,))
 		t.start()
 		while(t.is_alive()):
 			pass
@@ -1130,9 +1147,9 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 			self.make_ocr_widgets_active()
 			self.make_preferences_widgets_active()
 			return			
-		text,angle = self.ocr("{0}{1}.pnm".format(global_var.tmp_dir,self.get_page_number_as_string()),self.mode_of_rotation,self.rotation_angle)
+		text,angle = self.ocr(destination,self.mode_of_rotation,self.rotation_angle)
 		self.put_text_to_buffer(text,True,True)
-		self.rotate(angle,"{0}{1}.pnm".format(global_var.tmp_dir,self.get_page_number_as_string()))
+		self.rotate(angle,destination)
 		self.announce("Page {}".format(self.get_page_number_as_string()))
 		self.update_page_number()
 		self.make_scanner_wigets_active()
@@ -1151,7 +1168,9 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		self.process_breaker = False
 		for i in range(0,self.number_of_pages_to_scan):
 			print("calling scan")
-			t = threading.Thread(target=self.scan)
+			destination = "{0}{1}.pnm".format(global_var.tmp_dir,self.get_page_number_as_string())
+			destination = self.get_feesible_filename_from_filename(destination)
+			t = threading.Thread(target=self.scan,args=(destination,))
 			t.start()
 			while(t.is_alive()):
 				pass
@@ -1162,7 +1181,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 			if(self.process_breaker):
 				break
 			print("Running Ocr")					
-			text,angle = self.ocr("{0}{1}.pnm".format(global_var.tmp_dir,self.get_page_number_as_string()),mode,angle)	
+			text,angle = self.ocr(destination,mode,angle)	
 			print("Placing text and cursor")
 			if (i == 0):
 				self.put_text_to_buffer(text,True,True)
@@ -1170,7 +1189,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 				self.put_text_to_buffer(text,False,True)
 			self.announce("Page {}".format(self.get_page_number_as_string()))
 			print("Rotating image")	
-			self.rotate(angle,"{0}{1}.pnm".format(global_var.tmp_dir,self.get_page_number_as_string()))
+			self.rotate(angle,destination)
 			self.update_page_number()
 			
 			if mode == 1: #Change the mode partial automatic to Manual
