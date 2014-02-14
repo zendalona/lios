@@ -163,6 +163,10 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		item.connect("activate",self.ocr_all_images_without_rotating)
 		self.iconview_popup_menu_none_selected.append(item)		
 
+		item = Gtk.MenuItem.new_with_label("Invert-List")
+		item.connect("activate",self.invert_image_list)
+		self.iconview_popup_menu_none_selected.append(item)		
+
 		item = Gtk.MenuItem.new_with_label("Rotate-All-Images")
 		submenu = Gtk.Menu()
 		rotate_item = Gtk.MenuItem.new_with_label("Right")
@@ -685,6 +689,12 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		self.image_icon_view.select_all()
 		self.rotate_selected_images_to_twice(None)
 
+	def invert_image_list(self,widget):
+		liststore = Gtk.ListStore(GdkPixbuf.Pixbuf, str)
+		for item in reversed(self.liststore_images):
+			liststore.append((item[0],item[1]))
+		self.liststore_images = liststore
+		self.image_icon_view.set_model(self.liststore_images)	
 
 
 
