@@ -665,7 +665,6 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 	def rotate_selected_images_to_twice(self,widget):
 		self.rotate_selected_images_to_angle(180)
 
-	@on_thread
 	def rotate_selected_images_to_angle(self,angle):
 		progress_step = len(self.image_icon_view.get_selected_items())/(10^len(self.image_icon_view.get_selected_items()));progress = 0;
 		for item in reversed(self.image_icon_view.get_selected_items()):
@@ -673,9 +672,9 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 			t.start()
 			while(t.is_alive()):
 				pass			
-			#self.set_progress_bar("Rotating selected image {} to {}".format(self.liststore_images[item[0]][1],angle),progress,None)
-			#progress = progress + progress_step;
-		#self.set_progress_bar("completed!",None,0.01)
+			self.set_progress_bar("Rotating selected image {} to {}".format(self.liststore_images[item[0]][1],angle),progress,None)
+			progress = progress + progress_step;
+		self.set_progress_bar("completed!",None,0.01)
 
 	def rotate_all_images_to_right(self,widget):
 		self.image_icon_view.select_all()
