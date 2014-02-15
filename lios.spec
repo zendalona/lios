@@ -17,7 +17,7 @@
 
 Name:           lios
 Version:        1.9
-Release:        1.9
+Release:        0
 License:        GPL-3.0+
 Summary:        Linux-Intelligent-Ocr-Solution
 Url:            http://sourceforge.net/projects/lios/
