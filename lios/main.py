@@ -463,7 +463,18 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		   if (self.zoom_level != 1):
 			   self.pb = self.pb.scale_simple(self.pb.get_width()*self.zoom_level,self.pb.get_height()*self.zoom_level,GdkPixbuf.InterpType.HYPER)
 		   self.treeview_image_clear(self)
-	
+
+	def drawingarea_button_press_event(self, widget, event):
+		self.start_x,self.start_y=event.get_coords()
+		print("Start  X - {0}, Y - {1}".format(self.start_x,self.start_y))
+		self.on_select = True
+		return True
+    
+	def drawingarea_motion_notify_event(self, widget, event):
+		if (self.on_select):
+			self.tmp_finish_x,self.tmp_finish_y = event.get_coords()
+			self.drawingarea.queue_draw()	
+
 	def drawingarea_button_release_event(self, widget, event):
 		self.finish_x,self.finish_y=event.get_coords()
 		self.on_select = False
@@ -525,17 +536,6 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 			self.rectangle_store.set(iter,4,True)
 			self.drawingarea.queue_draw()
         
-        
-	def drawingarea_button_press_event(self, widget, event):
-		self.start_x,self.start_y=event.get_coords()
-		print("Start  X - {0}, Y - {1}".format(self.start_x,self.start_y))
-		self.on_select = True
-		return True
-    
-	def drawingarea_motion_notify_event(self, widget, event):
-		if (self.on_select):
-			self.tmp_finish_x,self.tmp_finish_y = event.get_coords()
-			self.drawingarea.queue_draw()
 	
 	@on_thread			
 	def ocr_selected_areas(self,widget):
@@ -546,7 +546,8 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		mode = self.mode_of_rotation
 		angle = self.rotation_angle
 		pb = GdkPixbuf.Pixbuf.new_from_file(self.pb_file_name)
-		progress_step = len(self.rectangle_store)/(10^len(self.rectangle_store));progress = 0;
+		progress_step = 1/len(self.image_icon_view.get_selected_items());
+		progress = 0;
 		for item in self.rectangle_store:
 			self.set_progress_bar("Running OCR on selected Area [ X={} Y={} Width={} Height={} ]".format(item[0],item[1],item[2],item[3]),progress,None)
 			progress = progress + progress_step;
@@ -575,24 +576,22 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		self.drawingarea_load_image(self.pb_file_name)
 	
 	def rotate_right(self,widget):
-		self.rotate(270)
+		self.rotate(270,self.pb_file_name,True)
 
 	def rotate_left(self,widget):
-		self.rotate(90)
+		self.rotate(90,self.pb_file_name,True)
 
 	def rotate_twice(self,widget):
-		self.rotate(180)
+		self.rotate(180,self.pb_file_name,True)
 
 	@on_thread
-	def rotate(self,angle,file_name = None):
-		if (file_name == None):
-			file_name = self.pb_file_name
+	def rotate(self,angle,file_name,load_to_drawing_area = False):
 		pb = GdkPixbuf.Pixbuf.new_from_file(file_name)
 		pb = pb.rotate_simple(angle)
 		pb.savev(file_name, "png",[],[])
-		self.drawingarea_load_image(file_name)
 		self.iconview_image_reload(file_name)
-
+		if(load_to_drawing_area):
+			self.drawingarea_load_image(file_name)
 		
 	def iconview_image_reload(self,filename):
 		for item in self.liststore_images:
@@ -665,15 +664,18 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 	def rotate_selected_images_to_twice(self,widget):
 		self.rotate_selected_images_to_angle(180)
 
+	@on_thread
 	def rotate_selected_images_to_angle(self,angle):
-		progress_step = len(self.image_icon_view.get_selected_items())/(10^len(self.image_icon_view.get_selected_items()));progress = 0;
+		progress_step = 1/len(self.image_icon_view.get_selected_items())
+		progress = 0;
 		for item in reversed(self.image_icon_view.get_selected_items()):
-			t = threading.Thread(target=self.rotate,args=(angle,self.liststore_images[item[0]][1]))
-			t.start()
-			while(t.is_alive()):
-				pass			
+			pb = GdkPixbuf.Pixbuf.new_from_file(self.liststore_images[item[0]][1])
+			pb = pb.rotate_simple(angle)
+			pb.savev(self.liststore_images[item[0]][1], "png",[],[])
+			self.iconview_image_reload(self.liststore_images[item[0]][1])			
 			self.set_progress_bar("Rotating selected image {} to {}".format(self.liststore_images[item[0]][1],angle),progress,None)
 			progress = progress + progress_step;
+			print(progress_step)
 		self.set_progress_bar("completed!",None,0.01)
 
 	def rotate_all_images_to_right(self,widget):
@@ -702,7 +704,8 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		self.make_ocr_widgets_inactive()
 		self.make_preferences_widgets_inactive()
 		self.make_image_widgets_inactive()
-		progress_step = len(self.image_icon_view.get_selected_items())/(10^len(self.image_icon_view.get_selected_items()));progress = 0;
+		progress_step = 1/len(self.image_icon_view.get_selected_items())
+		progress = 0;
 		for item in reversed(self.image_icon_view.get_selected_items()):
 			self.set_progress_bar("Running OCR on selected image {} (without rotating)".format(self.liststore_images[item[0]][1]),progress,None)
 			self.announce("Recognising {} without rotating".format(self.liststore_images[item[0]][1]))
@@ -726,7 +729,8 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		self.make_ocr_widgets_inactive()
 		self.make_preferences_widgets_inactive()
 		self.make_image_widgets_inactive()
-		progress_step = len(self.image_icon_view.get_selected_items())/(10^len(self.image_icon_view.get_selected_items()));progress = 0;
+		progress_step = 1/len(self.image_icon_view.get_selected_items())
+		progress = 0;
 		mode = self.mode_of_rotation
 		angle = self.rotation_angle
 		for item in reversed(self.image_icon_view.get_selected_items()):
@@ -735,7 +739,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 			progress = progress + progress_step;			
 			text,angle = self.ocr(self.liststore_images[item[0]][1],mode,angle)
 			self.put_text_to_buffer(text,False,False)
-			self.rotate(angle,self.liststore_images[item[0]][1])
+			self.rotate(angle,self.liststore_images[item[0]][1],False)
 			if mode == 1:#Changing partial automatic to Manual
 				mode = 2
 				self.announce("Angle to be rotated = {}".format(angle))
@@ -1054,9 +1058,6 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		if(self.process_breaker):
 			return
 
-#		destination = "{0}{1}.pnm".format(global_var.tmp_dir,self.get_page_number_as_string())
-#		destination = self.get_feesible_filename_from_filename(destination)
-		
 						
 
 	def put_text_to_buffer(self,text,place_cursor = False,give_page_number = False):
@@ -1158,7 +1159,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 			return			
 		text,angle = self.ocr(destination,self.mode_of_rotation,self.rotation_angle)
 		self.put_text_to_buffer(text,True,True)
-		self.rotate(angle,destination)
+		self.rotate(angle,destination,False)
 		self.announce("Page {}".format(self.get_page_number_as_string()))
 		self.update_page_number()
 		self.make_scanner_wigets_active()
@@ -1198,7 +1199,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 				self.put_text_to_buffer(text,False,True)
 			self.announce("Page {}".format(self.get_page_number_as_string()))
 			print("Rotating image")	
-			self.rotate(angle,destination)
+			self.rotate(angle,destination,False)
 			self.update_page_number()
 			
 			if mode == 1: #Change the mode partial automatic to Manual
