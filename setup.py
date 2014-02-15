@@ -1,7 +1,7 @@
 from distutils.core import setup
 from glob import glob
 setup(name='lios',
-      version='2.0',
+      version='1.9',
       description='Python Distribution Utilities',
       author='Nalin.x.Linux',
       author_email='Nalin.x.Linux@gmail.com',
