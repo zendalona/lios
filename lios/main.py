@@ -323,6 +323,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		#Drawing Area and it's TreeView
 		self.drawingarea = self.guibuilder.get_object("drawingarea")
 		self.paned_drawing = self.guibuilder.get_object("paned_drawing")
+		self.paned_text_and_image = self.guibuilder.get_object("paned_text_and_image")
 		self.rectangle_store = Gtk.ListStore(int,int,int,int,int)
 		self.treeview_image = self.guibuilder.get_object("treeview_image")
 		self.treeview_image.set_model(self.rectangle_store);
@@ -937,7 +938,9 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 
 	def configure_event(self,widget,event):
 		self.paned.set_position(event.width-230)
-		self.paned_drawing.set_position(200)
+		self.paned_text_and_image.set_position(event.height-450)
+		self.paned_drawing.set_position(event.width-435)
+		
 	
 	def make_preferences_widgets_inactive(self):
 		self.toolbutton_preferences.set_sensitive(False)
@@ -1135,6 +1138,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 	
 	############## Core OCR  Process Start ################################
 	def ocr(self,file_name,mode,angle):
+		self.process_breaker = False
 		if mode == 2:	#Manual
 			text = self.ocr_with_multiprocessing(file_name,angle)
 			return (text,angle)
@@ -1144,6 +1148,8 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 				text = self.ocr_with_multiprocessing(file_name,angle)
 				count = self.count_dict_words(text)
 				list_.append((text,count,angle))
+				if(self.process_breaker):
+					return True;
 			list_ = sorted(list_, key=lambda item: item[1],reverse=True)
 		return (list_[0][0],list_[0][2])
 				
