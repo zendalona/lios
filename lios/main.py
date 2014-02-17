@@ -221,6 +221,33 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		item.connect("activate",self.paste)
 		self.textview_popup_menu_no_selection.append(item)
 
+		#Drawingarea Popup Menu
+		self.drawingarea_popupmenu = Gtk.Menu()
+
+		item = Gtk.MenuItem.new_with_label("Zoom-In")
+		item.connect("activate",self.zoom_in)
+		self.drawingarea_popupmenu.append(item)
+
+		item = Gtk.MenuItem.new_with_label("Zoom-Out")
+		item.connect("activate",self.zoom_out)
+		self.drawingarea_popupmenu.append(item)
+
+		item = Gtk.MenuItem.new_with_label("Zoom-Fit")
+		item.connect("activate",self.zoom_fit)
+		self.drawingarea_popupmenu.append(item)
+
+		item = Gtk.MenuItem.new_with_label("Rotate-Right")
+		item.connect("activate",self.rotate_right)
+		self.drawingarea_popupmenu.append(item)
+
+		item = Gtk.MenuItem.new_with_label("Rotate-Left")
+		item.connect("activate",self.rotate_left)
+		self.drawingarea_popupmenu.append(item)
+
+		item = Gtk.MenuItem.new_with_label("Rotate-Twice")
+		item.connect("activate",self.rotate_twice)
+		self.drawingarea_popupmenu.append(item)
+
 		
 		#Creating Lios Folder in tmp
 		try:
@@ -465,9 +492,12 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		   self.treeview_image_clear(self)
 
 	def drawingarea_button_press_event(self, widget, event):
-		self.start_x,self.start_y=event.get_coords()
-		print("Start  X - {0}, Y - {1}".format(self.start_x,self.start_y))
-		self.on_select = True
+		if (event.button == 1):
+			self.start_x,self.start_y=event.get_coords()
+			self.on_select = True
+		elif(event.button == 3):
+			self.drawingarea_popupmenu.popup(None, None, None, None,event.button,event.time)
+			self.drawingarea_popupmenu.show_all()
 		return True
     
 	def drawingarea_motion_notify_event(self, widget, event):
@@ -476,45 +506,44 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 			self.drawingarea.queue_draw()	
 
 	def drawingarea_button_release_event(self, widget, event):
-		self.finish_x,self.finish_y=event.get_coords()
-		self.on_select = False
-		print("Finish X - {0}, Y - {1}".format(self.finish_x,self.finish_y))
+		if(self.on_select):
+			self.finish_x,self.finish_y=event.get_coords()
+			self.on_select = False		
+			#Swap coordinate if selected in reverse direction
+			if(self.start_x >= self.finish_x):
+				self.start_x,self.finish_x = self.finish_x,self.start_x
+			if(self.start_y >= self.finish_y):
+				self.start_y,self.finish_y = self.finish_y,self.start_y
 		
-		#Swap coordinate if selected in reverse direction
-		if(self.start_x >= self.finish_x):
-			self.start_x,self.finish_x = self.finish_x,self.start_x
-		if(self.start_y >= self.finish_y):
-			self.start_y,self.finish_y = self.finish_y,self.start_y
+			out_of_range = False
+			max_width = self.pb.get_width()
+			max_height = self.pb.get_height()
+			if (self.start_x > max_width or self.start_y > max_height or self.finish_x > max_width or self.finish_y > max_height ):
+				out_of_range = True
 		
-		out_of_range = False
-		max_width = self.pb.get_width()
-		max_height = self.pb.get_height()
-		if (self.start_x > max_width or self.start_y > max_height or self.finish_x > max_width or self.finish_y > max_height ):
-			out_of_range = True
-		
-		overlaped = False
-		for item in self.rectangle_store:
-			start_x = item[0]
-			start_y = item[1]
-			finish_x = item[2]+item[0]
-			finish_y = item[3]+item[1]
-			if ((start_x <= self.start_x <= finish_x or start_x <= self.finish_x <= finish_x) and (start_y <= self.start_y <= finish_y or start_y <= self.finish_y <= finish_y)):
-				overlaped = True
+			overlaped = False
+			for item in self.rectangle_store:
+				start_x = item[0]
+				start_y = item[1]
+				finish_x = item[2]+item[0]
+				finish_y = item[3]+item[1]
+				if ((start_x <= self.start_x <= finish_x or start_x <= self.finish_x <= finish_x) and (start_y <= self.start_y <= finish_y or start_y <= self.finish_y <= finish_y)):
+					overlaped = True
 				
-		if (overlaped):
-			dialog = Gtk.MessageDialog(None, 0, Gtk.MessageType.INFO,Gtk.ButtonsType.OK, "Rectangle Overlaped!")
-			dialog.format_secondary_text("Rectangle overlaped with Start - ({0},{1})  End - ({2},{3})".format(start_x,start_y,finish_x,finish_y))
-			dialog.run()
-			dialog.destroy()
-		elif (out_of_range):
-			dialog = Gtk.MessageDialog(None, 0, Gtk.MessageType.INFO,Gtk.ButtonsType.OK, "Selection out of range!")
-			dialog.format_secondary_text("Selection out of range! Please select area inside the image")
-			dialog.run()
-			dialog.destroy()
-		else:
-			self.rectangle_store.append((self.start_x,self.start_y,self.finish_x-self.start_x,self.finish_y-self.start_y,0))
+			if (overlaped):
+				dialog = Gtk.MessageDialog(None, 0, Gtk.MessageType.INFO,Gtk.ButtonsType.OK, "Rectangle Overlaped!")
+				dialog.format_secondary_text("Rectangle overlaped with Start - ({0},{1})  End - ({2},{3})".format(start_x,start_y,finish_x,finish_y))
+				dialog.run()
+				dialog.destroy()
+			elif (out_of_range):
+				dialog = Gtk.MessageDialog(None, 0, Gtk.MessageType.INFO,Gtk.ButtonsType.OK, "Selection out of range!")
+				dialog.format_secondary_text("Selection out of range! Please select area inside the image")
+				dialog.run()
+				dialog.destroy()
+			else:
+				self.rectangle_store.append((self.start_x,self.start_y,self.finish_x-self.start_x,self.finish_y-self.start_y,0))
 		
-		self.drawingarea.queue_draw()
+			self.drawingarea.queue_draw()
 		return True
 
 	def treeview_image_delete(self,widget):
@@ -588,7 +617,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 	def rotate(self,angle,file_name,load_to_drawing_area = False):
 		pb = GdkPixbuf.Pixbuf.new_from_file(file_name)
 		pb = pb.rotate_simple(angle)
-		pb.savev(file_name, filename.split(".")[-1],[],[])
+		pb.savev(file_name, file_name.split(".")[-1],[],[])
 		self.iconview_image_reload(file_name)
 		if(load_to_drawing_area):
 			self.drawingarea_load_image(file_name)
