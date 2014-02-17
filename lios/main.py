@@ -588,7 +588,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 	def rotate(self,angle,file_name,load_to_drawing_area = False):
 		pb = GdkPixbuf.Pixbuf.new_from_file(file_name)
 		pb = pb.rotate_simple(angle)
-		pb.savev(file_name, "png",[],[])
+		pb.savev(file_name, filename.split(".")[-1],[],[])
 		self.iconview_image_reload(file_name)
 		if(load_to_drawing_area):
 			self.drawingarea_load_image(file_name)
