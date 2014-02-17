@@ -807,6 +807,16 @@
                         <signal name="activate" handler="scan_using_cam" swapped="no"/>
                       </object>
                     </child>
+                    <child>
+                      <object class="GtkMenuItem" id="menuitem1">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">Stop-All-Process</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="stop_process" swapped="no"/>
+                        <accelerator key="F4" signal="activate" modifiers="GDK_CONTROL_MASK"/>
+                      </object>
+                    </child>
                   </object>
                 </child>
               </object>
@@ -1070,7 +1080,6 @@
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-media-stop</property>
                 <signal name="clicked" handler="stop_process" swapped="no"/>
-                <accelerator key="F4" signal="clicked" modifiers="GDK_CONTROL_MASK"/>
                 <accelerator key="F4" signal="clicked" modifiers="GDK_CONTROL_MASK"/>
               </object>
               <packing>
