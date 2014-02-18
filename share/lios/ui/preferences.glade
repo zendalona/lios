@@ -226,7 +226,7 @@
         <col id="0" translatable="yes">Partial-Automatic</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Manuel</col>
+        <col id="0" translatable="yes">Manual</col>
       </row>
     </data>
   </object>
