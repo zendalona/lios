@@ -309,6 +309,12 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		self.voice_list=[]
 		for item in espeak.list_voices():
 			self.voice_list.append(item.name)
+			
+		#Writable formats
+		self.writable_format = []
+		for item in GdkPixbuf.Pixbuf.get_formats():
+			if(item.is_writable()):
+				self.writable_format.append(item.get_name())
 
 		#Preferences signals
 		General_Preferences = self.guibuilder.get_object("General_Preferences")
@@ -618,7 +624,10 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 	def rotate(self,angle,file_name,load_to_drawing_area = False):
 		pb = GdkPixbuf.Pixbuf.new_from_file(file_name)
 		pb = pb.rotate_simple(angle)
-		pb.savev(file_name, file_name.split(".")[-1],[],[])
+		save_format = file_name.split(".")[-1]
+		if save_format not in self.writable_format:
+			save_format = 'png'
+		pb.savev(file_name,save_format,[],[])
 		self.iconview_image_reload(file_name)
 		if(load_to_drawing_area):
 			self.drawingarea_load_image(file_name)
@@ -701,7 +710,10 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		for item in reversed(self.image_icon_view.get_selected_items()):
 			pb = GdkPixbuf.Pixbuf.new_from_file(self.liststore_images[item[0]][1])
 			pb = pb.rotate_simple(angle)
-			pb.savev(self.liststore_images[item[0]][1], "png",[],[])
+			save_format = self.liststore_images[item[0]][1].split(".")[-1]
+			if save_format not in self.writable_format:
+				save_format = 'png'
+			pb.savev(self.liststore_images[item[0]][1], save_format,[],[])
 			self.iconview_image_reload(self.liststore_images[item[0]][1])			
 			self.set_progress_bar("Rotating selected image {} to {}".format(self.liststore_images[item[0]][1],angle),progress,None)
 			progress = progress + progress_step;
