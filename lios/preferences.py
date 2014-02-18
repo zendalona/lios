@@ -376,7 +376,7 @@ class lios_preferences:
 	def change_rotation(self,rotation):
 		self.model_rotation = rotation.get_model()
 		self.index_rotation = rotation.get_active()
-		if self.model_rotation[self.index_rotation][0] == "Manuel":
+		if self.model_rotation[self.index_rotation][0] == "Manual":
 			self.angle_cb.show()
 			self.label_angle.show()
 			if int(self.rotation_angle) == 00:
