@@ -24,15 +24,20 @@ from gi.repository import GdkPixbuf
 
 
 def ocr_image_to_text(name,engine,language,angle):
-	try:
-		pb = GdkPixbuf.Pixbuf.new_from_file(name)
-	except:
-		return ""
-	pb = pb.rotate_simple(angle)
-	pb.savev("{0}for_ocr.png".format(global_var.tmp_dir), "png",[],[])
+	#try:
+	#	print("Opening filename")
+	#	pbc = GdkPixbuf.Pixbuf.new_from_file(name)
+	#	print("JLFd")
+	#except:
+	#	return ""
+	#pbc = pbc.rotate_simple(angle)
+	#pbc.savev("{0}for_ocr.png".format(global_var.tmp_dir), "png",[],[])
+	#del pbc
+	os.system("convert -rotate {} {} {}for_ocr.png".format(angle,name,global_var.tmp_dir))
 	if engine == "CUNEIFORM":
-		pb = GdkPixbuf.Pixbuf.new_from_file("{0}for_ocr.png".format(global_var.tmp_dir))
-		pb.savev("{0}for_ocr.bmp".format(global_var.tmp_dir), "bmp",[],[])
+		#pb = GdkPixbuf.Pixbuf.new_from_file("{0}for_ocr.png".format(global_var.tmp_dir))
+		#pb.savev("{0}for_ocr.bmp".format(global_var.tmp_dir), "bmp",[],[])
+		os.system("convert {0}for_ocr.png {0}for_ocr.bmp".format(global_var.tmp_dir))
 		os.system("cuneiform -f text -l {0} -o {1}output.txt {1}for_ocr.bmp".format(language,global_var.tmp_dir))
 		os.remove("{0}for_ocr.bmp".format(global_var.tmp_dir))		
 	elif engine == "TESSERACT":
