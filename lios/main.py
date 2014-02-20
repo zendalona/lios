@@ -850,8 +850,10 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 			ratio = (width*50)/height
 			#Gdk.threads_enter()
 			buff = pixbuff.scale_simple(50,ratio,GdkPixbuf.InterpType.BILINEAR)
+			del pixbuff
 			self.liststore_images.append([buff, destination])
 			self.image_icon_view.queue_draw()
+			del buff
 			#Gdk.threads_leave()
 
 	def import_image(self,wedget,data=None):
@@ -1088,7 +1090,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		selected_scanner = self.combobox_scanner.get_active()
 		self.announce("Scanning!")
 		print("Scanning from scan")
-		self.set_progress_bar("Scanning with resolution={} brightness={}".format(global_var.tmp_dir,self.get_page_number_as_string(),self.scan_resolution,self.scan_brightness),None,0.0030)
+		self.set_progress_bar("Scanning {} with resolution={} brightness={}".format(filename,self.scan_resolution,self.scan_brightness),None,0.0030)
 		p = multiprocessing.Process(target=(self.scanner_objects[selected_scanner].scan), args=("{}lios_tmp.pnm".format(global_var.tmp_dir),self.scan_resolution,self.scan_brightness,self.scan_area))
 		p.start()
 		while(p.is_alive()):
