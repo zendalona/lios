@@ -32,6 +32,7 @@ Requires:       aspell-en
 Requires:       cuneiform 
 Requires:       tesseract
 Requires:       python3-espeak
+Requires:       python3-pillow-sane
 
 
 %description
