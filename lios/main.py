@@ -74,6 +74,7 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		self.paned = self.guibuilder.get_object("paned")
 		self.textview = self.guibuilder.get_object("textview")
 		self.notebook = self.guibuilder.get_object("notebook")
+		self.progressbar = self.guibuilder.get_object("progressbar")		
 		self.textbuffer = self.textview.get_buffer();
 		self.guibuilder.connect_signals(self)
 		
@@ -351,7 +352,6 @@ class linux_intelligent_ocr_solution(editor,lios_preferences):
 		#Activating Preference
 		self.activate_preferences()
 		
-		self.progressbar = self.guibuilder.get_object("progressbar")
 		self.timeout_id = GLib.timeout_add(20, self.progressbar_timeout, None)
 		self.activity_mode = True
 		self.set_progress_bar("Welcome to Lios 1.8",False,0.01)
