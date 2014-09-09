@@ -82,6 +82,10 @@ class editor():
 	def open(self,wedget,data=None):
 		open_file = Gtk.FileChooserDialog("Select the file to open",None,Gtk.FileChooserAction.OPEN,buttons=(Gtk.STOCK_OPEN,Gtk.ResponseType.OK))
 		open_file.set_current_folder(global_var.home_dir)
+		filter = Gtk.FileFilter()
+		filter.add_pattern("*.txt")
+		filter.add_pattern("*.text")
+		open_file.add_filter(filter)
 		response = open_file.run()
 		if response == Gtk.ResponseType.OK:
 			to_read = open("%s" % (open_file.get_filename()))
