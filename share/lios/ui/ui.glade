@@ -1370,13 +1370,14 @@ then press ocr</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkToolButton" id="OCR1">
+                      <object class="GtkToolButton" id="toolbutton_ocr_2">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="tooltip_text" translatable="yes">OCR</property>
                         <property name="label" translatable="yes">OCR</property>
                         <property name="use_underline">True</property>
-                        <signal name="clicked" handler="ocr_selected_images" swapped="no"/>
+                        <property name="stock_id">gtk-convert</property>
+                        <signal name="clicked" handler="ocr_selected_images_without_rotating" swapped="no"/>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -1622,13 +1623,14 @@ then press ocr</property>
               </packing>
             </child>
             <child>
-              <object class="GtkToolButton" id="OCR2">
+              <object class="GtkToolButton" id="toolbutton_ocr_1">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="tooltip_text" translatable="yes">OCR</property>
                 <property name="label" translatable="yes">OCR</property>
                 <property name="use_underline">True</property>
-                <signal name="clicked" handler="ocr_selected_images" swapped="no"/>
+                <property name="stock_id">gtk-convert</property>
+                <signal name="clicked" handler="ocr_selected_images_without_rotating" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
