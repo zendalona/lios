@@ -299,7 +299,7 @@ class find_and_replace(find):
 
 # CHECK SPELLING
 class spell_check:
-	def __init__ (self,textview,textbuffer,language,enchant_language):
+	def __init__ (self,textview,textbuffer,enchant_language):
 		self.textbuffer = textbuffer;
 		self.textview = textview;
 		
@@ -316,7 +316,7 @@ class spell_check:
 		
 		#Builder And Gui
 		builder = Gtk.Builder()
-		builder.add_from_file("%s/ui/Spell.glade" % (global_var.data_dir))
+		builder.add_from_file("%s/ui/spell.glade" % (global_var.data_dir))
 		self.spell_window = builder.get_object("window")
 		builder.connect_signals(self)
 		self.entry = builder.get_object("entry")

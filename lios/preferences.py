@@ -103,7 +103,7 @@ class lios_preferences:
 			self.require_scanner_refresh = True
 			self.activate_preferences()
 			#self.notify("preferences loaded from %s" % (load_preferences.get_filename()),False,None,True)
-		self.set_dict("%s" % self.key_value[self.language])
+		self.set_dict("%s" % self.dictionary_language_dict[self.language])
 		load_preferences.destroy()
 		
 		
@@ -466,7 +466,7 @@ class lios_preferences:
 		self.textview.modify_font(pangoFont)
 		self.textview.modify_fg(Gtk.StateFlags.NORMAL, Gdk.color_parse(self.font_color))
 		self.textview.modify_bg(Gtk.StateFlags.NORMAL, Gdk.color_parse(self.background_color))
-		self.set_dict("%s" % self.key_value[self.language])
+		self.set_dict("%s" % self.dictionary_language_dict[self.language])
 		if (self.require_scanner_refresh):
 			self.scanner_refresh(self)
 		
