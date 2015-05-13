@@ -52,11 +52,6 @@
     <property name="can_focus">False</property>
     <property name="stock">gtk-jump-to</property>
   </object>
-  <object class="GtkImage" id="image19">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="stock">gtk-missing-image</property>
-  </object>
   <object class="GtkImage" id="image2">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -162,11 +157,6 @@
     <property name="can_focus">False</property>
     <property name="stock">gtk-missing-image</property>
   </object>
-  <object class="GtkImage" id="image7">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="stock">gtk-missing-image</property>
-  </object>
   <object class="GtkImage" id="image8">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -188,7 +178,7 @@
     <property name="title" translatable="yes">Linux-Intelligent-OCR-Solution</property>
     <property name="role">Lios</property>
     <property name="icon">lios</property>
-    <signal name="configure-event" handler="configure_event" swapped="no"/>
+    <signal name="configure-event" handler="main_window_configure_event" swapped="no"/>
     <signal name="destroy" handler="quit" swapped="no"/>
     <child>
       <object class="GtkTable" id="Main_table">
@@ -315,27 +305,6 @@
                   <object class="GtkMenu" id="image">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <child>
-                      <object class="GtkImageMenuItem" id="Rotate Right">
-                        <property name="label" translatable="yes">Rotate Right</property>
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="image">image7</property>
-                        <property name="use_stock">False</property>
-                        <signal name="activate" handler="rotate_right" swapped="no"/>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkImageMenuItem" id="Rotate Left">
-                        <property name="label" translatable="yes">Rotate Left</property>
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="tooltip_text" translatable="yes">Rotate Left</property>
-                        <property name="image">image19</property>
-                        <property name="use_stock">False</property>
-                        <signal name="activate" handler="rotate_left" swapped="no"/>
-                      </object>
-                    </child>
                     <child>
                       <object class="GtkImageMenuItem" id="import-image">
                         <property name="label" translatable="yes">Import-Image</property>
@@ -1000,178 +969,7 @@
                 <property name="can_focus">True</property>
                 <property name="orientation">vertical</property>
                 <child>
-                  <object class="GtkPaned" id="paned_drawing">
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <child>
-                      <object class="GtkBox" id="box2">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="border_width">10</property>
-                        <property name="orientation">vertical</property>
-                        <child>
-                          <object class="GtkScrolledWindow" id="scrolledwindow_image">
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="hexpand">True</property>
-                            <property name="vexpand">True</property>
-                            <child>
-                              <object class="GtkViewport" id="viewport_image">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="tooltip_markup" translatable="yes">Draw rectangle using mouse
-then press ocr button located at the bottom of the right side list</property>
-                                <child>
-                                  <object class="GtkDrawingArea" id="drawingarea">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <signal name="button-press-event" handler="drawingarea_button_press_event" swapped="no"/>
-                                    <signal name="button-release-event" handler="drawingarea_button_release_event" swapped="no"/>
-                                    <signal name="draw" handler="drawingarea_draw" swapped="no"/>
-                                    <signal name="motion-notify-event" handler="drawingarea_motion_notify_event" swapped="no"/>
-                                  </object>
-                                </child>
-                              </object>
-                            </child>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">1</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkBox" id="box_cam_buttons">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <child>
-                              <object class="GtkButton" id="button6">
-                                <property name="label" translatable="yes">Take</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">True</property>
-                                <signal name="clicked" handler="cam_take" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="expand">True</property>
-                                <property name="fill">True</property>
-                                <property name="position">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkButton" id="button7">
-                                <property name="label" translatable="yes">Close</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">True</property>
-                                <signal name="clicked" handler="cam_close" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="expand">True</property>
-                                <property name="fill">True</property>
-                                <property name="position">1</property>
-                              </packing>
-                            </child>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">1</property>
-                          </packing>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="resize">True</property>
-                        <property name="shrink">True</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkBox" id="box_drawing_area_tree_and_buttons">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="orientation">vertical</property>
-                        <child>
-                          <object class="GtkTreeView" id="treeview_image">
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="tooltip_markup" translatable="yes">&lt;b&gt;Ocr selected areas : &lt;/b&gt; Draw rectangle using mouse
-then press ocr</property>
-                            <property name="vexpand">True</property>
-                            <signal name="cursor-changed" handler="treeview_image_cursor_changed" swapped="no"/>
-                            <child internal-child="selection">
-                              <object class="GtkTreeSelection" id="treeview-selection"/>
-                            </child>
-                          </object>
-                          <packing>
-                            <property name="expand">True</property>
-                            <property name="fill">True</property>
-                            <property name="position">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkBox" id="box_drawing_area_buttons">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <child>
-                              <object class="GtkButton" id="button1">
-                                <property name="label" translatable="yes">Ocr</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">True</property>
-                                <signal name="clicked" handler="ocr_selected_areas" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="expand">True</property>
-                                <property name="fill">True</property>
-                                <property name="position">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkButton" id="button2">
-                                <property name="label" translatable="yes">Delete</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">True</property>
-                                <signal name="clicked" handler="treeview_image_delete" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="expand">True</property>
-                                <property name="fill">True</property>
-                                <property name="position">1</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkButton" id="button3">
-                                <property name="label" translatable="yes">Clear</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">True</property>
-                                <signal name="clicked" handler="treeview_image_clear" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="expand">True</property>
-                                <property name="fill">True</property>
-                                <property name="position">2</property>
-                              </packing>
-                            </child>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">1</property>
-                          </packing>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="resize">False</property>
-                        <property name="shrink">False</property>
-                      </packing>
-                    </child>
-                  </object>
-                  <packing>
-                    <property name="resize">False</property>
-                    <property name="shrink">True</property>
-                  </packing>
+                  <placeholder/>
                 </child>
                 <child>
                   <object class="GtkBox" id="box1">
@@ -1370,7 +1168,24 @@ then press ocr</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkToolButton" id="toolbutton_ocr_2">
+                      <object class="GtkToolButton" id="toolbutton2">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="has_tooltip">True</property>
+                        <property name="tooltip_markup" translatable="yes">Rotate Right</property>
+                        <property name="tooltip_text" translatable="yes">Rotate Right</property>
+                        <property name="label" translatable="yes">Rotate Right</property>
+                        <property name="use_underline">True</property>
+                        <property name="icon_name">object-rotate-right</property>
+                        <signal name="clicked" handler="rotate_selected_images_to_right" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="homogeneous">True</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkToolButton" id="toolbutton_ocr">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="tooltip_text" translatable="yes">OCR</property>
@@ -1378,6 +1193,23 @@ then press ocr</property>
                         <property name="use_underline">True</property>
                         <property name="stock_id">gtk-convert</property>
                         <signal name="clicked" handler="ocr_selected_images_without_rotating" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="homogeneous">True</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkToolButton" id="toolbutton3">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="has_tooltip">True</property>
+                        <property name="tooltip_markup" translatable="yes">Rotate Twice</property>
+                        <property name="tooltip_text" translatable="yes">Rotate Twice</property>
+                        <property name="label" translatable="yes">Rotate Twice</property>
+                        <property name="use_underline">True</property>
+                        <property name="icon_name">object-flip-vertical</property>
+                        <signal name="clicked" handler="rotate_selected_images_to_twice" swapped="no"/>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -1408,6 +1240,23 @@ then press ocr</property>
                         <property name="use_underline">True</property>
                         <property name="stock_id">gtk-clear</property>
                         <signal name="clicked" handler="iconview_image_clear" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="homogeneous">True</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkToolButton" id="toolbutton1">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="has_tooltip">True</property>
+                        <property name="tooltip_markup" translatable="yes">Rotate Left</property>
+                        <property name="tooltip_text" translatable="yes">Rotate Left</property>
+                        <property name="label" translatable="yes">Rotate Left</property>
+                        <property name="use_underline">True</property>
+                        <property name="icon_name">object-rotate-left</property>
+                        <signal name="clicked" handler="rotate_selected_images_to_left" swapped="no"/>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -1529,114 +1378,6 @@ then press ocr</property>
             <property name="can_focus">False</property>
             <property name="hexpand">True</property>
             <property name="toolbar_style">icons</property>
-            <child>
-              <object class="GtkToolButton" id="toolbutton1">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="has_tooltip">True</property>
-                <property name="tooltip_markup" translatable="yes">Rotate Left</property>
-                <property name="tooltip_text" translatable="yes">Rotate Left</property>
-                <property name="label" translatable="yes">Rotate Left</property>
-                <property name="use_underline">True</property>
-                <property name="icon_name">object-rotate-left</property>
-                <signal name="clicked" handler="rotate_left" swapped="no"/>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="homogeneous">True</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkToolButton" id="toolbutton5">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Zoom In</property>
-                <property name="use_underline">True</property>
-                <property name="icon_name">zoom-in</property>
-                <signal name="clicked" handler="zoom_in" swapped="no"/>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="homogeneous">True</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkToolButton" id="toolbutton10">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Zoom Fit</property>
-                <property name="use_underline">True</property>
-                <property name="icon_name">zoom-best-fit</property>
-                <signal name="clicked" handler="zoom_fit" swapped="no"/>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="homogeneous">True</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkToolButton" id="toolbutton3">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="has_tooltip">True</property>
-                <property name="tooltip_markup" translatable="yes">Rotate Twice</property>
-                <property name="tooltip_text" translatable="yes">Rotate Twice</property>
-                <property name="label" translatable="yes">Rotate Twice</property>
-                <property name="use_underline">True</property>
-                <property name="icon_name">object-flip-vertical</property>
-                <signal name="clicked" handler="rotate_twice" swapped="no"/>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="homogeneous">True</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkToolButton" id="toolbutton6">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Zoom Out</property>
-                <property name="use_underline">True</property>
-                <property name="icon_name">zoom-out</property>
-                <signal name="clicked" handler="zoom_out" swapped="no"/>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="homogeneous">True</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkToolButton" id="toolbutton2">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="has_tooltip">True</property>
-                <property name="tooltip_markup" translatable="yes">Rotate Right</property>
-                <property name="tooltip_text" translatable="yes">Rotate Right</property>
-                <property name="label" translatable="yes">Rotate Right</property>
-                <property name="use_underline">True</property>
-                <property name="icon_name">object-rotate-right</property>
-                <signal name="clicked" handler="rotate_right" swapped="no"/>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="homogeneous">True</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkToolButton" id="toolbutton_ocr_1">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="tooltip_text" translatable="yes">OCR</property>
-                <property name="label" translatable="yes">OCR</property>
-                <property name="use_underline">True</property>
-                <property name="stock_id">gtk-convert</property>
-                <signal name="clicked" handler="ocr_selected_images_without_rotating" swapped="no"/>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="homogeneous">True</property>
-              </packing>
-            </child>
             <child>
               <object class="GtkToolButton" id="toolbutton_preferences">
                 <property name="visible">True</property>

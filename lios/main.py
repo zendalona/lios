@@ -47,6 +47,7 @@ from lios import converter
 from lios import scanner
 
 from lios import text
+from lios import image_viewer
 
 from lios.preferences import lios_preferences
 from lios import global_var
@@ -74,9 +75,9 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 		self.guibuilder.add_from_file("%s/ui/ui.glade" %(global_var.data_dir))
 		self.window = self.guibuilder.get_object("window")
 		self.paned = self.guibuilder.get_object("paned")
-		self.textview = self.guibuilder.get_object("textview")
 		self.notebook = self.guibuilder.get_object("notebook")
 		self.progressbar = self.guibuilder.get_object("progressbar")		
+		self.textview = self.guibuilder.get_object("textview")
 		self.textbuffer = self.textview.get_buffer();
 		self.guibuilder.connect_signals(self)
 		
@@ -91,7 +92,7 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 		self.image_icon_view = self.guibuilder.get_object("iconview")
 		self.image_icon_view.set_selection_mode(Gtk.SelectionMode.MULTIPLE)
 		
-		self.liststore_images = Gtk.ListStore(GdkPixbuf.Pixbuf, str)
+		self.liststore_images = Gtk.ListStore(GdkPixbuf.Pixbuf, str,object,int)
 		self.image_icon_view.set_pixbuf_column(0)
 		self.image_icon_view.set_text_column(1)
 		self.image_icon_view.set_model(self.liststore_images)
@@ -224,32 +225,7 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 		item.connect("activate",self.paste)
 		self.textview_popup_menu_no_selection.append(item)
 
-		#Drawingarea Popup Menu
-		self.drawingarea_popupmenu = Gtk.Menu()
 
-		item = Gtk.MenuItem.new_with_label("Zoom-In")
-		item.connect("activate",self.zoom_in)
-		self.drawingarea_popupmenu.append(item)
-
-		item = Gtk.MenuItem.new_with_label("Zoom-Out")
-		item.connect("activate",self.zoom_out)
-		self.drawingarea_popupmenu.append(item)
-
-		item = Gtk.MenuItem.new_with_label("Zoom-Fit")
-		item.connect("activate",self.zoom_fit)
-		self.drawingarea_popupmenu.append(item)
-
-		item = Gtk.MenuItem.new_with_label("Rotate-Right")
-		item.connect("activate",self.rotate_right)
-		self.drawingarea_popupmenu.append(item)
-
-		item = Gtk.MenuItem.new_with_label("Rotate-Left")
-		item.connect("activate",self.rotate_left)
-		self.drawingarea_popupmenu.append(item)
-
-		item = Gtk.MenuItem.new_with_label("Rotate-Twice")
-		item.connect("activate",self.rotate_twice)
-		self.drawingarea_popupmenu.append(item)
 
 		
 		#Creating Lios Folder in tmp
@@ -271,26 +247,11 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 		self.combobox_scanner.pack_start(renderer_text, True)
 		self.combobox_scanner.add_attribute(renderer_text, "text", 0)
 		
-		
-		#Webcam
-		self.box_drawing_area_tree_and_buttons = self.guibuilder.get_object("box_drawing_area_tree_and_buttons")
-		self.box_cam_buttons = self.guibuilder.get_object("box_cam_buttons")
-		# Create GStreamer pipeline
-		self.pipeline = Gst.Pipeline()
-		# Create bus to get events from GStreamer pipeline
-		self.bus = self.pipeline.get_bus()
-		self.bus.add_signal_watch()
-		self.bus.connect('message::error', self.cam_on_error)
-		# This is needed to make the video output in our DrawingArea:
-		self.bus.enable_sync_message_emission()
-		self.bus.connect('sync-message::element', self.cam_on_sync_message)
-		self.box_cam_buttons.hide()
 				
 		
 		#OCR Wedgets
 		self.ocr_submenu = self.guibuilder.get_object("OCR_Submenu")
-		self.toolbutton_ocr_1 = self.guibuilder.get_object("toolbutton_ocr_1")
-		self.toolbutton_ocr_2 = self.guibuilder.get_object("toolbutton_ocr_2")
+		self.toolbutton_ocr = self.guibuilder.get_object("toolbutton_ocr")
 
 		#Preference Wedgets
 		self.toolbutton_preferences = self.guibuilder.get_object("toolbutton_preferences")
@@ -301,7 +262,6 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 		self.toolbutton_import_pdf = self.guibuilder.get_object("toolbutton_import_pdf")
 		self.toolbutton_import_images = self.guibuilder.get_object("toolbutton_import_images")
 		self.toolbutton_import_folder = self.guibuilder.get_object("toolbutton_import_folder")
-		self.box_drawing_area_buttons = self.guibuilder.get_object("box_drawing_area_buttons")
 		self.toolbar_image = self.guibuilder.get_object("toolbar_image")
 		
 		#Breaker
@@ -332,27 +292,18 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 		Preferences_CamaraWebcam.connect("activate",self.preferences,3)
 		
 		#Drawing Area and it's TreeView
-		self.drawingarea = self.guibuilder.get_object("drawingarea")
-		self.paned_drawing = self.guibuilder.get_object("paned_drawing")
 		self.paned_text_and_image = self.guibuilder.get_object("paned_text_and_image")
-		self.rectangle_store = Gtk.ListStore(int,int,int,int,int)
-		self.treeview_image = self.guibuilder.get_object("treeview_image")
-		self.treeview_image.set_model(self.rectangle_store);
-		cell = Gtk.CellRendererText()
-		col = Gtk.TreeViewColumn("X", cell, text=0)
-		self.treeview_image.append_column(col)
-		col = Gtk.TreeViewColumn("Y", cell, text=1)
-		self.treeview_image.append_column(col)
-		col = Gtk.TreeViewColumn("Width", cell, text=2)
-		self.treeview_image.append_column(col)
-		col = Gtk.TreeViewColumn("Height", cell, text=3)
-		self.treeview_image.append_column(col)
-		self.treeview_image.set_reorderable(True)
-		self.on_select = False
-		self.drawingarea.set_events(Gdk.EventMask.ALL_EVENTS_MASK)
-		self.zoom_level = 1
-		self.drawingarea_load_image("{0}/ui/lios".format(global_var.data_dir))
-		self.zoom_level = 0.25		
+		self.imageview = image_viewer.ImageViewer()
+		self.imageview.connect("list_updated",self.on_image_view_list_update);
+		self.imageview.load_image("/usr/share/lios/ui/lios",[],image_viewer.ImageViewer.ZOOM_FIT)		
+		
+		box = Gtk.VBox()
+		box.add(self.imageview)
+		button = Gtk.Button("OCR Selected Areas")
+		button.connect("clicked",self.ocr_selected_areas)
+		box.pack_end(button,False,True,0)
+		self.paned_text_and_image.pack2(box,True,False)
+		box.show_all()		
 		
 		#Activating Preference
 		self.activate_preferences()
@@ -391,6 +342,16 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 		self.window.show()
 		Gtk.main();
 	
+	def scan_using_cam(self):
+		pass
+
+	def on_image_view_list_update(self,data=None):
+		items = self.image_icon_view.get_selected_items()
+		if (items):
+			self.liststore_images[items[0]][2] = self.imageview.get_selection_list()
+			self.liststore_images[items[0]][3] = self.imageview.get_zoom_level()
+
+	
 	def progressbar_timeout(self, user_data):
 		if self.activity_mode:
 			self.progressbar.pulse()
@@ -422,214 +383,34 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 				os.system("pkill paplay")
 			os.system("espeak -v {} -a {} -s {} -p {} '{}' --stdout|paplay &".format(self.voice_list[self.voice_message_voice],self.voice_message_volume,self.voice_message_rate,self.voice_message_pitch,text.replace("'",'"')))	
 
-	def scan_using_cam(self,widget):		
-		self.src = Gst.ElementFactory.make('v4l2src', None)
-		self.src.set_property("device", "/dev/video{0}".format(self.cam_device))
-		self.pipeline.add(self.src)		
-		
-		self.sink = Gst.ElementFactory.make('autovideosink', None)
-		self.pipeline.add(self.sink)		
-		self.src.link(self.sink)
-		
-		self.box_drawing_area_tree_and_buttons.set_sensitive(False)
-		self.box_cam_buttons.show()
-		self.notebook.set_current_page(1)
-		self.make_preferences_widgets_inactive()
-		self.make_ocr_widgets_inactive()
-		self.make_image_widgets_inactive()		
-		
-		self.drawingarea.set_size_request(self.cam_x,self.cam_y)
-		self.xid = self.drawingarea.get_property('window').get_xid()
-		self.pipeline.set_state(Gst.State.PLAYING)
-		
-	
-	def cam_close(self, window):
-		self.pipeline.set_state(Gst.State.NULL)
-		self.box_drawing_area_tree_and_buttons.set_sensitive(True)
-		self.box_cam_buttons.hide()
-		self.make_preferences_widgets_active()
-		self.make_ocr_widgets_active()
-		self.make_image_widgets_active()		
-		self.pipeline.remove(self.src)
-		self.pipeline.remove(self.sink)
-		self.zoom_level = 1	
-		self.drawingarea_load_image("{0}/ui/lios".format(global_var.data_dir))
-		self.zoom_level = 0.25
-	
-	def cam_take(self,widget):
-	    window = self.drawingarea.get_window()
-	    x = window.get_width()
-	    y = window.get_height()
-	    pixbuf = Gdk.pixbuf_get_from_window(window, 0, 0,x, y)
-	    pixbuf.savev("{0}{1}.png".format(global_var.tmp_dir,self.get_page_number_as_string()), 'png', [], [])
-	    self.add_image_to_image_list("{0}{1}.png".format(global_var.tmp_dir,self.get_page_number_as_string()))
-	    self.update_page_number()
-	    
-	def cam_on_sync_message(self, bus, msg):
-		if msg.get_structure().get_name() == 'prepare-window-handle':
-			print('prepare-window-handle')
-			msg.src.set_property('force-aspect-ratio', True)
-			msg.src.set_window_handle(self.xid)
-		print(msg.get_structure().get_name())
 
-	def cam_on_error(self, bus, msg):
-		print('on_error():', msg.parse_error())
         		
 		
-		
-
-	def drawingarea_draw(self, widget, cr):
-		   Gdk.cairo_set_source_pixbuf(cr, self.pb, 0, 0)
-		   cr.paint()
-		   
-		   for item in self.rectangle_store:
-			   cr.move_to(10, 90)
-			   cr.rectangle(item[0], item[1], item[2], item[3])
-			   if item[4] == True:
-				   cr.set_source_rgb(0.9, 0.1, 0.1)
-			   else:
-				   cr.set_source_rgb(1, 0, 1)
-			   cr.set_line_width (5.0);
-			   #cr.fill()
-			   cr.stroke()
-		   
-		   if (self.on_select == True):
-			   cr.rectangle(self.start_x,self.start_y,self.tmp_finish_x-self.start_x,self.tmp_finish_y-self.start_y)
-			   cr.set_source_rgb(0, 0, 1.0)
-			   cr.set_line_width (5.0);
-			   cr.stroke()
-		   return True
-	
-	def drawingarea_load_image(self,filename):
-		   self.pb = GdkPixbuf.Pixbuf.new_from_file(filename)
-		   self.pb_file_name = filename
-		   self.drawingarea.set_size_request(self.pb.get_width()*self.zoom_level,self.pb.get_height()*self.zoom_level)
-		   if (self.zoom_level != 1):
-			   self.pb = self.pb.scale_simple(self.pb.get_width()*self.zoom_level,self.pb.get_height()*self.zoom_level,GdkPixbuf.InterpType.HYPER)
-		   self.treeview_image_clear(self)
-
-	def drawingarea_button_press_event(self, widget, event):
-		if (event.button == 1):
-			self.start_x,self.start_y=event.get_coords()
-			self.on_select = True
-		elif(event.button == 3):
-			self.drawingarea_popupmenu.popup(None, None, None, None,event.button,event.time)
-			self.drawingarea_popupmenu.show_all()
-		return True
-    
-	def drawingarea_motion_notify_event(self, widget, event):
-		if (self.on_select):
-			self.tmp_finish_x,self.tmp_finish_y = event.get_coords()
-			self.drawingarea.queue_draw()	
-
-	def drawingarea_button_release_event(self, widget, event):
-		if(self.on_select):
-			self.finish_x,self.finish_y=event.get_coords()
-			self.on_select = False		
-			#Swap coordinate if selected in reverse direction
-			if(self.start_x >= self.finish_x):
-				self.start_x,self.finish_x = self.finish_x,self.start_x
-			if(self.start_y >= self.finish_y):
-				self.start_y,self.finish_y = self.finish_y,self.start_y
-		
-			out_of_range = False
-			max_width = self.pb.get_width()
-			max_height = self.pb.get_height()
-			if (self.start_x > max_width or self.start_y > max_height or self.finish_x > max_width or self.finish_y > max_height ):
-				out_of_range = True
-		
-			overlaped = False
-			for item in self.rectangle_store:
-				start_x = item[0]
-				start_y = item[1]
-				finish_x = item[2]+item[0]
-				finish_y = item[3]+item[1]
-				if ((start_x <= self.start_x <= finish_x or start_x <= self.finish_x <= finish_x) and (start_y <= self.start_y <= finish_y or start_y <= self.finish_y <= finish_y)):
-					overlaped = True
-				
-			if (overlaped):
-				dialog = Gtk.MessageDialog(None, 0, Gtk.MessageType.INFO,Gtk.ButtonsType.OK, "Rectangle Overlaped!")
-				dialog.format_secondary_text("Rectangle overlaped with Start - ({0},{1})  End - ({2},{3})".format(start_x,start_y,finish_x,finish_y))
-				dialog.run()
-				dialog.destroy()
-			elif (out_of_range):
-				dialog = Gtk.MessageDialog(None, 0, Gtk.MessageType.INFO,Gtk.ButtonsType.OK, "Selection out of range!")
-				dialog.format_secondary_text("Selection out of range! Please select area inside the image")
-				dialog.run()
-				dialog.destroy()
-			else:
-				self.rectangle_store.append((self.start_x,self.start_y,self.finish_x-self.start_x,self.finish_y-self.start_y,0))
-		
-			self.drawingarea.queue_draw()
-		return True
-
-	def treeview_image_delete(self,widget):
-		item = self.treeview_image.get_selection()
-		model,iter = item.get_selected()
-		self.rectangle_store.remove(iter)
-		self.drawingarea.queue_draw()
-
-	def treeview_image_clear(self,widget):
-		self.rectangle_store.clear()
-		self.drawingarea.queue_draw()
-
-	def treeview_image_cursor_changed(self,widget):
-		for item in self.rectangle_store:
-			item[4] = False
-		item = self.treeview_image.get_selection()
-		model,iter = item.get_selected()
-		if iter:
-			self.rectangle_store.set(iter,4,True)
-			self.drawingarea.queue_draw()
-        
-	
 	@on_thread			
 	def ocr_selected_areas(self,widget):
 		self.process_breaker = False
 		self.make_preferences_widgets_inactive(lock=True)
 		self.make_ocr_widgets_inactive(lock=True)
-		self.make_image_widgets_inactive(lock=True)
-		mode = self.mode_of_rotation
-		angle = self.rotation_angle
-		pb = GdkPixbuf.Pixbuf.new_from_file(self.pb_file_name)
-		progress_step = 1/len(self.image_icon_view.get_selected_items());
+		#self.make_image_widgets_inactive(lock=True)
+		progress_step = 1/len(self.imageview.get_selection_list());
 		progress = 0;
-		for item in self.rectangle_store:
+		for item in self.imageview.get_selection_list():
 			self.set_progress_bar("Running OCR on selected Area [ X={} Y={} Width={} Height={} ]".format(item[0],item[1],item[2],item[3]),progress,None,lock=True)
 			progress = progress + progress_step;
-			dest = pb.new_subpixbuf(item[0]/self.zoom_level,item[1]/self.zoom_level,item[2]/self.zoom_level,item[3]/self.zoom_level)
-			dest.savev("{0}tmp".format(global_var.tmp_dir), "png",[],[])
+			self.imageview.save_sub_image("{0}tmp".format(global_var.tmp_dir),
+			item[0],item[1],item[2],item[3])
+			
 			#Will always be Manual with no rotation
 			text,angle = self.ocr("{0}tmp".format(global_var.tmp_dir),2,00)
 			self.put_text_to_buffer(text,False,False)
 			if(self.process_breaker):
 				break;
+
 		self.set_progress_bar("completed!",None,0.01,lock=True)
 		self.make_preferences_widgets_active(lock=True)
 		self.make_ocr_widgets_active(lock=True)
-		self.make_image_widgets_active(lock=True)
-
-	def zoom_in(self,widget):
-		self.zoom_level = self.zoom_level * 4/3
-		self.drawingarea_load_image(self.pb_file_name)
-
-	def zoom_out(self,widget):
-		self.zoom_level = self.zoom_level * 3/4
-		self.drawingarea_load_image(self.pb_file_name)
-
-	def zoom_fit(self,widget):
-		self.zoom_level = 0.25
-		self.drawingarea_load_image(self.pb_file_name)
+		#self.make_image_widgets_active(lock=True)
 	
-	def rotate_right(self,widget):
-		self.rotate(270,self.pb_file_name,True)
-
-	def rotate_left(self,widget):
-		self.rotate(90,self.pb_file_name,True)
-
-	def rotate_twice(self,widget):
-		self.rotate(180,self.pb_file_name,True)
-
 	@on_thread
 	def rotate(self,angle,file_name,load_to_drawing_area = False):
 		pb = GdkPixbuf.Pixbuf.new_from_file(file_name)
@@ -675,8 +456,7 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 	def iconview_selection_changed(self,widget):
 		items = self.image_icon_view.get_selected_items()
 		if (items):
-			self.drawingarea_load_image(self.liststore_images[items[0]][1])
-
+			self.imageview.load_image(self.liststore_images[items[0]][1],self.liststore_images[items[0]][2],self.liststore_images[items[0]][3])
 
 	def iconview_image_delete(self,widget):
 		if (len(self.image_icon_view.get_selected_items()) >= 1):
@@ -690,9 +470,7 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 					iter = self.liststore_images.get_iter_from_string(item.to_string())
 					os.remove(self.liststore_images.get_value(iter, 1))
 					self.liststore_images.remove(iter)
-				self.zoom_level = 1
 				self.drawingarea_load_image("{0}/ui/lios".format(global_var.data_dir))
-				self.zoom_level = 0.25	
 
 	def iconview_image_clear(self,widget):
 		if (len(self.liststore_images) >= 1):
@@ -705,9 +483,7 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 				for item in self.liststore_images:
 					os.remove(item[1])
 				self.liststore_images.clear()
-				self.zoom_level = 1
 				self.drawingarea_load_image("{0}/ui/lios".format(global_var.data_dir))
-				self.zoom_level = 0.25
 
 	
 	def rotate_selected_images_to_right(self,widget):
@@ -733,7 +509,7 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 			self.iconview_image_reload(self.liststore_images[item[0]][1])			
 			self.set_progress_bar("Rotating selected image {} to {}".format(self.liststore_images[item[0]][1],angle),progress,None,lock=True)
 			progress = progress + progress_step;
-			print(progress_step)
+		self.imageview.redraw()
 		self.set_progress_bar("completed!",None,0.01,lock=True)
 
 	def rotate_all_images_to_right(self,widget):
@@ -866,14 +642,14 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 				Gdk.threads_enter()
 			buff = pixbuff.scale_simple(50,ratio,GdkPixbuf.InterpType.BILINEAR)
 			del pixbuff
-			self.liststore_images.append([buff, destination])
+			self.liststore_images.append([buff, destination,[],image_viewer.ImageViewer.ZOOM_FIT])
 			self.image_icon_view.queue_draw()
 			del buff
 			if(lock):
 				Gdk.threads_leave()
 
 	def import_image(self,wedget,data=None):
-		self.make_image_widgets_inactive()
+		#self.make_image_widgets_inactive()
 		open_file = Gtk.FileChooserDialog("Select image file to import",None,Gtk.FileChooserAction.OPEN,buttons=(Gtk.STOCK_OPEN,Gtk.ResponseType.OK))
 		open_file.set_current_folder(global_var.home_dir)
 
@@ -893,7 +669,7 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 				self.add_image_to_list(file_name_with_directory,destination,False)
 			self.announce("Images imported!")			
 		open_file.destroy()
-		self.make_image_widgets_active()		
+		#self.make_image_widgets_active()		
 
 	def import_pdf(self,wedget,data=None):
 		open_file = Gtk.FileChooserDialog("Select Pdf file to import",None,Gtk.FileChooserAction.OPEN,buttons=(Gtk.STOCK_OPEN,Gtk.ResponseType.OK))
@@ -967,10 +743,12 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 			self.announce("Images imported!")		
 		self.make_image_widgets_active()		
 
-	def configure_event(self,widget,event):
-		self.paned.set_position(event.width-230)
-		self.paned_text_and_image.set_position(event.height-450)
-		self.paned_drawing.set_position(event.width-435)
+	################# End of Icon View Related Handler functions  ##############
+
+
+	def main_window_configure_event(self,widget,event):
+		self.paned.set_position(event.width-320)
+		#self.paned_text_and_image.set_position(event.height-150)
 		
 	
 	def make_preferences_widgets_inactive(self,lock=False):
@@ -993,8 +771,7 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 		if(lock):
 			Gdk.threads_enter()
 		self.ocr_submenu.set_sensitive(False)
-		self.toolbutton_ocr_1.set_sensitive(False)
-		self.toolbutton_ocr_2.set_sensitive(False)
+		self.toolbutton_ocr.set_sensitive(False)
 		if(lock):
 			Gdk.threads_leave()
 
@@ -1002,8 +779,7 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 		if(lock):
 			Gdk.threads_enter()
 		self.ocr_submenu.set_sensitive(True)
-		self.toolbutton_ocr_1.set_sensitive(True)
-		self.toolbutton_ocr_2.set_sensitive(True)		
+		self.toolbutton_ocr.set_sensitive(True)
 		if(lock):
 			Gdk.threads_leave()
 
@@ -1014,7 +790,6 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 		self.toolbutton_import_images.set_sensitive(False)
 		self.toolbutton_import_pdf.set_sensitive(False)
 		self.toolbutton_import_folder.set_sensitive(False)
-		self.box_drawing_area_buttons.set_sensitive(False)
 		self.toolbar_image.set_sensitive(False)
 		if(lock):
 			Gdk.threads_leave()
@@ -1026,7 +801,6 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 		self.toolbutton_import_images.set_sensitive(True)
 		self.toolbutton_import_pdf.set_sensitive(True)
 		self.toolbutton_import_folder.set_sensitive(True)
-		self.box_drawing_area_buttons.set_sensitive(True)
 		self.toolbar_image.set_sensitive(True)
 		if(lock):
 			Gdk.threads_leave()
