@@ -48,6 +48,7 @@ from lios import scanner
 
 from lios import text
 from lios import image_viewer
+from lios import cam
 
 from lios.preferences import lios_preferences
 from lios import global_var
@@ -295,15 +296,15 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 		self.paned_text_and_image = self.guibuilder.get_object("paned_text_and_image")
 		self.imageview = image_viewer.ImageViewer()
 		self.imageview.connect("list_updated",self.on_image_view_list_update);
-		self.imageview.load_image("/usr/share/lios/ui/lios",[],image_viewer.ImageViewer.ZOOM_FIT)		
-		
+		self.imageview.load_image("/usr/share/lios/ui/lios",[],image_viewer.ImageViewer.ZOOM_FIT)
 		box = Gtk.VBox()
 		box.add(self.imageview)
 		button = Gtk.Button("OCR Selected Areas")
 		button.connect("clicked",self.ocr_selected_areas)
 		box.pack_end(button,False,True,0)
 		self.paned_text_and_image.pack2(box,True,False)
-		box.show_all()		
+		box.show_all()
+				
 		
 		#Activating Preference
 		self.activate_preferences()
@@ -342,8 +343,13 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 		self.window.show()
 		Gtk.main();
 	
-	def scan_using_cam(self):
-		pass
+	def scan_using_cam(self,widget):
+		devices = cam.Cam.get_available_devices()
+		ob = cam.Cam(devices[0],self.cam_x,self.cam_y)
+		ob.connect("image_captured",self.cam_image_captured)
+		
+	def cam_image_captured(self,widget,filename):
+		self.add_image_to_list(filename,"/tmp/Lios/{}".format(filename.split("/")[2]),True,False)
 
 	def on_image_view_list_update(self,data=None):
 		items = self.image_icon_view.get_selected_items()
