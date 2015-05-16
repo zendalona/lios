@@ -43,7 +43,7 @@ from gi.repository import GdkPixbuf
 import gi
 gi.require_version('Gst', '1.0')
 
-from lios import converter
+from lios import text_to_audio_gtk_ui
 from lios import scanner
 
 from lios import text
@@ -1292,7 +1292,7 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 		except ValueError:
 			start,end = self.textbuffer.get_bounds()
 		text = self.textbuffer.get_text(start,end,False)		
-		converter.record(text)
+		text_to_audio_gtk_ui.record_ui(text)
 
 	def spell_checker(self,widget):
 		text.spell_check(self.textview,self.textbuffer,self.dictionary_language_dict[self.language])
