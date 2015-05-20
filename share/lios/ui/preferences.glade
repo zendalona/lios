@@ -182,20 +182,6 @@
       </row>
     </data>
   </object>
-  <object class="GtkListStore" id="liststore_engine">
-    <columns>
-      <!-- column-name Engine -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">CUNEIFORM</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">TESSERACT</col>
-      </row>
-    </data>
-  </object>
   <object class="GtkListStore" id="liststore_insert_position">
     <columns>
       <!-- column-name Position -->
@@ -905,13 +891,6 @@
                   <object class="GtkComboBox" id="combobox_engine">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="model">liststore_engine</property>
-                    <child>
-                      <object class="GtkCellRendererText" id="cellrenderertext2"/>
-                      <attributes>
-                        <attribute name="text">0</attribute>
-                      </attributes>
-                    </child>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -924,9 +903,6 @@
                   <object class="GtkComboBox" id="combobox_language">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <child>
-                      <object class="GtkCellRendererText" id="cellrenderertext3"/>
-                    </child>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
