@@ -2,7 +2,7 @@
 
 ###########################################################################
 #    Lios - Linux-Intelligent-Ocr-Solution
-#    Copyright (C) 2011-2014 Nalin.x.Linux GPL-3
+#    Copyright (C) 2011-2015 Nalin.x.Linux GPL-3
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@ import sys
 import enchant
 import subprocess
 import configparser
+import shutil
 from espeak import espeak
 from gi.repository import Gtk
 from gi.repository import Gdk
@@ -36,19 +37,19 @@ from lios import global_var
 
 class lios_preferences:
 	# FUNCTION TO Read PREFERENCES #
-	def read_preferences(self):
+	def set_preferences_from_file(self,filename):
 		config = configparser.ConfigParser()
-		if config.read('{0}/.lios_preferences.cfg'.format(global_var.home_dir)) != []:
+		if config.read(filename) != []:
 			try:
 				self.time_between_repeated_scanning=int(config.get('cfg',"time_between_repeated_scanning"))
 				self.scan_resolution=int(config.get('cfg',"scan_resolution"))
 				self.scan_brightness=int(config.get('cfg',"scan_brightness"))
-				self.ocr_engine=config.get('cfg',"ocr_engine")
+				self.ocr_engine=int(config.get('cfg',"ocr_engine"))
 				self.scan_area=int(config.get('cfg',"scan_area"))
 				self.scan_driver=int(config.get('cfg',"scan_driver"))
 				self.insert_position=int(config.get('cfg',"insert_position"))
 				self.auto_skew=int(config.get('cfg',"auto_skew"))			
-				self.language=config.get('cfg',"language")
+				self.language=int(config.get('cfg',"language"))
 				self.number_of_pages_to_scan=int(config.get('cfg',"number_of_pages_to_scan"))#pages
 				self.mode_of_rotation = int(config.get('cfg',"mode_of_rotation"))
 				self.rotation_angle = int(config.get('cfg',"angle"))		
@@ -72,62 +73,73 @@ class lios_preferences:
 				self.cam_device=int(config.get('cfg',"cam_device"))				
 				self.require_scanner_refresh = True
 			except:
-				self.on_Restore_preferences_activate(self,data=None)
+				self.set_default_preferences(self,data=None)
 		else:
-			self.on_Restore_preferences_activate(self,data=None)
+			self.set_default_preferences(self,data=None)
 			
 
 	def on_Save_preferences_activate(self,wedget,data=None):
-		save_preferences = gtk.FileChooserDialog(title="save_preferences as ",action=gtk.FILE_CHOOSER_ACTION_SAVE,
-		                     buttons=(gtk.STOCK_SAVE,gtk.RESPONSE_OK))
-		save_preferences.set_current_folder("%s/Lios"%(os.environ['HOME']))
-		response = save_preferences.run()		
-		if response == gtk.RESPONSE_OK:
-			shutil.copy2('{0}/.lios_preferences.cfg'.format(global_var.home_dir),"%s.cfg"%(save_preferences.get_filename()))
-			#self.notify("preferences saved as %s.cfg" % (save_preferences.get_filename()),False,None,True)
-		save_preferences.destroy()
+		save_preferences_dlg = Gtk.FileChooserDialog(title="save_preferences as ",
+		action=Gtk.FileChooserAction.SAVE,buttons=(Gtk.STOCK_SAVE,Gtk.ResponseType.OK))
+		save_preferences_dlg.set_current_folder("%s/Lios"%(os.environ['HOME']))
+		response = save_preferences_dlg.run()		
+		if response == Gtk.ResponseType.OK:
+			shutil.copy2('{0}/.lios_preferences.cfg'.format(global_var.home_dir),
+			"%s.cfg"%(save_preferences_dlg.get_filename()))
+			#self.notify("preferences saved as %s.cfg" % (save_preferences_dlg.get_filename()),False,None,True)
+		save_preferences_dlg.destroy()
 
 
 
 	def on_Load_preferences_activate(self,wedget,data=None):
-		load_preferences = gtk.FileChooserDialog("Select the image",None,gtk.FILE_CHOOSER_ACTION_OPEN,(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,gtk.STOCK_OPEN, gtk.RESPONSE_OK))
-		load_preferences.set_default_response(gtk.RESPONSE_OK)
-		load_preferences.set_current_folder("%s/Lios"%(os.environ['HOME']))
-		filter = gtk.FileFilter()
+		load_preferences_dlg = Gtk.FileChooserDialog("Select the image",None,
+		Gtk.FileChooserAction.OPEN,(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+		Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
+		
+		load_preferences_dlg.set_default_response(Gtk.ResponseType.OK)
+		load_preferences_dlg.set_current_folder("%s/Lios"%(os.environ['HOME']))
+		filter = Gtk.FileFilter()
 		filter.add_pattern("*.cfg")
-		load_preferences.add_filter(filter)
-		response = load_preferences.run()
-		if response == gtk.RESPONSE_OK:
-			shutil.copy2("%s"%(load_preferences.get_filename()),'{0}/.lios_preferences.cfg'.format(global_var.home_dir))
-			self.read_preferences()
+		load_preferences_dlg.add_filter(filter)
+		response = load_preferences_dlg.run()
+		if response == Gtk.ResponseType.OK:
+			self.set_preferences_from_file(load_preferences_dlg.get_filename())
 			self.require_scanner_refresh = True
 			self.activate_preferences()
-			#self.notify("preferences loaded from %s" % (load_preferences.get_filename()),False,None,True)
-		self.set_dict("%s" % self.dictionary_language_dict[self.language])
-		load_preferences.destroy()
+			#self.notify("preferences loaded from %s" % (load_preferences_dlg.get_filename()),False,None,True)
+		load_preferences_dlg.destroy()
 		
 		
 				
-	def on_Restore_preferences_activate(self,wedget,data=None):
+	def set_default_preferences(self,wedget,data=None):
 		#Setting Default Values
-		self.font="Georgia 14";self.highlight_font="Georgia 14";self.background_color="#000";self.font_color="#fff";self.highlight_color="#1572ffff0000"
-		self.background_highlight_color="#00000bacffff";self.time_between_repeated_scanning=0;self.scan_resolution=300;self.scan_brightness=100;self.scan_area=0;self.insert_position=2;self.ocr_engine="CUNEIFORM";self.language="eng"
-		self.mode_of_rotation=0;self.number_of_pages_to_scan=100;self.page_numbering_type=0;self.starting_page_number=1;self.scanner_mode_switching=1;self.scanner_cache_calibration=1;self.auto_skew=0;self.rotation_angle=00;
-		self.voice_message_state=0;self.voice_message_rate=170;self.voice_message_volume=150;self.voice_message_pitch=50;self.voice_message_voice=11;self.scan_driver=1;
+		self.font="Georgia 14";self.highlight_font="Georgia 14";
+		self.background_color="#000";self.font_color="#fff";
+		self.highlight_color="#1572ffff0000";
+		self.background_highlight_color="#00000bacffff";
+		self.time_between_repeated_scanning=0;self.scan_resolution=300;
+		self.scan_brightness=100;self.scan_area=0;self.insert_position=2;
+		self.ocr_engine=0;self.language=0;self.mode_of_rotation=0;
+		self.number_of_pages_to_scan=100;self.page_numbering_type=0;
+		self.starting_page_number=1;self.scanner_mode_switching=1;
+		self.scanner_cache_calibration=1;self.auto_skew=0;self.rotation_angle=00;
+		self.voice_message_state=0;self.voice_message_rate=170;
+		self.voice_message_volume=150;self.voice_message_pitch=50;
+		self.voice_message_voice=11;self.scan_driver=1;
 		self.cam_x=1280;self.cam_y=800;self.cam_device=0;
 		#Writing it to user configuration file
-		self.set_preferences_to_file()				
+		self.save_preferences_to_file('{0}/.lios_preferences.cfg'.format(global_var.home_dir))				
 		#self.notify("preferences restored!",False,None,True)
 		self.require_scanner_refresh = True
 
-	def set_preferences_to_file(self):
+	def save_preferences_to_file(self,filename):
 		#Removing old configuration file
 		try:
-			os.remove('{0}/.lios_preferences.cfg'.format(global_var.home_dir))
+			os.remove(filename)
 		except:
 			pass		
 		config = configparser.ConfigParser()
-		config.read('{0}/.lios_preferences.cfg'.format(global_var.home_dir))
+		config.read(filename)
 		config.add_section('cfg')
 		config.set('cfg',"time_between_repeated_scanning",str(self.time_between_repeated_scanning))
 		config.set('cfg',"scan_resolution",str(self.scan_resolution))
@@ -159,12 +171,12 @@ class lios_preferences:
 		config.set('cfg',"cam_x",str(self.cam_x))
 		config.set('cfg',"cam_y",str(self.cam_y))
 		config.set('cfg',"cam_device",str(self.cam_device))
-		with open('{0}/.lios_preferences.cfg'.format(global_var.home_dir), 'w') as configfile:
+		with open(filename, 'w') as configfile:
 			config.write(configfile)
 	
 	
 	#Function for manipulating preferences		
-	def preferences(self,wedget,data=None):
+	def configure_preferences_dialog(self,wedget,data=None):
 		self.preferences_guibuilder = Gtk.Builder()
 		self.preferences_guibuilder.add_from_file("%s/ui/preferences.glade" %(global_var.data_dir))
 		self.preferences_window = self.preferences_guibuilder.get_object("window")
@@ -255,30 +267,25 @@ class lios_preferences:
 		
 		
 		#ENGINE
-		engine = self.preferences_guibuilder.get_object("combobox_engine")	
-		engine.connect('changed', self.change_engine)
-		set_engine = 0
-		if self.ocr_engine == "CUNEIFORM":
-			set_engine = 0
-		elif self.ocr_engine == "TESSERACT":
-			set_engine = 1
-		else:
-			set_engine = 2		
-		engine.set_active(set_engine)
+		combobox_engine = self.preferences_guibuilder.get_object("combobox_engine")	
+		combobox_engine.connect('changed', self.change_engine)
+		
+		self.ocr_engine_list_store = Gtk.ListStore(str)
+		for item in self.available_ocr_engine_list:
+			self.ocr_engine_list_store.append([item.name])
+		combobox_engine.set_model(self.ocr_engine_list_store)
+		
+		renderer_text = Gtk.CellRendererText()
+		combobox_engine.pack_start(renderer_text, True)
+		combobox_engine.add_attribute(renderer_text, "text", 0)
+		combobox_engine.set_active(self.ocr_engine)
 		
 		#LANGUAGE
 		self.language_cb = self.preferences_guibuilder.get_object("combobox_language")
-		self.language_cb.connect('changed',self.change_language)
 		renderer_text = Gtk.CellRendererText()
 		self.language_cb.pack_start(renderer_text, True)
 		self.language_cb.add_attribute(renderer_text, "text", 0)
-		
-		#Setting old language  
-		number = 0
-		for item in self.language_cb.get_model():
-			if self.language == item[0]:
-				self.language_cb.set_active(number)
-			number += 1	
+		self.language_cb.set_active(self.language)	
 		
 		#ROTATION
 		rotation = self.preferences_guibuilder.get_object("combobox_rotation")
@@ -345,32 +352,15 @@ class lios_preferences:
 	def change_engine(self, engine):
 		self.model_engine = engine.get_model()
 		self.index_engine = engine.get_active()
+		
 		self.language_cb = self.preferences_guibuilder.get_object("combobox_language")
-		ls = Gtk.ListStore(str)
-		if self.model_engine[self.index_engine][0] == "CUNEIFORM":
-			for i in 'eng' ,'ger','fra','rus','swe','spa','ita','ruseng','ukr','srp','hrv','pol','dan','por','dut','cze','rum','hun','bul','slo','lav','lit','est','tur':
-				ls.append([i])				
 		
-		if self.model_engine[self.index_engine][0] == "TESSERACT":
-			list = "afr","ara","aze","bel","ben","bul","cat","ces","chi-sim","chi-tra","chr","dan","deu","deu-frk","ell","eng","enm","epo","est","eus","fin","fra","frk","frm","glg","heb","hin","hrv","hun","ind","isl","ita","ita-old","jpn","kan","kor","lav","lit","mal","mkd","mlt","msa","nld","nor","pol","ron","rus","slk","slk-frak","slv","spa","spa-old","sqi","srp","swa","swe","tam","tel","tgl","tha","tur","ukr","vie"
-			check_list = []
-			check = subprocess.Popen(['ls',global_var.tesseract_data],stdout=subprocess.PIPE)
-			for lan in check.stdout:
-				lan = lan.decode('utf-8')
-				if "." in lan:
-					if lan.split(".")[0] in list:		
-						if [lan.split(".")[0]] in check_list:
-							pass
-						else:
-							ls.append([lan.split(".")[0]])
-							check_list.append([lan.split(".")[0]])			
+		language_list_store = Gtk.ListStore(str)
+		for item in self.available_ocr_engine_list[self.index_engine].get_available_languages():
+			language_list_store.append([item])			
 		
-		self.language_cb.set_model(ls)			
-		self.language_cb.set_active(0)					
-
-	def change_language(self,language):
-		self.model_language = language.get_model()
-		self.index_language = language.get_active()	
+		self.language_cb.set_model(language_list_store)			
+		self.language_cb.set_active(0)	
 
 
 	def change_rotation(self,rotation):
@@ -401,14 +391,8 @@ class lios_preferences:
 	def close_preferences(self,widget,data=None):
 		#self.notify("Its-all-right!",False,None,True)
 		self.preferences_window.destroy()
+
 	def apply_preferences(self,widget,data=None):
-		try:
-			language = (self.model_language[self.index_language][0])
-		except AttributeError:
-			language = self.language
-		else:
-			pass
-		
 		value=self.combobox_cam_resolution.get_active()
 		self.cam_x = self.liststore_cam_resolution[value][1]
 		self.cam_y = self.liststore_cam_resolution[value][2]
@@ -425,14 +409,23 @@ class lios_preferences:
 			self.voice_message_state = 0
 			
 		
-		self.font=self.font_button.get_font_name();self.highlight_font=self.fontbutton_highlight_button.get_font_name();
-		self.background_color=self.background_color_button.get_color().to_string();self.font_color=self.font_color_button.get_color().to_string();
-		self.highlight_color=self.highlight_color_button.get_color().to_string();self.time_between_repeated_scanning=self.time_spin.get_value_as_int();
+		self.font=self.font_button.get_font_name();
+		self.highlight_font=self.fontbutton_highlight_button.get_font_name();
+		self.background_color=self.background_color_button.get_color().to_string();
+		self.font_color=self.font_color_button.get_color().to_string();
+		self.highlight_color=self.highlight_color_button.get_color().to_string();
+		self.time_between_repeated_scanning=self.time_spin.get_value_as_int();
 		self.background_highlight_color=self.highlight_background_color_button.get_color().to_string();
-		self.scan_resolution = self.re_spin.get_value_as_int();self.scan_brightness=self.bt_spin.get_value_as_int();self.scan_area=self.index_area;self.scan_driver=self.index_driver;self.insert_position=self.index_insert_position;
-		self.ocr_engine=self.model_engine[self.index_engine][0];self.language=language
-		self.mode_of_rotation=self.index_rotation;self.number_of_pages_to_scan=self.pages_spin.get_value_as_int();self.page_numbering_type=self.index_numbering;
-		self.starting_page_number=self.start_spin.get_value_as_int();self.scanner_mode_switching=int(self.checkbutton_scanner_mode_switching.get_active())
+		self.scan_resolution = self.re_spin.get_value_as_int();
+		self.scan_brightness=self.bt_spin.get_value_as_int();
+		self.scan_area=self.index_area;self.scan_driver=self.index_driver;
+		self.insert_position=self.index_insert_position;
+		self.ocr_engine=self.index_engine;self.language=self.language_cb.get_active()
+		self.mode_of_rotation=self.index_rotation;
+		self.number_of_pages_to_scan=self.pages_spin.get_value_as_int();
+		self.page_numbering_type=self.index_numbering;
+		self.starting_page_number=self.start_spin.get_value_as_int();
+		self.scanner_mode_switching=int(self.checkbutton_scanner_mode_switching.get_active())
 		self.scanner_cache_calibration=int(self.checkbutton_scanner_cache_calibration.get_active())
 		
 		if self.angle_cb.get_visible() ==True:
@@ -447,7 +440,7 @@ class lios_preferences:
 			self.scanner_cache_calibration_old = self.scanner_cache_calibration
 			
 		self.activate_preferences()
-		self.set_preferences_to_file()
+		self.save_preferences_to_file('{0}/.lios_preferences.cfg'.format(global_var.home_dir))
 		self.preferences_window.destroy()
 
 	
@@ -466,7 +459,12 @@ class lios_preferences:
 		self.textview.modify_font(pangoFont)
 		self.textview.modify_fg(Gtk.StateFlags.NORMAL, Gdk.color_parse(self.font_color))
 		self.textview.modify_bg(Gtk.StateFlags.NORMAL, Gdk.color_parse(self.background_color))
-		self.set_dict("%s" % self.dictionary_language_dict[self.language])
+		
+		
+		languages = self.available_ocr_engine_list[self.ocr_engine].get_available_languages()
+		self.ocr_engine_object = self.available_ocr_engine_list[self.ocr_engine](languages[self.language])
+		
+		self.set_dict("%s" % self.dictionary_language_dict[languages[self.language]])
 		if (self.require_scanner_refresh):
 			self.scanner_refresh(self)
 		
@@ -477,7 +475,11 @@ class lios_preferences:
 			self.dict = enchant.Dict(language)
 		except	enchant.errors.DictNotFoundError:
 			self.dict = enchant.Dict("en")
-			dialog = Gtk.MessageDialog(None, 0, Gtk.MessageType.ERROR,Gtk.ButtonsType.OK, "Dict not found!")
-			dialog.format_secondary_text("Please install the aspell dict for your language({0}) and restart Lios.\n Otherwise spellchecker will be disabled and auto-rotation will work with english(fallback) ".format(language))
+			dialog = Gtk.MessageDialog(None, 0, Gtk.MessageType.ERROR,
+			Gtk.ButtonsType.OK, "Dict not found!")
+			
+			dialog.format_secondary_text("Please install the aspell dict for your " +
+			"language({0}) and restart Lios.\n Otherwise spellchecker will".format(language) + 
+			"be disabled and auto-rotation will work with english(fallback) ")
 			dialog.run()
 			dialog.destroy()

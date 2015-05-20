@@ -49,10 +49,10 @@ from lios import scanner
 from lios import text
 from lios import image_viewer
 from lios import cam
+from lios import ocr
 
 from lios.preferences import lios_preferences
 from lios import global_var
-from lios.ocr import *
 
 import multiprocessing
 import threading
@@ -87,7 +87,7 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 		self.dictionary_language_dict = {"eng" : "en","afr" : "af","am" : "am","ara" : "ar","ara" : "ar","bul" : "bg","ben" : "bn","br" : "br","cat" : "ca","ces" : "cs","cy" : "cy","dan" : "da","ger" : "de","ger" : "de","ell" : "el","eo" : "eo","spa" : "es","est" : "et","eu" : "eu","fa" : "fa","fin" : "fi","fo" : "fo","fra" : "fr","ga" : "ga","gl" : "gl","gu" : "gu","heb" : "he","hin" : "hi","hrv" : "hr","hsb" : "hsb","hun" : "hu","hy" : "hy","id" : "id","is" : "is","ita" : "it","kk" : "kk","kn" : "kn","ku" : "ku","lit" : "lt","lav" : "lv","mal" : "ml ","mr" : "mr ","dut" : "nl","no" : "no","nr" : "nr","ns" : "ns ","or" : "or ","pa" : "pa ","pol" : "pl ","por" : "pt","por" : "pt","por" : "pt","ron" : "ro","rus" : "ru ","slk" : "sk","slv" : "sl","ss" : "ss","st" : "st","swe" : "sv","tam" : "ta","tel" : "te","tl" : "tl","tn" : "tn","ts" : "ts","ukr" : "uk","uz" : "uz","xh" : "xh","zu" : "zu" }
 
 		#Getting Preferences Values
-		self.read_preferences()
+		self.set_preferences_from_file('{0}/.lios_preferences.cfg'.format(global_var.home_dir))
 		
 		#Image iconview and store
 		self.image_icon_view = self.guibuilder.get_object("iconview")
@@ -225,9 +225,10 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 		item = Gtk.MenuItem.new_with_label("Paste")
 		item.connect("activate",self.paste)
 		self.textview_popup_menu_no_selection.append(item)
-
-
-
+		
+		#OCR Engine
+		self.available_ocr_engine_list = ocr.get_available_engines()
+		
 		
 		#Creating Lios Folder in tmp
 		try:
@@ -254,10 +255,6 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 		self.ocr_submenu = self.guibuilder.get_object("OCR_Submenu")
 		self.toolbutton_ocr = self.guibuilder.get_object("toolbutton_ocr")
 
-		#Preference Wedgets
-		self.toolbutton_preferences = self.guibuilder.get_object("toolbutton_preferences")
-		self.preferences_menu = self.guibuilder.get_object("preferences_menu")
-
 		#Image Wedgets
 		self.image_submenu = self.guibuilder.get_object("ImageMenu")
 		self.toolbutton_import_pdf = self.guibuilder.get_object("toolbutton_import_pdf")
@@ -282,15 +279,19 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 			if(item.is_writable()):
 				self.writable_format.append(item.get_name())
 
+		#Preference Wedgets
+		self.toolbutton_preferences = self.guibuilder.get_object("toolbutton_preferences")
+		self.preferences_menu = self.guibuilder.get_object("preferences_menu")
+
 		#Preferences signals
 		General_Preferences = self.guibuilder.get_object("General_Preferences")
-		General_Preferences.connect("activate",self.preferences,0)
+		General_Preferences.connect("activate",self.configure_preferences_dialog,0)
 		Preferences_Recognition = self.guibuilder.get_object("Preferences_Recognition")
-		Preferences_Recognition.connect("activate",self.preferences,1)
+		Preferences_Recognition.connect("activate",self.configure_preferences_dialog,1)
 		Preferences_Scanning = self.guibuilder.get_object("Preferences_Scanning")
-		Preferences_Scanning.connect("activate",self.preferences,2)
+		Preferences_Scanning.connect("activate",self.configure_preferences_dialog,2)
 		Preferences_CamaraWebcam = self.guibuilder.get_object("Preferences_CamaraWebcam")
-		Preferences_CamaraWebcam.connect("activate",self.preferences,3)
+		Preferences_CamaraWebcam.connect("activate",self.configure_preferences_dialog,3)
 		
 		#Drawing Area and it's TreeView
 		self.paned_text_and_image = self.guibuilder.get_object("paned_text_and_image")
@@ -345,7 +346,7 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 	
 	def scan_using_cam(self,widget):
 		devices = cam.Cam.get_available_devices()
-		ob = cam.Cam(devices[0],self.cam_x,self.cam_y)
+		ob = cam.Cam(devices[-1],self.cam_x,self.cam_y)
 		ob.connect("image_captured",self.cam_image_captured)
 		
 	def cam_image_captured(self,widget,filename):
@@ -988,16 +989,18 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 		
 					
 	
-	############## Core OCR  Process Start ################################
+	############## OCR ################################
 	def ocr(self,file_name,mode,angle):
 		self.process_breaker = False
 		if mode == 2:	#Manual
-			text = self.ocr_with_multiprocessing(file_name,angle)
+			os.system("convert -rotate {0} {1} {1}".format(angle,file_name))
+			text = self.ocr_engine_object.ocr_image_to_text_with_multiprocessing(file_name)
 			return (text,angle)
 		else: #Full_Automatic or Partial_Automatic
 			list_ = []
 			for angle in [00,270,180,90]:
-				text = self.ocr_with_multiprocessing(file_name,angle)
+				os.system("convert -rotate {0} {1} {1}".format(angle,file_name))
+				text = self.ocr_engine_object.ocr_image_to_text_with_multiprocessing(file_name)
 				count = self.count_dict_words(text)
 				list_.append((text,count,angle))
 				if(self.process_breaker):
@@ -1014,23 +1017,7 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 					count += 1
 		return count
 		
-	def ocr_with_multiprocessing(self,file_name,angle):
-		parent_conn, child_conn = multiprocessing.Pipe()
-		print("Running ocr with multi proc")
-		self.set_progress_bar("Running OCR on {} with Engine = {} Language = {} Angle = {}".format(file_name,self.ocr_engine,self.language,angle),None,0.001,lock=True)
-		
-		p = multiprocessing.Process(target=(lambda parent_conn, child_conn,file_name : child_conn.send(ocr_image_to_text(file_name,self.ocr_engine,self.language,angle))), args=(parent_conn, child_conn,file_name))
-
-		p.start()
-		p.join()
-
-		#while(p.is_alive()):
-		#	pass
-		self.set_progress_bar("Recognition Completed!",None,0.01,lock=True)
-		print("Getting text from pipe")
-		return parent_conn.recv();
-		
-	############## Core OCR  Process End ################################
+	############## OCR  ################################
 	
 	@on_thread	
 	def scan_and_ocr(self,widget):
@@ -1201,7 +1188,7 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 				if(self.process_breaker):
 					list = sorted(list, key=lambda item: item[0],reverse=True)
 					return (list)
-				text = self.ocr_with_multiprocessing("{0}test.pnm".format(global_var.tmp_dir),angle)
+				text = self.ocr("{0}test.pnm".format(global_var.tmp_dir),2,angle)
 				count = self.count_dict_words(text)
 				list.append((count,pos))
 				self.announce("Got {} words at brightness {}.".format(count,pos))
@@ -1295,7 +1282,8 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 		text_to_audio_gtk_ui.record_ui(text)
 
 	def spell_checker(self,widget):
-		text.spell_check(self.textview,self.textbuffer,self.dictionary_language_dict[self.language])
+		languages = self.available_ocr_engine_list[self.ocr_engine].get_available_languages()
+		text.spell_check(self.textview,self.textbuffer,self.dictionary_language_dict[languages[self.language]])
 
     # Read the text
 	def Read_Stop(self,wedget,data=None):
