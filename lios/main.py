@@ -868,12 +868,13 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 		list_ = list(parent_conn.recv())
 		for device in list_:
 			self.set_progress_bar("Setting Scanner {}".format(device),None,0.0030,lock=True)
-			self.announce("Setting Scanner {}".format(device[2]))
+			self.announce("Setting Scanner {}".format(device))
 			
 			self.scanner_objects.append(self.available_driver_list[self.scan_driver]
 			(device,self.scan_resolution,self.scan_brightness,self.scan_area))
 			
-			scanner_store.append([device[2]])
+		for scanner in self.scanner_objects:
+			scanner_store.append([scanner.device_name])
 			
 		#Gdk.threads_enter()	
 		self.combobox_scanner.set_model(scanner_store)		
