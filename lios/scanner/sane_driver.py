@@ -26,12 +26,14 @@ except:
 	
 	
 from lios.scanner.driver_base import DriverBase
+import os
 
 class DriverSane(DriverBase):
 	name = "Sane"
 	
 	def __init__(self,device,resolution=300,brightness=40,scan_area=4):
 		sane_version = sane.init()
+		self.device_name = device[2];
 		try:
 			self.scanner = sane.open(device[0])
 		except sane._sane.error:
@@ -75,9 +77,10 @@ class DriverSane(DriverBase):
 		
 
 	def scan(self,file_name,brightness=-1,resolution=-1,region=-1):
-		super(DriverSane, self).scan(file_name,brightness,resolution,region)					
+		super(DriverSane, self).scan(file_name,brightness,resolution,region)
 		pil_image = self.scanner.scan()
-		pil_image.save(file_name)
+		pil_image.save("/tmp/sane_temp.png")
+		os.system("convert /tmp/sane_temp.png {}".format(file_name))
 
 			
 	def check_brightness_support(self):
@@ -129,11 +132,11 @@ class DriverSane(DriverBase):
 		#Y Axis for scan Area
 		option = self.get_scanner_option('br-y')
 		if option:
-			if scan_area == SCAN_AREA_FULL:
+			if scan_area == self.SCAN_AREA_FULL:
 				self.scanner.br_y = option[8][1]
-			elif scan_area == SCAN_AREA_THREE_QUARTER:
+			elif scan_area == self.SCAN_AREA_THREE_QUARTER:
 				self.scanner.br_y = 3*(option[8][1]/4)
-			elif scan_area == SCAN_AREA_HALF:
+			elif scan_area == self.SCAN_AREA_HALF:
 				self.scanner.br_y = option[8][1]/2
 			else:
 				self.scanner.br_y = option[8][1]/4
