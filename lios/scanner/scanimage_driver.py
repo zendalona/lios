@@ -26,7 +26,8 @@ class DriverScanimage(DriverBase):
 	name = "Scanimage"
 	
 	def __init__(self,device,resolution=300,brightness=40,scan_area=4):
-		self.device = device
+		self.device = device.split()[1][1:-1]
+		self.device_name = device;
 		
 		self.scanner_mode = "Color"
 		self.light_parameter_state = False
@@ -116,7 +117,7 @@ class DriverScanimage(DriverBase):
 		for line in output.split("\n"):
 			if "device" in line:
 				try:
-					scanner_list.append(line.split()[1][1:-1])
+					scanner_list.append(line)
 				except:
 					pass
 		return scanner_list
