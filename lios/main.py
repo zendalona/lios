@@ -249,7 +249,8 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 		self.combobox_scanner.pack_start(renderer_text, True)
 		self.combobox_scanner.add_attribute(renderer_text, "text", 0)
 		
-				
+		#Available Scanner Driver list
+		self.available_driver_list = scanner.get_available_drivers()
 		
 		#OCR Wedgets
 		self.ocr_submenu = self.guibuilder.get_object("OCR_Submenu")
@@ -856,19 +857,23 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 		
 		parent_conn, child_conn = multiprocessing.Pipe()
 
-		#q = multiprocessing.Queue()
-		p = multiprocessing.Process(target=(lambda parent_conn, child_conn : child_conn.send(tuple(scanner.scanner.get_devices()))), args=(parent_conn, child_conn))
+		p = multiprocessing.Process(target=(lambda parent_conn, child_conn :
+		child_conn.send(tuple(self.available_driver_list[self.scan_driver].get_available_devices()))),
+		args=(parent_conn, child_conn))
+		
 		p.start()
 		while(p.is_alive()):
 			pass
 		
 		list_ = list(parent_conn.recv())
 		for device in list_:
-			if "scanner" in device[3]:
-				self.set_progress_bar("Setting Scanner {}".format(device),None,0.0030,lock=True)
-				self.announce("Setting Scanner {}".format(device[2]))
-				self.scanner_objects.append(scanner.scanner(device,self.scan_driver,self.scanner_mode_switching,self.scanner_cache_calibration))
-				scanner_store.append([device[2]])
+			self.set_progress_bar("Setting Scanner {}".format(device),None,0.0030,lock=True)
+			self.announce("Setting Scanner {}".format(device[2]))
+			
+			self.scanner_objects.append(self.available_driver_list[self.scan_driver]
+			(device,self.scan_resolution,self.scan_brightness,self.scan_area))
+			
+			scanner_store.append([device[2]])
 			
 		#Gdk.threads_enter()	
 		self.combobox_scanner.set_model(scanner_store)		
@@ -884,7 +889,7 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 			self.announce("No Scanner Detected!")
 			self.set_progress_bar("No Scanner Detected!",None,0.01,lock=True)
 		self.make_preferences_widgets_active(lock=True)
-		#Gdk.threads_leave()
+		#Gdk.threads_leave()"""
 					
 	@on_thread
 	def scan_single_image(self,widget):
@@ -926,9 +931,13 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 	def scan(self,filename):
 		selected_scanner = self.combobox_scanner.get_active()
 		self.announce("Scanning!")
-		print("Scanning from scan")
-		self.set_progress_bar("Scanning {} with resolution={} brightness={}".format(filename,self.scan_resolution,self.scan_brightness),None,0.0030,lock=True)
-		p = multiprocessing.Process(target=(self.scanner_objects[selected_scanner].scan), args=("{}lios_tmp.pnm".format(global_var.tmp_dir),self.scan_resolution,self.scan_brightness,self.scan_area))
+
+		self.set_progress_bar("Scanning {} with resolution={} brightness={}"
+		.format(filename,self.scan_resolution,self.scan_brightness),None,0.0030,lock=True)
+		
+		p = multiprocessing.Process(target=(self.scanner_objects[selected_scanner].scan),
+		args=("{}lios_tmp.pnm".format(global_var.tmp_dir),self.scan_resolution,self.scan_brightness,self.scan_area))
+		
 		p.start()
 		while(p.is_alive()):
 			pass
@@ -1105,8 +1114,12 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 		mode = self.mode_of_rotation
 		angle = self.rotation_angle
 		if (mode == 0 or mode == 1):
-			self.set_progress_bar("Scanning with resolution={} brightness={}".format(self.scan_resolution,100),None,0.0030,lock=True)
-			p = multiprocessing.Process(target=(self.scanner_objects[selected_scanner].scan), args=("{0}test.pnm".format(global_var.tmp_dir),self.scan_resolution,100,self.scan_area))
+			self.set_progress_bar("Scanning with resolution={} brightness={}"
+			.format(self.scan_resolution,100),None,0.0030,lock=True)
+			
+			p = multiprocessing.Process(target=(self.scanner_objects[selected_scanner].scan),
+			args=("{0}test.pnm".format(global_var.tmp_dir),self.scan_resolution,100,self.scan_area))
+			
 			p.start()
 			while(p.is_alive()):
 				pass
@@ -1178,10 +1191,16 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 				self.announce("Got {} words at brightness {}.".format(previous_optimised_count,mid_value))
 			else:
 				if (count != -1):
-					self.set_progress_bar("Got {} words at brightness {}. Scanning with resolution={} brightness={}".format(count,pos-distance,self.scan_resolution,pos),None,0.0030,lock=True)
+					self.set_progress_bar("Got {} words at brightness {}. Scanning with resolution={} brightness={}"
+					.format(count,pos-distance,self.scan_resolution,pos),None,0.0030,lock=True)
 				else:
-					self.set_progress_bar("Scanning with resolution={} brightness={}".format(self.scan_resolution,pos),None,0.0030,lock=True)
-				p = multiprocessing.Process(target=(self.scanner_objects[selected_scanner].scan), args=("{0}test.pnm".format(global_var.tmp_dir,self.get_page_number_as_string()),self.scan_resolution,pos,self.scan_area))
+					self.set_progress_bar("Scanning with resolution={} brightness={}"
+					.format(self.scan_resolution,pos),None,0.0030,lock=True)
+				
+				p = multiprocessing.Process(target=(self.scanner_objects[selected_scanner].scan),
+				args=("{0}test.pnm".format(global_var.tmp_dir,self.get_page_number_as_string()),
+				self.scan_resolution,pos,self.scan_area))
+				
 				p.start()
 				while(p.is_alive()):
 					pass

@@ -168,20 +168,6 @@
       </row>
     </data>
   </object>
-  <object class="GtkListStore" id="liststore_driver">
-    <columns>
-      <!-- column-name Driver -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">SANE</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">SCAN-IMAGE</col>
-      </row>
-    </data>
-  </object>
   <object class="GtkListStore" id="liststore_insert_position">
     <columns>
       <!-- column-name Position -->
@@ -1199,13 +1185,6 @@
                   <object class="GtkComboBox" id="combobox_scan_driver">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="model">liststore_driver</property>
-                    <child>
-                      <object class="GtkCellRendererText" id="cellrenderertext9"/>
-                      <attributes>
-                        <attribute name="text">0</attribute>
-                      </attributes>
-                    </child>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>

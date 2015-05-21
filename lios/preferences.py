@@ -256,9 +256,18 @@ class lios_preferences:
 
 		#Driver
 		self.scan_driver_old = self.scan_driver						      
-		driver = self.preferences_guibuilder.get_object("combobox_scan_driver")
-		driver.connect('changed', self.change_driver)
-		driver.set_active(self.scan_driver)
+		driver_combobox = self.preferences_guibuilder.get_object("combobox_scan_driver")
+		driver_combobox.connect('changed', self.change_driver)
+
+		driver_list_store = Gtk.ListStore(str)
+		for item in self.available_driver_list:
+			driver_list_store.append([item.name])
+		driver_combobox.set_model(driver_list_store)
+		
+		renderer_text = Gtk.CellRendererText()
+		driver_combobox.pack_start(renderer_text, True)
+		driver_combobox.add_attribute(renderer_text, "text", 0)
+		driver_combobox.set_active(self.scan_driver)
 
 		#insert_position						      
 		insert_position = self.preferences_guibuilder.get_object("combobox_insert_position")
@@ -403,10 +412,7 @@ class lios_preferences:
 		self.voice_message_rate=int(self.hscale_rate.get_value())
 		self.voice_message_volume=int(self.hscale_volume.get_value())
 		self.voice_message_pitch=int(self.hscale_pitch.get_value())
-		if self.checkbutton_say.get_active() == True:
-			self.voice_message_state = 1
-		else:
-			self.voice_message_state = 0
+		self.voice_message_state = self.checkbutton_say.get_active()
 			
 		
 		self.font=self.font_button.get_font_name();
