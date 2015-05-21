@@ -230,12 +230,7 @@ class lios_preferences:
 		self.combobox_voice.set_active(self.voice_message_voice)
 		
 		self.checkbutton_say = self.preferences_guibuilder.get_object("checkbutton_say")
-		if self.voice_message_state == 1:
-			self.checkbutton_say.set_active(True)
-		else:
-			self.checkbutton_say.set_active(False)
-		
-
+		self.checkbutton_say.set_active(self.voice_message_state)
 		
 		# Scanning
 		self.time_spin = self.preferences_guibuilder.get_object("spinbutton_time")
@@ -412,7 +407,7 @@ class lios_preferences:
 		self.voice_message_rate=int(self.hscale_rate.get_value())
 		self.voice_message_volume=int(self.hscale_volume.get_value())
 		self.voice_message_pitch=int(self.hscale_pitch.get_value())
-		self.voice_message_state = self.checkbutton_say.get_active()
+		self.voice_message_state = int(self.checkbutton_say.get_active())
 			
 		
 		self.font=self.font_button.get_font_name();
