@@ -24,19 +24,19 @@ class DriverBase(metaclass=abc.ABCMeta):
 	SCAN_AREA_QUARTER,SCAN_AREA_THREE_QUARTER = range(4)
 	
 	@abc.abstractmethod
-	def __init__(self,device,resolution=300,brightness=40,scan_area=4):
+	def __init__(self,device,resolution=300,brightness=40,scan_area=0):
 		self.set_resolution(resolution);
 		self.set_brightness(brightness);
 		self.set_scan_area(scan_area);
 	
 	@abc.abstractmethod
-	def scan(self,filename,brightness=-1,resolution=-1,scan_area=-1):
+	def scan(self,filename,resolution=-1,brightness=-1,scan_area=-1):
 		if (brightness !=-1 ):
 			self.set_brightness(brightness)
 		if (resolution !=-1 ):
 			self.set_resolution(resolution);
 		if (scan_area !=-1 ):
-			self.set_scan_area(resolution);			
+			self.set_scan_area(scan_area);			
 
 
 	@abc.abstractmethod

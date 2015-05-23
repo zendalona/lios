@@ -84,7 +84,20 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 		
 
 		#Reading Dictionarys		
-		self.dictionary_language_dict = {"eng" : "en","afr" : "af","am" : "am","ara" : "ar","ara" : "ar","bul" : "bg","ben" : "bn","br" : "br","cat" : "ca","ces" : "cs","cy" : "cy","dan" : "da","ger" : "de","ger" : "de","ell" : "el","eo" : "eo","spa" : "es","est" : "et","eu" : "eu","fa" : "fa","fin" : "fi","fo" : "fo","fra" : "fr","ga" : "ga","gl" : "gl","gu" : "gu","heb" : "he","hin" : "hi","hrv" : "hr","hsb" : "hsb","hun" : "hu","hy" : "hy","id" : "id","is" : "is","ita" : "it","kk" : "kk","kn" : "kn","ku" : "ku","lit" : "lt","lav" : "lv","mal" : "ml ","mr" : "mr ","dut" : "nl","no" : "no","nr" : "nr","ns" : "ns ","or" : "or ","pa" : "pa ","pol" : "pl ","por" : "pt","por" : "pt","por" : "pt","ron" : "ro","rus" : "ru ","slk" : "sk","slv" : "sl","ss" : "ss","st" : "st","swe" : "sv","tam" : "ta","tel" : "te","tl" : "tl","tn" : "tn","ts" : "ts","ukr" : "uk","uz" : "uz","xh" : "xh","zu" : "zu" }
+		self.dictionary_language_dict = {"eng" : "en","afr" : "af","am" : "am",
+		"ara" : "ar","ara" : "ar","bul" : "bg","ben" : "bn","br" : "br",
+		"cat" : "ca","ces" : "cs","cy" : "cy","dan" : "da","ger" : "de",
+		"ger" : "de","ell" : "el","eo" : "eo","spa" : "es","est" : "et",
+		"eu" : "eu","fa" : "fa","fin" : "fi","fo" : "fo","fra" : "fr",
+		"ga" : "ga","gl" : "gl","gu" : "gu","heb" : "he","hin" : "hi",
+		"hrv" : "hr","hsb" : "hsb","hun" : "hu","hy" : "hy","id" : "id",
+		"is" : "is","ita" : "it","kk" : "kk","kn" : "kn","ku" : "ku",
+		"lit" : "lt","lav" : "lv","mal" : "ml ","mr" : "mr ","dut" : "nl",
+		"no" : "no","nr" : "nr","ns" : "ns ","or" : "or ","pa" : "pa ",
+		"pol" : "pl ","por" : "pt","por" : "pt","por" : "pt","ron" : "ro",
+		"rus" : "ru ","slk" : "sk","slv" : "sl","ss" : "ss","st" : "st",
+		"swe" : "sv","tam" : "ta","tel" : "te","tl" : "tl","tn" : "tn",
+		"ts" : "ts","ukr" : "uk","uz" : "uz","xh" : "xh","zu" : "zu" }
 
 		#Getting Preferences Values
 		self.set_preferences_from_file('{0}/.lios_preferences.cfg'.format(global_var.home_dir))
@@ -389,7 +402,9 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 		if (self.voice_message_state):
 			if(interrupt):
 				os.system("pkill paplay")
-			os.system("espeak -v {} -a {} -s {} -p {} '{}' --stdout|paplay &".format(self.voice_list[self.voice_message_voice],self.voice_message_volume,self.voice_message_rate,self.voice_message_pitch,text.replace("'",'"')))	
+			os.system("espeak -v {} -a {} -s {} -p {} '{}' --stdout|paplay &"
+			.format(self.voice_list[self.voice_message_voice],self.voice_message_volume,
+			self.voice_message_rate,self.voice_message_pitch,text.replace("'",'"')))	
 
 
         		
@@ -403,7 +418,9 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 		progress_step = 1/len(self.imageview.get_selection_list());
 		progress = 0;
 		for item in self.imageview.get_selection_list():
-			self.set_progress_bar("Running OCR on selected Area [ X={} Y={} Width={} Height={} ]".format(item[0],item[1],item[2],item[3]),progress,None,lock=True)
+			self.set_progress_bar("Running OCR on selected Area [ X={} Y={} Width={} Height={} ]"
+			.format(item[0],item[1],item[2],item[3]),progress,None,lock=True)
+			
 			progress = progress + progress_step;
 			self.imageview.save_sub_image("{0}tmp".format(global_var.tmp_dir),
 			item[0],item[1],item[2],item[3])
@@ -444,7 +461,8 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 				item[0] = buff
 	
 	def iconview_press_event(self, treeview, event):
-		if ((event.type == Gdk.EventType.BUTTON_PRESS and event.button == 3) or (event.type == Gdk.EventType.KEY_PRESS and event.hardware_keycode == 135)):
+		if ((event.type == Gdk.EventType.BUTTON_PRESS and event.button == 3)
+		or (event.type == Gdk.EventType.KEY_PRESS and event.hardware_keycode == 135)):
 			time = event.time
 			if (event.type == Gdk.EventType.KEY_PRESS):
 				event.button = 0
@@ -464,7 +482,8 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 	def iconview_selection_changed(self,widget):
 		items = self.image_icon_view.get_selected_items()
 		if (items):
-			self.imageview.load_image(self.liststore_images[items[0]][1],self.liststore_images[items[0]][2],self.liststore_images[items[0]][3])
+			self.imageview.load_image(self.liststore_images[items[0]][1],
+			self.liststore_images[items[0]][2],self.liststore_images[items[0]][3])
 
 	def iconview_image_delete(self,widget):
 		if (len(self.image_icon_view.get_selected_items()) >= 1):
@@ -515,7 +534,9 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 				save_format = 'png'
 			pb.savev(self.liststore_images[item[0]][1], save_format,[],[])
 			self.iconview_image_reload(self.liststore_images[item[0]][1])			
-			self.set_progress_bar("Rotating selected image {} to {}".format(self.liststore_images[item[0]][1],angle),progress,None,lock=True)
+			self.set_progress_bar("Rotating selected image {} to {}"
+			.format(self.liststore_images[item[0]][1],angle),progress,None,lock=True)
+			
 			progress = progress + progress_step;
 		self.imageview.redraw()
 		self.set_progress_bar("completed!",None,0.01,lock=True)
@@ -549,7 +570,9 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 		progress_step = 1/len(self.image_icon_view.get_selected_items())
 		progress = 0;
 		for item in reversed(self.image_icon_view.get_selected_items()):
-			self.set_progress_bar("Running OCR on selected image {} (without rotating)".format(self.liststore_images[item[0]][1]),progress,None,lock=True)
+			self.set_progress_bar("Running OCR on selected image {} (without rotating)"
+			.format(self.liststore_images[item[0]][1]),progress,None,lock=True)
+			
 			self.announce("Recognising {} without rotating".format(self.liststore_images[item[0]][1]))
 			progress = progress + progress_step;
 			text,angle = self.ocr(self.liststore_images[item[0]][1],2,00)
@@ -576,7 +599,9 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 		mode = self.mode_of_rotation
 		angle = self.rotation_angle
 		for item in reversed(self.image_icon_view.get_selected_items()):
-			self.set_progress_bar("Running OCR on selected image {}".format(self.liststore_images[item[0]][1]),progress,None,lock=True)
+			self.set_progress_bar("Running OCR on selected image {}"
+			.format(self.liststore_images[item[0]][1]),progress,None,lock=True)
+			
 			self.announce("Recognising {}".format(self.liststore_images[item[0]][1]))
 			progress = progress + progress_step;			
 			text,angle = self.ocr(self.liststore_images[item[0]][1],mode,angle)
@@ -596,7 +621,9 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 		self.ocr_selected_images(None)
 	
 	def save_selected_images(self,widget):
-		dialog = Gtk.FileChooserDialog("Select Folder to save images",None,Gtk.FileChooserAction.SELECT_FOLDER,buttons=(Gtk.STOCK_SAVE,Gtk.ResponseType.OK))
+		dialog = Gtk.FileChooserDialog("Select Folder to save images",None,
+		Gtk.FileChooserAction.SELECT_FOLDER,buttons=(Gtk.STOCK_SAVE,Gtk.ResponseType.OK))
+		
 		dialog.set_current_folder(global_var.home_dir)
 		response = dialog.run()
 		if response == Gtk.ResponseType.OK:
@@ -611,7 +638,9 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 		self.save_selected_images(None)
 		
 	def save_selected_images_as_pdf(self,widget):
-		dialog = Gtk.FileChooserDialog("Give pdf filename(with extention) to save images",None,Gtk.FileChooserAction.SAVE,buttons=(Gtk.STOCK_SAVE,Gtk.ResponseType.OK))
+		dialog = Gtk.FileChooserDialog("Give pdf filename(with extention) to save images",
+		None,Gtk.FileChooserAction.SAVE,buttons=(Gtk.STOCK_SAVE,Gtk.ResponseType.OK))
+		
 		dialog.set_current_folder(global_var.home_dir)
 		response = dialog.run()
 		if response == Gtk.ResponseType.OK:
@@ -658,7 +687,9 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 
 	def import_image(self,wedget,data=None):
 		#self.make_image_widgets_inactive()
-		open_file = Gtk.FileChooserDialog("Select image file to import",None,Gtk.FileChooserAction.OPEN,buttons=(Gtk.STOCK_OPEN,Gtk.ResponseType.OK))
+		open_file = Gtk.FileChooserDialog("Select image file to import",
+		None,Gtk.FileChooserAction.OPEN,buttons=(Gtk.STOCK_OPEN,Gtk.ResponseType.OK))
+		
 		open_file.set_current_folder(global_var.home_dir)
 
 		filter = Gtk.FileFilter()
@@ -680,7 +711,9 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 		#self.make_image_widgets_active()		
 
 	def import_pdf(self,wedget,data=None):
-		open_file = Gtk.FileChooserDialog("Select Pdf file to import",None,Gtk.FileChooserAction.OPEN,buttons=(Gtk.STOCK_OPEN,Gtk.ResponseType.OK))
+		open_file = Gtk.FileChooserDialog("Select Pdf file to import",
+		None,Gtk.FileChooserAction.OPEN,buttons=(Gtk.STOCK_OPEN,Gtk.ResponseType.OK))
+		
 		open_file.set_current_folder(global_var.home_dir)
 		filter = Gtk.FileFilter()
 		filter.set_name("*.Pdf")
@@ -704,7 +737,10 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 		
 		self.set_progress_bar("Extracting images from Pdf",None,0.001,lock=True)
 		self.announce("Extracting images from Pdf please wait!")	
-		p = multiprocessing.Process(target=lambda : os.system("pdfimages {} {}/{}".format(destination,destination.split(".")[0],pdf_filename.split(".")[0])) , args=())
+		
+		p = multiprocessing.Process(target=lambda : os.system("pdfimages {} {}/{}"
+		.format(destination,destination.split(".")[0],pdf_filename.split(".")[0])) , args=())
+		
 		p.start()
 		while(p.is_alive()):
 			pass
@@ -729,7 +765,9 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 		
 	def import_folder(self,wedget,data=None):
 		self.make_image_widgets_inactive()
-		folder = Gtk.FileChooserDialog("Select Folder contains images to import",None,Gtk.FileChooserAction.SELECT_FOLDER,buttons=(Gtk.STOCK_OPEN,Gtk.ResponseType.OK))
+		folder = Gtk.FileChooserDialog("Select Folder contains images to import",
+		None,Gtk.FileChooserAction.SELECT_FOLDER,buttons=(Gtk.STOCK_OPEN,Gtk.ResponseType.OK))
+		
 		folder.set_current_folder(global_var.home_dir)
 		response = folder.run()
 		if response == Gtk.ResponseType.OK:
@@ -865,13 +903,23 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 		while(p.is_alive()):
 			pass
 		
+		
+		driver = self.available_driver_list[self.scan_driver]
 		list_ = list(parent_conn.recv())
 		for device in list_:
 			self.set_progress_bar("Setting Scanner {}".format(device),None,0.0030,lock=True)
 			self.announce("Setting Scanner {}".format(device))
 			
-			self.scanner_objects.append(self.available_driver_list[self.scan_driver]
-			(device,self.scan_resolution,self.scan_brightness,self.scan_area))
+			scanner = driver(device,self.scan_resolution,self.scan_brightness,self.scan_area)
+			if (self.scanner_mode_switching):
+				for mode in scanner.get_available_scan_modes():
+					if mode == "Lineart":
+						scanner.set_scan_mode(mode)
+					if mode == "Binary":
+						scanner.set_scan_mode(mode)
+
+			self.scanner_objects.append(scanner)
+		print(self.scanner_objects)
 			
 		for scanner in self.scanner_objects:
 			scanner_store.append([scanner.device_name])
@@ -937,7 +985,8 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 		.format(filename,self.scan_resolution,self.scan_brightness),None,0.0030,lock=True)
 		
 		p = multiprocessing.Process(target=(self.scanner_objects[selected_scanner].scan),
-		args=("{}lios_tmp.pnm".format(global_var.tmp_dir),self.scan_resolution,self.scan_brightness,self.scan_area))
+		args=("{}lios_tmp.pnm".format(global_var.tmp_dir),self.scan_resolution,
+		self.scan_brightness,self.scan_area))
 		
 		p.start()
 		while(p.is_alive()):
@@ -1142,9 +1191,16 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 			spinbutton_value.set_value(mid_value)
 			spinbutton_distance.set_value(distance)
 			spinbutton_vary.set_value(vary)
-			guibuilder.get_object("button_cancel").connect("clicked",lambda x : dialog.response(Gtk.ResponseType.CANCEL))
-			guibuilder.get_object("button_apply").connect("clicked",lambda x : dialog.response(Gtk.ResponseType.APPLY))
-			guibuilder.get_object("button_forward").connect("clicked",lambda x : dialog.response(Gtk.ResponseType.ACCEPT))
+			
+			guibuilder.get_object("button_cancel").connect("clicked",
+			lambda x : dialog.response(Gtk.ResponseType.CANCEL))
+			
+			guibuilder.get_object("button_apply").connect("clicked",
+			lambda x : dialog.response(Gtk.ResponseType.APPLY))
+			
+			guibuilder.get_object("button_forward").connect("clicked",
+			lambda x : dialog.response(Gtk.ResponseType.ACCEPT))
+			
 			response = dialog.run()
 			dialog.destroy()
 			Gdk.threads_leave()				
@@ -1233,20 +1289,26 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 				self.textview_popup_menu.popup(None, None, None, None,event.button,time)
 				self.textview_popup_menu.show_all()
 			else:
-				self.textview_popup_menu_no_selection.popup(None, None, None, None,event.button,time)
+				self.textview_popup_menu_no_selection.popup(None, None,
+				None, None,event.button,time)
+				
 				self.textview_popup_menu_no_selection.show_all()
 			return True	
 	
 
 	def go_to_page(self,wedget,data=None):
 		iter,end = self.textbuffer.get_bounds()
-		adj = Gtk.Adjustment(value=1, lower=1, upper=self.starting_page_number-1, step_incr=1, page_incr=5, page_size=0) 
+		adj = Gtk.Adjustment(value=1, lower=1, upper=self.starting_page_number-1,
+		step_incr=1, page_incr=5, page_size=0) 
+		
 		spinbutton_line = Gtk.SpinButton()
 		spinbutton_line.set_adjustment(adj)
 		spinbutton_line.set_value(0)		
 		spinbutton_line.show()
 
-		dialog =  Gtk.Dialog("Go to Page ",self.window,True,("Go", Gtk.ResponseType.ACCEPT,"Close!", Gtk.ResponseType.REJECT))
+		dialog =  Gtk.Dialog("Go to Page ",self.window,True,
+		("Go", Gtk.ResponseType.ACCEPT,"Close!", Gtk.ResponseType.REJECT))
+		
 		spinbutton_line.connect("activate",lambda x : dialog.response(Gtk.ResponseType.ACCEPT))
 		box = dialog.get_content_area();
 		box.add(spinbutton_line)
@@ -1303,14 +1365,17 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 
 	def spell_checker(self,widget):
 		languages = self.available_ocr_engine_list[self.ocr_engine].get_available_languages()
-		text.spell_check(self.textview,self.textbuffer,self.dictionary_language_dict[languages[self.language]])
+		text.spell_check(self.textview,self.textbuffer,
+		self.dictionary_language_dict[languages[self.language]])
 
     # Read the text
 	def Read_Stop(self,wedget,data=None):
 		image_read_stop = self.guibuilder.get_object("image_read_stop")
 		if espeak.is_playing() == False:
 			image_read_stop.set_from_file("{0}/ui/stop".format(global_var.data_dir))
-			self.textbuffer.remove_tag(self.highlight_tag, self.textbuffer.get_start_iter(),self.textbuffer.get_end_iter())
+			self.textbuffer.remove_tag(self.highlight_tag, self.textbuffer.get_start_iter(),
+			self.textbuffer.get_end_iter())
+			
 			mark = self.textbuffer.get_insert()
 			start = self.textbuffer.get_iter_at_mark(mark)
 			end = self.textbuffer.get_end_iter()
@@ -1323,7 +1388,9 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 			espeak.cancel()
 			espeak.set_SynthCallback(None)
 			image_read_stop.set_from_file("{0}/ui/play".format(global_var.data_dir))
-			self.textbuffer.remove_tag(self.highlight_tag, self.textbuffer.get_start_iter(),self.textbuffer.get_end_iter())
+			self.textbuffer.remove_tag(self.highlight_tag, self.textbuffer.get_start_iter(),
+			self.textbuffer.get_end_iter())
+			
 			self.textview.set_editable(True)
 			
 		
@@ -1334,7 +1401,9 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 			s = self.textbuffer.get_iter_at_offset(pos)
 			e = self.textbuffer.get_iter_at_offset(length+pos)			
 			
-			self.textbuffer.remove_all_tags(self.textbuffer.get_start_iter(),self.textbuffer.get_end_iter())
+			self.textbuffer.remove_all_tags(self.textbuffer.get_start_iter(),
+			self.textbuffer.get_end_iter())
+			
 			self.textbuffer.apply_tag(self.highlight_tag, s, e)
 
 		if event == espeak.event_END:
@@ -1347,7 +1416,8 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 			espeak._playing = False
 			self.textview.set_editable(True)
 			try:
-				self.textbuffer.remove_all_tags(self.textbuffer.get_start_iter(),self.textbuffer.get_end_iter())
+				self.textbuffer.remove_all_tags(self.textbuffer.get_start_iter(),
+				self.textbuffer.get_end_iter())
 			except:
 				pass
 
@@ -1369,7 +1439,8 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 			pass
 		Gtk.main_quit()
 	def new(self,data):
-		dialog =  Gtk.Dialog("Start new ?",self.window,True,("No!", Gtk.ResponseType.REJECT,"Yes!", Gtk.ResponseType.ACCEPT))
+		dialog =  Gtk.Dialog("Start new ?",self.window,True,("No!",
+		Gtk.ResponseType.REJECT,"Yes!", Gtk.ResponseType.ACCEPT))
 		label = Gtk.Label("Start new? This will clear all text and images!")
 		box = dialog.get_content_area()
 		box.add(label)

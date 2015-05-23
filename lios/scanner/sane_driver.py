@@ -31,7 +31,7 @@ import os
 class DriverSane(DriverBase):
 	name = "Sane"
 	
-	def __init__(self,device,resolution=300,brightness=40,scan_area=4):
+	def __init__(self,device,resolution=300,brightness=40,scan_area=0):
 		sane_version = sane.init()
 		self.device_name = device[2];
 		try:
