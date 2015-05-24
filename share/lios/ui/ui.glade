@@ -167,12 +167,6 @@
     <property name="can_focus">False</property>
     <property name="stock">gtk-jump-to</property>
   </object>
-  <object class="GtkImage" id="image_read_stop">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="tooltip_text" translatable="yes">Play or Stop TTS</property>
-    <property name="pixbuf">play</property>
-  </object>
   <object class="GtkWindow" id="window">
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">Linux-Intelligent-OCR-Solution</property>
@@ -201,57 +195,52 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <child>
-                      <object class="GtkImageMenuItem" id="new ">
+                      <object class="GtkImageMenuItem" id="New">
                         <property name="label">gtk-new</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
-                        <signal name="activate" handler="new" swapped="no"/>
                         <accelerator key="n" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                       </object>
                     </child>
                     <child>
-                      <object class="GtkImageMenuItem" id="open ">
+                      <object class="GtkImageMenuItem" id="Open">
                         <property name="label">gtk-open</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
-                        <signal name="activate" handler="open" swapped="no"/>
                         <accelerator key="o" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                       </object>
                     </child>
                     <child>
-                      <object class="GtkImageMenuItem" id="save ">
+                      <object class="GtkImageMenuItem" id="Save">
                         <property name="label">gtk-save</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
-                        <signal name="activate" handler="save" swapped="no"/>
                         <accelerator key="s" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                       </object>
                     </child>
                     <child>
-                      <object class="GtkImageMenuItem" id="save_as">
+                      <object class="GtkImageMenuItem" id="SaveAs">
                         <property name="label">gtk-save-as</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
-                        <signal name="activate" handler="save_as" swapped="no"/>
                         <accelerator key="s" signal="activate" modifiers="GDK_SHIFT_MASK | GDK_CONTROL_MASK"/>
                       </object>
                     </child>
                     <child>
-                      <object class="GtkImageMenuItem" id="Export_as_pdf">
+                      <object class="GtkImageMenuItem" id="ExportAsPdf">
                         <property name="label" translatable="yes">Export-as-pdf</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="image">image21</property>
                         <property name="use_stock">False</property>
-                        <signal name="activate" handler="print_to_pdf" swapped="no"/>
                       </object>
                     </child>
                     <child>
@@ -261,17 +250,15 @@
                         <property name="can_focus">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
-                        <signal name="activate" handler="print_text" swapped="no"/>
                       </object>
                     </child>
                     <child>
-                      <object class="GtkImageMenuItem" id="imagemenuitem3">
+                      <object class="GtkImageMenuItem" id="PrintPreview">
                         <property name="label">gtk-print-preview</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
-                        <signal name="activate" handler="print_preview" swapped="no"/>
                       </object>
                     </child>
                     <child>
@@ -501,27 +488,24 @@
                         <property name="can_focus">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
-                        <signal name="activate" handler="cut" swapped="no"/>
                       </object>
                     </child>
                     <child>
-                      <object class="GtkImageMenuItem" id="copy">
+                      <object class="GtkImageMenuItem" id="Copy">
                         <property name="label">gtk-copy</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
-                        <signal name="activate" handler="copy" swapped="no"/>
                       </object>
                     </child>
                     <child>
-                      <object class="GtkImageMenuItem" id="paste">
+                      <object class="GtkImageMenuItem" id="Paste">
                         <property name="label">gtk-paste</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
-                        <signal name="activate" handler="paste" swapped="no"/>
                       </object>
                     </child>
                     <child>
@@ -531,7 +515,6 @@
                         <property name="can_focus">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
-                        <signal name="activate" handler="delete" swapped="no"/>
                       </object>
                     </child>
                     <child>
@@ -541,17 +524,15 @@
                         <property name="can_focus">False</property>
                         <property name="image">image14</property>
                         <property name="use_stock">False</property>
-                        <signal name="activate" handler="punch" swapped="no"/>
                       </object>
                     </child>
                     <child>
-                      <object class="GtkImageMenuItem" id="Append-File">
+                      <object class="GtkImageMenuItem" id="Append">
                         <property name="label" translatable="yes">Append</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="image">image15</property>
                         <property name="use_stock">False</property>
-                        <signal name="activate" handler="append" swapped="no"/>
                       </object>
                     </child>
                     <child>
@@ -561,40 +542,36 @@
                         <property name="can_focus">False</property>
                         <property name="image">image16</property>
                         <property name="use_stock">False</property>
-                        <signal name="activate" handler="find" swapped="no"/>
                         <accelerator key="f" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                       </object>
                     </child>
                     <child>
-                      <object class="GtkImageMenuItem" id="Find &amp; Replace">
+                      <object class="GtkImageMenuItem" id="FindReplace">
                         <property name="label">gtk-find-and-replace</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
-                        <signal name="activate" handler="find_and_replace" swapped="no"/>
                         <accelerator key="r" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                       </object>
                     </child>
                     <child>
-                      <object class="GtkImageMenuItem" id="Go-To-Line">
+                      <object class="GtkImageMenuItem" id="GoToLine">
                         <property name="label" translatable="yes">Go-To-Line</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="image">image17</property>
                         <property name="use_stock">False</property>
-                        <signal name="activate" handler="go_to_line" swapped="no"/>
                         <accelerator key="l" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                       </object>
                     </child>
                     <child>
-                      <object class="GtkImageMenuItem" id="Go-To-Page">
+                      <object class="GtkImageMenuItem" id="GoToPage">
                         <property name="label" translatable="yes">Go-To-Page</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="image">image18</property>
                         <property name="use_stock">False</property>
-                        <signal name="activate" handler="go_to_page" swapped="no"/>
                         <accelerator key="g" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                       </object>
                     </child>
@@ -767,35 +744,32 @@
                       </object>
                     </child>
                     <child>
-                      <object class="GtkImageMenuItem" id="Spell-Checker">
+                      <object class="GtkImageMenuItem" id="SpellChecker">
                         <property name="label">gtk-spell-check</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
-                        <signal name="activate" handler="spell_checker" swapped="no"/>
                         <accelerator key="F7" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                       </object>
                     </child>
                     <child>
-                      <object class="GtkImageMenuItem" id="Read_Stop">
+                      <object class="GtkImageMenuItem" id="ReadStop">
                         <property name="label" translatable="yes">Read/Stop</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="image">image40</property>
                         <property name="use_stock">False</property>
-                        <signal name="activate" handler="Read_Stop" swapped="no"/>
                         <accelerator key="F5" signal="activate"/>
                       </object>
                     </child>
                     <child>
-                      <object class="GtkImageMenuItem" id="Audio-Converter">
+                      <object class="GtkImageMenuItem" id="AudioConverter">
                         <property name="label" translatable="yes">Audio-Converter</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="image">image28</property>
                         <property name="use_stock">False</property>
-                        <signal name="activate" handler="audio_converter" swapped="no"/>
                       </object>
                     </child>
                     <child>
@@ -972,154 +946,7 @@
                   <placeholder/>
                 </child>
                 <child>
-                  <object class="GtkBox" id="box1">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="orientation">vertical</property>
-                    <child>
-                      <object class="GtkToolbar" id="toolbar">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <child>
-                          <object class="GtkToolButton" id="new">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="tooltip_text" translatable="yes">Start a new file</property>
-                            <property name="label" translatable="yes">New</property>
-                            <property name="use_underline">True</property>
-                            <property name="stock_id">gtk-new</property>
-                            <signal name="clicked" handler="new" swapped="no"/>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="homogeneous">True</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkToolButton" id="save">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="tooltip_text" translatable="yes">Save file</property>
-                            <property name="label" translatable="yes">Save</property>
-                            <property name="use_underline">True</property>
-                            <property name="stock_id">gtk-save</property>
-                            <signal name="clicked" handler="save" swapped="no"/>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="homogeneous">True</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkToolButton" id="open">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="tooltip_text" translatable="yes">Open text file</property>
-                            <property name="label" translatable="yes">Open</property>
-                            <property name="use_underline">True</property>
-                            <property name="stock_id">gtk-open</property>
-                            <signal name="clicked" handler="open" swapped="no"/>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="homogeneous">True</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkToolButton" id="Spell-Check">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="tooltip_text" translatable="yes">Check spelling</property>
-                            <property name="label" translatable="yes">Spell-Check</property>
-                            <property name="use_underline">True</property>
-                            <property name="stock_id">gtk-spell-check</property>
-                            <signal name="clicked" handler="spell_checker" swapped="no"/>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="homogeneous">True</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkToolButton" id="toolbutton9">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="tooltip_text" translatable="yes">Stop-all-process</property>
-                            <property name="label" translatable="yes">Stop All Process</property>
-                            <property name="use_underline">True</property>
-                            <property name="stock_id">gtk-media-stop</property>
-                            <signal name="clicked" handler="stop_process" swapped="no"/>
-                            <accelerator key="F4" signal="clicked" modifiers="GDK_CONTROL_MASK"/>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="homogeneous">True</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkToolButton" id="toolbutton7">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="tooltip_text" translatable="yes">Find</property>
-                            <property name="label" translatable="yes">Find</property>
-                            <property name="use_underline">True</property>
-                            <property name="stock_id">gtk-find</property>
-                            <signal name="clicked" handler="find" swapped="no"/>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="homogeneous">True</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkToolButton" id="Read_button">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">Read</property>
-                            <property name="use_underline">True</property>
-                            <property name="icon_widget">image_read_stop</property>
-                            <signal name="clicked" handler="Read_Stop" swapped="no"/>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="homogeneous">True</property>
-                          </packing>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">0</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkScrolledWindow" id="scrolledwindow_text">
-                        <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="border_width">10</property>
-                        <property name="shadow_type">in</property>
-                        <child>
-                          <object class="GtkTextView" id="textview">
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="vscroll_policy">natural</property>
-                            <property name="wrap_mode">word</property>
-                            <property name="accepts_tab">False</property>
-                            <signal name="button-press-event" handler="textview_button_press_event" swapped="no"/>
-                          </object>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="expand">True</property>
-                        <property name="fill">True</property>
-                        <property name="position">1</property>
-                      </packing>
-                    </child>
-                  </object>
-                  <packing>
-                    <property name="resize">True</property>
-                    <property name="shrink">True</property>
-                  </packing>
+                  <placeholder/>
                 </child>
               </object>
               <packing>

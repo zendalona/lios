@@ -131,6 +131,7 @@ class lios_preferences:
 		self.save_preferences_to_file('{0}/.lios_preferences.cfg'.format(global_var.home_dir))				
 		#self.notify("preferences restored!",False,None,True)
 		self.require_scanner_refresh = True
+		self.activate_preferences()
 
 	def save_preferences_to_file(self,filename):
 		#Removing old configuration file
@@ -450,20 +451,15 @@ class lios_preferences:
 		espeak.set_parameter(espeak.Parameter.Pitch,self.voice_message_pitch)
 		espeak.set_parameter(espeak.Parameter.Volume,self.voice_message_volume)
 		espeak.set_voice(espeak.list_voices()[self.voice_message_voice].name)
-		
-		self.highlight_tag = self.textbuffer.create_tag('Reading')
-		self.highlight_tag.set_property('foreground',Gdk.color_parse(self.highlight_color).to_string())
-		self.highlight_tag.set_property('font',self.highlight_font)
-		self.highlight_tag.set_property('background',Gdk.color_parse(self.background_highlight_color).to_string())
-		
-		pangoFont = Pango.FontDescription(self.font)
-		self.textview.modify_font(pangoFont)
-		self.textview.modify_fg(Gtk.StateFlags.NORMAL, Gdk.color_parse(self.font_color))
-		self.textview.modify_bg(Gtk.StateFlags.NORMAL, Gdk.color_parse(self.background_color))
-		
-		
+				
 		languages = self.available_ocr_engine_list[self.ocr_engine].get_available_languages()
 		self.ocr_engine_object = self.available_ocr_engine_list[self.ocr_engine](languages[self.language])
+		
+		self.textviewer.set_language(self.dictionary_language_dict[languages[self.language]])
+		self.textviewer.set_page_numbering_type(self.page_numbering_type)
+		self.textviewer.set_max_page_number(self.starting_page_number)
+		self.textviewer.set_tags(self.highlight_color,self.highlight_font,self.background_highlight_color)
+		self.textviewer.set_font_and_color(self.font,self.font_color,self.background_color)
 		
 		self.set_dict("%s" % self.dictionary_language_dict[languages[self.language]])
 		if (self.require_scanner_refresh):

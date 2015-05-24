@@ -36,17 +36,15 @@ from gi.repository import Gio
 from gi.repository import Gst
 from gi.repository import GLib
 from gi.repository import Pango
-from gi.repository import PangoCairo
 from gi.repository import GObject
 from gi.repository import GdkPixbuf
 
 import gi
 gi.require_version('Gst', '1.0')
 
-from lios import text_to_audio_gtk_ui
 from lios import scanner
 
-from lios import text
+from lios import text_viewer
 from lios import image_viewer
 from lios import cam
 from lios import ocr
@@ -70,16 +68,17 @@ def on_thread(function):
 	return inner
 
 
-class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
+class linux_intelligent_ocr_solution(lios_preferences):
 	def __init__ (self,file_list=None):
 		self.guibuilder = Gtk.Builder()
 		self.guibuilder.add_from_file("%s/ui/ui.glade" %(global_var.data_dir))
 		self.window = self.guibuilder.get_object("window")
 		self.paned = self.guibuilder.get_object("paned")
 		self.notebook = self.guibuilder.get_object("notebook")
-		self.progressbar = self.guibuilder.get_object("progressbar")		
-		self.textview = self.guibuilder.get_object("textview")
-		self.textbuffer = self.textview.get_buffer();
+		self.progressbar = self.guibuilder.get_object("progressbar")
+		self.paned_text_and_image = self.guibuilder.get_object("paned_text_and_image")
+		self.textviewer = text_viewer.TextViewer()
+		self.paned_text_and_image.add1(self.textviewer)
 		self.guibuilder.connect_signals(self)
 		
 
@@ -217,27 +216,30 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 		item = Gtk.MenuItem.new_with_label("Import-Folder")
 		item.connect("activate",self.import_folder)
 		self.iconview_popup_menu_zero_items.append(item)
-
 		
-		#TextView Popup Menu
-		self.textview_popup_menu = Gtk.Menu()
-
-		item = Gtk.MenuItem.new_with_label("Cut")
-		item.connect("activate",self.cut)
-		self.textview_popup_menu.append(item)
-
-		item = Gtk.MenuItem.new_with_label("Copy")
-		item.connect("activate",self.copy)
-		self.textview_popup_menu.append(item)
-
-		item = Gtk.MenuItem.new_with_label("Paste")
-		item.connect("activate",self.paste)
-		self.textview_popup_menu.append(item)
 		
-		self.textview_popup_menu_no_selection = Gtk.Menu()
-		item = Gtk.MenuItem.new_with_label("Paste")
-		item.connect("activate",self.paste)
-		self.textview_popup_menu_no_selection.append(item)
+		self.guibuilder.get_object("New").connect("activate",self.textviewer.textview.new)
+		self.guibuilder.get_object("Open").connect("activate",self.textviewer.textview.open)
+		self.guibuilder.get_object("Save").connect("activate",self.textviewer.textview.save)
+		self.guibuilder.get_object("SaveAs").connect("activate",self.textviewer.textview.save_as)
+		self.guibuilder.get_object("Print").connect("activate",self.textviewer.textview.print_text)
+		self.guibuilder.get_object("PrintPreview").connect("activate",self.textviewer.textview.print_preview)
+		self.guibuilder.get_object("ExportAsPdf").connect("activate",self.textviewer.textview.print_to_pdf)
+		
+		self.guibuilder.get_object("Cut").connect("activate",self.textviewer.textview.cut)
+		self.guibuilder.get_object("Copy").connect("activate",self.textviewer.textview.copy)
+		self.guibuilder.get_object("Paste").connect("activate",self.textviewer.textview.paste)
+		self.guibuilder.get_object("Delete").connect("activate",self.textviewer.textview.delete)
+		self.guibuilder.get_object("Punch").connect("activate",self.textviewer.textview.punch)
+		self.guibuilder.get_object("Append").connect("activate",self.textviewer.textview.append)
+		self.guibuilder.get_object("Find").connect("activate",self.textviewer.textview.find)
+		self.guibuilder.get_object("FindReplace").connect("activate",self.textviewer.textview.find_and_replace)
+		self.guibuilder.get_object("GoToLine").connect("activate",self.textviewer.textview.go_to_line)
+		
+		self.guibuilder.get_object("GoToPage").connect("activate",self.textviewer.go_to_page)
+		self.guibuilder.get_object("AudioConverter").connect("activate",self.textviewer.audio_converter)
+		self.guibuilder.get_object("SpellChecker").connect("activate",self.textviewer.spell_checker)
+		self.guibuilder.get_object("ReadStop").connect("activate",self.textviewer.read_stop)
 		
 		#OCR Engine
 		self.available_ocr_engine_list = ocr.get_available_engines()
@@ -308,7 +310,6 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 		Preferences_CamaraWebcam.connect("activate",self.configure_preferences_dialog,3)
 		
 		#Drawing Area and it's TreeView
-		self.paned_text_and_image = self.guibuilder.get_object("paned_text_and_image")
 		self.imageview = image_viewer.ImageViewer()
 		self.imageview.connect("list_updated",self.on_image_view_list_update);
 		self.imageview.load_image("/usr/share/lios/ui/lios",[],image_viewer.ImageViewer.ZOOM_FIT)
@@ -336,7 +337,7 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 					pass
 				else:
 					if form == "txt":
-						self.textbuffer.set_text(open(file,"r").read())
+						self.textviewer.set_text(open(file,"r").read())
 						self.save_file_name = file
 				
 					elif form in global_var.image_formats:
@@ -349,11 +350,11 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 		else:
 			try:
 				file = open("{}/.lios_recent".format(global_var.home_dir),encoding="utf-8")
-				self.textbuffer.set_text(file.read())
+				self.textviewer.set_text(file.read())
 			except:
 				pass
 				
-		self.textview.grab_focus()
+		self.textviewer.grab_focus()
 		self.window.maximize();
 		self.window.show()
 		Gtk.main();
@@ -427,7 +428,7 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 			
 			#Will always be Manual with no rotation
 			text,angle = self.ocr("{0}tmp".format(global_var.tmp_dir),2,00)
-			self.put_text_to_buffer(text,False,False)
+			self.insert_text_to_textviewer(text,False,False)
 			if(self.process_breaker):
 				break;
 
@@ -576,7 +577,7 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 			self.announce("Recognising {} without rotating".format(self.liststore_images[item[0]][1]))
 			progress = progress + progress_step;
 			text,angle = self.ocr(self.liststore_images[item[0]][1],2,00)
-			self.put_text_to_buffer(text,False,False)
+			self.insert_text_to_textviewer(text,False,False)
 			if(self.process_breaker):
 				break
 		self.set_progress_bar("completed!",None,0.01,lock=True)
@@ -605,7 +606,7 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 			self.announce("Recognising {}".format(self.liststore_images[item[0]][1]))
 			progress = progress + progress_step;			
 			text,angle = self.ocr(self.liststore_images[item[0]][1],mode,angle)
-			self.put_text_to_buffer(text,False,False)
+			self.insert_text_to_textviewer(text,False,False)
 			self.rotate(angle,self.liststore_images[item[0]][1],False)
 			if mode == 1:#Changing partial automatic to Manual
 				mode = 2
@@ -794,7 +795,7 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 
 	def main_window_configure_event(self,widget,event):
 		self.paned.set_position(event.width-320)
-		#self.paned_text_and_image.set_position(event.height-150)
+		self.paned_text_and_image.set_position(event.height/2)
 		
 	
 	def make_preferences_widgets_inactive(self,lock=False):
@@ -1002,30 +1003,12 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 		if(self.process_breaker):
 			return
 
-						
-
-	def put_text_to_buffer(self,text,place_cursor = False,give_page_number = False):
+	def insert_text_to_textviewer(self,text,place_cursor = False,give_page_number = False):
 		Gdk.threads_enter()
-		if (self.insert_position == 0):
-			iter = self.textbuffer.get_start_iter()
-		elif (self.insert_position == 1):
-			mark = self.textbuffer.get_insert()
-			iter = self.textbuffer.get_iter_at_mark(mark)
-		else:
-			iter = self.textbuffer.get_end_iter()
-		
-		start = self.textbuffer.get_start_iter()
-		length = len(self.textbuffer.get_text(start,iter,False))
-		
 		if (give_page_number):
 			text = "\nPage-{}\n{}".format(self.get_page_number_as_string(),text)
-			
-		self.textbuffer.insert(iter,text)
-		if(place_cursor):
-			iter = self.textbuffer.get_iter_at_offset(length)
-			self.textbuffer.place_cursor(iter)
-		start,end = self.textbuffer.get_bounds()
-		text = self.textbuffer.get_text(start,end,False)
+		self.textviewer.insert_text(text,self.insert_position,place_cursor)
+		text = self.textviewer.get_text()
 		Gdk.threads_leave()
 		with open("{}/.lios_recent".format(global_var.home_dir),"w",encoding="utf-8") as file:
 			file.write(text)		
@@ -1041,7 +1024,7 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 			self.starting_page_number = self.starting_page_number + 1
 		else:
 			self.starting_page_number = self.starting_page_number + 2
-
+		self.textviewer.set_max_page_number(self.starting_page_number)
 		
 		
 				
@@ -1096,7 +1079,7 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 			self.make_preferences_widgets_active(lock=True)
 			return			
 		text,angle = self.ocr(destination,self.mode_of_rotation,self.rotation_angle)
-		self.put_text_to_buffer(text,True,True)
+		self.insert_text_to_textviewer(text,True,True)
 		self.rotate(angle,destination,False)
 		self.announce("Page {}".format(self.get_page_number_as_string()))
 		self.update_page_number()
@@ -1132,9 +1115,9 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 			text,angle = self.ocr(destination,mode,angle)	
 			print("Placing text and cursor")
 			if (i == 0):
-				self.put_text_to_buffer(text,True,True)
+				self.insert_text_to_textviewer(text,True,True)
 			else:
-				self.put_text_to_buffer(text,False,True)
+				self.insert_text_to_textviewer(text,False,True)
 			self.announce("Page {}".format(self.get_page_number_as_string()))
 			print("Rotating image")	
 			self.rotate(angle,destination,False)
@@ -1277,69 +1260,11 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 		os.system('killall tesseract');
 		os.system('killall cuneiform')
 
-
-
-		
-	def textview_button_press_event(self, treeview, event):
-		if event.button == 3:
-			x = int(event.x)
-			y = int(event.y)
-			time = event.time
-			if self.textbuffer.get_has_selection():
-				self.textview_popup_menu.popup(None, None, None, None,event.button,time)
-				self.textview_popup_menu.show_all()
-			else:
-				self.textview_popup_menu_no_selection.popup(None, None,
-				None, None,event.button,time)
-				
-				self.textview_popup_menu_no_selection.show_all()
-			return True	
-	
-
-	def go_to_page(self,wedget,data=None):
-		iter,end = self.textbuffer.get_bounds()
-		adj = Gtk.Adjustment(value=1, lower=1, upper=self.starting_page_number-1,
-		step_incr=1, page_incr=5, page_size=0) 
-		
-		spinbutton_line = Gtk.SpinButton()
-		spinbutton_line.set_adjustment(adj)
-		spinbutton_line.set_value(0)		
-		spinbutton_line.show()
-
-		dialog =  Gtk.Dialog("Go to Page ",self.window,True,
-		("Go", Gtk.ResponseType.ACCEPT,"Close!", Gtk.ResponseType.REJECT))
-		
-		spinbutton_line.connect("activate",lambda x : dialog.response(Gtk.ResponseType.ACCEPT))
-		box = dialog.get_content_area();
-		box.add(spinbutton_line)
-		spinbutton_line.grab_focus()
-		dialog.show_all()
-		response = dialog.run()
-		if response == Gtk.ResponseType.ACCEPT:
-			to_go = spinbutton_line.get_value_as_int()
-			if self.page_numbering_type == 0:
-				word = "Page-{0}".format(to_go)
-			else:
-				if to_go % 2 == 0:
-					word = "Page-{0}-{1}".format(to_go-1,to_go)
-				else:
-					word = "Page-{0}-{1}".format(to_go,to_go+1)	
-			
-			results = iter.forward_search(word, 0, end)
-			if results:
-				start,end = results
-				self.textbuffer.place_cursor(start)
-				self.textview.scroll_to_iter(start, 0.0,False,0.0,0.0)
-			dialog.destroy()
-		else:
-			dialog.destroy()
-
-
 	def open_readme(self,widget,data=None):
 		with open("{0}/Data/Readme".format(global_var.data_dir)) as file:
-			self.textbuffer.set_text(file.read())
-			start = self.textbuffer.get_start_iter()
-			self.textbuffer.place_cursor(start)
+			self.textviewer.set_text(file.read())
+			
+
 					
 	def about(self,wedget,data=None):
 		guibuilder_about = Gtk.Builder()
@@ -1355,83 +1280,6 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 	def artha(self,wedget,data=None):
 		os.system("artha &")
 
-	def audio_converter(self,widget):
-		try:
-			start,end = self.textbuffer.get_selection_bounds()
-		except ValueError:
-			start,end = self.textbuffer.get_bounds()
-		text = self.textbuffer.get_text(start,end,False)		
-		text_to_audio_gtk_ui.record_ui(text)
-
-	def spell_checker(self,widget):
-		languages = self.available_ocr_engine_list[self.ocr_engine].get_available_languages()
-		text.spell_check(self.textview,self.textbuffer,
-		self.dictionary_language_dict[languages[self.language]])
-
-    # Read the text
-	def Read_Stop(self,wedget,data=None):
-		image_read_stop = self.guibuilder.get_object("image_read_stop")
-		if espeak.is_playing() == False:
-			image_read_stop.set_from_file("{0}/ui/stop".format(global_var.data_dir))
-			self.textbuffer.remove_tag(self.highlight_tag, self.textbuffer.get_start_iter(),
-			self.textbuffer.get_end_iter())
-			
-			mark = self.textbuffer.get_insert()
-			start = self.textbuffer.get_iter_at_mark(mark)
-			end = self.textbuffer.get_end_iter()
-			self.to_count = start.get_offset()
-			text = self.textbuffer.get_text(start,end,False)
-			espeak.set_SynthCallback(self.espeak_event)
-			espeak.synth(text)
-			self.textview.set_editable(False)
-		else:
-			espeak.cancel()
-			espeak.set_SynthCallback(None)
-			image_read_stop.set_from_file("{0}/ui/play".format(global_var.data_dir))
-			self.textbuffer.remove_tag(self.highlight_tag, self.textbuffer.get_start_iter(),
-			self.textbuffer.get_end_iter())
-			
-			self.textview.set_editable(True)
-			
-		
-	def espeak_event(self, event, pos, length):
-		Gdk.threads_enter()
-		if event == espeak.core.event_WORD:
-			pos += self.to_count-1
-			s = self.textbuffer.get_iter_at_offset(pos)
-			e = self.textbuffer.get_iter_at_offset(length+pos)			
-			
-			self.textbuffer.remove_all_tags(self.textbuffer.get_start_iter(),
-			self.textbuffer.get_end_iter())
-			
-			self.textbuffer.apply_tag(self.highlight_tag, s, e)
-
-		if event == espeak.event_END:
-			point = self.textbuffer.get_iter_at_offset(pos+self.to_count)
-			self.textbuffer.place_cursor(point)
-			self.textview.scroll_to_iter(point, 0.0, use_align=True, xalign=0.0, yalign=0.2)
-							
-					
-		if event == espeak.event_MSG_TERMINATED:
-			espeak._playing = False
-			self.textview.set_editable(True)
-			try:
-				self.textbuffer.remove_all_tags(self.textbuffer.get_start_iter(),
-				self.textbuffer.get_end_iter())
-			except:
-				pass
-
-		if not espeak.is_playing():
-			mark = self.textbuffer.get_insert()
-			start = self.textbuffer.get_iter_at_mark(mark)
-			end = self.textbuffer.get_end_iter()
-			self.to_count = start.get_offset()
-			text = self.textbuffer.get_text(start,end,False)
-			if (text != ""):
-				espeak.synth(text)
-
-		Gdk.threads_leave()		
-		return True
 	def quit(self,data):
 		try:
 			shutil.rmtree(global_var.tmp_dir)
@@ -1448,9 +1296,8 @@ class linux_intelligent_ocr_solution(text.text_handler,lios_preferences):
 		response = dialog.run()
 		dialog.destroy()
 		if response == Gtk.ResponseType.ACCEPT:
-			start, end = self.textbuffer.get_bounds()
-			self.textbuffer.delete(start, end)
-			self.textview.grab_focus()
+			self.textviewer.new()
+			self.textviewer.grab_focus()
 			self.iconview_image_clear(None)
 			self.starting_page_number = 1
 			with open("{}/.lios_recent".format(global_var.home_dir),"w",encoding="utf-8") as file:

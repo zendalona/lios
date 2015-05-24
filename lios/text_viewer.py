@@ -23,14 +23,21 @@ import enchant
 from gi.repository import Gtk
 from gi.repository import Gdk
 from gi.repository import Pango
+from gi.repository import PangoCairo
+
+from espeak import espeak
+
 
 from lios import global_var
+from lios import text_to_audio_gtk_ui
 
-class text_handler():
-	
-	def __init__(self,textview):
-		self.textview = textview
-		self.textbuffer = self.textview.get_buffer()
+
+
+
+class BasicTextView(Gtk.TextView):
+	def __init__(self):
+		Gtk.TextView.__init__(self)
+		self.textbuffer = self.get_buffer()
 
 	def go_to_line(self,wedget,data=None):
 		insert_mark = self.textbuffer.get_insert()
@@ -43,7 +50,7 @@ class text_handler():
 		spinbutton_line.set_value(current_line)		
 		spinbutton_line.show()
 
-		dialog =  Gtk.Dialog("Go to Line ",self.window,True,("Go", Gtk.ResponseType.ACCEPT,"Close!", Gtk.ResponseType.REJECT))
+		dialog =  Gtk.Dialog("Go to Line ",None,True,("Go", Gtk.ResponseType.ACCEPT,"Close!", Gtk.ResponseType.REJECT))
 		spinbutton_line.connect("activate",lambda x : dialog.response(Gtk.ResponseType.ACCEPT))
 		box = dialog.get_content_area();
 		box.add(spinbutton_line)
@@ -54,7 +61,7 @@ class text_handler():
 			to = spinbutton_line.get_value_as_int()
 			iter = self.textbuffer.get_iter_at_line(to)
 			self.textbuffer.place_cursor(iter)
-			self.textview.scroll_to_iter(iter, 0.0,False,0.0,0.0)
+			self.scroll_to_iter(iter, 0.0,False,0.0,0.0)
 			dialog.destroy()
 		else:
 			dialog.destroy()
@@ -64,7 +71,7 @@ class text_handler():
 	
 	def new(self,wedget,data=None):
 		if (self.textbuffer.get_modified() == True):
-			dialog =  Gtk.Dialog("Start new without saving ?",self.window,True,
+			dialog =  Gtk.Dialog("Start new without saving ?",None,True,
 			("Save", Gtk.ResponseType.ACCEPT,"Start-New!", Gtk.ResponseType.REJECT))                           						
 
 			label = Gtk.Label("Start new without saving ?")
@@ -78,7 +85,7 @@ class text_handler():
 				self.save(self)
 		start, end = self.textbuffer.get_bounds()
 		self.textbuffer.delete(start, end)
-		self.textview.grab_focus();
+		self.grab_focus();
 
 	def open(self,wedget,data=None):
 		open_file = Gtk.FileChooserDialog("Select the file to open",None,Gtk.FileChooserAction.OPEN,buttons=(Gtk.STOCK_OPEN,Gtk.ResponseType.OK))
@@ -155,7 +162,7 @@ class text_handler():
 
 	def quit(self,wedget,data=None):
 		if self.textbuffer.get_modified() == True:
-			dialog =  Gtk.Dialog(None,self.window,1,
+			dialog =  Gtk.Dialog(None,None,1,
 			("Close without saving",Gtk.ResponseType.YES,"Save", Gtk.ResponseType.NO,"Cancel", Gtk.ResponseType.CANCEL))			
 			label = Gtk.Label("Close without saving ?.")
 			box = dialog.get_content_area();
@@ -215,7 +222,7 @@ class text_handler():
 		
 		if action == Gtk.PrintOperationAction.EXPORT:
 			print_.set_export_filename(filename)
-		res = print_.run(action,self.window)
+		res = print_.run(action,None)
     
 	def begin_print(self, operation, context):
 		width = context.get_width()
@@ -306,12 +313,267 @@ class text_handler():
 			
 
 	def find(self,widget):
-		find(self.textview,self.textbuffer).window.show()
+		find(self,self.textbuffer).window.show()
 	def find_and_replace(self,widget):
-		find_and_replace(self.textview,self.textbuffer).window.show()
+		find_and_replace(self,self.textbuffer).window.show()
 	def delete(self,wedget,data=None):
 		self.textbuffer.delete_selection(True, True)		
 
+
+class TextViewer(Gtk.HPaned):
+	def __init__(self):
+		Gtk.HPaned.__init__(self)
+		self.set_border_width(5)
+		
+		self.page_numbering_type = 0
+		self.language = "en"
+		box = Gtk.VBox()
+		
+		#Text Area		
+		self.textview = BasicTextView()
+		self.textview.connect("button-press-event",self.textview_button_press_event)
+		self.highlight_tag = self.textview.textbuffer.create_tag('Reading')
+		self.textview.set_wrap_mode(Gtk.WrapMode.WORD)
+
+		
+		scrolled = Gtk.ScrolledWindow()
+		scrolled.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
+		scrolled.add(self.textview);
+		box.pack_end(scrolled,True,True,0);
+		
+
+		#TextView Popup Menu
+		self.textview_popup_menu = Gtk.Menu()
+
+		item = Gtk.MenuItem.new_with_label("Cut")
+		item.connect("activate",self.textview.cut)
+		self.textview_popup_menu.append(item)
+
+		item = Gtk.MenuItem.new_with_label("Copy")
+		item.connect("activate",self.textview.copy)
+		self.textview_popup_menu.append(item)
+
+		item = Gtk.MenuItem.new_with_label("Paste")
+		item.connect("activate",self.textview.paste)
+		self.textview_popup_menu.append(item)
+		
+		self.textview_popup_menu_no_selection = Gtk.Menu()
+		item = Gtk.MenuItem.new_with_label("Paste")
+		item.connect("activate",self.textview.paste)
+		self.textview_popup_menu_no_selection.append(item)
+
+		
+		#Toolbar
+		toolbar = Gtk.Toolbar()
+		
+		button = Gtk.ToolButton(Gtk.STOCK_NEW)
+		button.connect("clicked",self.textview.new)
+		toolbar.add(button)
+
+		button = Gtk.ToolButton(Gtk.STOCK_SAVE)
+		button.connect("clicked",self.textview.save)
+		toolbar.add(button)		
+
+		button = Gtk.ToolButton(Gtk.STOCK_OPEN)
+		button.connect("clicked",self.textview.open)
+		toolbar.add(button)
+
+		button = Gtk.ToolButton(Gtk.STOCK_SPELL_CHECK)
+		button.connect("clicked",self.spell_checker)
+		toolbar.add(button)				
+
+		button = Gtk.ToolButton(Gtk.STOCK_FIND)
+		button.connect("clicked",self.textview.find)
+		toolbar.add(button)		
+
+		self.button_read_stop = Gtk.ToolButton(Gtk.STOCK_MEDIA_PLAY)
+		self.button_read_stop.connect("clicked",self.read_stop)
+		toolbar.add(self.button_read_stop)
+
+		
+		box.pack_end(toolbar, False, False, 0)
+		self.add(box)
+		
+		self.show_all()
+
+	def textview_button_press_event(self, treeview, event):
+		if event.button == 3:
+			x = int(event.x)
+			y = int(event.y)
+			time = event.time
+			if self.textview.textbuffer.get_has_selection():
+				self.textview_popup_menu.popup(None, None, None, None,event.button,time)
+				self.textview_popup_menu.show_all()
+			else:
+				self.textview_popup_menu_no_selection.popup(None, None,
+				None, None,event.button,time)
+				
+				self.textview_popup_menu_no_selection.show_all()
+			return True
+			
+	def set_page_numbering_type(self,value):
+		self.page_numbering_type = value
+	
+	def set_max_page_number(self,value):
+		self.starting_page_number = value
+	
+	def set_text(self,text):
+		self.textview.textbuffer.set_text(text)
+		start = self.textview.textbuffer.get_start_iter()
+		self.textview.textbuffer.place_cursor(start)
+
+	def go_to_page(self,wedget,data=None):
+		iter,end = self.textview.textbuffer.get_bounds()
+		adj = Gtk.Adjustment(value=1, lower=1, upper=self.starting_page_number-1,
+		step_incr=1, page_incr=5, page_size=0) 
+		
+		spinbutton_line = Gtk.SpinButton()
+		spinbutton_line.set_adjustment(adj)
+		spinbutton_line.set_value(0)		
+		spinbutton_line.show()
+
+		dialog =  Gtk.Dialog("Go to Page ",None,True,
+		("Go", Gtk.ResponseType.ACCEPT,"Close!", Gtk.ResponseType.REJECT))
+		
+		spinbutton_line.connect("activate",lambda x : dialog.response(Gtk.ResponseType.ACCEPT))
+		box = dialog.get_content_area();
+		box.add(spinbutton_line)
+		spinbutton_line.grab_focus()
+		dialog.show_all()
+		response = dialog.run()
+		if response == Gtk.ResponseType.ACCEPT:
+			to_go = spinbutton_line.get_value_as_int()
+			if self.page_numbering_type == 0:
+				word = "Page-{0}".format(to_go)
+			else:
+				if to_go % 2 == 0:
+					word = "Page-{0}-{1}".format(to_go-1,to_go)
+				else:
+					word = "Page-{0}-{1}".format(to_go,to_go+1)	
+			
+			results = iter.forward_search(word, 0, end)
+			if results:
+				start,end = results
+				self.textview.textbuffer.place_cursor(start)
+				self.textview.scroll_to_iter(start, 0.0,False,0.0,0.0)
+			dialog.destroy()
+		else:
+			dialog.destroy()
+
+	def audio_converter(self,widget):
+		try:
+			start,end = self.textview.textbuffer.get_selection_bounds()
+		except ValueError:
+			start,end = self.textview.textbuffer.get_bounds()
+		text = self.textview.textbuffer.get_text(start,end,False)		
+		text_to_audio_gtk_ui.record_ui(text)
+	
+	def set_language(self,language):
+		self.language = language
+
+	def spell_checker(self,widget):
+		spell_check(self.textview,self.language)
+	
+	def set_tags(self,highlight_color,highlight_font_color,background_highlight_color):
+		self.highlight_tag.set_property('foreground',Gdk.color_parse(highlight_color).to_string())
+		self.highlight_tag.set_property('font',highlight_font_color)
+		self.highlight_tag.set_property('background',Gdk.color_parse(background_highlight_color).to_string())
+	
+	def set_font_and_color(self,font,font_color,background_color):
+		pangoFont = Pango.FontDescription(font)
+		self.textview.modify_font(pangoFont)
+		self.textview.modify_fg(Gtk.StateFlags.NORMAL, Gdk.color_parse(font_color))
+		self.textview.modify_bg(Gtk.StateFlags.NORMAL, Gdk.color_parse(background_color))
+	
+	def grab_focus(self):
+		self.textview.grab_focus()
+	
+	def insert_text(self,text,insert_position=0,place_cursor=False):
+		if (insert_position == 0):
+			iter = self.textview.textbuffer.get_start_iter()
+		elif (insert_position == 1):
+			mark = self.textview.textbuffer.get_insert()
+			iter = self.textview.textbuffer.get_iter_at_mark(mark)
+		else:
+			iter = self.textview.textbuffer.get_end_iter()
+		
+		start = self.textview.textbuffer.get_start_iter()
+		length = len(self.textview.textbuffer.get_text(start,iter,False))
+			
+		self.textview.textbuffer.insert(iter,text)
+		if(place_cursor):
+			iter = self.textview.textbuffer.get_iter_at_offset(length)
+			self.textview.textbuffer.place_cursor(iter)
+	
+	def get_text(self):
+		start,end = self.textview.textbuffer.get_bounds()
+		text = self.textview.textbuffer.get_text(start,end,False)
+		return text
+
+
+    # Read the text
+	def read_stop(self,wedget,data=None):
+		print("Pressed")
+		if espeak.is_playing() == False:
+			self.textview.textbuffer.remove_tag(self.highlight_tag, self.textview.textbuffer.get_start_iter(),
+			self.textview.textbuffer.get_end_iter())
+			
+			mark = self.textview.textbuffer.get_insert()
+			start = self.textview.textbuffer.get_iter_at_mark(mark)
+			end = self.textview.textbuffer.get_end_iter()
+			self.to_count = start.get_offset()
+			text = self.textview.textbuffer.get_text(start,end,False)
+			espeak.set_SynthCallback(self.espeak_event)
+			espeak.synth(text)
+			self.textview.set_editable(False)
+		else:
+			#self.button_read_stop.new_from_stock(Gtk.STOCK_MEDIA_PLAY)
+			espeak.cancel()
+			espeak.set_SynthCallback(None)
+			self.textview.textbuffer.remove_tag(self.highlight_tag, self.textview.textbuffer.get_start_iter(),
+			self.textview.textbuffer.get_end_iter())
+			
+			self.textview.set_editable(True)
+			
+		
+	def espeak_event(self, event, pos, length):
+		Gdk.threads_enter()
+		if event == espeak.core.event_WORD:
+			pos += self.to_count-1
+			s = self.textview.textbuffer.get_iter_at_offset(pos)
+			e = self.textview.textbuffer.get_iter_at_offset(length+pos)			
+			
+			self.textview.textbuffer.remove_all_tags(self.textview.textbuffer.get_start_iter(),
+			self.textview.textbuffer.get_end_iter())
+			
+			self.textview.textbuffer.apply_tag(self.highlight_tag, s, e)
+
+		if event == espeak.event_END:
+			point = self.textview.textbuffer.get_iter_at_offset(pos+self.to_count)
+			self.textview.textbuffer.place_cursor(point)
+			self.textview.scroll_to_iter(point, 0.0, use_align=True, xalign=0.0, yalign=0.2)
+							
+					
+		if event == espeak.event_MSG_TERMINATED:
+			espeak._playing = False
+			self.textview.set_editable(True)
+			try:
+				self.textview.textbuffer.remove_all_tags(self.textview.textbuffer.get_start_iter(),
+				self.textview.textbuffer.get_end_iter())
+			except:
+				pass
+
+		if not espeak.is_playing():
+			mark = self.textview.textbuffer.get_insert()
+			start = self.textview.textbuffer.get_iter_at_mark(mark)
+			end = self.textview.textbuffer.get_end_iter()
+			self.to_count = start.get_offset()
+			text = self.textview.textbuffer.get_text(start,end,False)
+			if (text != ""):
+				espeak.synth(text)
+
+		Gdk.threads_leave()		
+		return True
 
 		
 class find():
@@ -429,9 +691,9 @@ class find_and_replace(find):
 
 # CHECK SPELLING
 class spell_check:
-	def __init__ (self,textview,textbuffer,enchant_language):
-		self.textbuffer = textbuffer;
+	def __init__ (self,textview,enchant_language):
 		self.textview = textview;
+		self.textbuffer = self.textview.get_buffer()
 		
 		#Loading Dict
 		try:
@@ -620,3 +882,32 @@ class spell_check:
 			else:
 				new_text += line + '\n'
 		return new_text
+		
+################ Test Module #############################################
+class TestWindow(Gtk.Window):
+
+    def __init__(self):
+        Gtk.Window.__init__(self, title="Hello World")
+        self.set_default_size(400,500)
+        
+        self.btv = TextViewer()
+
+        self.box = Gtk.VBox(spacing=6)
+        self.add(self.box)
+        self.box.pack_start(self.btv, True, True, 0)
+
+        self.button2 = Gtk.Button(label="Exit")
+        self.button2.connect("clicked", self.on_button2_clicked)        
+        self.box.pack_start(self.button2, False, False, 0)
+
+        self.add(self.box)
+
+    def on_button2_clicked(self, widget):
+        Gtk.main_quit()
+
+
+if __name__ == "__main__":
+	win = TestWindow()
+	win.connect("delete-event", Gtk.main_quit)
+	win.show_all()
+	Gtk.main()
