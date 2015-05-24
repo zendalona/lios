@@ -33,13 +33,14 @@ class ImageViewer(Gtk.HPaned):
 
 	def __init__(self):
 		Gtk.HPaned.__init__(self)
+		self.set_border_width(5)
 
 		#Drawing Area		
 		self.drawingarea = Gtk.DrawingArea()
 		self.drawingarea.set_events(Gdk.EventMask.ALL_EVENTS_MASK)
 		
 		scrolled = Gtk.ScrolledWindow()
-		scrolled.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+		scrolled.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
 		scrolled.add_with_viewport(self.drawingarea);
 		
 		
