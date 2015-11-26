@@ -137,40 +137,6 @@ class Toolbar(Gtk.Toolbar):
 	def set_show_nth_item(self,n,value):
 		item = self.get_nth_item(n)
 		item.set_sensitive(value)
-
-	
-
-class Test():
-	def __init__(self):
-		window = Gtk.Window()
-		grid = Grid()
-		button0 = Gtk.Button("Full")
-		button1 = Gtk.Button("hello")
-		button2 = Gtk.Button("This")
-		button3 = Gtk.Button("is")
-		button4 = Gtk.Button("not")
-
-		grid.add_widgets([(button0,2,1,1,1),
-						Grid.NEW_ROW,
-						(button1,1,3,1,1)]);
-		
-		"""grid.add_widget(button0,2,1,1,1);
-		grid.add_new_row()
-		grid.add_widget(button1,1,3,1,1);
-		grid.add_widget(button2,1,1,1,1);
-		grid.add_new_row()
-		grid.add_widget(button3,1,1,1,1);
-		grid.add_new_row()
-		grid.add_widget(button4,1,1,1,1);"""
-		
-		
-		window.add(grid)
-		grid.show_all()
-		window.show()	
-
-if (__name__ == "__main__"):
-	Test()
-	Gtk.main()
 			
 		
 		

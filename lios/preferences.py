@@ -415,10 +415,6 @@ class lios_preferences:
 		dlg.destroy()
 		return False
 
-
-
-			#combobox_angle.set_active(self.rotation_angle)
-
 	
 if "__main__" == __name__:
 	a = lios_preferences()
