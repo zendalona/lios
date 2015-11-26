@@ -1,4 +1,4 @@
-#! /usr/bin/python3 
+#!/usr/bin/python3 
 
 ###########################################################################
 #    Lios - Linux-Intelligent-Ocr-Solution
@@ -18,44 +18,28 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###########################################################################
 
-import abc
-import multiprocessing
+from gi.repository import Gtk
 
 
-class OcrEngineBase(metaclass=abc.ABCMeta):
-	def __init__(self,language=None):
-		self.language = language
+class Dialog(Gtk.Dialog):
+	BUTTON_ID_1 = 1
+	BUTTON_ID_2 = 2
+	BUTTON_ID_3 = 3
+	def __init__(self,title,buttons):
+		super(Dialog,self).__init__(title,None,True,buttons)
 	
-	@staticmethod
-	@abc.abstractmethod
-	def get_available_languages():
-		return
+	def add_widget(self,widget):
+		box = self.get_content_area();
+		box.add(widget)
 	
-	@abc.abstractmethod
-	def ocr_image_to_text(self,image_file_name):
-		pass
-
-	def set_language(self,language):
-		if language in self.__class__.get_available_languages():
-			self.language = language
-			return True
-		else:
-			return False
-	
-	def ocr_image_to_text_with_multiprocessing(self,image_file_name):
-		parent_conn, child_conn = multiprocessing.Pipe()
+	def add_widget_with_label(self,widget,label_text):
+		new_box = Gtk.Box()
+		label = Gtk.Label(label_text)
+		new_box.pack_start(label, True, True, 0)
+		new_box.pack_start(widget, True, True, 0)
+		box = self.get_content_area();
+		box.add(new_box)
+		box.show_all()		
 		
-		p = multiprocessing.Process(target=(lambda parent_conn, child_conn,
-		image_file_name : child_conn.send(self.ocr_image_to_text(image_file_name))),
-		args=(parent_conn, child_conn,image_file_name))
-		
-		p.start()
-		p.join()
-		
-		return parent_conn.recv();
-
-
-	@staticmethod
-	@abc.abstractmethod
-	def is_available():
-		return		
+	#show_all()
+	#run()

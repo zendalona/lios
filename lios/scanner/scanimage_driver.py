@@ -66,7 +66,7 @@ class DriverScanimage(DriverBase):
 		super(DriverScanimage, self).scan(filename,brightness,resolution,scan_area)
 
 		command = "scanimage --device-name='{}' --resolution {} --mode {} -x {} -y {}"\
-		.format(self.device,self.resolution,self.scanner_mode,self.max_x,self.max_y)
+		.format(self.device,self.resolution,self.scanner_mode,self.max_x,self.y)
 		
 		
 			
@@ -96,13 +96,13 @@ class DriverScanimage(DriverBase):
 
 	def set_scan_area(self,scan_area):
 		if scan_area == self.SCAN_AREA_FULL:
-			self.y = self.max_y
+			self.y = int(self.max_y)
 		elif scan_area == self.SCAN_AREA_THREE_QUARTER:
-			self.y = 3*(self.max_y/4)
+			self.y = 3*(int(self.max_y)/4)
 		elif scan_area == self.SCAN_AREA_HALF:
-			self.y = self.max_y/2
+			self.y = int(self.max_y)/2
 		else:
-			self.y = self.max_y/4
+			self.y = int(self.max_y)/4
 				
 	def get_scan_area(self):
 		return self.scan_area

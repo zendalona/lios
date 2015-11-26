@@ -1,5 +1,3 @@
-# coding: latin-1
-
 ###########################################################################
 #    Lios - Linux-Intelligent-Ocr-Solution
 #    Copyright (C) 2011-2015 Nalin.x.Linux GPL-3
@@ -18,26 +16,48 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###########################################################################
 
-import os
-import sys
-import enchant
-import subprocess
+
 import configparser
 import shutil
-from espeak import espeak
-from gi.repository import Gtk
-from gi.repository import Gdk
-from gi.repository import Gio
-from gi.repository import GLib
-from gi.repository import Pango
+from lios.ui.gtk import widget
+from lios.ui.gtk import containers
+from lios.ui.gtk import loop
+from lios.ui.gtk import dialog
 
-from lios import global_var
+from lios import speech
+from lios import localization
 
+_ = localization._
 
 
 class lios_preferences:
+	def __init__(self):
+		
+		#Setting Default Values
+		self.font="Georgia 14";self.highlight_font="Georgia 14";
+		self.background_color="#000";self.font_color="#fff";
+		self.highlight_color="#1572ffff0000";
+		self.background_highlight_color="#00000bacffff";
+		self.speech_module=0;self.speech_language=0;
+		self.speech_rate=50;self.speech_pitch=50;self.speech_volume=100;
+		self.time_between_repeated_scanning=0;self.scan_resolution=300;
+		self.scan_driver=1;self.scanner_cache_calibration=1;
+		self.scan_brightness=100;self.scan_area=0;self.insert_position=2;
+		self.ocr_engine=0;self.language=0;self.mode_of_rotation=0;
+		self.number_of_pages_to_scan=100;self.page_numbering_type=0;
+		self.starting_page_number=1;self.scanner_mode_switching=1;
+		self.rotation_angle=00;
+		self.available_scanner_drivers = []
+		self.available_ocr_engine_list = []
+
+	def set_avalable_scanner_drivers(self,list):
+		self.available_scanner_drivers = list
+
+	def set_avalable_ocr_engines(self,list):
+		self.available_ocr_engine_list = list
+		
 	# FUNCTION TO Read PREFERENCES #
-	def set_preferences_from_file(self,filename):
+	def set_from_file(self,filename):
 		config = configparser.ConfigParser()
 		if config.read(filename) != []:
 			try:
@@ -48,8 +68,9 @@ class lios_preferences:
 				self.scan_area=int(config.get('cfg',"scan_area"))
 				self.scan_driver=int(config.get('cfg',"scan_driver"))
 				self.insert_position=int(config.get('cfg',"insert_position"))
-				self.auto_skew=int(config.get('cfg',"auto_skew"))			
 				self.language=int(config.get('cfg',"language"))
+				self.speech_module=int(config.get('cfg',"speech_module"))
+				self.speech_language=int(config.get('cfg',"speech_language"))
 				self.number_of_pages_to_scan=int(config.get('cfg',"number_of_pages_to_scan"))#pages
 				self.mode_of_rotation = int(config.get('cfg',"mode_of_rotation"))
 				self.rotation_angle = int(config.get('cfg',"angle"))		
@@ -62,85 +83,20 @@ class lios_preferences:
 				self.highlight_color=config.get('cfg',"highlight_color")
 				self.background_highlight_color=config.get('cfg',"highlight_background_color")
 				self.font=config.get('cfg',"font")
-				self.highlight_font=config.get('cfg',"highlight_font")
-				self.voice_message_state=int(config.get('cfg',"voice_message_state"))
-				self.voice_message_voice=int(config.get('cfg',"voice_message_voice"))
-				self.voice_message_rate=int(config.get('cfg',"voice_message_rate"))
-				self.voice_message_volume=int(config.get('cfg',"voice_message_volume"))
-				self.voice_message_pitch=int(config.get('cfg',"voice_message_pitch"))
-				self.cam_x=int(config.get('cfg',"cam_x"))
-				self.cam_y=int(config.get('cfg',"cam_y"))
-				self.cam_device=int(config.get('cfg',"cam_device"))				
+				self.highlight_font=config.get('cfg',"highlight_font")				
 				self.require_scanner_refresh = True
 			except:
-				self.set_default_preferences(self,data=None)
+				self.__init__()
 		else:
-			self.set_default_preferences(self,data=None)
-			
+			self.__init__()
 
-	def on_Save_preferences_activate(self,wedget,data=None):
-		save_preferences_dlg = Gtk.FileChooserDialog(title="save_preferences as ",
-		action=Gtk.FileChooserAction.SAVE,buttons=(Gtk.STOCK_SAVE,Gtk.ResponseType.OK))
-		save_preferences_dlg.set_current_folder("%s/Lios"%(os.environ['HOME']))
-		response = save_preferences_dlg.run()		
-		if response == Gtk.ResponseType.OK:
-			shutil.copy2('{0}/.lios_preferences.cfg'.format(global_var.home_dir),
-			"%s.cfg"%(save_preferences_dlg.get_filename()))
-			#self.notify("preferences saved as %s.cfg" % (save_preferences_dlg.get_filename()),False,None,True)
-		save_preferences_dlg.destroy()
-
-
-
-	def on_Load_preferences_activate(self,wedget,data=None):
-		load_preferences_dlg = Gtk.FileChooserDialog("Select the image",None,
-		Gtk.FileChooserAction.OPEN,(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-		Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
-		
-		load_preferences_dlg.set_default_response(Gtk.ResponseType.OK)
-		load_preferences_dlg.set_current_folder("%s/Lios"%(os.environ['HOME']))
-		filter = Gtk.FileFilter()
-		filter.add_pattern("*.cfg")
-		load_preferences_dlg.add_filter(filter)
-		response = load_preferences_dlg.run()
-		if response == Gtk.ResponseType.OK:
-			self.set_preferences_from_file(load_preferences_dlg.get_filename())
-			self.require_scanner_refresh = True
-			self.activate_preferences()
-			#self.notify("preferences loaded from %s" % (load_preferences_dlg.get_filename()),False,None,True)
-		load_preferences_dlg.destroy()
-		
-		
-				
-	def set_default_preferences(self,wedget,data=None):
-		#Setting Default Values
-		self.font="Georgia 14";self.highlight_font="Georgia 14";
-		self.background_color="#000";self.font_color="#fff";
-		self.highlight_color="#1572ffff0000";
-		self.background_highlight_color="#00000bacffff";
-		self.time_between_repeated_scanning=0;self.scan_resolution=300;
-		self.scan_brightness=100;self.scan_area=0;self.insert_position=2;
-		self.ocr_engine=0;self.language=0;self.mode_of_rotation=0;
-		self.number_of_pages_to_scan=100;self.page_numbering_type=0;
-		self.starting_page_number=1;self.scanner_mode_switching=1;
-		self.scanner_cache_calibration=1;self.auto_skew=0;self.rotation_angle=00;
-		self.voice_message_state=0;self.voice_message_rate=170;
-		self.voice_message_volume=150;self.voice_message_pitch=50;
-		self.voice_message_voice=11;self.scan_driver=1;
-		self.cam_x=1280;self.cam_y=800;self.cam_device=0;
-		#Writing it to user configuration file
-		self.save_preferences_to_file('{0}/.lios_preferences.cfg'.format(global_var.home_dir))				
-		#self.notify("preferences restored!",False,None,True)
-		self.require_scanner_refresh = True
-		self.activate_preferences()
-
-	def save_preferences_to_file(self,filename):
+	def save_to_file(self,filename):
 		#Removing old configuration file
 		try:
 			os.remove(filename)
 		except:
 			pass		
 		config = configparser.ConfigParser()
-		config.read(filename)
 		config.add_section('cfg')
 		config.set('cfg',"time_between_repeated_scanning",str(self.time_between_repeated_scanning))
 		config.set('cfg',"scan_resolution",str(self.scan_resolution))
@@ -149,8 +105,12 @@ class lios_preferences:
 		config.set('cfg',"insert_position",str(self.insert_position))
 		config.set('cfg',"scan_area",str(self.scan_area))
 		config.set('cfg',"scan_driver",str(self.scan_driver))
-		config.set('cfg',"auto_skew",str(self.auto_skew))
 		config.set('cfg',"language",str(self.language))
+		config.set('cfg',"speech_module",str(self.speech_module))
+		config.set('cfg',"speech_language",str(self.speech_language))
+		config.set('cfg',"speech_pitch",str(self.speech_pitch))
+		config.set('cfg',"speech_volume",str(self.speech_volume))
+		config.set('cfg',"speech_rate",str(self.speech_rate))
 		config.set('cfg',"number_of_pages_to_scan",str(self.number_of_pages_to_scan))
 		config.set('cfg',"mode_of_rotation",str(self.mode_of_rotation))
 		config.set('cfg',"angle",str(self.rotation_angle))
@@ -164,319 +124,309 @@ class lios_preferences:
 		config.set('cfg',"highlight_background_color",str(self.background_highlight_color))
 		config.set('cfg',"font",str(self.font))
 		config.set('cfg',"highlight_font",str(self.highlight_font))
-		config.set('cfg',"voice_message_state",str(self.voice_message_state))
-		config.set('cfg',"voice_message_voice",str(self.voice_message_voice))
-		config.set('cfg',"voice_message_rate",str(self.voice_message_rate))
-		config.set('cfg',"voice_message_volume",str(self.voice_message_volume))
-		config.set('cfg',"voice_message_pitch",str(self.voice_message_pitch))
-		config.set('cfg',"cam_x",str(self.cam_x))
-		config.set('cfg',"cam_y",str(self.cam_y))
-		config.set('cfg',"cam_device",str(self.cam_device))
 		with open(filename, 'w') as configfile:
 			config.write(configfile)
+
+
+	def update_page_number(self):
+		if (self.page_numbering_type == 0):
+			self.starting_page_number = self.starting_page_number + 1
+		else:
+			self.starting_page_number = self.starting_page_number + 2
+
+	def get_page_number_as_string(self):
+		if (self.page_numbering_type == 0):
+			return ("{0}".format(self.starting_page_number))
+		else:
+			return ("{0}-{1}".format(self.starting_page_number,self.starting_page_number + 1))
 	
 	
 	#Function for manipulating preferences		
-	def configure_preferences_dialog(self,wedget,data=None):
-		self.preferences_guibuilder = Gtk.Builder()
-		self.preferences_guibuilder.add_from_file("%s/ui/preferences.glade" %(global_var.data_dir))
-		self.preferences_window = self.preferences_guibuilder.get_object("window")
-		self.preferences_guibuilder.connect_signals(self)
+	def open_configure_dialog(self,page=0):
+		def change_engine(*data):
+			index_engine = combobox_engine.get_active()
+			combobox_language.clear()
+			for item in self.available_ocr_engine_list[index_engine][1]:
+				combobox_language.add_item(item)
+			combobox_language.set_active(self.language)
+
+		def change_speech_module(*data):
+			index_engine = combobox_speech_module.get_active()
+			combobox_speech_language.clear()
+			test = speech.Speech()
+			list = test.list_output_modules()
+			test.set_output_module(list[index_engine])
+			for item in test.list_voices():
+				combobox_speech_language.add_item(item)
+			combobox_speech_language.set_active(self.speech_language)
+
+		def change_mode_of_rotation(*data):
+			if(combobox_mode_of_rotation.get_active() == 2):
+				combobox_angle.show()
+				self.label_angle.show()
+			else:
+				combobox_angle.hide()
+				self.label_angle.hide()
+
+
 		self.require_scanner_refresh = False
+		
+		#Notebook
+		notebook = containers.NoteBook()
+		notebook.show_all()
+		
+		#GENERAL - PAGE #########	
+		label_font = widget.Label(_("Font"))
+		fontbutton_font = widget.FontButton()
+		fontbutton_font.set_font_name(self.font)
 
+		label_font_color = widget.Label(_("Font Color"))
+		colorbutton_font = widget.ColorButton()
+		colorbutton_font.set_color_from_string(self.font_color)
 
-		#General
-		
-		#Font and font color
-		self.start_spin = self.preferences_guibuilder.get_object("spinbutton_page_start")
-		self.start_spin.set_value(self.starting_page_number)
-		self.pages_spin = self.preferences_guibuilder.get_object("spinbutton_number_of_pages_to_scan")
-		self.pages_spin.set_value(self.number_of_pages_to_scan)		
-		
-		self.background_color_button = self.preferences_guibuilder.get_object("colorbutton_background")
-		self.background_color_button.set_color(Gdk.color_parse(self.background_color))	
+		label_background_color = widget.Label(_("Background Color"))
+		colorbutton_background = widget.ColorButton()
+		colorbutton_background.set_color_from_string(self.background_color)
 
-		self.highlight_color_button = self.preferences_guibuilder.get_object("colorbutton_highlight")
-		self.highlight_color_button.set_color(Gdk.color_parse(self.highlight_color))	
+		label_highlight_font = widget.Label(_("Highlight Font"))
+		fontbutton_highlight_font = widget.FontButton()
+		fontbutton_highlight_font.set_font_name(self.font)
+		
+		label_highlight_color = widget.Label(_("Highlight Color"))
+		colorbutton_highlight = widget.ColorButton()
+		colorbutton_highlight.set_color_from_string(self.highlight_color)
 
-		self.highlight_background_color_button = self.preferences_guibuilder.get_object("colorbutton_highlight_background")
-		self.highlight_background_color_button.set_color(Gdk.color_parse(self.background_highlight_color))
-					
-		self.font_color_button = self.preferences_guibuilder.get_object("colorbutton_font")		
-		self.font_color_button.set_color(Gdk.color_parse(self.font_color))
-			
-		self.font_button = self.preferences_guibuilder.get_object("fontbutton")
-		self.font_button.set_font_name(self.font)
+		label_highlight_background = widget.Label(_("Highlight Background"))
+		colorbutton_highlight_background = widget.ColorButton()
+		colorbutton_highlight_background.set_color_from_string(self.background_highlight_color)
+		
+		label_speech_module = widget.Label(_("Speech-Module"))
+		combobox_speech_module = widget.ComboBox()
+		for item in speech.Speech().list_output_modules():
+			combobox_speech_module.add_item(item)
+		combobox_speech_module.connect_change_callback_function(change_speech_module)		
 
-		self.fontbutton_highlight_button = self.preferences_guibuilder.get_object("fontbutton_highlight")
-		self.fontbutton_highlight_button.set_font_name(self.highlight_font)
+		label_speech_language = widget.Label(_("Speech-Language"))
+		combobox_speech_language = widget.ComboBox()
+		combobox_speech_module.set_active(self.speech_module)
+		combobox_speech_language.set_active(self.speech_language)
+
+		label_speech_rate = widget.Label(_("Speech-Rate"))
+		spin_speech_rate = widget.SpinButton(self.speech_rate,0,100,1,10,0)
+		label_speech_volume = widget.Label(_("Speech-Volume"))
+		spin_speech_volume = widget.SpinButton(self.speech_volume,0,100,1,10,0)
+		label_speech_pitch = widget.Label(_("Speech-Pitch"))
+		spin_speech_pitch = widget.SpinButton(self.speech_pitch,0,100,1,10,0)
+
 		
-		#Voice Message
-		self.hscale_rate = self.preferences_guibuilder.get_object("scale_rate")
-		self.hscale_rate.set_value(self.voice_message_rate)
-		self.hscale_volume = self.preferences_guibuilder.get_object("scale_volume")
-		self.hscale_volume.set_value(self.voice_message_volume)
-		self.hscale_pitch = self.preferences_guibuilder.get_object("scale_pitch")
-		self.hscale_pitch.set_value(self.voice_message_pitch)
-		self.combobox_voice = self.preferences_guibuilder.get_object("combobox_voice")
+		grid_general = containers.Grid()
+		grid_general.add_widgets(
+			[(label_font,1,1),(fontbutton_font,1,1),containers.Grid.NEW_ROW,								  
+			(label_font_color,1,1),(colorbutton_font,1,1),containers.Grid.NEW_ROW,								  
+			(label_background_color,1,1),(colorbutton_background,1,1),containers.Grid.NEW_ROW,								  
+			(label_highlight_font,1,1),(fontbutton_highlight_font,1,1),containers.Grid.NEW_ROW,								  
+			(label_highlight_color,1,1),(colorbutton_highlight,1,1),containers.Grid.NEW_ROW,							  
+			(label_highlight_background,1,1),(colorbutton_highlight_background,1,1),containers.Grid.NEW_ROW,
+			(label_speech_module,1,1),(combobox_speech_module,1,1),containers.Grid.NEW_ROW,
+			(label_speech_language,1,1),(combobox_speech_language,1,1),containers.Grid.NEW_ROW,
+			(label_speech_rate,1,1),(spin_speech_rate,1,1),containers.Grid.NEW_ROW,
+			(label_speech_pitch,1,1),(spin_speech_pitch,1,1),containers.Grid.NEW_ROW,
+			(label_speech_volume,1,1),(spin_speech_volume,1,1)])
+		notebook.add_page(_("General"),grid_general)
+		grid_general.show_all()
+
+		#RECOGNITION - PAGE ########
+		#Engine		
+		label_engine = widget.Label(_("Engine"))
+		combobox_engine = widget.ComboBox()
+		combobox_engine.connect_change_callback_function(change_engine)
 		
-		voice_store = Gtk.ListStore(str)		
-		for item in espeak.list_voices():
-			voice_store.append([item.name])
+		for item in self.available_ocr_engine_list:
+			combobox_engine.add_item(item[0])		
 		
-		self.combobox_voice.set_model(voice_store)
-		renderer_text = Gtk.CellRendererText()
-		self.combobox_voice.pack_start(renderer_text, True)
-		self.combobox_voice.add_attribute(renderer_text, "text", 0)		
-		self.combobox_voice.set_active(self.voice_message_voice)
+		#Language
+		label_language = widget.Label(_("Language"))		
+		combobox_language = widget.ComboBox()
 		
-		self.checkbutton_say = self.preferences_guibuilder.get_object("checkbutton_say")
-		self.checkbutton_say.set_active(self.voice_message_state)
+		#setting current engine - This can't be done before creating language combobox
+		combobox_engine.set_active(self.ocr_engine)
+		combobox_language.set_active(self.language)
 		
-		# Scanning
-		self.time_spin = self.preferences_guibuilder.get_object("spinbutton_time")
-		self.re_spin = self.preferences_guibuilder.get_object("spinbutton_resolution")
-		self.bt_spin = self.preferences_guibuilder.get_object("spinbutton_brightness")
-		self.time_spin.set_value(self.time_between_repeated_scanning)
-		self.re_spin.set_value(self.scan_resolution)
-		self.bt_spin.set_value(self.scan_brightness)
+		#insert_position
+		label_insert_position = widget.Label(_("Insert Position"))
+		combobox_insert_position = widget.ComboBox()
+		combobox_insert_position.add_item(_("Start"))
+		combobox_insert_position.add_item(_("Cursor"))
+		combobox_insert_position.add_item(_("End"))
+		combobox_insert_position.set_active(self.insert_position)
+		
+		#Seperator
+		seperator_1 = widget.Separator()
+
+		#Mode of Rotation
+		label_mode_of_rotation = widget.Label(_("Mode Of Rotation"))
+		combobox_mode_of_rotation = widget.ComboBox()
+		combobox_mode_of_rotation.add_item(_("Full Automatic"))
+		combobox_mode_of_rotation.add_item(_("Partial Automatic"))
+		combobox_mode_of_rotation.add_item(_("Manual"))
+		combobox_mode_of_rotation.connect_change_callback_function(change_mode_of_rotation)
 		
 		#Angle
-		self.angle_cb = self.preferences_guibuilder.get_object("combobox_angle")
-		self.label_angle = self.preferences_guibuilder.get_object("label_angle")
-		
-		#AREA						      
-		area = self.preferences_guibuilder.get_object("combobox_scan_area")
-		area.connect('changed', self.change_area)
-		area.set_active(self.scan_area)
+		self.label_angle = widget.Label(_("Angle"))		
+		combobox_angle = widget.ComboBox()
+		combobox_angle.add_item(_("00"))
+		combobox_angle.add_item(_("90"))
+		combobox_angle.add_item(_("180"))
+		combobox_angle.add_item(_("270"))		
 
-		#Driver
-		self.scan_driver_old = self.scan_driver						      
-		driver_combobox = self.preferences_guibuilder.get_object("combobox_scan_driver")
-		driver_combobox.connect('changed', self.change_driver)
+		#Seperator 2
+		seperator_2 = widget.Separator()
+		
+		#Page-Numbering
+		label_numbering_type = widget.Label(_("Page Numbering Type"))				
+		combobox_numbering_type = widget.ComboBox()
+		combobox_numbering_type.add_item(_("Single Page"))
+		combobox_numbering_type.add_item(_("Double Page"))
+		combobox_numbering_type.set_active(self.page_numbering_type)
+		
+		#Starting Page Number
+		label_starting_page_number = widget.Label(_("Starting Page Number"))
+		spin_starting_page_number = widget.SpinButton(0,0,100000,1,5,0)
+		spin_starting_page_number.set_value(self.starting_page_number)
+		
+		grid_recognition = containers.Grid()
+		grid_recognition.add_widgets([
+			(label_engine,1,1),(combobox_engine,1,1),containers.Grid.NEW_ROW,
+			(label_language,1,1),(combobox_language,1,1),containers.Grid.NEW_ROW,
+			(label_insert_position,1,1),(combobox_insert_position,1,1),containers.Grid.NEW_ROW,
+			(seperator_1,2,1),containers.Grid.NEW_ROW,
+			(label_mode_of_rotation,1,1),(combobox_mode_of_rotation,1,1),containers.Grid.NEW_ROW,
+			(self.label_angle,1,1),(combobox_angle,1,1),containers.Grid.NEW_ROW,
+			(seperator_2,2,1),containers.Grid.NEW_ROW,
+			(label_numbering_type,1,1),	(combobox_numbering_type,1,1),containers.Grid.NEW_ROW,
+			(label_starting_page_number,1,1),
+			(spin_starting_page_number,1,1)])
+		notebook.add_page(_("Recognition"),grid_recognition)
+		grid_recognition.show_all()
 
-		driver_list_store = Gtk.ListStore(str)
-		for item in self.available_driver_list:
-			driver_list_store.append([item.name])
-		driver_combobox.set_model(driver_list_store)
+		#setting current mode of rotation - This can't be done before creating angle combobox
+		#also it should be here because the show_all function of grid will make angle combobox show again
+		combobox_mode_of_rotation.set_active(self.mode_of_rotation)
+		combobox_angle.set_active(self.rotation_angle)
 		
-		renderer_text = Gtk.CellRendererText()
-		driver_combobox.pack_start(renderer_text, True)
-		driver_combobox.add_attribute(renderer_text, "text", 0)
-		driver_combobox.set_active(self.scan_driver)
+		
+		#SCANNING - PAGE ##############
+		label_resolution = widget.Label(_("Resolution"))
+		spin_resolution = widget.SpinButton(300,100,1200,1,5,0)
+		spin_resolution.set_value(self.scan_resolution)
 
-		#insert_position						      
-		insert_position = self.preferences_guibuilder.get_object("combobox_insert_position")
-		insert_position.connect('changed', self.change_insert_position)
-		insert_position.set_active(self.insert_position)
-		
-		
-		#ENGINE
-		combobox_engine = self.preferences_guibuilder.get_object("combobox_engine")	
-		combobox_engine.connect('changed', self.change_engine)
-		
-		self.ocr_engine_list_store = Gtk.ListStore(str)
-		for item in self.available_ocr_engine_list:
-			self.ocr_engine_list_store.append([item.name])
-		combobox_engine.set_model(self.ocr_engine_list_store)
-		
-		renderer_text = Gtk.CellRendererText()
-		combobox_engine.pack_start(renderer_text, True)
-		combobox_engine.add_attribute(renderer_text, "text", 0)
-		combobox_engine.set_active(self.ocr_engine)
-		
-		#LANGUAGE
-		self.language_cb = self.preferences_guibuilder.get_object("combobox_language")
-		renderer_text = Gtk.CellRendererText()
-		self.language_cb.pack_start(renderer_text, True)
-		self.language_cb.add_attribute(renderer_text, "text", 0)
-		self.language_cb.set_active(self.language)	
-		
-		#ROTATION
-		rotation = self.preferences_guibuilder.get_object("combobox_rotation")
-		rotation.connect("changed",self.change_rotation)
-		rotation.set_active(self.mode_of_rotation)
-		
+		label_brightness = widget.Label(_("Brightness"))
+		spin_brightness = widget.SpinButton(50,0,100,1,5,0)
+		spin_brightness.set_value(self.scan_brightness)
 
-		#Mode Switching
-		self.scanner_mode_switching_old = self.scanner_mode_switching
-		self.checkbutton_scanner_mode_switching = self.preferences_guibuilder.get_object("checkbutton_scanner_mode_switching")
-		self.checkbutton_scanner_mode_switching.set_active(self.scanner_mode_switching)
-		
-		#Cache Calibration
-		self.scanner_cache_calibration_old = self.scanner_cache_calibration
-		self.checkbutton_scanner_cache_calibration = self.preferences_guibuilder.get_object("checkbutton_scanner_cache_calibration")
-		self.checkbutton_scanner_cache_calibration.set_active(self.scanner_cache_calibration)
+		label_scan_area = widget.Label(_("Scan Area"))
+		combobox_scan_area = widget.ComboBox()
+		combobox_scan_area.add_item(_("Full Scan Area"))
+		combobox_scan_area.add_item(_("Three Quarters"))
+		combobox_scan_area.add_item(_("Two Quarters"))
+		combobox_scan_area.add_item(_("One Quarters"))
+		combobox_scan_area.set_active(self.scan_area)
 
-		#Skew
-		self.checkbutton_skew = self.preferences_guibuilder.get_object("checkbutton_skew")
-		self.checkbutton_skew.set_active(self.auto_skew)
-		
+		label_scan_driver = widget.Label(_("Driver"))
+		combobox_scan_driver = widget.ComboBox()		
+		for item in self.available_scanner_drivers:
+			combobox_scan_driver.add_item(item)
+			print(item)
+		print(self.scan_driver)
+		combobox_scan_driver.set_active(self.scan_driver)
 
-	
-		#PAGE-NUMBARING
-		numbering = self.preferences_guibuilder.get_object("combobox_page_type")
-		numbering.connect("changed",self.change_numbering)
-		numbering.set_active(self.page_numbering_type)
+		sparator_3 = widget.Separator()
 		
-		
-		#Cam_and_Webcam
-		self.combobox_cam_resolution = self.preferences_guibuilder.get_object("combobox_cam_resolution")
-		self.liststore_cam_resolution = self.preferences_guibuilder.get_object("liststore_cam_resolution")
-		for intex,item in enumerate(self.liststore_cam_resolution):
-			if (self.cam_x == item[1] and self.cam_y == item[2]):
-				self.combobox_cam_resolution.set_active(intex)
-						
-		
-		
-		self.combobox_cam_device = self.preferences_guibuilder.get_object("combobox_cam_device")
-		self.combobox_cam_device.set_active(self.cam_device)
-		
+		label_number_of_pages_to_scan = widget.Label(_("Number of Pages to Scan"))
+		spin_number_of_pages_to_scan = widget.SpinButton(10,2,100,1,5,0)
+		spin_number_of_pages_to_scan.set_value(self.number_of_pages_to_scan)
 
-		notebook = self.preferences_guibuilder.get_object("notebook")
-		try:
-			notebook.set_current_page(data)
-		except TypeError:
-			pass
-		self.preferences_window.show()		
-	
-	#FUNCTIONS-COMBOBOX	
-	def change_area(self, area):
-		self.model_area = area.get_model()
-		self.index_area = area.get_active()
+		label_time_bitween_repeted_scanning = widget.Label(_("Time Bitween Repeted Scanning"))
+		spin_time_bitween_repeted_scanning = widget.SpinButton(0,0,30,1,5,0)
+		spin_time_bitween_repeted_scanning.set_value(self.time_between_repeated_scanning)
 
-	def change_driver(self, driver):
-		self.model_driver = driver.get_model()
-		self.index_driver = driver.get_active()
+		sparator_4 = widget.Separator()
 
-	def change_insert_position(self, insert_position):
-		self.model_insert_position = insert_position.get_model()
-		self.index_insert_position = insert_position.get_active()
-		
-	
-	def change_engine(self, engine):
-		self.model_engine = engine.get_model()
-		self.index_engine = engine.get_active()
-		
-		self.language_cb = self.preferences_guibuilder.get_object("combobox_language")
-		
-		language_list_store = Gtk.ListStore(str)
-		for item in self.available_ocr_engine_list[self.index_engine].get_available_languages():
-			language_list_store.append([item])			
-		
-		self.language_cb.set_model(language_list_store)			
-		self.language_cb.set_active(0)	
+		checkbutton_scan_mode_switching = widget.CheckButton(_("Change to binary or lineart if possible"))
+		checkbutton_scan_mode_switching.set_active(self.scanner_mode_switching)
 
-
-	def change_rotation(self,rotation):
-		self.model_rotation = rotation.get_model()
-		self.index_rotation = rotation.get_active()
-		if self.model_rotation[self.index_rotation][0] == "Manual":
-			self.angle_cb.show()
-			self.label_angle.show()
-			if int(self.rotation_angle) == 00:
-				self.angle_cb.set_active(0)
-			elif int(self.rotation_angle) == 90:
-				self.angle_cb.set_active(1)
-			elif int(self.rotation_angle) == 180:
-				self.angle_cb.set_active(2)
-			else:
-				self.angle_cb.set_active(3)					
-		else:
-			self.angle_cb.hide()
-			self.label_angle.hide()
+		checkbutton_scanner_cache_calibration = widget.CheckButton(_("Cache Calibration"))
+		checkbutton_scanner_cache_calibration.set_active(self.scanner_cache_calibration)
 		
-	
-	def change_numbering(self,numbering):
-		self.model_numbering = numbering.get_model()
-		self.index_numbering = numbering.get_active()
-
-	
-	#FUNCTIONS-BUTTONS
-	def close_preferences(self,widget,data=None):
-		#self.notify("Its-all-right!",False,None,True)
-		self.preferences_window.destroy()
-
-	def apply_preferences(self,widget,data=None):
-		value=self.combobox_cam_resolution.get_active()
-		self.cam_x = self.liststore_cam_resolution[value][1]
-		self.cam_y = self.liststore_cam_resolution[value][2]
-		self.cam_device=self.combobox_cam_device.get_active()
+		grid_scanning = containers.Grid()
+		grid_scanning.add_widgets([
+			(label_resolution,1,1),(spin_resolution,1,1),containers.Grid.NEW_ROW,
+			(label_brightness,1,1),(spin_brightness,1,1),containers.Grid.NEW_ROW,
+			(label_scan_area,1,1),(combobox_scan_area,1,1),containers.Grid.NEW_ROW,
+			(label_scan_driver,1,1),(combobox_scan_driver,1,1),containers.Grid.NEW_ROW,
+			(sparator_3,2,1),containers.Grid.NEW_ROW,
+			(label_number_of_pages_to_scan,1,1),(spin_number_of_pages_to_scan,1,1),containers.Grid.NEW_ROW,
+			(label_time_bitween_repeted_scanning,1,1),(spin_time_bitween_repeted_scanning,1,1),containers.Grid.NEW_ROW,
+			(sparator_4,2,1),containers.Grid.NEW_ROW,
+			(checkbutton_scan_mode_switching,2,1),containers.Grid.NEW_ROW,
+			(checkbutton_scanner_cache_calibration,2,1)])
 		
+		notebook.add_page(_("Scanning"),grid_scanning)
+		grid_scanning.show_all()
 		
-		self.voice_message_voice=self.combobox_voice.get_active()
-		self.voice_message_rate=int(self.hscale_rate.get_value())
-		self.voice_message_volume=int(self.hscale_volume.get_value())
-		self.voice_message_pitch=int(self.hscale_pitch.get_value())
-		self.voice_message_state = int(self.checkbutton_say.get_active())
+		#Setting page
+		notebook.set_current_page(page)
+		
+		dlg = dialog.Dialog(_("Lios Preferences"),(_("Apply"),dialog.Dialog.BUTTON_ID_1,_("Close"),dialog.Dialog.BUTTON_ID_2))
+		dlg.add_widget(notebook)
+		if (dlg.run()==True):
+			self.font=fontbutton_font.get_font_name();
+			self.font_color=colorbutton_font.get_color_as_string()			
+			self.background_color=colorbutton_background.get_color_as_string()
 			
-		
-		self.font=self.font_button.get_font_name();
-		self.highlight_font=self.fontbutton_highlight_button.get_font_name();
-		self.background_color=self.background_color_button.get_color().to_string();
-		self.font_color=self.font_color_button.get_color().to_string();
-		self.highlight_color=self.highlight_color_button.get_color().to_string();
-		self.time_between_repeated_scanning=self.time_spin.get_value_as_int();
-		self.background_highlight_color=self.highlight_background_color_button.get_color().to_string();
-		self.scan_resolution = self.re_spin.get_value_as_int();
-		self.scan_brightness=self.bt_spin.get_value_as_int();
-		self.scan_area=self.index_area;self.scan_driver=self.index_driver;
-		self.insert_position=self.index_insert_position;
-		self.ocr_engine=self.index_engine;self.language=self.language_cb.get_active()
-		self.mode_of_rotation=self.index_rotation;
-		self.number_of_pages_to_scan=self.pages_spin.get_value_as_int();
-		self.page_numbering_type=self.index_numbering;
-		self.starting_page_number=self.start_spin.get_value_as_int();
-		self.scanner_mode_switching=int(self.checkbutton_scanner_mode_switching.get_active())
-		self.scanner_cache_calibration=int(self.checkbutton_scanner_cache_calibration.get_active())
-		
-		if self.angle_cb.get_visible() ==True:
-			model_angle = self.angle_cb.get_model()
-			self.rotation_angle = model_angle[self.angle_cb.get_active()][0]
-		
-		self.auto_skew = int(self.checkbutton_skew.get_active())
-		if (self.scan_driver_old != self.scan_driver or self.scanner_mode_switching_old != self.scanner_mode_switching or self.scanner_cache_calibration_old != self.scanner_cache_calibration ):
-			self.require_scanner_refresh = True
-			self.scan_driver_old = self.scan_driver
-			self.scanner_mode_switching_old = self.scanner_mode_switching
-			self.scanner_cache_calibration_old = self.scanner_cache_calibration
+			self.highlight_font=fontbutton_highlight_font.get_font_name();
+			self.highlight_color=colorbutton_highlight.get_color_as_string()
+			self.background_highlight_color=colorbutton_highlight_background.get_color_as_string()
 			
-		self.activate_preferences()
-		self.save_preferences_to_file('{0}/.lios_preferences.cfg'.format(global_var.home_dir))
-		self.preferences_window.destroy()
+			self.ocr_engine=combobox_engine.get_active()
+			self.language=combobox_language.get_active()
+			self.speech_module=combobox_speech_module.get_active()
+			self.speech_language=combobox_speech_language.get_active()
+			self.speech_rate=spin_speech_rate.get_value()
+			self.speech_pitch=spin_speech_pitch.get_value()
+			self.speech_volume=spin_speech_volume.get_value()
+			self.insert_position=combobox_insert_position.get_active();
+			self.mode_of_rotation=combobox_mode_of_rotation.get_active()
+			self.angle = combobox_angle.get_active()
+			self.page_numbering_type=combobox_numbering_type.get_active();
+			self.starting_page_number=spin_starting_page_number.get_value_as_int();
+			
+			self.scan_resolution = spin_resolution.get_value_as_int();
+			self.scan_brightness=spin_brightness.get_value_as_int();
+			self.scan_area=combobox_scan_area.get_active();
+			self.scan_driver=combobox_scan_driver.get_active();
+			self.number_of_pages_to_scan=spin_number_of_pages_to_scan.get_value_as_int();
+			self.time_between_repeated_scanning=spin_time_bitween_repeted_scanning.get_value_as_int();
+			self.scanner_mode_switching=int(checkbutton_scan_mode_switching.get_active())
+			self.scanner_cache_calibration=int(checkbutton_scanner_cache_calibration.get_active())
+			
+			dlg.destroy()
+			return True
+		dlg.destroy()
+		return False
+
+
+
+			#combobox_angle.set_active(self.rotation_angle)
 
 	
-	def activate_preferences(self):
-		espeak.set_parameter(espeak.Parameter.Rate,self.voice_message_rate)
-		espeak.set_parameter(espeak.Parameter.Pitch,self.voice_message_pitch)
-		espeak.set_parameter(espeak.Parameter.Volume,self.voice_message_volume)
-		espeak.set_voice(espeak.list_voices()[self.voice_message_voice].name)
-				
-		languages = self.available_ocr_engine_list[self.ocr_engine].get_available_languages()
-		self.ocr_engine_object = self.available_ocr_engine_list[self.ocr_engine](languages[self.language])
-		
-		self.textviewer.set_language(self.dictionary_language_dict[languages[self.language]])
-		self.textviewer.set_page_numbering_type(self.page_numbering_type)
-		self.textviewer.set_max_page_number(self.starting_page_number)
-		self.textviewer.set_tags(self.highlight_color,self.highlight_font,self.background_highlight_color)
-		self.textviewer.set_font_and_color(self.font,self.font_color,self.background_color)
-		
-		self.set_dict("%s" % self.dictionary_language_dict[languages[self.language]])
-		if (self.require_scanner_refresh):
-			self.scanner_refresh(self)
+if "__main__" == __name__:
+	a = lios_preferences()
+	a.open_configure_dialog()
+	a.open_configure_dialog()
+	
+	loop.start_main_loop()
 		
 
 	
-	def set_dict(self,language):
-		try:
-			self.dict = enchant.Dict(language)
-		except	enchant.errors.DictNotFoundError:
-			self.dict = enchant.Dict("en")
-			dialog = Gtk.MessageDialog(None, 0, Gtk.MessageType.ERROR,
-			Gtk.ButtonsType.OK, "Dict not found!")
-			
-			dialog.format_secondary_text("Please install the aspell dict for your " +
-			"language({0}) and restart Lios.\n Otherwise spellchecker will".format(language) + 
-			"be disabled and auto-rotation will work with english(fallback) ")
-			dialog.run()
-			dialog.destroy()
+

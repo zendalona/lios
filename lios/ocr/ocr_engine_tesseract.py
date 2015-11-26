@@ -37,7 +37,7 @@ TESSDATA_EXTENSION = ".traineddata"
 class OcrEngineTesseract(OcrEngineBase):
 	name = "Tesseract"
 	
-	def __init__(self,language):
+	def __init__(self,language=None):
 		self.set_language(language)
 
 	def is_available():

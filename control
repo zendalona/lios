@@ -1,15 +1,15 @@
 Package: lios
 Priority: optional
 Section: graphics
-Installed-Size: 400
+Installed-Size: 225
 Architecture: all
-Version: 1.9
+Version: 2.0
 Depends: tesseract-ocr,imagemagick,cuneiform,python3-espeak,python3-imaging-sane,espeak,poppler-utils,python3-enchant,aspell-en
 Provides: N.x.L
 Maintainer: Nalin.x.Linux <Nalin.x.Linux@Gmail.com>
 Homepage: http://sourceforge.net/projects/lios/
 Description: Linux-intelligent-ocr-solution
- Lios is a free and open source software for converting print in to text using either scanner or a camera,
+ Lios is a free and open source software for converting print in to text using either scanner, camera, or screenshot,
  It can also produce text out of scanned images from other sources such as Pdf,
  Image or Folder containing Images. Program is given total accessibility for visually impaired. Lios is written in python3,
  and we release it under GPL-3 license. There are great many possibilities for this program,

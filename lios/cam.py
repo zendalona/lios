@@ -63,7 +63,8 @@ class Cam(Gtk.Window):
 		self.xid = self.drawingarea.get_property('window').get_xid()
 		self.show_all()
 
-		
+	def start(self):
+		Gtk.main()
 	
 	def cam_close(self, window):
 		self.pipeline.set_state(Gst.State.NULL)
@@ -79,6 +80,9 @@ class Cam(Gtk.Window):
 	    filename = "{}{}.png".format(self.directory,datetime.datetime.now().time())
 	    pixbuf.savev(filename, 'png', [], [])
 	    self.emit("image_captured",filename)
+	
+	def connect_image_captured(self,function):
+		self.connect("image_captured",function)
 	    
 	    
 	def cam_on_error(self, bus, msg):
@@ -103,5 +107,6 @@ class Cam(Gtk.Window):
 if __name__ == "__main__":
 	devices = Cam.get_available_devices()
 	print(devices)
-	Cam(devices[0],1024,768)
-	Gtk.main();
+
+	a = Cam(devices[0],1024,768)
+	a.start()

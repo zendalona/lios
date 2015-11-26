@@ -1,4 +1,4 @@
-#! /usr/bin/python3 
+#!/usr/bin/python3 
 
 ###########################################################################
 #    Lios - Linux-Intelligent-Ocr-Solution
@@ -18,44 +18,27 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###########################################################################
 
-import abc
-import multiprocessing
+from gi.repository import Gtk
 
 
-class OcrEngineBase(metaclass=abc.ABCMeta):
-	def __init__(self,language=None):
-		self.language = language
+class FileChooserDialog(Gtk.FileChooserDialog):
+	OPEN = Gtk.FileChooserAction.OPEN
+	SAVE = Gtk.FileChooserAction.SAVE
+	OPEN_FOLDER = Gtk.FileChooserAction.SELECT_FOLDER
+	ACCEPT = Gtk.ResponseType.OK
 	
-	@staticmethod
-	@abc.abstractmethod
-	def get_available_languages():
-		return
-	
-	@abc.abstractmethod
-	def ocr_image_to_text(self,image_file_name):
-		pass
-
-	def set_language(self,language):
-		if language in self.__class__.get_available_languages():
-			self.language = language
-			return True
+	def __init__(self,title,action,filters=None,dir=None):
+		if(action == Gtk.FileChooserAction.OPEN or
+			action == Gtk.FileChooserAction.SELECT_FOLDER):
+			super(FileChooserDialog,self).__init__(title,None,action,buttons=(Gtk.STOCK_OPEN,Gtk.ResponseType.OK))
 		else:
-			return False
-	
-	def ocr_image_to_text_with_multiprocessing(self,image_file_name):
-		parent_conn, child_conn = multiprocessing.Pipe()
+			super(FileChooserDialog,self).__init__(title,None,action,buttons=(Gtk.STOCK_SAVE,Gtk.ResponseType.OK))
 		
-		p = multiprocessing.Process(target=(lambda parent_conn, child_conn,
-		image_file_name : child_conn.send(self.ocr_image_to_text(image_file_name))),
-		args=(parent_conn, child_conn,image_file_name))
-		
-		p.start()
-		p.join()
-		
-		return parent_conn.recv();
+		filter = Gtk.FileFilter()
+		for item in filters:
+			filter.add_pattern("*."+item)
+		self.add_filter(filter)
+		if (dir):
+			self.set_current_folder(dir)
 
-
-	@staticmethod
-	@abc.abstractmethod
-	def is_available():
-		return		
+	#def run() distroy() get_filename()	set_current_folder()

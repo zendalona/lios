@@ -16,17 +16,15 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###########################################################################
-#!/usr/bin/env python3
 
 
-from lios.scanner.driver_base import DriverBase
-from lios.scanner.sane_driver import DriverSane
-from lios.scanner.scanimage_driver import DriverScanimage
 
-def get_available_drivers():
-	list = []
-	for item in DriverBase.__subclasses__():
-		if item.is_available():
-			list.append(item)
-	return list
+#from lios.ui.ui_base import OcrEngineBase
+#from lios.ui.ui_gtk import OcrEngineCuneiform
 
+#def get_available_ui_engines():
+#	list = []
+#	for item in OcrEngineBase.__subclasses__():
+#		if item.is_available():
+#			list.append(item)
+#	return list

@@ -1,4 +1,4 @@
-#! /usr/bin/python3 
+#!/usr/bin/python3 
 
 ###########################################################################
 #    Lios - Linux-Intelligent-Ocr-Solution
@@ -17,45 +17,23 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###########################################################################
-
-import abc
-import multiprocessing
-
-
-class OcrEngineBase(metaclass=abc.ABCMeta):
-	def __init__(self,language=None):
-		self.language = language
+from gi.repository import Gtk
 	
-	@staticmethod
-	@abc.abstractmethod
-	def get_available_languages():
-		return
+class Window(Gtk.Window):
+	def __init__(self,title):
+		super(Window,self).__init__()
+		self.set_title(title)
+		
 	
-	@abc.abstractmethod
-	def ocr_image_to_text(self,image_file_name):
-		pass
-
-	def set_language(self,language):
-		if language in self.__class__.get_available_languages():
-			self.language = language
-			return True
-		else:
-			return False
+	def connect_close_function(self,function):
+		self.connect("destroy",function)
 	
-	def ocr_image_to_text_with_multiprocessing(self,image_file_name):
-		parent_conn, child_conn = multiprocessing.Pipe()
+	def connect_menubar(self,menubar):
+		self.add_accel_group(menubar.get_accel_group())
+	
+	def connect_configure_event_handler(self,function):
+		self.connect("configure-event",function)
 		
-		p = multiprocessing.Process(target=(lambda parent_conn, child_conn,
-		image_file_name : child_conn.send(self.ocr_image_to_text(image_file_name))),
-		args=(parent_conn, child_conn,image_file_name))
-		
-		p.start()
-		p.join()
-		
-		return parent_conn.recv();
 
-
-	@staticmethod
-	@abc.abstractmethod
-	def is_available():
-		return		
+	#add()
+	#get_size()

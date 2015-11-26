@@ -1,7 +1,6 @@
-#!/usr/bin/env python3
 ###########################################################################
 #    Lios - Linux-Intelligent-Ocr-Solution
-#    Copyright (C) 2015-2016 Nalin.x.Linux GPL-3
+#    Copyright (C) 2011-2015 Nalin.x.Linux GPL-3
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -16,17 +15,24 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###########################################################################
-#!/usr/bin/env python3
+
+import os
+
+home_dir = os.environ['HOME']
+
+tmp_dir = "/tmp/Lios/"
+
+supported_image_formats = ["png","pnm","jpg","jpeg","tif","tiff","bmp","pbm","ppm"]
+
+supported_text_formats = ["txt","text"]
+
+supported_pdf_formats = ["pdf"]
+
+version = "2.0"
+
+logo_file = "/usr/share/lios/lios"
 
 
-from lios.scanner.driver_base import DriverBase
-from lios.scanner.sane_driver import DriverSane
-from lios.scanner.scanimage_driver import DriverScanimage
+readme_file = "/usr/share/lios/readme"
 
-def get_available_drivers():
-	list = []
-	for item in DriverBase.__subclasses__():
-		if item.is_available():
-			list.append(item)
-	return list
-
+app_name = "Linux-intelligent-ocr-solution"

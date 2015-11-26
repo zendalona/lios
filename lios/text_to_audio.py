@@ -22,7 +22,7 @@ import os
 import subprocess
 
 class text_to_audio_converter:
-	def __init__(self,text="Blank",volume=100,voice="english",output_file_name="",split_time=5,pitch=50,speed=170):
+	def __init__(self,text="Blank",volume=100,voice="english",split_time=5,pitch=50,speed=170):
 		self.text = text
 		self.set_volume(volume)
 		self.set_voice(voice)
@@ -31,12 +31,12 @@ class text_to_audio_converter:
 		self.set_speed(speed)	
 		
 	
-	def list_voices(self):
+	def list_voices():
 		voice_list = []
 		output = subprocess.getoutput("espeak --voices")
 		for line in output.split("\n"):
 			if(line.split()[3] != "VoiceName"):
-				voice_list.append([line.split()[3]])
+				voice_list.append(line.split()[3])
 		return voice_list
 
 		
@@ -64,7 +64,7 @@ class text_to_audio_converter:
 			return False;
 
 	def set_voice(self,value):
-		if (value in self.list_voices()):
+		if (value in text_to_audio_converter.list_voices()):
 			self.voice = value
 			return True;
 		else:

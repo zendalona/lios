@@ -1,4 +1,5 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3 
+
 ###########################################################################
 #    Lios - Linux-Intelligent-Ocr-Solution
 #    Copyright (C) 2015-2016 Nalin.x.Linux GPL-3
@@ -16,17 +17,20 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###########################################################################
-#!/usr/bin/env python3
+
+from gi.repository import Gtk
+from gi.repository import GdkPixbuf
 
 
-from lios.scanner.driver_base import DriverBase
-from lios.scanner.sane_driver import DriverSane
-from lios.scanner.scanimage_driver import DriverScanimage
+class AboutDialog(Gtk.AboutDialog):
 
-def get_available_drivers():
-	list = []
-	for item in DriverBase.__subclasses__():
-		if item.is_available():
-			list.append(item)
-	return list
-
+	def __init__(self,title,buttons):
+		super(AboutDialog,self).__init__(title,None,True,buttons)
+	
+	def set_logo_from_file(self,filename):
+		pixbuff =  GdkPixbuf.Pixbuf.new_from_file(filename)
+		self.set_logo(pixbuff)
+			
+		
+	#show_all()
+	#run()

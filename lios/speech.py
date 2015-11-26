@@ -1,5 +1,3 @@
-#! /usr/bin/python3 
-
 ###########################################################################
 #    Lios - Linux-Intelligent-Ocr-Solution
 #    Copyright (C) 2015-2016 Nalin.x.Linux GPL-3
@@ -18,44 +16,27 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###########################################################################
 
-import abc
-import multiprocessing
+import speechd
 
-
-class OcrEngineBase(metaclass=abc.ABCMeta):
-	def __init__(self,language=None):
-		self.language = language
+class Speech(speechd.SSIPClient):
+	def __init__(self,client_name="lios"):
+		super(Speech,self).__init__(client_name)
+		self.status = False
 	
-	@staticmethod
-	@abc.abstractmethod
-	def get_available_languages():
-		return
+	def list_voices(self):
+		return [ x[0] for x in self.list_synthesis_voices()]
 	
-	@abc.abstractmethod
-	def ocr_image_to_text(self,image_file_name):
-		pass
-
-	def set_language(self,language):
-		if language in self.__class__.get_available_languages():
-			self.language = language
-			return True
-		else:
-			return False
+	def say(self,text):
+		self.status = True
+		self.speak(text,self.end,speechd.CallbackType.END)
 	
-	def ocr_image_to_text_with_multiprocessing(self,image_file_name):
-		parent_conn, child_conn = multiprocessing.Pipe()
+	def wait(self):
+		while (self.status):
+			pass
+	
+	def end(self,*data):
+		self.status = False
+	
+	#close()
+			
 		
-		p = multiprocessing.Process(target=(lambda parent_conn, child_conn,
-		image_file_name : child_conn.send(self.ocr_image_to_text(image_file_name))),
-		args=(parent_conn, child_conn,image_file_name))
-		
-		p.start()
-		p.join()
-		
-		return parent_conn.recv();
-
-
-	@staticmethod
-	@abc.abstractmethod
-	def is_available():
-		return		

@@ -31,7 +31,7 @@ LANGUAGES_SPLIT_RE = re.compile("[^a-z]")
 class OcrEngineCuneiform(OcrEngineBase):
 	name = "Cuneiform"
 	
-	def __init__(self,language):
+	def __init__(self,language=None):
 		self.set_language(language)
 
 	def is_available():
