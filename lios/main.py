@@ -38,7 +38,7 @@ _ = localization._
 import multiprocessing
 import threading
 
-
+import webbrowser
 
 def on_thread(function):
 	@wraps(function)
@@ -143,66 +143,74 @@ class linux_intelligent_ocr_solution():
 		
 		menubar = menu.MenuBar(
 		[[_("File"),(_("New"),self.textview.new,"<Control>N"),menu.SEPARATOR,
-				 (_("Import-Image"),self.import_image,"<Control>I"),(_("Import-Pdf"),self.import_pdf,"None"),
-				 (_("Import-Folder"),self.import_folder,"None"),menu.SEPARATOR,
-				 (_("Open"),self.open_text,"<Control>O"),		
-				 (_("Save"),self.open_text,"<Control>S"),(_("Save-As"),self.open_text,"<Shift><Control>N"),
-				 (_("Export-As-Pdf"),self.open_text,"<Control>E"),(_("Print"),self.open_text,"<Control>P"),
-				 (_("Print-Preview"),self.open_text,"None"),menu.SEPARATOR,
-				 (_("Quit"),self.quit,"<Control>Q")],
+			(_("Import-Image"),self.import_image,"<Control>I"),(_("Import-Pdf"),self.import_pdf,"None"),
+			(_("Import-Folder"),self.import_folder,"None"),menu.SEPARATOR,
+			(_("Open"),self.open_text,"<Control>O"),		
+			(_("Save"),self.open_text,"<Control>S"),(_("Save-As"),self.open_text,"<Shift><Control>N"),
+			(_("Export-As-Pdf"),self.open_text,"<Control>E"),(_("Print"),self.open_text,"<Control>P"),
+			(_("Print-Preview"),self.open_text,"None"),menu.SEPARATOR,
+			(_("Quit"),self.quit,"<Control>Q")],
 		[_("Edit"),(_("Undo"),self.textview.undo,"<Control>Z"),(_("Redo"),self.textview.redo,"<Control>Y"),
-				menu.SEPARATOR,(_("Cut"),self.open_text,"<Control>X"),
-				(_("Copy"),self.open_text,"<Control>C"),(_("Paste"),self.open_text,"<Control>V"),
-				(_("Delete"),self.open_text,"<Control>D"),menu.SEPARATOR,
-				(_("Punch-Text"),self.open_text,"None"),(_("Append-Text"),self.open_text,"None"),
-				menu.SEPARATOR,(_("Find"),self.open_text,"<Control>F"),
-				(_("Find-Replace"),self.open_text,"<Control>R"),menu.SEPARATOR,
-				(_("Go-To-Line"),self.open_text,"<Control>L"),(_("Go-To-Page"),self.open_text,"<Control>G"),
-				menu.SEPARATOR,(_("Preferences"),self.open_preferences_general_page,"None")],
+			menu.SEPARATOR,(_("Cut"),self.open_text,"<Control>X"),
+			(_("Copy"),self.open_text,"<Control>C"),(_("Paste"),self.open_text,"<Control>V"),
+			(_("Delete"),self.open_text,"<Control>D"),menu.SEPARATOR,
+			(_("Punch-Text"),self.open_text,"None"),(_("Append-Text"),self.open_text,"None"),
+			menu.SEPARATOR,(_("Find"),self.open_text,"<Control>F"),
+			(_("Find-Replace"),self.open_text,"<Control>R"),menu.SEPARATOR,
+			(_("Go-To-Line"),self.open_text,"<Control>L"),(_("Go-To-Page"),self.open_text,"<Control>G"),
+			menu.SEPARATOR,(_("Preferences"),self.open_preferences_general_page,"None")],
 		[_("Image"),[_("Rotate-Left"),(_("Current"),self.open_text,"None"),
-								(_("Selected"),self.rotate_selected_images_to_left,"None"),
-								(_("All"),self.rotate_all_images_to_left,"None")],
-				 [_("Rotate-Twice"),(_("Current"),self.open_text,"None"),
-								(_("Selected"),self.rotate_selected_images_to_twice,"None"),
-								(_("All"),self.rotate_all_images_to_twice,"None")],
-				 [_("Rotate-Right"),(_("Current"),self.open_text,"None"),
-								(_("Selected"),self.rotate_selected_images_to_right,"None"),
-								(_("All"),self.rotate_all_images_to_right,"None")],											
-				 menu.SEPARATOR, (_("Invert-List"),self.iconview.invert_list,"None"), menu.SEPARATOR,
-				 [_("Save"),(_("Selected-Images"),self.save_selected_images,"None"),(_("All-Images"),self.save_all_images,"None")],
-				 [_("Export-As-Pdf"),(_("Selected-Images"),self.save_selected_images_as_pdf,"None"),(_("All-Images"),self.save_all_images_as_pdf,"None")], menu.SEPARATOR,
-				 [_("Delete"),(_("Selected-Images"),self.iconview_remove_selected_images,"None"),(_("All-Images"),self.iconview_remove_all_images,"None")],],
-		[_("Scan"),(_("Scan-Image"),self.scan_single_image,"F8"),(_("Scan-Image-Repeatedly"),self.scan_image_repeatedly,"<Control>F8"),
-				(_("Scan-and-Ocr"),self.scan_and_ocr,"F9"),(_("Scan-and-Ocr-Repeatedly"),self.scan_and_ocr_repeatedly,"<Control>F9"),
-				(_("Optimise-Scanner-Brightness"),self.optimize_brightness,"None"),menu.SEPARATOR,
-				(_("Scan-Using-Webcam"),self.scan_using_cam,"F6"),menu.SEPARATOR,
-				[_("Take-Screenshort"),(_("Selection"),self.take_rectangle_screenshot,"<Control>F6"),(_("Full"),self.take_full_screenshot,"F6")],
-				[_("Take-and-Recognize-Screenshort"),(_("Selection"),self.open_text,"<Control>F10"),(_("Full"),self.open_text,"F10")]],
+				(_("Selected"),self.rotate_selected_images_to_left,"None"),
+				(_("All"),self.rotate_all_images_to_left,"None")],
+			[_("Rotate-Twice"),(_("Current"),self.open_text,"None"),
+				(_("Selected"),self.rotate_selected_images_to_twice,"None"),
+				(_("All"),self.rotate_all_images_to_twice,"None")],
+			[_("Rotate-Right"),(_("Current"),self.open_text,"None"),
+				(_("Selected"),self.rotate_selected_images_to_right,"None"),
+				(_("All"),self.rotate_all_images_to_right,"None")],											
+			menu.SEPARATOR, (_("Invert-List"),self.iconview.invert_list,"None"),
+			menu.SEPARATOR,
+			[_("Save"),(_("Selected-Images"),self.save_selected_images,"None"),
+				(_("All-Images"),self.save_all_images,"None")],
+			[_("Export-As-Pdf"),(_("Selected-Images"),self.save_selected_images_as_pdf,"None"),
+				(_("All-Images"),self.save_all_images_as_pdf,"None")], menu.SEPARATOR,
+			[_("Delete"),(_("Selected-Images"),self.iconview_remove_selected_images,"None"),
+				(_("All-Images"),self.iconview_remove_all_images,"None")],],
+		[_("Scan"),(_("Scan-Image"),self.scan_single_image,"F8"),
+			(_("Scan-Image-Repeatedly"),self.scan_image_repeatedly,"<Control>F8"),
+			(_("Scan-and-Ocr"),self.scan_and_ocr,"F9"),(_("Scan-and-Ocr-Repeatedly"),self.scan_and_ocr_repeatedly,"<Control>F9"),
+			(_("Optimise-Scanner-Brightness"),self.optimize_brightness,"None"),menu.SEPARATOR,
+			(_("Scan-Using-Webcam"),self.scan_using_cam,"F6"),menu.SEPARATOR,
+			[_("Take-Screenshort"),(_("Selection"),self.take_rectangle_screenshot,"<Control>F6"),(_("Full"),self.take_full_screenshot,"F6")],
+			[_("Take-and-Recognize-Screenshort"),(_("Selection"),self.open_text,"<Control>F10"),(_("Full"),self.open_text,"F10")]],
 		[_("Recognize"),(_("Recognize-Selected-Areas"),self.ocr_selected_areas,"None"),(_("Recognize-Selected-Images"),self.ocr_selected_images,"None"),(_("Recognize-All-Images"),self.open_text,"None"),
-				(_("Recognize-Selected-with-rotation"),self.ocr_selected_images_with_rotation,"None"),(_("Recognize-All-with-rotation"),self.open_text,"None")],
+			(_("Recognize-Selected-with-rotation"),self.ocr_selected_images_with_rotation,"None"),(_("Recognize-All-with-rotation"),self.open_text,"None")],
 		[_("Tools"),(_("Spell-Check"),self.open_text,"<Control>F7"),
-				(_("Audio-Converter"),self.textview.audio_converter,"None"),
-				(_("Dictionary"),self.artha,"<Control><Alt>W")],
+			(_("Audio-Converter"),self.textview.audio_converter,"None"),
+			(_("Dictionary"),self.artha,"<Control><Alt>W")],
 		[_("Preferences"),(_("Preferences-General"),self.open_preferences_general_page,"None"),
 			(_("Preferences-Recognition"),self.open_preferences_recognition_page,"None"),
-				(_("Preferences-Scanning"),self.open_preferences_scanning_page,"None"),
-				menu.SEPARATOR,	(_("Save"),self.save_preferences,"None"),
-				(_("Load"),self.load_preferences,"None"),(_("Restore"),self.restore_preferences,"None")],
-		[_("Help"),(_("Open-Readme"),self.open_readme,"None"),(_("Video-Tutorial"),self.open_text,"None"),
-				menu.SEPARATOR,(_("About"),self.about,"None")]])
+			(_("Preferences-Scanning"),self.open_preferences_scanning_page,"None"),
+			menu.SEPARATOR,	(_("Save"),self.save_preferences,"None"),
+			(_("Load"),self.load_preferences,"None"),(_("Restore"),self.restore_preferences,"None")],
+		[_("Help"),(_("Open-Readme"),self.open_readme,"None"),
+			(_("Video-Tutorials"),self.open_video_tutorials,"None"),
+			(_("Open-Home-Page"),self.open_home_page,"None"),
+			(_("Get-Source-Code"),self.get_source_code,"None"),
+			menu.SEPARATOR,(_("About"),self.about,"None")]])
 		menubar.show()
 
-		
 		self.combobox_scanners = widget.ComboBox()
 		button_update_scanner_list = widget.Button("Refresh-Scanner-List")
 		button_update_scanner_list.connect_function(self.scanner_refresh)
 		button_scan = widget.Button("Scan")
 		button_scan.connect_function(self.scan_single_image)		
 		toolbar_main = containers.Toolbar(containers.Toolbar.HORIZONTAL,
-						[(_("Take-Screenshort"),self.take_rectangle_screenshot),(_("Scan-Using-Webcam"),self.scan_using_cam),
-						(_("Preferences"),self.open_preferences_general_page),(_("About"),self.about),
-						(_("Quit"),self.quit)	])		
-				
+			[(_("Take-Screenshort"),self.take_rectangle_screenshot),(_("Scan-Using-Webcam"),self.scan_using_cam),
+			(_("Preferences"),self.open_preferences_general_page),
+			(_("Video-Tutorials"),self.open_video_tutorials),
+			(_("About"),self.about),
+			(_("Quit"),self.quit)])				
 		
 		#Slide Panes
 		self.paned_image_text = containers.Paned(containers.Paned.VERTICAL)
@@ -230,9 +238,6 @@ class linux_intelligent_ocr_solution():
 			(self.statusbar,4,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND),
 			(self.progressbar,1,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND),])
 
-		
-
-				 
 		text_updated = False
 		if(file_list):
 			for item in file_list:
@@ -273,6 +278,16 @@ class linux_intelligent_ocr_solution():
 		self.window.show()
 		loop.start_main_loop()	
 	
+
+	def open_video_tutorials(self,*data):
+		webbrowser.open(macros.video_tutorials_link)
+
+	def open_home_page(self,*data):
+		webbrowser.open(macros.home_page_link)
+
+	def get_source_code(self,*data):
+		webbrowser.open(macros.source_link)
+
 	def iconview_button_release(self,*data):
 		if (self.iconview.get_selected_item_names() == []):
 			self.iconview.select_all()
@@ -304,8 +319,7 @@ class linux_intelligent_ocr_solution():
 		if (move):
 			shutil.move(file_name_with_directory,destination)
 		else:
-			shutil.copyfile(file_name_with_directory,destination)
-		
+			shutil.copyfile(file_name_with_directory,destination)		
 		self.iconview.add_item(destination)
 
 	def import_image(self,wedget,data=None):

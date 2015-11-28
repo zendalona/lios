@@ -66,6 +66,8 @@ stock_icon_dict = { _("File") :"edit-copy",
 					_("Audio-Converter"):"audio-input-microphone",
 					_("Help"):"gtk-help",
 					_("Open-Readme"):"gtk-help",
-					_("Video-Tutorial"):"gtk-help",
+					_("Video-Tutorials"):"gtk-help",
+					_("Open-Home-Page"):"gtk-help",
+					_("Get-Source-Code"):"gtk-help",
 					_("About"):"gtk-about"}
 					

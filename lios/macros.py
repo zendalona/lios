@@ -36,3 +36,9 @@ logo_file = "/usr/share/lios/lios"
 readme_file = "/usr/share/lios/readme"
 
 app_name = "Linux-intelligent-ocr-solution"
+
+source_link = "https://gitlab.com/Nalin-x-Linux/lios-3"
+
+home_page_link = "http://sourceforge.net/projects/lios/"
+
+video_tutorials_link = "https://www.youtube.com/playlist?list=PLn29o8rxtRe1zS1r2-yGm1DNMOZCgdU0i"
