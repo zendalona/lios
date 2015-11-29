@@ -82,7 +82,7 @@ class linux_intelligent_ocr_solution():
 			(_("Delete"),self.iconview_remove_selected_images)])
 			
 		self.iconview.connect_on_selected_callback(self.on_iconview_item_selected)
-		self.iconview.connect_button_release_callback(self.iconview_button_release)
+		self.iconview.connect_context_menu_button_callback(self.iconview_popup_context_menu)
 		box_iconview.add(toolbar_iconview)
 		box_iconview.add(scroll_box_iconview)			
 
@@ -93,14 +93,24 @@ class linux_intelligent_ocr_solution():
 		self.imageview.set_hexpand(True)
 		box_imageview = containers.Box(containers.Box.HORIZONTAL)
 		toolbar_imageview = containers.Toolbar(containers.Toolbar.VERTICAL,
-							[(_("Rotate-Right"),self.open_text),(_("Rotate-Twice"),self.open_text),
-						  (_("Rotate-Left"),self.open_text),containers.Toolbar.SEPARATOR,
-						  (_("Zoom-In"),self.imageview.zoom_in),(_("Zoom-Fit"),self.imageview.zoom_fit),
-						  (_("Zoom-Out"),self.imageview.zoom_out),containers.Toolbar.SEPARATOR,(_("Recognize-Selected-Areas"),self.ocr_selected_areas)]);
+			[(_("Rotate-Right"),self.open_text),(_("Rotate-Twice"),self.open_text),
+			(_("Rotate-Left"),self.open_text),containers.Toolbar.SEPARATOR,
+			(_("Zoom-In"),self.imageview.zoom_in),(_("Zoom-Fit"),self.imageview.zoom_fit),
+			(_("Zoom-Out"),self.imageview.zoom_out),containers.Toolbar.SEPARATOR,
+			(_("Recognize-Selected-Areas"),self.ocr_selected_areas)]);
 		
 		box_imageview.add(toolbar_imageview)
 		box_imageview.add(self.imageview)
 		self.imageview.load_image(macros.logo_file,[],image_view.ImageViewer.ZOOM_FIT)
+		#Context menu
+		self.context_menu_imageview = menu.ContextMenu(
+			[(_("Rotate-Right"),self.open_text),(_("Rotate-Twice"),self.open_text),
+			(_("Rotate-Left"),self.open_text),menu.SEPARATOR,
+			(_("Zoom-In"),self.imageview.zoom_in),(_("Zoom-Fit"),self.imageview.zoom_fit),
+			(_("Zoom-Out"),self.imageview.zoom_out),menu.SEPARATOR,
+			(_("Recognize-Selected-Areas"),self.ocr_selected_areas)]);
+		self.imageview.connect_context_menu_button_callback(self.imageview_popup_context_menu)
+
 		
 		#Editor
 		self.textview = editor.BasicTextView()
@@ -138,8 +148,6 @@ class linux_intelligent_ocr_solution():
 		self.preferences.set_avalable_ocr_engines([ (item.name,item.get_available_languages())
 												for item in self.available_ocr_engine_list ])
 		
-
-
 		
 		menubar = menu.MenuBar(
 		[[_("File"),(_("New"),self.textview.new,"<Control>N"),menu.SEPARATOR,
@@ -288,20 +296,15 @@ class linux_intelligent_ocr_solution():
 	def get_source_code(self,*data):
 		webbrowser.open(macros.source_link)
 
-	def iconview_button_release(self,*data):
+	def iconview_popup_context_menu(self,*data):
 		if (self.iconview.get_selected_item_names() == []):
 			self.iconview.select_all()
 		if (self.iconview.get_selected_item_names() != []):
-			self.context_menu_iconview.popup(None, None, None, None,0,0)
-			self.context_menu_iconview.show_all()
-		
-	def textview_button_release(self,*data):
-		self.context_menu_iconview.popup(None, None, None, None,0,0)
-		self.context_menu_iconview.show_all()
-	def imageview_button_release(self,*data):
-		self.context_menu_iconview.popup(None, None, None, None,0,0)
-		self.context_menu_iconview.show_all()
-		
+			self.context_menu_iconview.pop_up()
+
+	def imageview_popup_context_menu(self,*data):
+		self.context_menu_imageview.pop_up()
+				
 	def window_reconfigure(self,*arg):
 		width,height = self.window.get_size()
 		self.paned_image_text.set_position(height/2)
@@ -1115,7 +1118,7 @@ class linux_intelligent_ocr_solution():
 			for this program. Feedback is the key to it."))
 		dlg.set_copyright("Copyright (C) 2011-2015 Nalin.x.Linux")
 		dlg.set_license("GPL-V3")
-		dlg.set_website("http://sourceforge.net/projects/lios/")
+		dlg.set_website(macros.home_page_link)
 		dlg.set_website_label(_("Visit Home Page"))
 		dlg.set_authors(["Nalin"])
 		dlg.set_documenters(["Shalini S","Sathyaseelan K"])

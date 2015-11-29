@@ -193,16 +193,11 @@ class ImageViewer(Gtk.HPaned):
 
 	def __drawingarea_button_press_event(self, widget, event):
 		if(event.button == 1):
-			self.start_x,self.start_y=event.get_coords()
-			
+			self.start_x,self.start_y=event.get_coords()			
 			if (self.on_resize_place):
 				self.on_resize = True;
 			else:
 				self.on_select = True
-							
-		elif(event.button == 3):
-			self.drawingarea_popupmenu.popup(None, None, None, None,event.button,event.time)
-			self.drawingarea_popupmenu.show_all()
 		return True
     
 	def __drawingarea_motion_notify_event(self, widget, event):
@@ -390,8 +385,6 @@ class ImageViewer(Gtk.HPaned):
 			self.on_resize = False;
 			#self.rs[self.index][4] = False
 			self.drawingarea.queue_draw()
-		return True
-
 		
 
 	def __delete_selection(self,widget):
@@ -414,6 +407,14 @@ class ImageViewer(Gtk.HPaned):
 		if iter:
 			self.rs.set(iter,4,True)
 			self.drawingarea.queue_draw()
+
+	def connect_context_menu_button_callback(self,function):
+		def fun(widget,event):
+			if ((event.type == Gdk.EventType.BUTTON_RELEASE and event.button == 3) or
+				(event.type == Gdk.EventType.KEY_PRESS and event.hardware_keycode == 135)):
+				function()
+		self.connect("button-release-event",fun)
+		self.connect("key-press-event",fun)
 
 
 class TestWindow(Gtk.Window):

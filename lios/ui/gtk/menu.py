@@ -99,6 +99,9 @@ class ContextMenu(Gtk.Menu):
 		for item in item_list:
 			menu = create_context_menu(item)
 			self.append(menu)
+	def pop_up(self,*data):
+		self.popup(None,None,None,None,0,0)
+		self.show_all()
 
 def create_context_menu(menu_list):
 	if (type(menu_list) == list ):

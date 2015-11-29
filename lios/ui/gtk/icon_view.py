@@ -91,6 +91,11 @@ class IconView(Gtk.IconView):
 	def connect_on_selected_callback(self,function):
 		self.connect("selection-changed",function)
 	
-	def connect_button_release_callback(self,function):
-		self.connect("button-release-event",function)
+	def connect_context_menu_button_callback(self,function):
+		def fun(widget,event):
+			if ((event.type == Gdk.EventType.BUTTON_RELEASE and event.button == 3) or
+				(event.type == Gdk.EventType.KEY_PRESS and event.hardware_keycode == 135)):
+				function()
+		self.connect("button-release-event",fun)
+		self.connect("key-press-event",fun)
 
