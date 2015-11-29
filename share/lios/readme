@@ -1,35 +1,28 @@
 Linux-intelligent-ocr-solution
 
-Lios is a free and open source software for converting print in to text using either scanner or a camera, It can also produce text out of scanned images from other sources such as Pdf, Image or Folder containing Images. Program is given total accessibility for visually impaired. Lios is written in python3, and we release it under GPL-3 license. There are great many possibilities for this program, Feedback is the key to it, Expecting your feedback Nalin.x.Linux@gmail.com
+Lios is a free and open source software for converting print in to text using either scanner or a camera, It can also produce text out of scanned images from other sources such as Pdf, Image, Folder containing Images or screenshot. Program is given total accessibility for visually impaired. Lios is written in python3, and we release it under GPL-3 license. There are great many possibilities for this program, Feedback is the key to it, Expecting your feedback Nalin.x.Linux@gmail.com
 
 Features.
 
-1. Acquire image from Scanner
-2. Import images from PDFs,Folder
-3. Scan using Web-cam(beta)
-4. Support two OCR Engines (CUNEIFORM,TESSERACT),
+1. Import images from Scanner, PDFs, Folder, or Webcam,
+2. Take and Recognize Screenshot,
+3. Recognize Selected Areas(Rectangle selection),
+4. Support two OCR Engines (Cuneiform,Tesseract),
 5. 24 Language support (Given at the end), 30 more languages can be installed in Tesseract,
-6. OCR Selected images(With or without rotation)
-7. Full Auto Rotation for any Language(If aspell installed for the language, Eg : "sudo apt-get install aspell-hi" for Hindi,
-8. OCR Selected Areas(Rectangle selection),
-9. Output Insert position(Where the output is to be inserted)
-10. Scan and OCR directly.
-11. Selection of Scan area, brightness, resolution and time between repeated scanning,
-12. Advanced Brightness optimizer,
-13. Cache calibration
-15. Selection of starting page number, page numbering mode and number of pages to scan,
-16. Side by side view of image and output
-17. Basic user interface options including image rotation and zoom options
-19. Print text(beta)
-20. Export as pdf(beta)
-21. Audio converter,
-22. Spell-checker,
-23. Good text manipulation with Find, Find-and-Replace, Go-To-Page, Go-To-Line, Append file, and Punch File,
-24. Options for save, load and reset settings,
-25. Text Reading with Highlighting, With user selected Color, Font, and Background Color,
-26. Display Preferences for Low vision,
-27. Dictionary Support for English(Artha)
-28. And more features are in the preferences.
+6. Full Auto Rotation for any Language(If aspell installed for the language, Eg : "sudo apt-get install aspell-hi" for Hindi,
+7. Side by side view of image and output
+8. Advanced Scanner Brightness optimizer,
+9. Text Reader for low vision with Highlighting, With user selected Color, Font, and Background Color,
+10. Audio converter(espeak),
+11. Spell-checker(aspell),
+12. Export as pdf (text/images),
+13. Dictionary Support for English(Artha)
+14. Options for save, load and reset settings,
+15. Other options - Find, Find-and-Replace, Go-To-Page, Go-To-Line, Append file, Punch File,
+Selection of starting page number, page numbering mode and number of pages to scan,
+Selection of Scan area, brightness, resolution and time between repeated scanning,
+Output Insert position, image rotation and zoom options, etc
+
 
 Short-cut Keys.
 Scan and ocr F9,
@@ -44,18 +37,18 @@ Lios Preferences Ctrl+P,
 Artha Alt+Ctrl+W,
 Spell Checker Ctrl+F7,
 Find Ctrl+F,
-Read/Stop F5,
+Start Lios Reader F5,
+Stop Lios Reader Ctrl+F5,
 Go To Line Ctrl+L,
 Go To Page Ctrl+G,
-Find and Replace Ctrl+R
-Apply Preferences Alt+A.
+Find and Replace Ctrl+R.
 
 
 Installed Languages List : Bulgarian, Croatian, Czech, Danish, Dutch, English, Estonian, French, German, Hungarian, Italian, Latvian, Lithuanian, Polish, Portuguese, Romanian, Russian, Russian-English bilingual, Serbian, Slovene, Spanish, Swedish, Turkish, and Ukrainian.
 
 Disclaimer
 
-    Copyright (c) 2011-2014 Lios Development Team 
+    Copyright (c) 2011-2015 Lios Development Team 
 
     All rights reserved . Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met: 
 
