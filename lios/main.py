@@ -127,9 +127,12 @@ class linux_intelligent_ocr_solution():
 			containers.Toolbar.SEPARATOR,
 			(_("Find"),self.textview.open_find_dialog),
 			(_("Find-Replace"),self.textview.open_find_and_replace_dialog),
-			containers.Toolbar.SEPARATOR,(_("Go-To-Line"),self.textview.go_to_line),
-			(_("Go-To-Page"),self.open_text),containers.Toolbar.SEPARATOR,
+			containers.Toolbar.SEPARATOR,
 			(_("Read"),self.start_reading),(_("Stop"),self.stop_reading),
+			containers.Toolbar.SEPARATOR,
+			(_("Go-To-Line"),self.textview.go_to_line),
+			(_("Go-To-Page"),self.open_text),
+			
 			])
 		box_editor.add(toolbar_editor)
 		scroll_box_editor = containers.ScrollBox()
@@ -157,7 +160,7 @@ class linux_intelligent_ocr_solution():
 			(_("Import-Folder"),self.import_folder,"None"),menu.SEPARATOR,
 			(_("Open"),self.open_text,"<Control>O"),		
 			(_("Save"),self.open_text,"<Control>S"),(_("Save-As"),self.open_text,"<Shift><Control>N"),
-			(_("Export-As-Pdf"),self.open_text,"<Control>E"),(_("Print"),self.open_text,"<Control>P"),
+			(_("Export-As-Pdf"),self.open_text,"<Control>E"),(_("Print"),self.open_text,"None"),
 			(_("Print-Preview"),self.open_text,"None"),menu.SEPARATOR,
 			(_("Quit"),self.quit,"<Control>Q")],
 		[_("Edit"),(_("Undo"),self.textview.undo,"<Control>Z"),(_("Redo"),self.textview.redo,"<Control>Y"),
@@ -168,7 +171,7 @@ class linux_intelligent_ocr_solution():
 			menu.SEPARATOR,(_("Find"),self.open_text,"<Control>F"),
 			(_("Find-Replace"),self.open_text,"<Control>R"),menu.SEPARATOR,
 			(_("Go-To-Line"),self.open_text,"<Control>L"),(_("Go-To-Page"),self.open_text,"<Control>G"),
-			menu.SEPARATOR,(_("Preferences"),self.open_preferences_general_page,"None")],
+			menu.SEPARATOR,(_("Preferences"),self.open_preferences_general_page,"<Control>P")],
 		[_("Image"),[_("Rotate-Left"),(_("Current"),self.open_text,"None"),
 				(_("Selected"),self.rotate_selected_images_to_left,"None"),
 				(_("All"),self.rotate_all_images_to_left,"None")],
@@ -206,7 +209,10 @@ class linux_intelligent_ocr_solution():
 			(_("Recognize-All-with-rotation"),self.open_text,"None")],
 		[_("Tools"),(_("Spell-Check"),self.open_text,"<Control>F7"),
 			(_("Audio-Converter"),self.textview.audio_converter,"None"),
-			(_("Dictionary"),self.artha,"<Control><Alt>W")],
+			(_("Dictionary"),self.artha,"<Control><Alt>W"),
+			(_("Read"),self.start_reading,"F5"),
+			(_("Stop"),self.stop_reading,"<Control>F5"),
+			(_("Stop-All-Process"),self.stop_all_process,"<Control>F4")],
 		[_("Preferences"),(_("Preferences-General"),self.open_preferences_general_page,"None"),
 			(_("Preferences-Recognition"),self.open_preferences_recognition_page,"None"),
 			(_("Preferences-Scanning"),self.open_preferences_scanning_page,"None"),
@@ -554,7 +560,7 @@ class linux_intelligent_ocr_solution():
 	def scan_image_repeatedly(self,widget):
 		#self.make_scanner_widgets_inactive(lock=True)
 		#self.make_preferences_widgets_inactive(lock=True)
-		#self.process_breaker = False
+		self.process_breaker = False
 		for i in range(0,self.preferences.number_of_pages_to_scan):
 			destination = "{0}{1}.pnm".format(macros.tmp_dir,self.preferences.get_page_number_as_string())
 			destination = self.get_feesible_filename_from_filename(destination)
@@ -587,14 +593,14 @@ class linux_intelligent_ocr_solution():
 			pass
 		self.notify_information(_("Scan Completed!"),0.0030,0.01)
 			
-		#if(self.process_breaker):
-		#	return
+		if(self.process_breaker):
+			return
 		print(_("Adding image to list"))			
 		self.iconview.add_item(filename)
 		
 		print(_("Image added"))
-		#if(self.process_breaker):
-		#	return
+		if(self.process_breaker):
+			return
 		
 
 
@@ -847,8 +853,9 @@ class linux_intelligent_ocr_solution():
 		list = sorted(list, key=lambda item: item[0],reverse=True)
 		return (list)
 
-	def stop_process(self,widget):
+	def stop_all_process(self,widget):
 		self.process_breaker = True
+		self.stop_reading()
 		os.system('killall tesseract');
 		os.system('killall cuneiform')
 
@@ -1122,7 +1129,7 @@ class linux_intelligent_ocr_solution():
 	
 	@on_thread
 	def start_reading(self,*data):
-		self.stop_reading = False
+		self.reading_breaker = False
 		speaker = speech.Speech()
 		speaker.set_output_module(speaker.list_output_modules()[self.preferences.speech_module])
 		if(self.preferences.speech_module != -1 and len(speaker.list_voices()) > 1):
@@ -1136,12 +1143,12 @@ class linux_intelligent_ocr_solution():
 			speaker.say(sentence)
 			loop.release_lock()
 			speaker.wait()
-			if(self.stop_reading):
+			if(self.reading_breaker):
 				break
 				speaker.close()
 	
 	def stop_reading(self,*data):
-		self.stop_reading = True
+		self.reading_breaker = True
 
 	def scan_using_cam(self,widget):
 		devices = cam.Cam.get_available_devices()
