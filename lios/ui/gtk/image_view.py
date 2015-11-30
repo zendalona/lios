@@ -103,6 +103,7 @@ class ImageViewer(Gtk.HPaned):
 	#set_position()				
 
 	def load_image(self,filename,list,zoom_level):
+		self.filename = filename
 		diff = self.zoom_level - zoom_level
 		self.zoom_level = zoom_level
 		parameter = self.zoom_list[self.zoom_level]
@@ -136,7 +137,10 @@ class ImageViewer(Gtk.HPaned):
 		for item in list:
 			self.rs.append((item[0],item[1],item[2],item[3],0))
 		self.drawingarea.queue_draw()
-		
+
+	def get_filename(self):
+		return self.filename		
+
 	def redraw(self):
 		self.load_image(self.pixbuf_file_name,[],self.ZOOM_FIT)
 

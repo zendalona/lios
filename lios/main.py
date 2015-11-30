@@ -93,8 +93,9 @@ class linux_intelligent_ocr_solution():
 		self.imageview.set_hexpand(True)
 		box_imageview = containers.Box(containers.Box.HORIZONTAL)
 		toolbar_imageview = containers.Toolbar(containers.Toolbar.VERTICAL,
-			[(_("Rotate-Right"),self.open_text),(_("Rotate-Twice"),self.open_text),
-			(_("Rotate-Left"),self.open_text),containers.Toolbar.SEPARATOR,
+			[(_("Rotate-Right"),self.rotate_current_images_to_right),
+			(_("Rotate-Twice"),self.rotate_current_images_to_twice),
+			(_("Rotate-Left"),self.rotate_current_images_to_left),containers.Toolbar.SEPARATOR,
 			(_("Zoom-In"),self.imageview.zoom_in),(_("Zoom-Fit"),self.imageview.zoom_fit),
 			(_("Zoom-Out"),self.imageview.zoom_out),containers.Toolbar.SEPARATOR,
 			(_("Recognize-Selected-Areas"),self.ocr_selected_areas)]);
@@ -104,8 +105,9 @@ class linux_intelligent_ocr_solution():
 		self.imageview.load_image(macros.logo_file,[],image_view.ImageViewer.ZOOM_FIT)
 		#Context menu
 		self.context_menu_imageview = menu.ContextMenu(
-			[(_("Rotate-Right"),self.open_text),(_("Rotate-Twice"),self.open_text),
-			(_("Rotate-Left"),self.open_text),menu.SEPARATOR,
+			[(_("Rotate-Right"),self.rotate_current_images_to_right),
+			(_("Rotate-Twice"),self.rotate_current_images_to_twice),
+			(_("Rotate-Left"),self.rotate_current_images_to_left),menu.SEPARATOR,
 			(_("Zoom-In"),self.imageview.zoom_in),(_("Zoom-Fit"),self.imageview.zoom_fit),
 			(_("Zoom-Out"),self.imageview.zoom_out),menu.SEPARATOR,
 			(_("Recognize-Selected-Areas"),self.ocr_selected_areas)]);
@@ -186,13 +188,22 @@ class linux_intelligent_ocr_solution():
 				(_("All-Images"),self.iconview_remove_all_images,"None")],],
 		[_("Scan"),(_("Scan-Image"),self.scan_single_image,"F8"),
 			(_("Scan-Image-Repeatedly"),self.scan_image_repeatedly,"<Control>F8"),
-			(_("Scan-and-Ocr"),self.scan_and_ocr,"F9"),(_("Scan-and-Ocr-Repeatedly"),self.scan_and_ocr_repeatedly,"<Control>F9"),
+			(_("Scan-and-Ocr"),self.scan_and_ocr,"F9"),
+			(_("Scan-and-Ocr-Repeatedly"),self.scan_and_ocr_repeatedly,"<Control>F9"),
 			(_("Optimise-Scanner-Brightness"),self.optimize_brightness,"None"),menu.SEPARATOR,
 			(_("Scan-Using-Webcam"),self.scan_using_cam,"F6"),menu.SEPARATOR,
-			[_("Take-Screenshort"),(_("Selection"),self.take_rectangle_screenshot,"<Control>F6"),(_("Full"),self.take_full_screenshot,"F6")],
-			[_("Take-and-Recognize-Screenshort"),(_("Selection"),self.open_text,"<Control>F10"),(_("Full"),self.open_text,"F10")]],
-		[_("Recognize"),(_("Recognize-Selected-Areas"),self.ocr_selected_areas,"None"),(_("Recognize-Selected-Images"),self.ocr_selected_images,"None"),(_("Recognize-All-Images"),self.open_text,"None"),
-			(_("Recognize-Selected-with-rotation"),self.ocr_selected_images_with_rotation,"None"),(_("Recognize-All-with-rotation"),self.open_text,"None")],
+			[_("Take-Screenshort"),
+				(_("Selection"),self.take_rectangle_screenshot,"<Control>F6"),
+				(_("Full"),self.take_full_screenshot,"F6")],
+			[_("Take-and-Recognize-Screenshort"),
+				(_("Selection"),self.take_and_recognize_rectangle_screenshot,"<Control>F10"),
+				(_("Full"),self.take_and_recognize_full_screenshot,"F10")]],
+		[_("Recognize"),
+			(_("Recognize-Selected-Areas"),self.ocr_selected_areas,"None"),
+			(_("Recognize-Selected-Images"),self.ocr_selected_images,"None"),
+			(_("Recognize-All-Images"),self.open_text,"None"),
+			(_("Recognize-Selected-with-rotation"),self.ocr_selected_images_with_rotation,"None"),
+			(_("Recognize-All-with-rotation"),self.open_text,"None")],
 		[_("Tools"),(_("Spell-Check"),self.open_text,"<Control>F7"),
 			(_("Audio-Converter"),self.textview.audio_converter,"None"),
 			(_("Dictionary"),self.artha,"<Control><Alt>W")],
@@ -200,7 +211,8 @@ class linux_intelligent_ocr_solution():
 			(_("Preferences-Recognition"),self.open_preferences_recognition_page,"None"),
 			(_("Preferences-Scanning"),self.open_preferences_scanning_page,"None"),
 			menu.SEPARATOR,	(_("Save"),self.save_preferences,"None"),
-			(_("Load"),self.load_preferences,"None"),(_("Restore"),self.restore_preferences,"None")],
+			(_("Load"),self.load_preferences,"None"),
+			(_("Restore"),self.restore_preferences,"None")],
 		[_("Help"),(_("Open-Readme"),self.open_readme,"None"),
 			(_("Video-Tutorials"),self.open_video_tutorials,"None"),
 			(_("Open-Home-Page"),self.open_home_page,"None"),
@@ -214,7 +226,8 @@ class linux_intelligent_ocr_solution():
 		button_scan = widget.Button("Scan")
 		button_scan.connect_function(self.scan_single_image)		
 		toolbar_main = containers.Toolbar(containers.Toolbar.HORIZONTAL,
-			[(_("Take-Screenshort"),self.take_rectangle_screenshot),(_("Scan-Using-Webcam"),self.scan_using_cam),
+			[(_("Take-Screenshort"),self.take_rectangle_screenshot),
+			(_("Scan-Using-Webcam"),self.scan_using_cam),
 			(_("Preferences"),self.open_preferences_general_page),
 			(_("Video-Tutorials"),self.open_video_tutorials),
 			(_("About"),self.about),
@@ -275,6 +288,8 @@ class linux_intelligent_ocr_solution():
 		#This will clear scanner combobox
 		#so scanner combobox should be inetialised
 		self.make_preferences_effective()
+		
+		self.notify_information(_("Welcome to {} Version {}").format(macros.app_name,macros.version),0.0030,10)
 
 		#For connecting menubar accell group Gtk
 		self.window.connect_menubar(menubar)
@@ -285,6 +300,15 @@ class linux_intelligent_ocr_solution():
 		self.window.maximize()
 		self.window.show()
 		loop.start_main_loop()	
+
+	
+	def notify_information(self,text,percentage,pulsate=None):
+		self.statusbar.set_text(text)
+		if(pulsate):
+			self.progressbar.set_pulse_step(percentage)
+		else:
+			self.progressbar.set_fraction(percentage)
+		
 	
 
 	def open_video_tutorials(self,*data):
@@ -358,8 +382,7 @@ class linux_intelligent_ocr_solution():
 		shutil.copyfile(pdf_filename_full,destination)
 		os.makedirs(destination.split(".")[0],exist_ok=True)
 		
-#		self.set_progress_bar("Extracting images from Pdf",None,0.001,lock=True)
-#		self.announce(_("Extracting images from Pdf please wait!"))
+		self.notify_information(_("Extracting images from Pdf"),0.0030,0.001)
 		
 		p = multiprocessing.Process(target=lambda : os.system("pdfimages {} {}/{}"
 		.format(destination,destination.split(".")[0],pdf_filename.split(".")[0])) , args=())
@@ -379,8 +402,7 @@ class linux_intelligent_ocr_solution():
 					filename = self.get_feesible_filename_from_filename(filename)
 					self.add_image_to_list("{}/{}".format(destination.split(".")[0],image),filename,True)
 		os.rmdir(destination.split(".")[0])
-#		self.set_progress_bar("Completed!",None,0.01,lock=True)
-#		self.announce("Images imported!")
+		self.notify_information(_("Completed!"),0.0030,0.01)
 #		self.make_image_widgets_active(lock=True)		
 	
 	def import_folder(self,wedget,data=None):
@@ -392,19 +414,19 @@ class linux_intelligent_ocr_solution():
 			image_directory = folder.get_current_folder()
 			folder.destroy()
 			file_list = os.listdir(image_directory)
-			#progress_step = len(file_list)/(10^len(file_list));progress = 0;			
+			progress_step = len(file_list)/(10^len(file_list));
+			progress = 0;			
 			for image in sorted(file_list):
 				try:
 					if image.split(".")[-1] in macros.supported_image_formats:
 						destination = "{0}{1}".format(macros.tmp_dir,image.replace(' ','-'))
-						#self.set_progress_bar("Importing image {}".format(destination),progress,None,lock=False)
+						self.notify_information(_("Importing image {}").format(destination),progress,None)
 						destination = self.get_feesible_filename_from_filename(destination)
 						self.add_image_to_list("{0}/{1}".format(image_directory,image),destination,False)					
 				except IndexError:
 					pass
-				#progress = progress + progress_step;
-			self.set_progress_bar(_("Completed!"),None,0.01,lock=False)
-			#self.announce("Images imported!")		
+				progress = progress + progress_step;
+			self.notify_information(_("Completed!"),0.0030,0.01)
 		#self.make_image_widgets_active()
 
 	@on_thread	#should continue the loop to get window minimize 
@@ -413,7 +435,6 @@ class linux_intelligent_ocr_solution():
 		self.window.iconify() #minimize
 		os.system("sleep 1") #Time to minimize lios window
 		capture_screen.capture_entire_screen(destination)
-		self.window.set_keep_above(True)
 		self.iconview.add_item(destination)
 		self.preferences.update_page_number()
 
@@ -423,7 +444,27 @@ class linux_intelligent_ocr_solution():
 		self.window.iconify() #minimize
 		capture_screen.capture_rectangle_selection(destination)
 		self.iconview.add_item(destination)
-		self.window.set_keep_above(True)
+		self.preferences.update_page_number()
+
+	@on_thread
+	def take_and_recognize_full_screenshot(self,data):
+		destination = self.get_feesible_filename_from_filename("{}{}.png".format(macros.tmp_dir,self.preferences.starting_page_number))
+		self.window.iconify() #minimize
+		os.system("sleep 1") #Time to minimize lios window
+		capture_screen.capture_entire_screen(destination)
+		self.iconview.add_item(destination)
+		text,angle = self.ocr(destination,2,00)
+		self.insert_text_to_textview(text,self.preferences.insert_position)
+		self.preferences.update_page_number()
+
+	@on_thread
+	def take_and_recognize_rectangle_screenshot(self,data):
+		destination = self.get_feesible_filename_from_filename("{}{}.png".format(macros.tmp_dir,self.preferences.starting_page_number))
+		self.window.iconify() #minimize
+		capture_screen.capture_rectangle_selection(destination)
+		self.iconview.add_item(destination)
+		text,angle = self.ocr(destination,2,00)
+		self.insert_text_to_textview(text,self.preferences.insert_position)		
 		self.preferences.update_page_number()
 		
 
@@ -448,8 +489,7 @@ class linux_intelligent_ocr_solution():
 		#self.make_preferences_widgets_inactive(lock=True)
 		#self.make_scanner_widgets_inactive(lock=True)
 		
-		#self.set_progress_bar(_("Geting devices"),None,0.001,lock=True)
-		#self.announce(_("Getting devices"))
+		self.notify_information(_("Geting devices"),0.0030,0.001)
 		#Tuple - List Convertion is used to get all items in devices list
 		
 		
@@ -466,7 +506,7 @@ class linux_intelligent_ocr_solution():
 		driver = self.available_scanner_driver_list[self.preferences.scan_driver]
 		list_ = list(parent_conn.recv())
 		for device in list_:
-			#self.set_progress_bar(_("Setting Scanner {}").format(device),None,0.0030,lock=True)			
+			self.notify_information(_("Setting Scanner {}").format(device),0.0030,0.0030)			
 			scanner = driver(device,self.preferences.scan_resolution,self.preferences.scan_brightness,self.preferences.scan_area)
 			if (self.preferences.scanner_mode_switching):
 				for mode in scanner.get_available_scan_modes():
@@ -485,13 +525,12 @@ class linux_intelligent_ocr_solution():
 		if (len(self.scanner_objects) != 0):
 			self.combobox_scanners.set_active(0)
 			#self.make_scanner_widgets_active(lock=True)
-			#self.set_progress_bar(_("Completed!"),None,0.01,lock=True)
+			self.notify_information(_("Completed!"),0.0030,0.01)
 		else:
 			#self.button_refresh.set_sensitive(True)
 			#self.spinner.set_state(False)
 			#self.spinner.hide()
-			#self.announce(_("No Scanner Detected!"))
-			#self.set_progress_bar(_("No Scanner Detected!"),None,0.01,lock=True)
+			self.notify_information(_("No Scanner Detected!"),0.0030,0.01)
 			pass
 		#self.make_preferences_widgets_active(lock=True)
 		loop.release_lock()
@@ -529,16 +568,15 @@ class linux_intelligent_ocr_solution():
 			time.sleep(self.preferences.time_between_repeated_scanning)
 			if(self.process_breaker):
 				break
-		#self.announce(_("Job completed!"))
+		self.notify_information(_("Job completed!"),100)
 		#self.make_scanner_widgets_active(lock=True)
 		#self.make_preferences_widgets_active(lock=True)
 
 	def scan(self,filename):
 		selected_scanner = self.combobox_scanners.get_active()
-		#self.announce(_("Scanning!"))
 
-		#self.set_progress_bar(_("Scanning {} with resolution={} brightness={}")
-		#.format(filename,self.preferences.scan_resolution,self.preferences.scan_brightness),None,0.0030,lock=True)
+		self.notify_information(_("Scanning {} with resolution={} brightness={}").
+		format(filename,self.preferences.scan_resolution,self.preferences.scan_brightness),0.0030,0.0030)
 		
 		p = multiprocessing.Process(target=(self.scanner_objects[selected_scanner].scan),
 		args=(filename,self.preferences.scan_resolution,
@@ -547,7 +585,7 @@ class linux_intelligent_ocr_solution():
 		p.start()
 		while(p.is_alive()):
 			pass
-		#self.set_progress_bar(_("Scan Completed!"),None,0.01,lock=True)
+		self.notify_information(_("Scan Completed!"),0.0030,0.01)
 			
 		#if(self.process_breaker):
 		#	return
@@ -629,7 +667,7 @@ class linux_intelligent_ocr_solution():
 		text,angle = self.ocr(destination,self.preferences.mode_of_rotation,self.preferences.rotation_angle)
 		self.insert_text_to_textview(text,self.preferences.insert_position)
 		#self.rotate(angle,destination,False)
-		#self.announce(_("Page {}").format(self.preferences.get_page_number_as_string()))
+		self.notify_information(_("Page {}").format(self.preferences.get_page_number_as_string()),10)
 		self.preferences.update_page_number()
 		#self.make_scanner_widgets_active(lock=True)
 		#self.make_ocr_widgets_active(lock=True)
@@ -663,7 +701,7 @@ class linux_intelligent_ocr_solution():
 				self.insert_text_to_textview(text,True,True)
 			else:
 				self.insert_text_to_textview(text,False,True)
-			#self.announce(_("Page {}".format(self.preferences.get_page_number_as_string()))
+			self.notify_information(_("Page {}").format(self.preferences.get_page_number_as_string()),100)
 			print(_("Rotating image"))	
 			self.rotate(angle,destination,False)
 			self.preferences.update_page_number()
@@ -696,8 +734,8 @@ class linux_intelligent_ocr_solution():
 		mode = self.preferences.mode_of_rotation
 		angle = self.preferences.rotation_angle
 		if (mode == 0 or mode == 1):
-			#self.set_progress_bar(_("Scanning with resolution={} brightness={}")
-			#.format(self.preferences.scan_resolution,100),None,0.0030,lock=True)
+			self.notify_information(_("Scanning with resolution={} brightness={}")
+			.format(self.preferences.scan_resolution,100),0.0030,0.0030)
 			
 			p = multiprocessing.Process(target=(self.scanner_objects[selected_scanner].scan),
 			args=("{0}test.pnm".format(macros.tmp_dir),self.preferences.scan_resolution,100,self.preferences.scan_area))
@@ -784,12 +822,12 @@ class linux_intelligent_ocr_solution():
 				list.append((mid_value,previous_optimised_count))
 				#self.announce(_("Got {} words at brightness {}.").format(previous_optimised_count,mid_value))
 			else:
-				#if (count != -1):
-				#	self.set_progress_bar(_("Got {} words at brightness {}. Scanning with resolution={} brightness={}")
-				#	.format(count,pos-distance,self.preferences.scan_resolution,pos),None,0.0030,lock=True)
-				#else:
-				#	self.set_progress_bar(_("Scanning with resolution={} brightness={}")
-				#	.format(self.preferences.scan_resolution,pos),None,0.0030,lock=True)
+				if (count != -1):
+					self.notify_information(_("Got {} words at brightness {}. Scanning with resolution={} brightness={}")
+					.format(count,pos-distance,self.preferences.scan_resolution,pos),0.0030,0.0030)
+				else:
+					self.notify_information(_("Scanning with resolution={} brightness={}")
+					.format(self.preferences.scan_resolution,pos),0.0030,0.0030)
 				
 				p = multiprocessing.Process(target=(self.scanner_objects[selected_scanner].scan),
 				args=("{0}test.pnm".format(macros.tmp_dir,self.preferences.get_page_number_as_string()),
@@ -824,16 +862,16 @@ class linux_intelligent_ocr_solution():
 		#self.make_ocr_widgets_inactive(lock=True)
 		#self.make_preferences_widgets_inactive(lock=True)
 		#self.make_image_widgets_inactive(lock=True)
-		#progress_step = 1/len(self.iconview.get_selected_item_names())
-		#progress = 0;
+		progress_step = 1/len(self.iconview.get_selected_item_names())
+		progress = 0;
 		mode = self.preferences.mode_of_rotation
 		angle = self.preferences.rotation_angle
 		for item in reversed(self.iconview.get_selected_item_names()):
-			#self.set_progress_bar(_("Running OCR on selected image {}")
-			#.format(self.liststore_images[item[0]][1]),progress,None,lock=True)
+			self.notify_information(_("Running OCR on selected image {}")
+			.format(self.liststore_images[item[0]][1]),progress,None)
 			
 			#self.announce(_("Recognising {}").format(self.liststore_images[item[0]][1]))
-			#progress = progress + progress_step;			
+			progress = progress + progress_step;			
 			text,angle = self.ocr(item,mode,angle)
 			self.insert_text_to_textview(text,self.preferences.insert_position)
 			#self.insert_text_to_textview(text,False,False)
@@ -857,19 +895,19 @@ class linux_intelligent_ocr_solution():
 		#self.make_ocr_widgets_inactive(lock=True)
 		#self.make_preferences_widgets_inactive(lock=True)
 		#self.make_image_widgets_inactive(lock=True)
-		#progress_step = 1/len(self.iconview.get_selected_item_names())
-		#progress = 0;
+		progress_step = 1/len(self.iconview.get_selected_item_names())
+		progress = 0;
 		for item in reversed(self.iconview.get_selected_item_names()):
-			#self.set_progress_bar(_("Running OCR on selected image {} (without rotating)")
-			#.format(self.liststore_images[item[0]][1]),progress,None,lock=True)
+			self.notify_information(_("Running OCR on selected image {} (without rotating)")
+			.format(self.liststore_images[item[0]][1]),progress,0.0030,)
 			
 			#self.announce(_("Recognising {} without rotating").format(self.liststore_images[item[0]][1]))
-			#progress = progress + progress_step;
+			progress = progress + progress_step;
 			text,angle = self.ocr(item,2,00)
 			self.insert_text_to_textview(text,self.preferences.insert_position)
 			if(self.process_breaker):
 				break
-		#self.set_progress_bar(_("completed!"),None,0.01,lock=True)
+		self.notify_information(_("completed!"),0.0030,0.01)
 		#self.announce(_("Completed!"))
 		#self.make_ocr_widgets_active(lock=True)
 		#self.make_preferences_widgets_active(lock=True)
@@ -899,23 +937,19 @@ class linux_intelligent_ocr_solution():
 
 	@on_thread
 	def rotate_selected_images_to_angle(self,angle):
-		#progress_step = 1/len(self.iconview.get_selected_item_names())
-		#progress = 0;
+		if(len(self.iconview.get_selected_item_names()) == 0):
+			self.notify_information(_("Nothing selected"),0.0030,0.01)
+			return
+		progress_step = 1/len(self.iconview.get_selected_item_names())
+		progress = 0;
 		for item in reversed(self.iconview.get_selected_item_names()):
 			os.system("convert -rotate {0} {1} {1}".format(angle,item))
-			#pb = GdkPixbuf.Pixbuf.new_from_file(self.liststore_images[item[0]][1])
-			#pb = pb.rotate_simple(angle)
-			#save_format = self.liststore_images[item[0]][1].split(".")[-1]
-			#if save_format not in self.writable_format:
-			#	save_format = 'png'
-			#pb.savev(self.liststore_images[item[0]][1], save_format,[],[])
 			self.iconview.reload_preview(item)			
-			#self.set_progress_bar("Rotating selected image {} to {}"
-			#.format(self.liststore_images[item[0]][1],angle),progress,None,lock=True)
-			
-			#progress = progress + progress_step;
-		#self.imageview.redraw()
-		#self.set_progress_bar("completed!",None,0.01,lock=True)
+			self.notify_information(_("Rotating selected image {} to {}")
+			.format(item,angle),progress,None)
+			progress = progress + progress_step;
+		self.imageview.redraw()
+		self.notify_information(_("completed!"),0.0030,0.01)
 
 	def rotate_selected_images_to_right(self,widget):
 		self.rotate_selected_images_to_angle(90)
@@ -937,6 +971,21 @@ class linux_intelligent_ocr_solution():
 
 	def rotate_all_images_to_twice(self,widget):
 		self.image_icon_view.select_all()
+		self.rotate_selected_images_to_twice(None)
+
+	def rotate_current_images_to_right(self,widget):
+		filename = self.imageview.get_filename()
+		self.iconview.select_item(filename)
+		self.rotate_selected_images_to_right(None)
+
+	def rotate_current_images_to_left(self,widget):
+		filename = self.imageview.get_filename()
+		self.iconview.select_item(filename)
+		self.rotate_selected_images_to_left(None)
+
+	def rotate_current_images_to_twice(self,widget):
+		filename = self.imageview.get_filename()
+		self.iconview.select_item(filename)
 		self.rotate_selected_images_to_twice(None)
 
 
@@ -980,13 +1029,13 @@ class linux_intelligent_ocr_solution():
 		#self.make_preferences_widgets_inactive(lock=True)
 		#self.make_ocr_widgets_inactive(lock=True)
 		#self.make_image_widgets_inactive(lock=True)
-		#progress_step = 1/len(self.imageview.get_selection_list());
-		#progress = 0;
+		progress_step = 1/len(self.imageview.get_selection_list());
+		progress = 0;
 		for item in self.imageview.get_selection_list():
-			#self.set_progress_bar(_("Running OCR on selected Area [ X={} Y={} Width={} Height={} ]")
-			#.format(item[0],item[1],item[2],item[3]),progress,None,lock=True)
+			self.notify_information(_("Running OCR on selected Area [ X={} Y={} Width={} Height={} ]")
+			.format(item[0],item[1],item[2],item[3]),progress,None)
 			
-			#progress = progress + progress_step;
+			progress = progress + progress_step;
 			self.imageview.save_sub_image("{0}tmp".format(macros.tmp_dir),
 				item[0],item[1],item[2],item[3])
 			
@@ -996,7 +1045,7 @@ class linux_intelligent_ocr_solution():
 			if(self.process_breaker):
 				break;
 
-		#self.set_progress_bar(_("completed!"),None,0.01,lock=True)
+		self.notify_information(_("completed!"),0.0030,0.01)
 		#self.make_preferences_widgets_active(lock=True)
 		#self.make_ocr_widgets_active(lock=True)
 		#self.make_image_widgets_active(lock=True)

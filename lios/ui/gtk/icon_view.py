@@ -60,6 +60,17 @@ class IconView(Gtk.IconView):
 	
 	def select_all_items(self):
 		self.select_all()
+
+	def select_item(self,filename):
+		model = self.get_model()
+		#iter = model.get_iter_first()
+		for item in self.get_selected_items():
+			iter = self.liststore_images.get_iter_from_string(item.to_string())
+			if (filename == self.liststore_images.get_value(iter, 1)):		
+				path = model.get_path(iter)
+				self.select_path(path)
+				break;
+				
 	
 	def reload_preview(self,filename):
 		for item in self.liststore_images:

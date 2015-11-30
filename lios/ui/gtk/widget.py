@@ -19,6 +19,7 @@
 ###########################################################################
 
 from gi.repository import Gtk
+from gi.repository import GLib
 from gi.repository import Gdk
 from lios.ui.gtk import icon		
 
@@ -144,7 +145,21 @@ class CheckButton(Gtk.CheckButton):
 class ProgressBar(Gtk.ProgressBar):
 	def __init__(self):
 		super(ProgressBar,self).__init__()
+		self.activity_mode = True
+		a = GLib.timeout_add(20, self.progressbar_timeout, None)
+
+	def progressbar_timeout(self, user_data):
+		if self.activity_mode:
+			self.pulse()
+		else:
+			new_value = self.get_fraction() + 0.01
+			if new_value > 1:
+				new_value = 0
+			self.set_fraction(new_value)
+		return True	
 
 class Statusbar(Gtk.Statusbar):
 	def __init__(self):
 		super(Statusbar,self).__init__()
+	def set_text(self,text):
+		self.push(0,text)
