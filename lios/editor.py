@@ -22,6 +22,7 @@ from lios.text_to_audio import text_to_audio_converter
 from lios import macros
 from lios import dictionary
 from lios import localization
+from lios.ui.gtk import print_dialog
 
 import queue
 
@@ -397,7 +398,7 @@ class BasicTextView(text_view.TextView):
 			volume = spinbutton_volume.get_value()
 			split = spinbutton_split.get_value()
 			voice = combobox.get_active_text()
-			save_file = file_chooser.FileChooserDialog(_("Select the file to open"),file_chooser.FileChooserDialog.SAVE,["*.wav"],macros.home_dir)
+			save_file = file_chooser.FileChooserDialog(_("Select the file to open"),file_chooser.FileChooserDialog.SAVE,["wav"],macros.home_dir)
 			response = save_file.run()
 			if response == file_chooser.FileChooserDialog.ACCEPT:
 				converter = text_to_audio_converter(text,volume,voice,split,pitch,speed)
@@ -406,11 +407,30 @@ class BasicTextView(text_view.TextView):
 		dialog_ac.destroy()
 		
 				
-		
-		
-		
-		
-		
 
-
-
+	def print_preview(self,*data):
+		if (self.has_selection()):
+			text = self.get_selection_text()()
+		else:
+			text = self.get_text()
+		printer.print_with_action(text,printer.print_with_action.PREVIEW)
+			
+	def print_dialog(self,*data):
+		if (self.has_selection()):
+			text = self.get_selection_text()()
+		else:
+			text = self.get_text()
+		printer.print_with_action(text,printer.print_with_action.PRINT_DIALOG)		
+		
+	def print_to_pdf(self,*data):
+		save_file = file_chooser.FileChooserDialog(_("Enter the file name"),
+			file_chooser.FileChooserDialog.SAVE,macros.supported_pdf_formats,macros.home_dir)
+		response = save_file.run()
+		if response == file_chooser.FileChooserDialog.ACCEPT:
+			if (self.has_selection()):
+				text = self.get_selection_text()()
+			else:
+				text = self.get_text()
+			printer.print_with_action(text,printer.print_with_action.EXPORT,
+				save_file.get_filename())
+			save_file.destroy()
