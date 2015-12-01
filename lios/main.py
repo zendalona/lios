@@ -1193,6 +1193,9 @@ class linux_intelligent_ocr_solution():
 			shutil.rmtree(macros.tmp_dir)
 		except FileNotFoundError:
 			pass
+		#Closing scanners
+		for item in self.scanner_objects:
+			item.close()
 		loop.stop_main_loop()
 		self.preferences.save_to_file("{}/.lios_preferences.cfg".format(macros.home_dir))
 
