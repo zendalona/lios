@@ -1,10 +1,10 @@
 Package: lios
 Priority: optional
 Section: graphics
-Installed-Size: 225
+Installed-Size: 250
 Architecture: all
 Version: 2.0
-Depends: tesseract-ocr,imagemagick,cuneiform,python3-espeak,python3-imaging-sane,espeak,poppler-utils,python3-enchant,aspell-en
+Depends: tesseract-ocr,imagemagick,cuneiform,python3-espeak,python3-imaging-sane,espeak,poppler-utils,python3-enchant,aspell-en,python3-speechd
 Provides: N.x.L
 Maintainer: Nalin.x.Linux <Nalin.x.Linux@Gmail.com>
 Homepage: http://sourceforge.net/projects/lios/
