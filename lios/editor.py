@@ -77,9 +77,12 @@ class BasicTextView(text_view.TextView):
 			dlg.destroy()				
 			if response == dialog.Dialog.BUTTON_ID_1:
 				self.save(self)
+				self.grab_focus();
+				return 0;
 			else:
 				self.delete_all_text()
-		self.grab_focus();
+				self.grab_focus();
+				return 1;
 
 	def open(self):
 		open_file = file_chooser.FileChooserDialog(_("Select the file to open"),

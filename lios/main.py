@@ -98,7 +98,8 @@ class linux_intelligent_ocr_solution():
 			(_("Rotate-Left"),self.rotate_current_images_to_left),containers.Toolbar.SEPARATOR,
 			(_("Zoom-In"),self.imageview.zoom_in),(_("Zoom-Fit"),self.imageview.zoom_fit),
 			(_("Zoom-Out"),self.imageview.zoom_out),containers.Toolbar.SEPARATOR,
-			(_("Recognize-Selected-Areas"),self.ocr_selected_areas)]);
+			(_("Recognize-Selected-Areas"),self.ocr_selected_areas),
+			(_("Recognize-Current-Image"),self.ocr_current_image)]);
 		
 		box_imageview.add(toolbar_imageview)
 		box_imageview.add(self.imageview)
@@ -110,7 +111,8 @@ class linux_intelligent_ocr_solution():
 			(_("Rotate-Left"),self.rotate_current_images_to_left),menu.SEPARATOR,
 			(_("Zoom-In"),self.imageview.zoom_in),(_("Zoom-Fit"),self.imageview.zoom_fit),
 			(_("Zoom-Out"),self.imageview.zoom_out),menu.SEPARATOR,
-			(_("Recognize-Selected-Areas"),self.ocr_selected_areas)]);
+			(_("Recognize-Selected-Areas"),self.ocr_selected_areas),
+			(_("Recognize-Current-Image"),self.ocr_current_image)]);
 		self.imageview.connect_context_menu_button_callback(self.imageview_popup_context_menu)
 
 		
@@ -120,7 +122,7 @@ class linux_intelligent_ocr_solution():
 		self.textview.set_hexpand(True)		
 		box_editor = containers.Box(containers.Box.HORIZONTAL)
 		toolbar_editor = containers.Toolbar(containers.Toolbar.VERTICAL,
-			[(_("New"),self.textview.new),('Open',self.textview.open),
+			[(_("New"),self.new),('Open',self.textview.open),
 			(_("Save"),self.textview.save),containers.Toolbar.SEPARATOR,
 			(_("Spell-Check"),self.textview.open_spell_check),containers.Toolbar.SEPARATOR,
 			(_("Undo"),self.textview.undo),(_("Redo"),self.textview.redo),
@@ -202,6 +204,7 @@ class linux_intelligent_ocr_solution():
 				(_("Selection"),self.take_and_recognize_rectangle_screenshot,"<Control>F10"),
 				(_("Full"),self.take_and_recognize_full_screenshot,"F10")]],
 		[_("Recognize"),
+			(_("Recognize-Current-Image"),self.ocr_current_image,"None"),
 			(_("Recognize-Selected-Areas"),self.ocr_selected_areas,"None"),
 			(_("Recognize-Selected-Images"),self.ocr_selected_images,"None"),
 			(_("Recognize-All-Images"),self.open_text,"None"),
@@ -315,7 +318,14 @@ class linux_intelligent_ocr_solution():
 		else:
 			self.progressbar.set_fraction(percentage)
 		
-	
+	def new(self,*data):
+		if(self.textview.new()):
+			try:
+				file = open("{}/.lios_recent".format(macros.home_dir),"w")
+				file.write("")
+			except:
+				pass
+
 
 	def open_video_tutorials(self,*data):
 		webbrowser.open(macros.video_tutorials_link)
@@ -875,7 +885,7 @@ class linux_intelligent_ocr_solution():
 		angle = self.preferences.rotation_angle
 		for item in reversed(self.iconview.get_selected_item_names()):
 			self.notify_information(_("Running OCR on selected image {}")
-			.format(self.liststore_images[item[0]][1]),progress,None)
+			.format(item),progress,None)
 			
 			#self.announce(_("Recognising {}").format(self.liststore_images[item[0]][1]))
 			progress = progress + progress_step;			
@@ -906,7 +916,7 @@ class linux_intelligent_ocr_solution():
 		progress = 0;
 		for item in reversed(self.iconview.get_selected_item_names()):
 			self.notify_information(_("Running OCR on selected image {} (without rotating)")
-			.format(self.liststore_images[item[0]][1]),progress,0.0030,)
+			.format(item),progress,0.0030,)
 			
 			#self.announce(_("Recognising {} without rotating").format(self.liststore_images[item[0]][1]))
 			progress = progress + progress_step;
@@ -1029,6 +1039,13 @@ class linux_intelligent_ocr_solution():
 	def save_all_images_as_pdf(self,widget):
 		self.iconview.select_all()
 		self.save_selected_images_as_pdf(None)
+
+	@on_thread
+	def ocr_current_image(self,widget):
+		filename = self.imageview.get_filename()
+		self.iconview.select_item(filename)
+		self.ocr_selected_images(None)
+
 
 	@on_thread			
 	def ocr_selected_areas(self,widget):
