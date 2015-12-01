@@ -113,6 +113,11 @@ class TextView(Gtk.TextView):
 	def has_selection(self):
 		buffer = self.get_buffer()
 		return buffer.get_has_selection()
+
+	def get_selected_text(self):
+		buffer = self.get_buffer()
+		start,end = buffer.get_selection_bounds()
+		return buffer.get_text(start,end,0)
 	
 	def delete_all_text(self):
 		buffer = self.get_buffer()

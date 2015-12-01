@@ -359,7 +359,7 @@ class BasicTextView(text_view.TextView):
 	
 	def audio_converter(self,data=None):
 		if (self.has_selection()):
-			text = self.get_selection_text()
+			text = self.get_selected_text()
 		else:
 			text = self.get_text()
 		
@@ -410,14 +410,14 @@ class BasicTextView(text_view.TextView):
 
 	def print_preview(self,*data):
 		if (self.has_selection()):
-			text = self.get_selection_text()()
+			text = self.get_selected_text()
 		else:
 			text = self.get_text()
 		print_dialog.print_with_action(text,print_dialog.print_with_action.PREVIEW)
 			
 	def open_print_dialog(self,*data):
 		if (self.has_selection()):
-			text = self.get_selection_text()()
+			text = self.get_selected_text()
 		else:
 			text = self.get_text()
 		print_dialog.print_with_action(text,print_dialog.print_with_action.PRINT_DIALOG)		
@@ -428,7 +428,7 @@ class BasicTextView(text_view.TextView):
 		response = save_file.run()
 		if response == file_chooser.FileChooserDialog.ACCEPT:
 			if (self.has_selection()):
-				text = self.get_selection_text()()
+				text = self.get_selected_text()
 			else:
 				text = self.get_text()
 			print_dialog.print_with_action(text,print_dialog.print_with_action.EXPORT,
