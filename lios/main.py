@@ -160,7 +160,7 @@ class linux_intelligent_ocr_solution():
 			(_("Import-Folder"),self.import_folder,"None"),menu.SEPARATOR,
 			(_("Open"),self.open_text,"<Control>O"),		
 			(_("Save"),self.open_text,"<Control>S"),(_("Save-As"),self.open_text,"<Shift><Control>N"),
-			(_("Export-Text-As-Pdf"),self.textview.print_to_pdf,"<Control>E"),(_("Print"),self.textview.print_dialog,"None"),
+			(_("Export-Text-As-Pdf"),self.textview.print_to_pdf,"<Control>E"),(_("Print"),self.textview.open_print_dialog,"None"),
 			(_("Print-Preview"),self.textview.print_preview,"None"),menu.SEPARATOR,
 			(_("Quit"),self.quit,"<Control>Q")],
 		[_("Edit"),(_("Undo"),self.textview.undo,"<Control>Z"),(_("Redo"),self.textview.redo,"<Control>Y"),

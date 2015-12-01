@@ -413,14 +413,14 @@ class BasicTextView(text_view.TextView):
 			text = self.get_selection_text()()
 		else:
 			text = self.get_text()
-		printer.print_with_action(text,printer.print_with_action.PREVIEW)
+		print_dialog.print_with_action(text,print_dialog.print_with_action.PREVIEW)
 			
-	def print_dialog(self,*data):
+	def open_print_dialog(self,*data):
 		if (self.has_selection()):
 			text = self.get_selection_text()()
 		else:
 			text = self.get_text()
-		printer.print_with_action(text,printer.print_with_action.PRINT_DIALOG)		
+		print_dialog.print_with_action(text,print_dialog.print_with_action.PRINT_DIALOG)		
 		
 	def print_to_pdf(self,*data):
 		save_file = file_chooser.FileChooserDialog(_("Enter the file name"),
@@ -431,6 +431,6 @@ class BasicTextView(text_view.TextView):
 				text = self.get_selection_text()()
 			else:
 				text = self.get_text()
-			printer.print_with_action(text,printer.print_with_action.EXPORT,
+			print_dialog.print_with_action(text,print_dialog.print_with_action.EXPORT,
 				save_file.get_filename())
 			save_file.destroy()
