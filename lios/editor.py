@@ -101,20 +101,19 @@ class BasicTextView(text_view.TextView):
 				#self.textbuffer.place_cursor(self.textbuffer.get_end_iter())
 		open_file.destroy()
 
-	def save(self):
+	def save(self,*data):
 		text = self.get_text()
 		try:
 			self.save_file_name
 		except AttributeError:
-			save_file = file_chooser.FileChooserDialog(_("Save "),file_chooser.FileChooserDialog.SAVE,["*.txt","*.text"],None)
-			#save_file.set_current_folder(global_var.home_dir)
-			#save_file.set_current_name(text[0:10]);
-			#save_file.set_do_overwrite_confirmation(True);
-			
+			save_file = file_chooser.FileChooserDialog(_("Save "),
+				file_chooser.FileChooserDialog.SAVE,
+				macros.supported_text_formats,None)
+			save_file.set_current_name(text[0:10]);
+			save_file.set_do_overwrite_confirmation(True);			
 			response = save_file.run()
 			if response == file_chooser.FileChooserDialog.ACCEPT:
 				self.save_file_name = save_file.get_filename()
-				print(self.save_file_name)
 				open("%s" %(self.save_file_name),'w').write(text)
 				self.set_modified(False)	
 				save_file.destroy()
@@ -128,7 +127,7 @@ class BasicTextView(text_view.TextView):
 			return True		
 
 
-	def save_as(self):
+	def save_as(self,*data):
 		try:
 			del self.save_file_name
 		except:
