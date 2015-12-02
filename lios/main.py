@@ -20,7 +20,7 @@ import os
 import sys
 import time
 import shutil
-
+import re
 from functools import wraps
 
 from lios import scanner, editor, cam, ocr, preferences, speech
@@ -353,10 +353,10 @@ class linux_intelligent_ocr_solution():
 		
 		
 	def get_feesible_filename_from_filename(self,filename):
-		if (os.path.exists(filename)):
+		if (os.path.exists(re.sub('[^.-/#0-9a-zA-Z]+', '#', filename))):
 			return self.get_feesible_filename_from_filename(filename.replace('.','#.'))
 		else:
-			return filename 
+			return re.sub('[^.-/#0-9a-zA-Z]+', '#', filename)
 
 	def add_image_to_list(self,file_name_with_directory,destination,move,lock=False):
 		if (move):
@@ -393,7 +393,7 @@ class linux_intelligent_ocr_solution():
 #		self.make_image_widgets_inactive(lock=True)
 		pdf_filename = pdf_filename_full.split("/")[-1:][0]
 		filename = pdf_filename.split(".")[0]
-		pdf_filename = pdf_filename.replace(' ','-').replace(')','-').replace('(','-')
+		pdf_filename = re.sub('[^.-/#0-9a-zA-Z]+', '#', pdf_filename)
 		destination = "{0}{1}".format(macros.tmp_dir,pdf_filename)		
 		shutil.copyfile(pdf_filename_full,destination)
 		os.makedirs(destination.split(".")[0],exist_ok=True)
