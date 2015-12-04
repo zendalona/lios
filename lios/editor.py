@@ -135,21 +135,23 @@ class BasicTextView(text_view.TextView):
 		self.save();
 		
 	def append(self,*data):
-		append_file_dialog = file_chooser.FileChooserDialog(_("Select the file to append"),file_chooser.FileChooserDialog.OPEN,["*.text","*.txt"])
+		append_file_dialog = file_chooser.FileChooserDialog(_("Select the file to append"),
+			file_chooser.FileChooserDialog.OPEN,macros.supported_text_formats)
 		append_file_dialog.set_current_folder("~/")
 		append_file_dialog.run()
 		with open(append_file_dialog.get_filename()) as file:
 			text_to_append = file.read()
-			self.insert_text_at_end(text_to_append)
+			self.insert_text(text_to_append,2,True)
 		append_file_dialog.destroy()
 	
 	def punch(self,*data):
-		insert_at_cursor_dialog = file_chooser.FileChooserDialog(_("Select the file to insert at cursor"),file_chooser.FileChooserDialog.OPEN,["*.text","*.txt"])
+		insert_at_cursor_dialog = file_chooser.FileChooserDialog(_("Select the file to insert at cursor"),
+			file_chooser.FileChooserDialog.OPEN,macros.supported_text_formats)
 		insert_at_cursor_dialog.set_current_folder("~/")
 		insert_at_cursor_dialog.run()
 		with open(insert_at_cursor_dialog.get_filename()) as file:
 			text_to_insert_at_cursor = file.read()
-			self.insert_text_at_cursor(text_to_insert_at_cursor)
+			self.insert_text(text_to_insert_at_cursor,1,True)
 		insert_at_cursor_dialog.destroy()
 		
 	
