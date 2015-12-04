@@ -21,6 +21,7 @@
 from gi.repository import Gtk
 from gi.repository import GLib
 from gi.repository import Gdk
+from gi.repository import Atk
 from lios.ui.gtk import icon		
 
 
@@ -158,8 +159,25 @@ class ProgressBar(Gtk.ProgressBar):
 			self.set_fraction(new_value)
 		return True	
 
-class Statusbar(Gtk.Statusbar):
+class Statusbar(Gtk.Frame):
 	def __init__(self):
 		super(Statusbar,self).__init__()
+		self.label = Gtk.Label()
+		frame_inner = Gtk.Frame()
+		frame_inner.add(self.label)
+		atk_ob1 = frame_inner.get_accessible()
+		atk_ob1.set_role(Atk.Role.NOTIFICATION)
+		
+		self.add(frame_inner)
+		atk_ob = self.get_accessible()
+		atk_ob.set_role(Atk.Role.STATUSBAR)
+		
+		
 	def set_text(self,text):
-		self.push(0,text)
+		self.label.set_text(text)
+		child = self.get_children()[0]
+		atk_ob = child.get_accessible()
+		atk_ob.notify_state_change(Atk.StateType.SHOWING,True);
+	
+	def set_line_wrap(self,val):
+		self.label.set_line_wrap(val)

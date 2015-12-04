@@ -179,44 +179,57 @@ class lios_preferences:
 		label_font = widget.Label(_("Font"))
 		fontbutton_font = widget.FontButton()
 		fontbutton_font.set_font_name(self.font)
+		label_font.set_mnemonic_widget(fontbutton_font)
 
 		label_font_color = widget.Label(_("Font Color"))
 		colorbutton_font = widget.ColorButton()
 		colorbutton_font.set_color_from_string(self.font_color)
+		label_font_color.set_mnemonic_widget(colorbutton_font)
+		
 
 		label_background_color = widget.Label(_("Background Color"))
 		colorbutton_background = widget.ColorButton()
 		colorbutton_background.set_color_from_string(self.background_color)
+		label_background_color.set_mnemonic_widget(colorbutton_background)
+		
 
 		label_highlight_font = widget.Label(_("Highlight Font"))
 		fontbutton_highlight_font = widget.FontButton()
 		fontbutton_highlight_font.set_font_name(self.font)
+		label_highlight_font.set_mnemonic_widget(fontbutton_highlight_font)
 		
 		label_highlight_color = widget.Label(_("Highlight Color"))
 		colorbutton_highlight = widget.ColorButton()
 		colorbutton_highlight.set_color_from_string(self.highlight_color)
+		label_highlight_color.set_mnemonic_widget(colorbutton_highlight)
 
 		label_highlight_background = widget.Label(_("Highlight Background"))
 		colorbutton_highlight_background = widget.ColorButton()
 		colorbutton_highlight_background.set_color_from_string(self.background_highlight_color)
+		label_highlight_background.set_mnemonic_widget(colorbutton_highlight_background)
 		
 		label_speech_module = widget.Label(_("Speech-Module"))
 		combobox_speech_module = widget.ComboBox()
 		for item in speech.Speech().list_output_modules():
 			combobox_speech_module.add_item(item)
-		combobox_speech_module.connect_change_callback_function(change_speech_module)		
+		combobox_speech_module.connect_change_callback_function(change_speech_module)
+		label_speech_module.set_mnemonic_widget(combobox_speech_module)		
 
 		label_speech_language = widget.Label(_("Speech-Language"))
 		combobox_speech_language = widget.ComboBox()
 		combobox_speech_module.set_active(self.speech_module)
 		combobox_speech_language.set_active(self.speech_language)
+		label_speech_language.set_mnemonic_widget(combobox_speech_language)
 
 		label_speech_rate = widget.Label(_("Speech-Rate"))
 		spin_speech_rate = widget.SpinButton(self.speech_rate,0,100,1,10,0)
+		label_speech_rate.set_mnemonic_widget(spin_speech_rate)
 		label_speech_volume = widget.Label(_("Speech-Volume"))
 		spin_speech_volume = widget.SpinButton(self.speech_volume,0,100,1,10,0)
+		label_speech_volume.set_mnemonic_widget(spin_speech_volume)
 		label_speech_pitch = widget.Label(_("Speech-Pitch"))
 		spin_speech_pitch = widget.SpinButton(self.speech_pitch,0,100,1,10,0)
+		label_speech_pitch.set_mnemonic_widget(spin_speech_pitch)
 
 		
 		grid_general = containers.Grid()
@@ -240,6 +253,7 @@ class lios_preferences:
 		label_engine = widget.Label(_("Engine"))
 		combobox_engine = widget.ComboBox()
 		combobox_engine.connect_change_callback_function(change_engine)
+		label_engine.set_mnemonic_widget(combobox_engine)
 		
 		for item in self.available_ocr_engine_list:
 			combobox_engine.add_item(item[0])		
@@ -247,6 +261,7 @@ class lios_preferences:
 		#Language
 		label_language = widget.Label(_("Language"))		
 		combobox_language = widget.ComboBox()
+		label_language.set_mnemonic_widget(combobox_language)
 		
 		#setting current engine - This can't be done before creating language combobox
 		combobox_engine.set_active(self.ocr_engine)
@@ -259,6 +274,7 @@ class lios_preferences:
 		combobox_insert_position.add_item(_("Cursor"))
 		combobox_insert_position.add_item(_("End"))
 		combobox_insert_position.set_active(self.insert_position)
+		label_insert_position.set_mnemonic_widget(combobox_insert_position)
 		
 		#Seperator
 		seperator_1 = widget.Separator()
@@ -270,6 +286,7 @@ class lios_preferences:
 		combobox_mode_of_rotation.add_item(_("Partial Automatic"))
 		combobox_mode_of_rotation.add_item(_("Manual"))
 		combobox_mode_of_rotation.connect_change_callback_function(change_mode_of_rotation)
+		label_mode_of_rotation.set_mnemonic_widget(combobox_mode_of_rotation)
 		
 		#Angle
 		self.label_angle = widget.Label(_("Angle"))		
@@ -277,7 +294,8 @@ class lios_preferences:
 		combobox_angle.add_item(_("00"))
 		combobox_angle.add_item(_("90"))
 		combobox_angle.add_item(_("180"))
-		combobox_angle.add_item(_("270"))		
+		combobox_angle.add_item(_("270"))
+		self.label_angle.set_mnemonic_widget(combobox_angle)		
 
 		#Seperator 2
 		seperator_2 = widget.Separator()
@@ -288,11 +306,13 @@ class lios_preferences:
 		combobox_numbering_type.add_item(_("Single Page"))
 		combobox_numbering_type.add_item(_("Double Page"))
 		combobox_numbering_type.set_active(self.page_numbering_type)
+		label_numbering_type.set_mnemonic_widget(combobox_numbering_type)
 		
 		#Starting Page Number
 		label_starting_page_number = widget.Label(_("Starting Page Number"))
 		spin_starting_page_number = widget.SpinButton(0,0,100000,1,5,0)
 		spin_starting_page_number.set_value(self.starting_page_number)
+		label_starting_page_number.set_mnemonic_widget(spin_starting_page_number)
 		
 		grid_recognition = containers.Grid()
 		grid_recognition.add_widgets([
@@ -319,13 +339,16 @@ class lios_preferences:
 		label_resolution = widget.Label(_("Resolution"))
 		spin_resolution = widget.SpinButton(300,100,1200,1,5,0)
 		spin_resolution.set_value(self.scan_resolution)
+		label_resolution.set_mnemonic_widget(spin_resolution)
 
 		label_brightness = widget.Label(_("Brightness"))
 		spin_brightness = widget.SpinButton(50,0,100,1,5,0)
 		spin_brightness.set_value(self.scan_brightness)
+		label_brightness.set_mnemonic_widget(spin_brightness)
 
 		label_scan_area = widget.Label(_("Scan Area"))
 		combobox_scan_area = widget.ComboBox()
+		label_scan_area.set_mnemonic_widget(combobox_scan_area)
 		combobox_scan_area.add_item(_("Full Scan Area"))
 		combobox_scan_area.add_item(_("Three Quarters"))
 		combobox_scan_area.add_item(_("Two Quarters"))
@@ -333,7 +356,8 @@ class lios_preferences:
 		combobox_scan_area.set_active(self.scan_area)
 
 		label_scan_driver = widget.Label(_("Driver"))
-		combobox_scan_driver = widget.ComboBox()		
+		combobox_scan_driver = widget.ComboBox()
+		label_scan_driver.set_mnemonic_widget(combobox_scan_driver)		
 		for item in self.available_scanner_drivers:
 			combobox_scan_driver.add_item(item)
 			print(item)
@@ -345,10 +369,12 @@ class lios_preferences:
 		label_number_of_pages_to_scan = widget.Label(_("Number of Pages to Scan"))
 		spin_number_of_pages_to_scan = widget.SpinButton(10,2,100,1,5,0)
 		spin_number_of_pages_to_scan.set_value(self.number_of_pages_to_scan)
+		label_number_of_pages_to_scan.set_mnemonic_widget(spin_number_of_pages_to_scan)
 
 		label_time_bitween_repeted_scanning = widget.Label(_("Time Bitween Repeted Scanning"))
 		spin_time_bitween_repeted_scanning = widget.SpinButton(0,0,30,1,5,0)
 		spin_time_bitween_repeted_scanning.set_value(self.time_between_repeated_scanning)
+		label_time_bitween_repeted_scanning.set_mnemonic_widget(spin_time_bitween_repeted_scanning)
 
 		sparator_4 = widget.Separator()
 

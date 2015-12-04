@@ -157,22 +157,24 @@ class BasicTextView(text_view.TextView):
 	
 	def open_find_dialog(self,*data):
 		entry = widget.Entry()
-		label_context = widget.Label(_("Context label"))
+		statusbar_context = widget.Statusbar()
+		statusbar_context.set_text(_("Context label"))
 
 		def find_next(*data):
 			word = entry.get_text()
 			if(not self.is_cursor_at_end()):
 				if(self.move_forward_to_word(word)):
-					label_context.set_text(self.get_context_text())
+					statusbar_context.set_text(self.get_context_text())
 
 		def find_previous(*data):
 			word = entry.get_text()
 			if(not self.is_cursor_at_start()):
 				if(self.move_backward_to_word(word)):
-					label_context.set_text(self.get_context_text())
+					statusbar_context.set_text(self.get_context_text())
 			
 		label = widget.Label(_("<b> Find word  : </b>"))
 		label.set_use_markup(True)
+		label.set_mnemonic_widget(entry)
 		
 		next_button = widget.Button(_("Next"))
 		next_button.connect_function(find_next)	
@@ -182,7 +184,7 @@ class BasicTextView(text_view.TextView):
 		
 		grid = containers.Grid()
 		grid.add_widgets([(label,1,1),(entry,1,1),containers.Grid.NEW_ROW,
-			(label_context,2,1),containers.Grid.NEW_ROW,(next_button,1,1,False,False),
+			(statusbar_context,2,1),containers.Grid.NEW_ROW,(next_button,1,1,False,False),
 			(previous_button,1,1,False,False)])
 		window_find = window.Window(_("Find Dialog"))
 		window_find.add(grid)
@@ -191,19 +193,20 @@ class BasicTextView(text_view.TextView):
 	def open_find_and_replace_dialog(self,*data):
 		entry_word = widget.Entry()
 		entry_replace_word = widget.Entry()
-		label_context = widget.Label(_("Context label"))
+		statusbar_context = widget.Statusbar()
+		statusbar_context.set_text(_("Context label"))
 
 		def find_next(*data):
 			word = entry_word.get_text()
 			if(not self.is_cursor_at_end()):
 				if(self.move_forward_to_word(word)):
-					label_context.set_text(self.get_context_text())
+					statusbar_context.set_text(self.get_context_text())
 
 		def find_previous(*data):
 			word = entry_word.get_text()
 			if(not self.is_cursor_at_start()):
 				if(self.move_backward_to_word(word)):
-					label_context.set_text(self.get_context_text())
+					statusbar_context.set_text(self.get_context_text())
 				else:
 					dialog.Dialog(_("No match found")).run()
 
@@ -222,8 +225,10 @@ class BasicTextView(text_view.TextView):
 			
 		label_word = widget.Label(_("<b> word  : </b>"))
 		label_word.set_use_markup(True)
+		label_word.set_mnemonic_widget(entry_word)
 		label_replace_word = widget.Label(_("<b> Replace word : </b>"))
 		label_replace_word.set_use_markup(True)
+		label_replace_word.set_mnemonic_widget(entry_replace_word)
 		
 		button_next = widget.Button(_("Next"))
 		button_next.connect_function(find_next)	
@@ -239,7 +244,7 @@ class BasicTextView(text_view.TextView):
 		grid.add_widgets([(label_word,2,1),(entry_word,4,1),containers.Grid.NEW_ROW,
 			(label_replace_word,2,1),(entry_replace_word,4,1),containers.Grid.NEW_ROW,
 			(button_next,3,1,False,False),(button_previous,3,1,False,False),
-			containers.Grid.NEW_ROW,(label_context,6,1),containers.Grid.NEW_ROW,
+			containers.Grid.NEW_ROW,(statusbar_context,6,1),containers.Grid.NEW_ROW,
 			(button_replace,3,1,False,False),(button_replace_all,3,1,False,False)])
 		window_find = window.Window(_("Find Dialog"))
 		window_find.add(grid)
@@ -248,8 +253,9 @@ class BasicTextView(text_view.TextView):
 	def open_spell_check(self,*data):
 		entry = widget.Entry()
 		list_view = widget.ListView(_("Suggestions"))
-		label_context = widget.Label(_("Context label"))
-		label_context.set_line_wrap(True)
+		statusbar_context = widget.Statusbar()
+		statusbar_context.set_text(_("Context label"))
+		statusbar_context.set_line_wrap(True)
 		change_all_dict = {}
 		self.word = ""
 
@@ -263,17 +269,14 @@ class BasicTextView(text_view.TextView):
 					
 				if (not self.dict.check(self.word)):
 					entry.set_text(self.word)
-					label_context.set_text(self.get_context_text())
+					statusbar_context.set_text(self.get_context_text())
 					list_view.clear()
 					for item in self.dict.suggest(self.word):
 						list_view.add_item(item)
 					break
 			if(self.is_cursor_at_end()):
 				entry.set_text("")
-				label_context.set_text("Spell Check finished")
-				dlg = dialog.Dialog("Spell check finished",(_("Ok"), dialog.Dialog.BUTTON_ID_1));
-				dlg.run()
-				dlg.destroy()
+				statusbar_context.set_text("Spell Check finished")
 			
 
 		def ignore_all(*data):
@@ -308,6 +311,7 @@ class BasicTextView(text_view.TextView):
 		
 		label = widget.Label(_("<b> Misspelled word  : </b>"))
 		label.set_use_markup(True)
+		label.set_mnemonic_widget(entry)
 		
 		scroll_box = containers.ScrollBox()
 		scroll_box.add(list_view)
@@ -331,7 +335,7 @@ class BasicTextView(text_view.TextView):
 			(entry,6,1,False,False),containers.Grid.NEW_ROW,
 			(scroll_box,1,3,False,False),(change_button,1,1,False,False),(change_all_button,1,1,False,False),(delete_button,1,1,False,False),containers.Grid.NEW_ROW,
 			(ignore_button,1,1,False,False),(ignore_all_button,1,1,False,False),(add_to_dict_button,1,1,False,False),containers.Grid.NEW_ROW,
-			(label_context,1,1),containers.Grid.NEW_ROW,
+			(statusbar_context,1,1),containers.Grid.NEW_ROW,
 			(close_button,4,1,False,False)])
 		
 		find_next_mispeleed_word()
@@ -372,20 +376,25 @@ class BasicTextView(text_view.TextView):
 
 		spinbutton_speed = widget.SpinButton(50,0,100,1,5,0)
 		label_speed = widget.Label(_("Speed : "))
+		label_speed.set_mnemonic_widget(spinbutton_speed)
 
 		spinbutton_volume = widget.SpinButton(100,0,100,1,5,0)
 		label_volume = widget.Label(_("Volume : "))
+		label_volume.set_mnemonic_widget(spinbutton_volume)
 
 		spinbutton_pitch = widget.SpinButton(50,0,100,1,5,0)
 		label_pitch = widget.Label(_("Pitch : "))
+		label_pitch.set_mnemonic_widget(spinbutton_pitch)
 
 		spinbutton_split = widget.SpinButton(5,0,100,1,5,0)
 		label_split_time = widget.Label(_("Split Time : "))
+		label_split_time.set_mnemonic_widget(spinbutton_split)
 		
 		combobox = widget.ComboBox()
 		for item in text_to_audio_converter.list_voices():
 			combobox.append_text(item)
 		label_voice = widget.Label(_("Voice : "))
+		label_voice.set_mnemonic_widget(combobox)
 		
 		grid.add_widgets([
 			(label_speed,1,1),(spinbutton_speed,1,1),containers.Grid.NEW_ROW,
