@@ -222,7 +222,9 @@ class TextView(Gtk.TextView):
 		if (result):
 			self.start_iter, self.end_iter = result
 			buffer.place_cursor(self.end_iter)
+			self.remove_all_highlights()
 			buffer.apply_tag(self.highlight_tag, self.start_iter, self.end_iter)
+			self.scroll_to_iter(self.start_iter,00,False,False,False)
 			return True
 		return False
 
@@ -235,7 +237,9 @@ class TextView(Gtk.TextView):
 		if (result):
 			self.start_iter, self.end_iter = result
 			buffer.place_cursor(self.start_iter)
+			self.remove_all_highlights()
 			buffer.apply_tag(self.highlight_tag, self.start_iter, self.end_iter)
+			self.scroll_to_iter(self.start_iter,00,False,False,False)
 			return True
 		return False
 

@@ -133,7 +133,7 @@ class linux_intelligent_ocr_solution():
 			(_("Read"),self.start_reading),(_("Stop"),self.stop_reading),
 			containers.Toolbar.SEPARATOR,
 			(_("Go-To-Line"),self.textview.go_to_line),
-			(_("Go-To-Page"),self.open_text),
+			(_("Go-To-Page"),self.go_to_page),
 			
 			])
 		box_editor.add(toolbar_editor)
@@ -166,21 +166,22 @@ class linux_intelligent_ocr_solution():
 			(_("Print-Preview"),self.textview.print_preview,"None"),menu.SEPARATOR,
 			(_("Quit"),self.quit,"<Control>Q")],
 		[_("Edit"),(_("Undo"),self.textview.undo,"<Control>Z"),(_("Redo"),self.textview.redo,"<Control>Y"),
-			menu.SEPARATOR,(_("Cut"),self.open_text,"<Control>X"),
-			(_("Copy"),self.open_text,"<Control>C"),(_("Paste"),self.open_text,"<Control>V"),
-			(_("Delete"),self.open_text,"<Control>D"),menu.SEPARATOR,
-			(_("Punch-Text"),self.open_text,"None"),(_("Append-Text"),self.open_text,"None"),
-			menu.SEPARATOR,(_("Find"),self.open_text,"<Control>F"),
-			(_("Find-Replace"),self.open_text,"<Control>R"),menu.SEPARATOR,
-			(_("Go-To-Line"),self.open_text,"<Control>L"),(_("Go-To-Page"),self.open_text,"<Control>G"),
+			menu.SEPARATOR,
+			(_("Punch-Text"),self.textview.punch,"None"),(_("Append-Text"),self.textview.append,"None"),
+			menu.SEPARATOR,(_("Find"),self.textview.open_find_dialog,"<Control>F"),
+			(_("Find-Replace"),self.textview.open_find_and_replace_dialog,"<Control>R")
+			,menu.SEPARATOR,
+			(_("Spell-Check"),self.textview.open_spell_check,"<Control>F7"),
+			menu.SEPARATOR,
+			(_("Go-To-Line"),self.textview.go_to_line,"<Control>L"),(_("Go-To-Page"),self.go_to_page,"<Control>G"),
 			menu.SEPARATOR,(_("Preferences"),self.open_preferences_general_page,"<Control>P")],
-		[_("Image"),[_("Rotate-Left"),(_("Current"),self.open_text,"None"),
+		[_("Image"),[_("Rotate-Left"),(_("Current"),self.rotate_current_images_to_left,"None"),
 				(_("Selected"),self.rotate_selected_images_to_left,"None"),
 				(_("All"),self.rotate_all_images_to_left,"None")],
-			[_("Rotate-Twice"),(_("Current"),self.open_text,"None"),
+			[_("Rotate-Twice"),(_("Current"),self.rotate_current_images_to_twice,"None"),
 				(_("Selected"),self.rotate_selected_images_to_twice,"None"),
 				(_("All"),self.rotate_all_images_to_twice,"None")],
-			[_("Rotate-Right"),(_("Current"),self.open_text,"None"),
+			[_("Rotate-Right"),(_("Current"),self.rotate_current_images_to_right,"None"),
 				(_("Selected"),self.rotate_selected_images_to_right,"None"),
 				(_("All"),self.rotate_all_images_to_right,"None")],											
 			menu.SEPARATOR, (_("Invert-List"),self.iconview.invert_list,"None"),
@@ -207,10 +208,10 @@ class linux_intelligent_ocr_solution():
 			(_("Recognize-Current-Image"),self.ocr_current_image,"None"),
 			(_("Recognize-Selected-Areas"),self.ocr_selected_areas,"None"),
 			(_("Recognize-Selected-Images"),self.ocr_selected_images,"None"),
-			(_("Recognize-All-Images"),self.open_text,"None"),
+			(_("Recognize-All-Images"),self.ocr_all_images,"None"),
 			(_("Recognize-Selected-with-rotation"),self.ocr_selected_images_with_rotation,"None"),
-			(_("Recognize-All-with-rotation"),self.open_text,"None")],
-		[_("Tools"),(_("Spell-Check"),self.open_text,"<Control>F7"),
+			(_("Recognize-All-with-rotation"),self.ocr_all_images_with_rotation,"None")],
+		[_("Tools"),(_("Spell-Check"),self.textview.open_spell_check,"<Control>F7"),
 			(_("Audio-Converter"),self.textview.audio_converter,"None"),
 			(_("Dictionary"),self.artha,"<Control><Alt>W"),
 			(_("Read"),self.start_reading,"F5"),
@@ -325,7 +326,27 @@ class linux_intelligent_ocr_solution():
 				file.write("")
 			except:
 				pass
-
+	def go_to_page(self,*data):
+		spinbutton_page = widget.SpinButton(0,0,self.preferences.starting_page_number,1,5,0)
+		dlg = dialog.Dialog(_("Go to page"),(_("Go"), dialog.Dialog.BUTTON_ID_1,_("Close!"), dialog.Dialog.BUTTON_ID_2))
+		dlg.add_widget_with_label(spinbutton_page,_("Page Number : "))
+		spinbutton_page.grab_focus()
+		dlg.show_all()
+		response = dlg.run()
+		if response == dialog.Dialog.BUTTON_ID_1:
+			to_go = spinbutton_page.get_value()
+			if (self.preferences.page_numbering_type == 0):
+				word = "Page-{0}".format(to_go)
+			else:
+				if (to_go % 2 == 0):
+					word = "Page-{0}-{1}".format(to_go-1,to_go)
+				else:
+					word = "Page-{0}-{1}".format(to_go,to_go+1)
+			if(not self.textview.move_forward_to_word(word)):
+				self.textview.move_backward_to_word(word)
+			dlg.destroy()
+		else:
+			dlg.destroy()
 
 	def open_video_tutorials(self,*data):
 		webbrowser.open(macros.video_tutorials_link)

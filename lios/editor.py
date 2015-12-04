@@ -134,8 +134,8 @@ class BasicTextView(text_view.TextView):
 			pass
 		self.save();
 		
-	def append(self):
-		append_file_dialog = ui.FileChooserDialog(_("Select the file to append"),ui.FileChooserDialog.OPEN,["*.text","*.txt"])
+	def append(self,*data):
+		append_file_dialog = file_chooser.FileChooserDialog(_("Select the file to append"),file_chooser.FileChooserDialog.OPEN,["*.text","*.txt"])
 		append_file_dialog.set_current_folder("~/")
 		append_file_dialog.run()
 		with open(append_file_dialog.get_filename()) as file:
@@ -143,8 +143,8 @@ class BasicTextView(text_view.TextView):
 			self.insert_text_at_end(text_to_append)
 		append_file_dialog.destroy()
 	
-	def punch(self):
-		insert_at_cursor_dialog = ui.FileChooserDialog(_("Select the file to insert at cursor"),ui.FileChooserDialog.OPEN,["*.text","*.txt"])
+	def punch(self,*data):
+		insert_at_cursor_dialog = file_chooser.FileChooserDialog(_("Select the file to insert at cursor"),file_chooser.FileChooserDialog.OPEN,["*.text","*.txt"])
 		insert_at_cursor_dialog.set_current_folder("~/")
 		insert_at_cursor_dialog.run()
 		with open(insert_at_cursor_dialog.get_filename()) as file:
@@ -153,7 +153,7 @@ class BasicTextView(text_view.TextView):
 		insert_at_cursor_dialog.destroy()
 		
 	
-	def open_find_dialog(self):
+	def open_find_dialog(self,*data):
 		entry = widget.Entry()
 		label_context = widget.Label(_("Context label"))
 
@@ -186,7 +186,7 @@ class BasicTextView(text_view.TextView):
 		window_find.add(grid)
 		window_find.show_all()
 
-	def open_find_and_replace_dialog(self):
+	def open_find_and_replace_dialog(self,*data):
 		entry_word = widget.Entry()
 		entry_replace_word = widget.Entry()
 		label_context = widget.Label(_("Context label"))
@@ -340,10 +340,10 @@ class BasicTextView(text_view.TextView):
 		window1.show_all()
 
 	
-	def go_to_line(self):
+	def go_to_line(self,*data):
 		current_line = self.get_cursor_line_number()
 		maximum_line = self.get_line_count()		
-		spinbutton_line = ui.SpinButton(current_line,0,maximum_line,1,5,0)
+		spinbutton_line = widget.SpinButton(current_line,0,maximum_line,1,5,0)
 		
 		dlg = dialog.Dialog(_("Go to line"),(_("Go"), dialog.Dialog.BUTTON_ID_1,_("Close!"), dialog.Dialog.BUTTON_ID_2))
 		#spinbutton_line.connect("activate",lambda x : dialog.response(Gtk.ResponseType.ACCEPT))
