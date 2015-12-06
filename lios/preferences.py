@@ -195,7 +195,7 @@ class lios_preferences:
 
 		label_highlight_font = widget.Label(_("Highlight Font"))
 		fontbutton_highlight_font = widget.FontButton()
-		fontbutton_highlight_font.set_font_name(self.font)
+		fontbutton_highlight_font.set_font_name(self.highlight_font)
 		label_highlight_font.set_mnemonic_widget(fontbutton_highlight_font)
 		
 		label_highlight_color = widget.Label(_("Highlight Color"))
