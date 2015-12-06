@@ -73,7 +73,7 @@ class lios_preferences:
 				self.speech_language=int(config.get('cfg',"speech_language"))
 				self.number_of_pages_to_scan=int(config.get('cfg',"number_of_pages_to_scan"))#pages
 				self.mode_of_rotation = int(config.get('cfg',"mode_of_rotation"))
-				self.rotation_angle = int(config.get('cfg',"angle"))		
+				self.rotation_angle = int(config.get('cfg',"rotation_angle"))		
 				self.page_numbering_type=int(config.get('cfg',"numbering_type"))
 				self.scanner_mode_switching=int(config.get('cfg',"scanner_mode_switching"))
 				self.scanner_cache_calibration=int(config.get('cfg',"scanner_cache_calibration"))						
@@ -113,7 +113,7 @@ class lios_preferences:
 		config.set('cfg',"speech_rate",str(self.speech_rate))
 		config.set('cfg',"number_of_pages_to_scan",str(self.number_of_pages_to_scan))
 		config.set('cfg',"mode_of_rotation",str(self.mode_of_rotation))
-		config.set('cfg',"angle",str(self.rotation_angle))
+		config.set('cfg',"rotation_angle",str(self.rotation_angle))
 		config.set('cfg',"numbering_type",str(self.page_numbering_type))
 		config.set('cfg',"scanner_mode_switching",str(self.scanner_mode_switching))
 		config.set('cfg',"scanner_cache_calibration",str(self.scanner_cache_calibration))				
@@ -423,7 +423,7 @@ class lios_preferences:
 			self.speech_volume=spin_speech_volume.get_value()
 			self.insert_position=combobox_insert_position.get_active();
 			self.mode_of_rotation=combobox_mode_of_rotation.get_active()
-			self.angle = combobox_angle.get_active()
+			self.rotation_angle = combobox_angle.get_active()
 			self.page_numbering_type=combobox_numbering_type.get_active();
 			self.starting_page_number=spin_starting_page_number.get_value_as_int();
 			
