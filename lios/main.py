@@ -305,6 +305,7 @@ class linux_intelligent_ocr_solution():
 		self.window.connect_menubar(menubar)
 		
 		self.window.connect_configure_event_handler(self.window_reconfigure)
+		self.window.connect_close_function(self.quit)
 		grid_main.show_all()
 		self.window.add(grid_main)
 		self.window.maximize()
