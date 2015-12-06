@@ -122,7 +122,7 @@ class linux_intelligent_ocr_solution():
 		self.textview.set_hexpand(True)		
 		box_editor = containers.Box(containers.Box.HORIZONTAL)
 		toolbar_editor = containers.Toolbar(containers.Toolbar.VERTICAL,
-			[(_("New"),self.new),('Open',self.textview.open),
+			[(_("New"),self.new),('Open',self.open_text),
 			(_("Save"),self.textview.save),containers.Toolbar.SEPARATOR,
 			(_("Spell-Check"),self.textview.open_spell_check),containers.Toolbar.SEPARATOR,
 			(_("Undo"),self.textview.undo),(_("Redo"),self.textview.redo),
