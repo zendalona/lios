@@ -611,6 +611,7 @@ class linux_intelligent_ocr_solution():
 		#self.make_preferences_widgets_active(lock=True)
 
 	def scan(self,filename):
+		self.process_breaker = False
 		selected_scanner = self.combobox_scanners.get_active()
 
 		self.notify_information(_("Scanning {} with resolution={} brightness={}").
@@ -655,8 +656,8 @@ class linux_intelligent_ocr_solution():
 		else: #Full_Automatic or Partial_Automatic
 			list_ = []
 			for angle in [00,270,180,90]:
-				os.system("convert -rotate {0} {1} {1}".format(angle,file_name))
-				text = ocr_engine_object.ocr_image_to_text_with_multiprocessing(file_name)
+				os.system("convert -rotate {0} {1} {1}_test".format(angle,file_name))
+				text = ocr_engine_object.ocr_image_to_text_with_multiprocessing(file_name+"_test")
 				count = self.count_dict_words(text)
 				list_.append((text,count,angle))
 				if(self.process_breaker):
@@ -704,7 +705,8 @@ class linux_intelligent_ocr_solution():
 			return			
 		text,angle = self.ocr(destination,self.preferences.mode_of_rotation,self.preferences.rotation_angle)
 		self.insert_text_to_textview(text,self.preferences.insert_position)
-		#self.rotate(angle,destination,False)
+		os.system("convert -rotate {0} {1} {1}".format(angle,destination))
+		self.iconview.reload_preview(destination)
 		self.notify_information(_("Page {}").format(self.preferences.get_page_number_as_string()),10)
 		self.preferences.update_page_number()
 		#self.make_scanner_widgets_active(lock=True)
@@ -740,8 +742,9 @@ class linux_intelligent_ocr_solution():
 			else:
 				self.insert_text_to_textview(text,False,True)
 			self.notify_information(_("Page {}").format(self.preferences.get_page_number_as_string()),100)
-			print(_("Rotating image"))	
-			self.rotate(angle,destination,False)
+			print(_("Rotating image"))
+			os.system("convert -rotate {0} {1} {1}".format(angle,destination))
+			self.iconview.reload_preview(destination)
 			self.preferences.update_page_number()
 			
 			if mode == 1: #Change the mode partial automatic to Manual
