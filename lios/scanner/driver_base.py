@@ -20,8 +20,8 @@
 import abc
 
 class DriverBase(metaclass=abc.ABCMeta):
-	SCAN_AREA_FULL,SCAN_AREA_HALF,\
-	SCAN_AREA_QUARTER,SCAN_AREA_THREE_QUARTER = range(4)
+	SCAN_AREA_FULL, SCAN_AREA_THREE_QUARTER, SCAN_AREA_HALF,\
+	SCAN_AREA_QUARTER = range(4)
 	
 	@abc.abstractmethod
 	def __init__(self,device,resolution=300,brightness=40,scan_area=0):
