@@ -648,14 +648,18 @@ class linux_intelligent_ocr_solution():
 		ocr_engine_object.set_language(language)
 		
 		print(language)
+		rotation_list = [00,90,180,270]
 		
 		if mode == 2:	#Manual
-			os.system("convert -rotate {0} {1} {1}".format(angle,file_name))
+			if(angle not in rotation_list):
+				os.system("convert -rotate {0} {1} {1}".format(rotation_list[angle],file_name))
+			else:
+				os.system("convert -rotate {0} {1} {1}".format(angle,file_name))
 			text = ocr_engine_object.ocr_image_to_text_with_multiprocessing(file_name)
 			return (text,angle)
 		else: #Full_Automatic or Partial_Automatic
 			list_ = []
-			for angle in [00,270,180,90]:
+			for angle in rotation_list:
 				os.system("convert -rotate {0} {1} {1}_test".format(angle,file_name))
 				text = ocr_engine_object.ocr_image_to_text_with_multiprocessing(file_name+"_test")
 				count = self.count_dict_words(text)
@@ -663,8 +667,8 @@ class linux_intelligent_ocr_solution():
 				if(self.process_breaker):
 					return True;
 			list_ = sorted(list_, key=lambda item: item[1],reverse=True)
-		return (list_[0][0],list_[0][2])
-				
+			os.system("convert -rotate {0} {1} {1}".format(list_[0][2],file_name))
+			return (list_[0][0],list_[0][2])				
 	
 	def count_dict_words(self,text):
 		count = 0
@@ -705,7 +709,7 @@ class linux_intelligent_ocr_solution():
 			return			
 		text,angle = self.ocr(destination,self.preferences.mode_of_rotation,self.preferences.rotation_angle)
 		self.insert_text_to_textview(text,self.preferences.insert_position)
-		os.system("convert -rotate {0} {1} {1}".format(angle,destination))
+		self.imageview.redraw()
 		self.iconview.reload_preview(destination)
 		self.notify_information(_("Page {}").format(self.preferences.get_page_number_as_string()),10)
 		self.preferences.update_page_number()
@@ -742,8 +746,7 @@ class linux_intelligent_ocr_solution():
 			else:
 				self.insert_text_to_textview(text,False,True)
 			self.notify_information(_("Page {}").format(self.preferences.get_page_number_as_string()),100)
-			print(_("Rotating image"))
-			os.system("convert -rotate {0} {1} {1}".format(angle,destination))
+			self.imageview.redraw()
 			self.iconview.reload_preview(destination)
 			self.preferences.update_page_number()
 			
