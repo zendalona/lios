@@ -649,7 +649,7 @@ class linux_intelligent_ocr_solution():
 		
 		print(language)
 		rotation_list = [00,90,180,270]
-		
+		print("Angle = ",angle)
 		if mode == 2:	#Manual
 			if(angle not in rotation_list):
 				os.system("convert -rotate {0} {1} {1}".format(rotation_list[angle],file_name))
@@ -776,20 +776,22 @@ class linux_intelligent_ocr_solution():
 		selected_scanner = self.combobox_scanners.get_active()
 		self.process_breaker = False
 		mode = self.preferences.mode_of_rotation
-		angle = self.preferences.rotation_angle
 		if (mode == 0 or mode == 1):
 			self.notify_information(_("Scanning with resolution={} brightness={}")
-			.format(self.preferences.scan_resolution,100),0.0030,0.0030)
+			.format(self.preferences.scan_resolution,self.preferences.scan_brightness),0.0030,0.0030)
 			
 			p = multiprocessing.Process(target=(self.scanner_objects[selected_scanner].scan),
-			args=("{0}test.pnm".format(macros.tmp_dir),self.preferences.scan_resolution,100,self.preferences.scan_area))
+			args=("{0}rotate.pnm".format(macros.tmp_dir),self.preferences.scan_resolution,
+				self.preferences.scan_brightness,self.preferences.scan_area))
 			
 			p.start()
 			while(p.is_alive()):
 				pass
-			text,angle = self.ocr("{0}test.pnm".format(macros.tmp_dir),mode,angle)
-			print(angle)		
-		mid_value = 100; distance = 10; vary = 50;
+			text,angle = self.ocr("{0}rotate.pnm".format(macros.tmp_dir),mode,00)
+			self.notify_information("Image at {} angle.".format(angle),0.0030)
+		else:
+			angle = self.preferences.rotation_angle		
+		mid_value = self.preferences.scan_brightness; distance = 10; vary = 50;
 		count = None
 		result_text = "<b>Click 'Forward' to start optimisation </b>" 
 		while(1):
@@ -803,7 +805,7 @@ class linux_intelligent_ocr_solution():
 			spinbutton_value = widget.SpinButton(mid_value,0,200,1,5,0)
 			
 			label_distance = widget.Label(_("Distance"))
-			spinbutton_distance = widget.SpinButton(distance,0,40,10,5,0)
+			spinbutton_distance = widget.SpinButton(distance,0,40,5,5,0)
 			
 			label_vary = widget.Label(_("Vary"))
 			spinbutton_vary = widget.SpinButton(vary,0,100,10,5,0)
