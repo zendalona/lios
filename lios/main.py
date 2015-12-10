@@ -258,11 +258,11 @@ class linux_intelligent_ocr_solution():
 		self.window = window.Window(macros.app_name)
 		grid_main = containers.Grid()
 		grid_main.add_widgets([
-			(menubar,1,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND),
-			(self.combobox_scanners,1,1,containers.Grid.NO_HEXPAND,containers.Grid.NO_VEXPAND,containers.Grid.ALIGN_END),
-			(button_update_scanner_list,1,1,containers.Grid.NO_HEXPAND,containers.Grid.NO_VEXPAND,containers.Grid.ALIGN_END),
-			(button_scan,1,1,containers.Grid.NO_HEXPAND,containers.Grid.NO_VEXPAND,containers.Grid.ALIGN_END),
-			(toolbar_main,1,1,containers.Grid.NO_HEXPAND,containers.Grid.NO_VEXPAND,containers.Grid.ALIGN_END),
+			(menubar,5,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND),containers.Grid.NEW_ROW,
+			(self.combobox_scanners,1,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND),
+			(button_update_scanner_list,1,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND),
+			(button_scan,1,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND),
+			(toolbar_main,2,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND,containers.Grid.ALIGN_END),
 			containers.Grid.NEW_ROW,
 			(self.paned_main,5,1),
 			containers.Grid.NEW_ROW,
