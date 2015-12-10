@@ -39,7 +39,7 @@ class lios_preferences:
 		self.highlight_color="#1572ffff0000";
 		self.background_highlight_color="#00000bacffff";
 		self.speech_module=0;self.speech_language=0;
-		self.speech_rate=50;self.speech_pitch=50;self.speech_volume=100;
+		self.speech_rate=0;self.speech_pitch=0;self.speech_volume=100;
 		self.time_between_repeated_scanning=0;self.scan_resolution=300;
 		self.scan_driver=1;self.scanner_cache_calibration=1;
 		self.scan_brightness=100;self.scan_area=0;self.insert_position=2;
