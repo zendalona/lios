@@ -71,6 +71,9 @@ class lios_preferences:
 				self.language=int(config.get('cfg',"language"))
 				self.speech_module=int(config.get('cfg',"speech_module"))
 				self.speech_language=int(config.get('cfg',"speech_language"))
+				self.speech_rate=int(config.get('cfg',"speech_rate"))
+				self.speech_volume=int(config.get('cfg',"speech_volume"))
+				self.speech_pitch=int(config.get('cfg',"speech_pitch"))
 				self.number_of_pages_to_scan=int(config.get('cfg',"number_of_pages_to_scan"))#pages
 				self.mode_of_rotation = int(config.get('cfg',"mode_of_rotation"))
 				self.rotation_angle = int(config.get('cfg',"rotation_angle"))		
@@ -222,13 +225,13 @@ class lios_preferences:
 		label_speech_language.set_mnemonic_widget(combobox_speech_language)
 
 		label_speech_rate = widget.Label(_("Speech-Rate"))
-		spin_speech_rate = widget.SpinButton(self.speech_rate,0,100,1,10,0)
+		spin_speech_rate = widget.SpinButton(self.speech_rate,-100,100,1,10,0)
 		label_speech_rate.set_mnemonic_widget(spin_speech_rate)
 		label_speech_volume = widget.Label(_("Speech-Volume"))
-		spin_speech_volume = widget.SpinButton(self.speech_volume,0,100,1,10,0)
+		spin_speech_volume = widget.SpinButton(self.speech_volume,-100,100,1,10,0)
 		label_speech_volume.set_mnemonic_widget(spin_speech_volume)
 		label_speech_pitch = widget.Label(_("Speech-Pitch"))
-		spin_speech_pitch = widget.SpinButton(self.speech_pitch,0,100,1,10,0)
+		spin_speech_pitch = widget.SpinButton(self.speech_pitch,-100,100,1,10,0)
 		label_speech_pitch.set_mnemonic_widget(spin_speech_pitch)
 
 		
