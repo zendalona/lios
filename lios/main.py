@@ -1145,6 +1145,7 @@ class linux_intelligent_ocr_solution():
 		response = save_preferences_dlg.run()		
 		if response == FileChooserDialog.ACCEPT:
 			self.preferences.save_to_file(save_preferences_dlg.get_filename()+".cfg")
+			self.notify_information(_("Preferences saved to ")+save_preferences_dlg.get_filename()+".cfg",0.0030)
 		save_preferences_dlg.destroy()
 
 
@@ -1156,13 +1157,14 @@ class linux_intelligent_ocr_solution():
 		if response == FileChooserDialog.ACCEPT:
 			self.preferences.set_from_file(load_preferences_dlg.get_filename())
 			self.make_preferences_effective()
-			#self.notify("preferences loaded from %s" % (load_preferences_dlg.get_filename()),False,None,True)
+			self.notify_information(_("Preferences loaded from ")+load_preferences_dlg.get_filename(),0.0030)
 		load_preferences_dlg.destroy()
 
 
 	def restore_preferences(self,*data):
 		self.preferences.__init__()
 		self.make_preferences_effective()
+		self.notify_information(_("Preferences Restored"),0.0030)		
 	
 	def open_preferences_general_page(self,*data):
 		if(self.preferences.open_configure_dialog(0)):
