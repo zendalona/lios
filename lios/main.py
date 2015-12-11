@@ -295,6 +295,7 @@ class linux_intelligent_ocr_solution():
 		
 		self.old_language = -1
 		self.old_scan_driver = -1
+		self.old_scanner_mode_switching = -1
 		#This will clear scanner combobox
 		#so scanner combobox should be inetialised
 		self.make_preferences_effective()
@@ -1122,8 +1123,10 @@ class linux_intelligent_ocr_solution():
 				dlg.run()
 				dlg.destroy()				
 				
-		if (self.old_scan_driver != self.preferences.scan_driver):
+		if (self.old_scan_driver != self.preferences.scan_driver or
+			self.old_scanner_mode_switching != self.preferences.scanner_mode_switching ):
 			self.old_scan_driver = self.preferences.scan_driver
+			self.old_scanner_mode_switching = self.preferences.scanner_mode_switching
 			self.scanner_refresh()
 		
 		self.textview.set_dictionary(self.dict)
