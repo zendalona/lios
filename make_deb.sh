@@ -12,10 +12,10 @@ cp control postinst prerm $package_name/DEBIAN/
 cd $package_name
 find -name "*~" -delete
 find . -type f ! -regex '.*.hg.*' ! -regex '.*?debian-binary.*' ! -regex '.*?DEBIAN.*' -printf '%P ' | xargs md5sum > DEBIAN/md5sums
-chown -R root DEBIAN/postinst DEBIAN/prerm DEBIAN/md5sums usr/
-chgrp -R root DEBIAN/postinst DEBIAN/prerm DEBIAN/md5sums usr/
-chmod 0755 DEBIAN/postinst DEBIAN/prerm usr/
-chmod 0644 DEBIAN/md5sums
+sudo chown -R root DEBIAN/postinst DEBIAN/prerm DEBIAN/md5sums usr/
+sudo chgrp -R root DEBIAN/postinst DEBIAN/prerm DEBIAN/md5sums usr/
+sudo chmod 0755 DEBIAN/postinst DEBIAN/prerm usr/
+sudo chmod 0644 DEBIAN/md5sums
 cd ../
 dpkg -b $package_name
-rm -rf $package_name
+sudo rm -rf $package_name
