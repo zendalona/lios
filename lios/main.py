@@ -130,7 +130,7 @@ class linux_intelligent_ocr_solution():
 			(_("Find"),self.textview.open_find_dialog),
 			(_("Find-Replace"),self.textview.open_find_and_replace_dialog),
 			containers.Toolbar.SEPARATOR,
-			(_("Read"),self.start_reading),(_("Stop"),self.stop_reading),
+			(_("Start-Reader"),self.start_reader),(_("Stop-Reader"),self.stop_reader),
 			containers.Toolbar.SEPARATOR,
 			(_("Go-To-Line"),self.textview.go_to_line),
 			(_("Go-To-Page"),self.go_to_page),
@@ -214,8 +214,10 @@ class linux_intelligent_ocr_solution():
 		[_("Tools"),(_("Spell-Check"),self.textview.open_spell_check,"<Control>F7"),
 			(_("Audio-Converter"),self.textview.audio_converter,"None"),
 			(_("Dictionary"),self.artha,"<Control><Alt>W"),
-			(_("Read"),self.start_reading,"F5"),
-			(_("Stop"),self.stop_reading,"<Control>F5"),
+			(_("Start-Reader"),self.start_reader,"F5"),
+			(_("Increase-Reader-Speed"),self.increase_reader_speed,"<Ctrl>Prior"),
+			(_("Decrease-Reader-Speed"),self.decrease_reader_speed,"<Ctrl>Next"),
+			(_("Stop-Reader"),self.stop_reader,"<Control>F5"),
 			(_("Stop-All-Process"),self.stop_all_process,"<Control>F4")],
 		[_("Preferences"),(_("Preferences-General"),self.open_preferences_general_page,"None"),
 			(_("Preferences-Recognition"),self.open_preferences_recognition_page,"None"),
@@ -896,7 +898,7 @@ class linux_intelligent_ocr_solution():
 
 	def stop_all_process(self,widget):
 		self.process_breaker = True
-		self.stop_reading()
+		self.stop_reader()
 		os.system('killall tesseract');
 		os.system('killall cuneiform')
 
@@ -1178,17 +1180,17 @@ class linux_intelligent_ocr_solution():
 		self.textview.open()
 	
 	@on_thread
-	def start_reading(self,*data):
+	def start_reader(self,*data):
 		self.reading_breaker = False
 		speaker = speech.Speech()
 		speaker.set_output_module(speaker.list_output_modules()[self.preferences.speech_module])
 		if(self.preferences.speech_module != -1 and len(speaker.list_voices()) > 1):
 			speaker.set_synthesis_voice(speaker.list_voices()[self.preferences.speech_language])
-		speaker.set_rate(self.preferences.speech_rate)
 		speaker.set_volume(self.preferences.speech_volume)
 		speaker.set_pitch(self.preferences.speech_pitch)
 		while(not self.textview.is_cursor_at_end()):
 			loop.acquire_lock()
+			speaker.set_rate(self.preferences.speech_rate)
 			sentence = self.textview.get_next_sentence()
 			speaker.say(sentence)
 			loop.release_lock()
@@ -1197,8 +1199,14 @@ class linux_intelligent_ocr_solution():
 				break
 				speaker.close()
 	
-	def stop_reading(self,*data):
+	def stop_reader(self,*data):
 		self.reading_breaker = True
+	
+	def increase_reader_speed(self,*data):
+		self.preferences.speech_rate = self.preferences.speech_rate + 10;
+
+	def decrease_reader_speed(self,*data):
+		self.preferences.speech_rate = self.preferences.speech_rate - 10;
 
 	def scan_using_cam(self,widget):
 		devices = cam.Cam.get_available_devices()
