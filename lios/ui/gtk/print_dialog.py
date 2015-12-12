@@ -31,6 +31,7 @@ class print_with_action():
 		self.text_to_print = text	
 		self.layout = None
 		self.page_breaks = None
+		self.font = "sans"
 		self.font_size=12
 		if action==None:
 			action = Gtk.PrintOperationAction.PREVIEW
@@ -45,19 +46,32 @@ class print_with_action():
 		print_ = Gtk.PrintOperation()
 		print_.set_default_page_setup(setup)
 		print_.set_unit(Gtk.Unit.MM)
+		print_.set_embed_page_setup(True)
 		
 		print_.connect("begin_print", self.begin_print)
 		print_.connect("draw_page", self.draw_page)
+		print_.connect("create-custom-widget", self.create_custom_widget)
+		print_.connect("custom-widget-apply", self.custom_widget_apply)
+		print_.set_custom_tab_label("Font")
 		
 		if action == Gtk.PrintOperationAction.EXPORT:
 			print_.set_export_filename(filename)
 		res = print_.run(action,None)
+
+	def create_custom_widget(self,*data):
+		self.fontbutton = Gtk.FontButton()
+		return self.fontbutton
+
+	def custom_widget_apply(self,*data):
+		self.font = self.fontbutton.get_font_name()
+		desc = Pango.FontDescription.from_string(self.font)
+		self.font_size = desc.get_size()/Pango.SCALE
     
 	def begin_print(self, operation, context):
 		width = context.get_width()
 		height = context.get_height()
 		self.layout = context.create_pango_layout()
-		self.layout.set_font_description(Pango.FontDescription("Sans " + str(self.font_size)))
+		self.layout.set_font_description(Pango.FontDescription(self.font))
 		self.layout.set_width(int(width*Pango.SCALE))
 		self.layout.set_text(self.text_to_print,len(self.text_to_print))
 		num_lines = self.layout.get_line_count()
