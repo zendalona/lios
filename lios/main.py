@@ -71,6 +71,7 @@ class linux_intelligent_ocr_solution():
 		#Context menu
 		self.context_menu_iconview = menu.ContextMenu([
 			(_("Recognize"),self.ocr_selected_images),
+			(_("Recognize-With-Rotation"),self.ocr_selected_images_with_rotation),
 			menu.SEPARATOR,
 			(_("Rotate-Left"),self.rotate_selected_images_to_left),
 			(_("Rotate-Twice"),self.rotate_selected_images_to_twice),
@@ -99,7 +100,8 @@ class linux_intelligent_ocr_solution():
 			(_("Zoom-In"),self.imageview.zoom_in),(_("Zoom-Fit"),self.imageview.zoom_fit),
 			(_("Zoom-Out"),self.imageview.zoom_out),containers.Toolbar.SEPARATOR,
 			(_("Recognize-Selected-Areas"),self.ocr_selected_areas),
-			(_("Recognize-Current-Image"),self.ocr_current_image)]);
+			(_("Recognize-Current-Image"),self.ocr_current_image),
+			(_("Recognize-Current-Image-With-Rotation"),self.ocr_current_image_with_rotation)]);
 		
 		box_imageview.add(toolbar_imageview)
 		box_imageview.add(self.imageview)
@@ -112,7 +114,8 @@ class linux_intelligent_ocr_solution():
 			(_("Zoom-In"),self.imageview.zoom_in),(_("Zoom-Fit"),self.imageview.zoom_fit),
 			(_("Zoom-Out"),self.imageview.zoom_out),menu.SEPARATOR,
 			(_("Recognize-Selected-Areas"),self.ocr_selected_areas),
-			(_("Recognize-Current-Image"),self.ocr_current_image)]);
+			(_("Recognize-Current-Image"),self.ocr_current_image),
+			(_("Recognize-Current-Image-With-Rotation"),self.ocr_current_image_with_rotation)]);
 		self.imageview.connect_context_menu_button_callback(self.imageview_popup_context_menu)
 
 		
@@ -206,6 +209,7 @@ class linux_intelligent_ocr_solution():
 				(_("Full"),self.take_and_recognize_full_screenshot,"F10")]],
 		[_("Recognize"),
 			(_("Recognize-Current-Image"),self.ocr_current_image,"None"),
+			(_("Recognize-Current-Image-With-Rotation"),self.ocr_current_image_with_rotation,"None"),
 			(_("Recognize-Selected-Areas"),self.ocr_selected_areas,"None"),
 			(_("Recognize-Selected-Images"),self.ocr_selected_images,"None"),
 			(_("Recognize-All-Images"),self.ocr_all_images,"None"),
@@ -924,13 +928,13 @@ class linux_intelligent_ocr_solution():
 			progress = progress + progress_step;			
 			text,angle = self.ocr(item,mode,angle)
 			self.insert_text_to_textview(text,self.preferences.insert_position)
-			#self.insert_text_to_textview(text,False,False)
-			#self.rotate(angle,self.liststore_images[item[0]][1],False)
+			self.iconview.reload_preview(item)
 			if mode == 1:#Changing partial automatic to Manual
 				mode = 2
 				#self.announce(_("Angle to be rotated = {}").format(angle))
 			if(self.process_breaker):
 				break
+		self.imageview.redraw()
 		#self.make_ocr_widgets_active(lock=True)
 		#self.make_preferences_widgets_active(lock=True)
 		#self.make_image_widgets_active(lock=True)
@@ -1079,6 +1083,11 @@ class linux_intelligent_ocr_solution():
 		self.iconview.select_item(filename)
 		self.ocr_selected_images(None)
 
+	@on_thread
+	def ocr_current_image_with_rotation(self,widget):
+		filename = self.imageview.get_filename()
+		self.iconview.select_item(filename)
+		self.ocr_selected_images_with_rotation(None)
 
 	@on_thread			
 	def ocr_selected_areas(self,widget):
