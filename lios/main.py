@@ -195,7 +195,8 @@ class linux_intelligent_ocr_solution():
 				(_("All-Images"),self.save_all_images_as_pdf,"None")], menu.SEPARATOR,
 			[_("Delete"),(_("Selected-Images"),self.iconview_remove_selected_images,"None"),
 				(_("All-Images"),self.iconview_remove_all_images,"None")],],
-		[_("Scan"),(_("Scan-Image"),self.scan_single_image,"F8"),
+		[_("Scan"),(_("Update-Scanner-List"),self.update_scanner_list,"None"),
+			(_("Scan-Image"),self.scan_single_image,"F8"),
 			(_("Scan-Image-Repeatedly"),self.scan_image_repeatedly,"<Control>F8"),
 			(_("Scan-and-Ocr"),self.scan_and_ocr,"F9"),
 			(_("Scan-and-Ocr-Repeatedly"),self.scan_and_ocr_repeatedly,"<Control>F9"),
@@ -237,9 +238,9 @@ class linux_intelligent_ocr_solution():
 		menubar.show()
 
 		self.combobox_scanners = widget.ComboBox()
-		button_update_scanner_list = widget.Button("Refresh-Scanner-List")
-		button_update_scanner_list.connect_function(self.scanner_refresh)
-		button_scan = widget.Button("Scan")
+		button_update_scanner_list = widget.Button(_("Update-Scanner-List"))
+		button_update_scanner_list.connect_function(self.update_scanner_list)
+		button_scan = widget.Button(_("Scan"))
 		button_scan.connect_function(self.scan_single_image)		
 		toolbar_main = containers.Toolbar(containers.Toolbar.HORIZONTAL,
 			[(_("Take-Screenshort"),self.take_rectangle_screenshot),
@@ -522,7 +523,7 @@ class linux_intelligent_ocr_solution():
 
 
 	@on_thread
-	def scanner_refresh(self,*data):
+	def update_scanner_list(self,*data):
 		self.combobox_scanners.clear()
 		for item in self.scanner_objects:
 			item.close()
@@ -1138,7 +1139,7 @@ class linux_intelligent_ocr_solution():
 			self.old_scanner_mode_switching != self.preferences.scanner_mode_switching ):
 			self.old_scan_driver = self.preferences.scan_driver
 			self.old_scanner_mode_switching = self.preferences.scanner_mode_switching
-			self.scanner_refresh()
+			self.update_scanner_list()
 		
 		self.textview.set_dictionary(self.dict)
 		self.textview.set_font_color(self.preferences.font_color)
