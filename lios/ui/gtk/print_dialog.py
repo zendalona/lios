@@ -21,7 +21,7 @@
 from gi.repository import Gtk
 from gi.repository import Pango
 from gi.repository import PangoCairo
-
+import math
 
 class print_with_action():
 	PREVIEW = Gtk.PrintOperationAction.PREVIEW
@@ -35,12 +35,11 @@ class print_with_action():
 		if action==None:
 			action = Gtk.PrintOperationAction.PREVIEW
 		
-		#paper_size = Gtk.PaperSize(Gtk.PAPER_NAME_A4)
-		#paper_size = Gtk.PaperSize.get_default()
-		#paper_size = Gtk.PaperSize(paper_size)
+		paper_size = Gtk.PaperSize.new(Gtk.PAPER_NAME_A4)
 		
 		setup = Gtk.PageSetup()
-		#setup.set_paper_size(paper_size)
+		setup.set_paper_size(paper_size)
+		setup.set_orientation(Gtk.PageOrientation.LANDSCAPE)
 		
 		# PrintOperation
 		print_ = Gtk.PrintOperation()
@@ -57,66 +56,45 @@ class print_with_action():
 	def begin_print(self, operation, context):
 		width = context.get_width()
 		height = context.get_height()
-		print (height)
 		self.layout = context.create_pango_layout()
 		self.layout.set_font_description(Pango.FontDescription("Sans " + str(self.font_size)))
 		self.layout.set_width(int(width*Pango.SCALE))
-
 		self.layout.set_text(self.text_to_print,len(self.text_to_print))
-
 		num_lines = self.layout.get_line_count()
-		print ("num_lines: ", num_lines)
+		self.lines_per_page = math.floor(context.get_height() / (self.font_size/2))
+		pages = ( int(math.ceil( float(num_lines) / float(self.lines_per_page) ) ) )
+		operation.set_n_pages(pages)		
 		
-		page_breaks = []
-		page_height = 0
 		
-		for line in range(num_lines):
-			layout_line = self.layout.get_line(line)
-			ink_rect, logical_rect = layout_line.get_extents()
-			
-			x_bearing, y_bearing, lwidth, lheight = logical_rect.x,logical_rect.y,logical_rect.width,logical_rect.height;
-			
-			line_height = lheight / 1024.0 # 1024.0 is float(pango.SCALE)
-			page_height += line_height
-			
-			print ("page_height ", page_height)
-			if page_height + line_height > height:
-				page_breaks.append(line)
-				page_height = 0
-				page_height += line_height
-		operation.set_n_pages(len(page_breaks) + 1)
-		self.page_breaks = page_breaks
     
 	def draw_page (self, operation, context, page_number):
-		assert isinstance(self.page_breaks, list)
-		#print page_number
-		if page_number == 0:
-			start = 0
-		else:
-			start = self.page_breaks[page_number - 1]
-		try:
-			end = self.page_breaks[page_number]
-		except IndexError:
-			end = self.layout.get_line_count()
-		
 		cr = context.get_cairo_context()
 		cr.set_source_rgb(0, 0, 0)
-		i = 0
-		start_pos = 0
+		start_line = page_number * self.lines_per_page
+		if page_number + 1 != operation.props.n_pages:
+			end_line = start_line + self.lines_per_page
+		else:
+			end_line = self.layout.get_line_count()
+		cr.move_to(0, 0)
 		iter = self.layout.get_iter()
+		i=0
 		while 1:
-			if i >= start:
-				line = iter.get_line()
-				_, logical_rect = iter.get_line_extents()
-				x_bearing, y_bearing, lwidth, lheight = logical_rect.x,logical_rect.y,logical_rect.width,logical_rect.height;
-				baseline = iter.get_baseline()
-				if i == start:
-					start_pos = y_bearing / 1024.0 # 1024.0 is float(pango.SCALE)
-				cr.move_to(x_bearing / 1024.0, baseline / 1024.0 - start_pos)
-				PangoCairo.show_layout_line(cr, line)
+			if i > start_line:
+				#Must be get_line_readonly
+				line = iter.get_line_readonly()
+				cr.rel_move_to(0, self.font_size/2)
+				PangoCairo.show_layout_line(cr,line)
 			i += 1
-			if not (i < end and iter.next_line()):
+			if not (i < end_line and iter.next_line()):
 				break
 
 
+
+if __name__ == "__main__":
+	data=""
+	file = open("/usr/share/lios/readme","r")
+	for x in file.readlines():
+		data = data + x
+	action = Gtk.PrintOperationAction.PREVIEW
+	printer = print_with_action(data,action)
 
