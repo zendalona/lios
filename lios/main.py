@@ -1168,15 +1168,18 @@ class linux_intelligent_ocr_solution():
 	
 	def open_preferences_general_page(self,*data):
 		if(self.preferences.open_configure_dialog(0)):
-			self.make_preferences_effective()		
+			self.make_preferences_effective()
+			self.preferences.save_to_file("{}/.lios_preferences.cfg".format(macros.home_dir))		
 
 	def open_preferences_recognition_page(self,*data):
 		if(self.preferences.open_configure_dialog(1)):
-			self.make_preferences_effective()		
+			self.make_preferences_effective()
+			self.preferences.save_to_file("{}/.lios_preferences.cfg".format(macros.home_dir))		
 
 	def open_preferences_scanning_page(self,*data):
 		if(self.preferences.open_configure_dialog(2)):
 			self.make_preferences_effective()
+			self.preferences.save_to_file("{}/.lios_preferences.cfg".format(macros.home_dir))
 
 	def open_text(self,widget,data=None):
 		self.textview.open()
