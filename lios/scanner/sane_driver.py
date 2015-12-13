@@ -64,6 +64,7 @@ class DriverSane(DriverBase):
 					self.max = 255
 			
 			#Calling super constructor for inetialising brightness resolution and scan area
+			self.set_scan_mode("Color")
 			super(DriverSane, self).__init__(device,resolution,\
 			brightness,scan_area)			
 			
