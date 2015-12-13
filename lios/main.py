@@ -1238,10 +1238,12 @@ class linux_intelligent_ocr_solution():
 		self.reading_breaker = True
 	
 	def increase_reader_speed(self,*data):
-		self.preferences.speech_rate = self.preferences.speech_rate + 10;
+		if (self.preferences.speech_rate < 100):
+			self.preferences.speech_rate = self.preferences.speech_rate + 10;
 
 	def decrease_reader_speed(self,*data):
-		self.preferences.speech_rate = self.preferences.speech_rate - 10;
+		if (self.preferences.speech_rate > -100):
+			self.preferences.speech_rate = self.preferences.speech_rate - 10;
 
 	def scan_using_cam(self,widget):
 		devices = cam.Cam.get_available_devices()
