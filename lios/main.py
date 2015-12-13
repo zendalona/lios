@@ -785,7 +785,7 @@ class linux_intelligent_ocr_solution():
 		self.process_breaker = False
 		mode = self.preferences.mode_of_rotation
 		if (mode == 0 or mode == 1):
-			self.notify_information(_("Scanning with resolution={} brightness={}")
+			self.notify_information(_("Scanning with resolution={} brightness={} for detecting angle of rotation")
 			.format(self.preferences.scan_resolution,self.preferences.scan_brightness),0.0030,0.0030)
 			
 			p = multiprocessing.Process(target=(self.scanner_objects[selected_scanner].scan),
@@ -799,33 +799,51 @@ class linux_intelligent_ocr_solution():
 			self.notify_information("Image at {} angle.".format(angle),0.0030)
 		else:
 			angle = self.preferences.rotation_angle		
-		mid_value = self.preferences.scan_brightness; distance = 10; vary = 50;
+		value = self.preferences.scan_brightness;
+		distance = 10; start = 10; end = 90;
 		count = None
-		result_text = "<b>Click 'Forward' to start optimisation </b>" 
+		result_text = "<b>Click 'Optimize' to start optimisation </b>" 
 		while(1):
 			loop.acquire_lock()
-			dlg = dialog.Dialog(_("Optimize Brightness"),
-				(_("Cancel"), dialog.Dialog.BUTTON_ID_1,
+			dlg = dialog.Dialog(_("Optimize Scanner-Brightness"),
+				(_("Optimize"), dialog.Dialog.BUTTON_ID_3,
 				_("Apply"), dialog.Dialog.BUTTON_ID_2,
-				_("Forward"), dialog.Dialog.BUTTON_ID_3))
-						
-			label_value = widget.Label(_("Value"))
-			spinbutton_value = widget.SpinButton(mid_value,0,200,1,5,0)
+				_("Cancel"), dialog.Dialog.BUTTON_ID_1))		
+			
+			label_rotation = widget.Label(_("Angle to be rotated : "))
+			spinbutton_rotation = widget.SpinButton(angle,00,360,90,90,90)
+			try:
+				spinbutton_rotation.set_value([00,90,180,270][angle])
+			except:
+				spinbutton_rotation.set_value(angle)			
+			
+			label_value = widget.Label(_("Current-Value"))
+			spinbutton_value = widget.SpinButton(value,0,200,1,5,0)
+			label_value.set_mnemonic_widget(spinbutton_value)
+
+			label_start = widget.Label(_("Start"))
+			spinbutton_start = widget.SpinButton(start,0,100,10,5,0)
+			label_start.set_mnemonic_widget(spinbutton_start)
 			
 			label_distance = widget.Label(_("Distance"))
 			spinbutton_distance = widget.SpinButton(distance,0,40,5,5,0)
+			label_distance.set_mnemonic_widget(spinbutton_distance)
 			
-			label_vary = widget.Label(_("Vary"))
-			spinbutton_vary = widget.SpinButton(vary,0,100,10,5,0)
+			label_end = widget.Label(_("End"))
+			spinbutton_end = widget.SpinButton(end,0,100,10,5,0)
+			label_end.set_mnemonic_widget(spinbutton_end)
 			
 			label_result = widget.Label(_("Result"))
 			label_result.set_use_markup(True)
 			label_result.set_label(result_text)
 			
 			grid = containers.Grid()
-			grid.add_widgets([(label_value,1,1),(spinbutton_value,1,1),containers.Grid.NEW_ROW,
+			grid.add_widgets([(label_rotation,1,1),(spinbutton_rotation,1,1),
+				containers.Grid.NEW_ROW,
+				(label_value,1,1),(spinbutton_value,1,1),containers.Grid.NEW_ROW,
+				(label_start,1,1),(spinbutton_start,1,1),containers.Grid.NEW_ROW,
 				(label_distance,1,1),(spinbutton_distance,1,1),containers.Grid.NEW_ROW,
-				(label_vary,1,1),(spinbutton_vary,1,1),containers.Grid.NEW_ROW,
+				(label_end,1,1),(spinbutton_end,1,1),containers.Grid.NEW_ROW,
 				(label_result,2,1)]);
 			dlg.add_widget(grid)
 			grid.show_all()
@@ -834,46 +852,48 @@ class linux_intelligent_ocr_solution():
 			dlg.destroy()
 			loop.release_lock()				
 			if (response == dialog.Dialog.BUTTON_ID_2):
-				self.preferences.scan_brightness = mid_value
+				self.preferences.scan_brightness = spinbutton_value.get_value()
 				#self.make_scanner_widgets_active(lock=True)
 				#self.make_ocr_widgets_active(lock=True)
 				#self.make_preferences_widgets_active(lock=True)				
 				return True
 			elif (response == dialog.Dialog.BUTTON_ID_3):
-				mid_value = spinbutton_value.get_value()
+				value = spinbutton_value.get_value()
+				start = spinbutton_start.get_value()
 				distance = spinbutton_distance.get_value()
-				vary = spinbutton_vary.get_value()
-				self.preferences.scan_brightness = mid_value
+				end = spinbutton_end.get_value()
+				self.preferences.scan_brightness = value
 			else:
 				#self.make_scanner_widgets_active(lock=True)
 				#elf.make_ocr_widgets_active(lock=True)
 				#self.make_preferences_widgets_active(lock=True)
 				return True
 							
-			list = self.optimize_with_model(mid_value,distance,vary,angle,count)
+			list = self.optimize_with_model(value,start,distance,end,angle,count)
 			if (not list):
 				#self.make_scanner_widgets_active(lock=True)
 				#self.make_ocr_widgets_active(lock=True)
 				#self.make_preferences_widgets_active(lock=True)
 				return True
-			count, mid_value = list[0][0],list[0][1];
+			count, value = list[0][0],list[0][1];
 			result_text = "<b>Optimisation Result "
 			for item in list:
 				result_text += "\nGot {} Words at brightness {}".format(item[0], item[1])
 			result_text += "</b>" 
+			start = value-distance;
+			end = value+distance;
 			distance = distance / 2;
-			vary = distance;
 			
 			
 		
-	def optimize_with_model(self,mid_value,distance,vary,angle,previous_optimised_count=None):
+	def optimize_with_model(self,value,start,distance,end,angle,previous_optimised_count=None):
 		selected_scanner = self.combobox_scanners.get_active()
 		list = []
 		count = -1		
-		pos = mid_value - vary
-		while(pos <= mid_value + vary):
-			if (pos == mid_value and previous_optimised_count != None):
-				list.append((mid_value,previous_optimised_count))
+		pos = start
+		while(pos <= end):
+			if (pos == value and previous_optimised_count != None):
+				list.append((previous_optimised_count,value))
 				#self.announce(_("Got {} words at brightness {}.").format(previous_optimised_count,mid_value))
 			else:
 				if (count != -1):
