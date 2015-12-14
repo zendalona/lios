@@ -124,7 +124,7 @@ class DriverScanimage(DriverBase):
 		scanner_list = []
 		output = subprocess.getoutput("scanimage --list")
 		for line in output.split("\n"):
-			if "device" in line:
+			if (("device" in line) and ("v4l" not in line)):
 				try:
 					scanner_list.append(line)
 				except:
