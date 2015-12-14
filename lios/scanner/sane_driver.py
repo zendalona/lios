@@ -66,7 +66,9 @@ class DriverSane(DriverBase):
 			#Calling super constructor for inetialising brightness resolution and scan area
 			self.set_scan_mode("Color")
 			super(DriverSane, self).__init__(device,resolution,\
-			brightness,scan_area)			
+			brightness,scan_area)
+			self.brightness_multiplier = (self.max - self.min)/100
+			self.brightness_offset = self.min
 			
 	
 	def get_scanner_option (self,name):
@@ -106,12 +108,8 @@ class DriverSane(DriverBase):
 
 	def set_brightness(self,brightness):
 		if (self.check_brightness_support()):
-			brightness_value = int(((self.max-self.min)/200)*brightness)
-			if (self.min < 0):
-				brightness_value = brightness_value - 100
-			print("Scanner Max = {0},  Scanner Min = {1}, User Value \
-			(200) = {2}, Corected Value {3}".format(self.max,self.min,
-			brightness,brightness_value))	
+			print("Scanner Max = {0},  Scanner Min = {1}, Corected Value {2}".
+				format(self.max,self.min,brightness))	
 			
 			if self.light_parameter == "brightness":
 				try:

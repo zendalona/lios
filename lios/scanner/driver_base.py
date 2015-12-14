@@ -28,10 +28,13 @@ class DriverBase(metaclass=abc.ABCMeta):
 		self.set_resolution(resolution);
 		self.set_brightness(brightness);
 		self.set_scan_area(scan_area);
+		self.brightness_multiplier = 1
+		self.brightness_offset = 0
 	
 	@abc.abstractmethod
 	def scan(self,filename,resolution=-1,brightness=-1,scan_area=-1):
 		if (brightness !=-1 ):
+			brightness = (brightness*self.brightness_multiplier)+self.brightness_offset
 			self.set_brightness(brightness)
 		if (resolution !=-1 ):
 			self.set_resolution(resolution);

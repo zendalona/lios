@@ -59,6 +59,8 @@ class DriverScanimage(DriverBase):
 				print(self.max_x)
 
 		super(DriverScanimage, self).__init__(device,resolution,brightness,scan_area)
+		self.brightness_multiplier = 2
+		self.brightness_offset = -100
 				
 
 	
