@@ -24,12 +24,18 @@ class DriverBase(metaclass=abc.ABCMeta):
 	SCAN_AREA_QUARTER = range(4)
 	
 	@abc.abstractmethod
-	def __init__(self,device,resolution=300,brightness=40,scan_area=0):
+	def __init__(self,device,scanner_mode_switching,resolution=300,brightness=40,scan_area=0):
 		self.set_resolution(resolution);
 		self.set_brightness(brightness);
 		self.set_scan_area(scan_area);
 		self.brightness_multiplier = 1
 		self.brightness_offset = 0
+		if (scanner_mode_switching):
+			modes_list = self.get_available_scan_modes()
+			if "Binary" in modes_list:
+				self.set_scan_mode("Binary")
+			if "Lineart" in modes_list:
+				self.set_scan_mode("Lineart")
 	
 	@abc.abstractmethod
 	def scan(self,filename,resolution=-1,brightness=-1,scan_area=-1):

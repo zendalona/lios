@@ -25,7 +25,7 @@ from lios.scanner.driver_base import DriverBase
 class DriverScanimage(DriverBase):
 	name = "Scanimage"
 	
-	def __init__(self,device,resolution=300,brightness=40,scan_area=0):
+	def __init__(self,device,scanner_mode_switching,resolution=300,brightness=40,scan_area=0):
 		self.device = device.split()[1][1:-1]
 		self.device_name = device;
 		
@@ -58,7 +58,8 @@ class DriverScanimage(DriverBase):
 				self.max_x = line.split()[1].split(".")[2].split("mm")[0]
 				print(self.max_x)
 
-		super(DriverScanimage, self).__init__(device,resolution,brightness,scan_area)
+		super(DriverScanimage, self).__init__(device,scanner_mode_switching,
+			resolution,brightness,scan_area)
 		self.brightness_multiplier = 2
 		self.brightness_offset = -100
 				

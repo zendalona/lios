@@ -553,13 +553,9 @@ class linux_intelligent_ocr_solution():
 		list_ = list(parent_conn.recv())
 		for device in list_:
 			self.notify_information(_("Setting Scanner {}").format(device),0.0030,0.0030)			
-			scanner = driver(device,self.preferences.scan_resolution,self.preferences.scan_brightness,self.preferences.scan_area)
-			if (self.preferences.scanner_mode_switching):
-				for mode in scanner.get_available_scan_modes():
-					if mode == "Lineart":
-						scanner.set_scan_mode(mode)
-					if mode == "Binary":
-						scanner.set_scan_mode(mode)
+			scanner = driver(device,self.preferences.scanner_mode_switching,
+				self.preferences.scan_resolution,self.preferences.scan_brightness,
+				self.preferences.scan_area)
 
 			self.scanner_objects.append(scanner)
 			self.combobox_scanners.add_item(scanner.device_name)

@@ -31,7 +31,7 @@ import os
 class DriverSane(DriverBase):
 	name = "Sane"
 	
-	def __init__(self,device,resolution=300,brightness=40,scan_area=0):
+	def __init__(self,device,scanner_mode_switching,resolution=300,brightness=40,scan_area=0):
 		sane_version = sane.init()
 		self.device_name = device[2];
 		try:
@@ -64,9 +64,10 @@ class DriverSane(DriverBase):
 					self.max = 255
 			
 			#Calling super constructor for inetialising brightness resolution and scan area
-			self.set_scan_mode("Color")
-			super(DriverSane, self).__init__(device,resolution,\
+			super(DriverSane, self).__init__(scanner_mode_switching,device,resolution,\
 			brightness,scan_area)
+			if(not scanner_mode_switching):
+				self.set_scan_mode("Color")
 			self.brightness_multiplier = (self.max - self.min)/100
 			self.brightness_offset = self.min
 			
