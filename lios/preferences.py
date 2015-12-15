@@ -42,7 +42,7 @@ class lios_preferences:
 		self.speech_rate=0;self.speech_pitch=0;self.speech_volume=100;
 		self.time_between_repeated_scanning=0;self.scan_resolution=300;
 		self.scan_driver=1;self.scanner_cache_calibration=0;
-		self.scan_brightness=100;self.scan_area=0;self.insert_position=2;
+		self.scan_brightness=50;self.scan_area=0;self.insert_position=2;
 		self.ocr_engine=0;self.language=0;self.mode_of_rotation=0;
 		self.number_of_pages_to_scan=100;self.page_numbering_type=0;
 		self.starting_page_number=1;self.scanner_mode_switching=0;
