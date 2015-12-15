@@ -36,8 +36,8 @@ class DriverSane(DriverBase):
 		self.device_name = device[2];
 		try:
 			self.scanner = sane.open(device[0])
-		except sane._sane.error:
-			print("sane error!")
+		except:
+			print("####sane error!")
 		else:
 			#Brightness and Threshold
 			self.light_parameter_state = False 
