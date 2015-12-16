@@ -69,20 +69,22 @@ class BasicTextView(text_view.TextView):
 	def new(self,*data):
 		if (self.get_modified() == True):
 			dlg =  dialog.Dialog(_("Start new without saving ?"),
-			("Save", dialog.Dialog.BUTTON_ID_1,_("Start-New!"), dialog.Dialog.BUTTON_ID_2))                           						
+			("Cancel", dialog.Dialog.BUTTON_ID_1,_("Start-New!"), dialog.Dialog.BUTTON_ID_2))                           						
 			label = widget.Label(_("Start new without saving ?"))
 			dlg.add_widget(label)
 			label.show()
 			response = dlg.run()
 			dlg.destroy()				
 			if response == dialog.Dialog.BUTTON_ID_1:
-				self.save(self)
 				self.grab_focus();
 				return 0;
 			else:
 				self.delete_all_text()
 				self.grab_focus();
 				return 1;
+		else:
+			self.delete_all_text()
+			return 1;
 
 	def open(self):
 		open_file = file_chooser.FileChooserDialog(_("Select the file to open"),
