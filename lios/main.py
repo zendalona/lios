@@ -849,6 +849,21 @@ class linux_intelligent_ocr_solution():
 			loop.release_lock()				
 			if (response == dialog.Dialog.BUTTON_ID_2):
 				self.preferences.scan_brightness = spinbutton_value.get_value()
+				angle = spinbutton_rotation.get_value()
+				loop.acquire_lock()
+				dlg_set_mode = dialog.Dialog(_("Set Mode of rotation"),
+				(_("Yes set this rotation"), dialog.Dialog.BUTTON_ID_1,
+				_("No continue with existing mode"), dialog.Dialog.BUTTON_ID_2))
+				label = widget.Label(_("Do you want to fix the angle at {}\
+				\ndegree manuel rotation ?".format(angle)))
+				dlg_set_mode.add_widget(label)
+				label.show()
+				response = dlg_set_mode.run()
+				if(response == dialog.Dialog.BUTTON_ID_1):
+					self.preferences.mode_of_rotation = 2
+					self.preferences.rotation_angle = [00,90,180,270].index(angle)
+				dlg_set_mode.destroy()
+				loop.release_lock()
 				#self.make_scanner_widgets_active(lock=True)
 				#self.make_ocr_widgets_active(lock=True)
 				#self.make_preferences_widgets_active(lock=True)				
