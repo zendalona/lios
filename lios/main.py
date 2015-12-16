@@ -317,6 +317,7 @@ class linux_intelligent_ocr_solution():
 		grid_main.show_all()
 		self.window.add(grid_main)
 		self.window.maximize()
+		self.textview.grab_focus()
 		self.window.show()
 		loop.start_main_loop()	
 
