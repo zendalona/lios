@@ -863,6 +863,8 @@ class linux_intelligent_ocr_solution():
 				if(response == dialog.Dialog.BUTTON_ID_1):
 					self.preferences.mode_of_rotation = 2
 					self.preferences.rotation_angle = [00,90,180,270].index(angle)
+					self.notify_information(_("Rotation mode changed to manual at angle {} degree").
+						format(self.preferences.rotation_angle),0.0030)
 				dlg_set_mode.destroy()
 				loop.release_lock()
 				#self.make_scanner_widgets_active(lock=True)
