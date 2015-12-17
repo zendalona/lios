@@ -47,8 +47,7 @@ class lios_preferences:
 		self.number_of_pages_to_scan=100;self.page_numbering_type=0;
 		self.starting_page_number=1;self.scanner_mode_switching=0;
 		self.rotation_angle=00;
-		self.available_scanner_drivers = []
-		self.available_ocr_engine_list = []
+
 
 	def set_avalable_scanner_drivers(self,list):
 		self.available_scanner_drivers = list
@@ -447,6 +446,8 @@ class lios_preferences:
 	
 if "__main__" == __name__:
 	a = lios_preferences()
+	a.set_avalable_ocr_engines([])
+	a.set_avalable_scanner_drivers([])
 	a.open_configure_dialog()
 	a.open_configure_dialog()
 	
