@@ -140,6 +140,9 @@ class DriverScanimage(DriverBase):
 			return True
 		else:
 			return False
+	
+	def cancel(self):
+		os.system("pkill scanimage")
 
 	def close(self):
 		return

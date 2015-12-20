@@ -51,6 +51,9 @@ class OcrEngineCuneiform(OcrEngineBase):
 				return text
 		except:
 			return ""
+	def cancel():
+		os.system("pkill convert")
+		os.system("pkill cuneiform")
 		
 	
 	def get_available_languages():

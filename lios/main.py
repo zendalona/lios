@@ -618,6 +618,10 @@ class linux_intelligent_ocr_solution():
 	def scan(self,filename):
 		self.process_breaker = False
 		selected_scanner = self.combobox_scanners.get_active()
+		
+		#No scanner added to list
+		if(selected_scanner == -1):
+			return;
 
 		self.notify_information(_("Scanning {} with resolution={} brightness={}").
 		format(filename,self.preferences.scan_resolution,self.preferences.scan_brightness),0.0030,0.0030)
@@ -937,10 +941,11 @@ class linux_intelligent_ocr_solution():
 
 	def stop_all_process(self,widget):
 		self.process_breaker = True
-		self.stop_reader()
-		os.system('killall tesseract');
-		os.system('killall cuneiform')
-
+		#selected_scanner = self.combobox_scanners.get_active()
+		#self.scanner_objects[selected_scanner].cancel()
+		os.system("pkill convert")
+		self.available_ocr_engine_list[self.preferences.ocr_engine].cancel()
+		
 	def open_readme(self,widget,data=None):
 		with open(macros.readme_file) as file:
 			self.textview.set_text(file.read())

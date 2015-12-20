@@ -34,6 +34,10 @@ class OcrEngineBase(metaclass=abc.ABCMeta):
 	@abc.abstractmethod
 	def ocr_image_to_text(self,image_file_name):
 		pass
+	
+	def cancel():
+		pass
+		
 
 	def set_language(self,language):
 		if language in self.__class__.get_available_languages():

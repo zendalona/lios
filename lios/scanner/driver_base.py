@@ -100,5 +100,9 @@ class DriverBase(metaclass=abc.ABCMeta):
 
 
 	@abc.abstractmethod
+	def cancel(self):
+		return
+
+	@abc.abstractmethod
 	def close(self):
 		return

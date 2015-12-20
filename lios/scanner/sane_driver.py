@@ -175,6 +175,9 @@ class DriverSane(DriverBase):
 	
 	def is_available():
 		return available
+	
+	def cancel(self):
+		self.scanner.cancel()
 
 
 	def close(self):
