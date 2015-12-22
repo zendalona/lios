@@ -536,7 +536,7 @@ class linux_intelligent_ocr_solution():
 		#self.make_preferences_widgets_inactive(lock=True)
 		#self.make_scanner_widgets_inactive(lock=True)
 		
-		self.notify_information(_("Geting devices"),0.0030,0.001)
+		self.notify_information(_("Getting devices"),0.0030,0.001)
 		#Tuple - List Convertion is used to get all items in devices list
 		
 		
@@ -637,7 +637,7 @@ class linux_intelligent_ocr_solution():
 			
 		if(self.process_breaker):
 			return
-		print(_("Adding image to list"))			
+		print(_("Adding image to list"))
 		self.iconview.add_item(filename)
 		
 		print(_("Image added"))
@@ -739,24 +739,31 @@ class linux_intelligent_ocr_solution():
 		for i in range(0,self.preferences.number_of_pages_to_scan):
 			destination = "{0}{1}.pnm".format(macros.tmp_dir,self.preferences.get_page_number_as_string())
 			destination = self.get_feesible_filename_from_filename(destination)
+			print(_("#Scanning"))
 			t = threading.Thread(target=self.scan,args=(destination,))
 			t.start()
 			while(t.is_alive()):
 				pass
+			print(_("#Scan Compleated"))
 			if(self.process_breaker):
 				break
 			time.sleep(self.preferences.time_between_repeated_scanning)	
 			if(self.process_breaker):
 				break
+			print(_("#Running OCR"))	
 			text,angle = self.ocr(destination,mode,angle)	
-			print(_("Placing text and cursor"))
+			print(_("#Placing text and cursor"))
 			if (i == 0):
 				self.insert_text_to_textview(text,True,True)
 			else:
 				self.insert_text_to_textview(text,False,True)
+			print(_("#Placing text and cursor Finished"))				
 			self.notify_information(_("Page {}").format(self.preferences.get_page_number_as_string()),100)
+			print(_("#Redraw"))
 			self.imageview.redraw()
+			print(_("#Redraw Compleated"))
 			self.iconview.reload_preview(destination)
+			print(_("#Preview Updated"))
 			self.preferences.update_page_number()
 			
 			if mode == 1: #Change the mode partial automatic to Manual
@@ -765,7 +772,7 @@ class linux_intelligent_ocr_solution():
 							
 			if(self.process_breaker):
 				break
-			print(_("Compleated "),i);
+			print(_("#Compleated "),i);
 		#self.announce(_("Job completed!")
 		#self.make_scanner_widgets_active(lock=True)
 		#self.make_ocr_widgets_active(lock=True)
@@ -813,6 +820,7 @@ class linux_intelligent_ocr_solution():
 			
 			label_rotation = widget.Label(_("Angle to be rotated : "))
 			spinbutton_rotation = widget.SpinButton(angle,00,360,90,90,90)
+			label_rotation.set_mnemonic_widget(spinbutton_rotation)
 			try:
 				spinbutton_rotation.set_value([00,90,180,270][angle])
 			except:
@@ -860,7 +868,7 @@ class linux_intelligent_ocr_solution():
 				(_("Yes set this rotation"), dialog.Dialog.BUTTON_ID_1,
 				_("No continue with existing mode"), dialog.Dialog.BUTTON_ID_2))
 				label = widget.Label(_("Do you want to fix the angle at {}\
-				\ndegree manuel rotation ?".format(angle)))
+				\ndegree manual rotation ?".format(angle)))
 				dlg_set_mode.add_widget(label)
 				label.show()
 				response = dlg_set_mode.run()
@@ -880,6 +888,7 @@ class linux_intelligent_ocr_solution():
 				start = spinbutton_start.get_value()
 				distance = spinbutton_distance.get_value()
 				end = spinbutton_end.get_value()
+				angle = spinbutton_rotation.get_value()
 				self.preferences.scan_brightness = value
 			else:
 				#self.make_scanner_widgets_active(lock=True)
@@ -1038,7 +1047,7 @@ class linux_intelligent_ocr_solution():
 		progress = 0;
 		for item in reversed(self.iconview.get_selected_item_names()):
 			os.system("convert -rotate {0} {1} {1}".format(angle,item))
-			self.iconview.reload_preview(item)			
+			self.iconview.reload_preview(item)
 			self.notify_information(_("Rotating selected image {} to {}")
 			.format(item,angle),progress,None)
 			progress = progress + progress_step;

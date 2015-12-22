@@ -131,10 +131,12 @@ class lios_preferences:
 
 
 	def update_page_number(self):
+		loop.acquire_lock()
 		if (self.page_numbering_type == 0):
 			self.starting_page_number = self.starting_page_number + 1
 		else:
 			self.starting_page_number = self.starting_page_number + 2
+		loop.release_lock()
 
 	def get_page_number_as_string(self):
 		if (self.page_numbering_type == 0):

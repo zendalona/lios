@@ -21,6 +21,7 @@ from gi.repository import Gdk
 from gi.repository import GObject
 from gi.repository import GdkPixbuf
 
+from lios.ui.gtk import loop
 
 class ImageViewer(Gtk.HPaned):
 	ZOOM_FIT = 4
@@ -142,7 +143,9 @@ class ImageViewer(Gtk.HPaned):
 		return self.filename		
 
 	def redraw(self):
+		loop.acquire_lock()
 		self.load_image(self.pixbuf_file_name,[],self.ZOOM_FIT)
+		loop.release_lock()
 
 	def get_selection_list(self):
 		list = []
