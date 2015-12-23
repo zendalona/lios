@@ -33,25 +33,21 @@ class IconView(Gtk.IconView):
 		self.set_columns(1)
 		self.set_model(self.liststore_images)
 
+	#methord is not thread safe
 	def add_item(self,filename):
-		Gdk.threads_enter()
 		try:
-			
 			pixbuff =  GdkPixbuf.Pixbuf.new_from_file(filename)
-			#pixbuff =  GdkPixbuf.Pixbuf.new_from_file("/usr/share/lios/lios")
-			
 		except:
 			pass
 		else:
 			height = pixbuff.get_height()
 			width = pixbuff.get_width()
-			ratio = (width*50)/height
+			ratio = (height*50)/width
 			buff = pixbuff.scale_simple(50,ratio,GdkPixbuf.InterpType.BILINEAR)
 			del pixbuff
 			self.liststore_images.append([buff, filename])
 			self.queue_draw()
 			del buff
-		Gdk.threads_leave()
 
 	def remove_selected_items(self):
 		for item in self.get_selected_items():
@@ -76,15 +72,14 @@ class IconView(Gtk.IconView):
 	def reload_preview(self,filename):
 		for item in self.liststore_images:
 			if (item[1] == filename):
-				Gdk.threads_enter()
 				pixbuff =  GdkPixbuf.Pixbuf.new_from_file(filename)
 				height = pixbuff.get_height()
 				width = pixbuff.get_width()
-				ratio = (width*50)/height
+				ratio = (height*50)/width
 				buff = pixbuff.scale_simple(50,ratio,GdkPixbuf.InterpType.BILINEAR)
-				item[0] = buff		
-				Gdk.threads_leave()
-
+				del pixbuff
+				item[0] = buff
+				del buff
 		
 	
 	def get_selected_item_names(self):

@@ -447,7 +447,9 @@ class linux_intelligent_ocr_solution():
 				if (image.split(".")[1] in macros.supported_image_formats):
 					filename = "{}{}".format(macros.tmp_dir,image)
 					filename = self.get_feesible_filename_from_filename(filename)
+					loop.acquire_lock()
 					self.add_image_to_list("{}/{}".format(destination.split(".")[0],image),filename,True)
+					loop.release_lock()
 		os.rmdir(destination.split(".")[0])
 		self.notify_information(_("Completed!"),0.0030,0.01)
 #		self.make_image_widgets_active(lock=True)		
@@ -482,7 +484,9 @@ class linux_intelligent_ocr_solution():
 		self.window.iconify() #minimize
 		os.system("sleep 1") #Time to minimize lios window
 		capture_screen.capture_entire_screen(destination)
+		loop.acquire_lock()
 		self.iconview.add_item(destination)
+		loop.release_lock()
 		self.preferences.update_page_number()
 
 	@on_thread
@@ -490,7 +494,9 @@ class linux_intelligent_ocr_solution():
 		destination = self.get_feesible_filename_from_filename("{}{}.png".format(macros.tmp_dir,self.preferences.starting_page_number))
 		self.window.iconify() #minimize
 		capture_screen.capture_rectangle_selection(destination)
+		loop.acquire_lock()
 		self.iconview.add_item(destination)
+		loop.release_lock()
 		self.preferences.update_page_number()
 
 	@on_thread
@@ -499,7 +505,9 @@ class linux_intelligent_ocr_solution():
 		self.window.iconify() #minimize
 		os.system("sleep 1") #Time to minimize lios window
 		capture_screen.capture_entire_screen(destination)
+		loop.acquire_lock()
 		self.iconview.add_item(destination)
+		loop.release_lock()
 		text,angle = self.ocr(destination,2,00)
 		self.insert_text_to_textview(text,self.preferences.insert_position)
 		self.preferences.update_page_number()
@@ -509,7 +517,9 @@ class linux_intelligent_ocr_solution():
 		destination = self.get_feesible_filename_from_filename("{}{}.png".format(macros.tmp_dir,self.preferences.starting_page_number))
 		self.window.iconify() #minimize
 		capture_screen.capture_rectangle_selection(destination)
+		loop.acquire_lock()
 		self.iconview.add_item(destination)
+		loop.release_lock()
 		text,angle = self.ocr(destination,2,00)
 		self.insert_text_to_textview(text,self.preferences.insert_position)		
 		self.preferences.update_page_number()
@@ -638,8 +648,9 @@ class linux_intelligent_ocr_solution():
 		if(self.process_breaker):
 			return
 		print(_("Adding image to list"))
+		loop.acquire_lock()
 		self.iconview.add_item(filename)
-		
+		loop.release_lock()
 		print(_("Image added"))
 		if(self.process_breaker):
 			return
@@ -719,7 +730,9 @@ class linux_intelligent_ocr_solution():
 		text,angle = self.ocr(destination,self.preferences.mode_of_rotation,self.preferences.rotation_angle)
 		self.insert_text_to_textview(text,self.preferences.insert_position)
 		self.imageview.redraw()
+		loop.acquire_lock()
 		self.iconview.reload_preview(destination)
+		loop.release_lock()
 		self.notify_information(_("Page {}").format(self.preferences.get_page_number_as_string()),10)
 		self.preferences.update_page_number()
 		#self.make_scanner_widgets_active(lock=True)
@@ -758,11 +771,13 @@ class linux_intelligent_ocr_solution():
 			else:
 				self.insert_text_to_textview(text,False,True)
 			print(_("#Placing text and cursor Finished"))				
-			self.notify_information(_("Page {}").format(self.preferences.get_page_number_as_string()),100)
 			print(_("#Redraw"))
 			self.imageview.redraw()
 			print(_("#Redraw Compleated"))
+			loop.acquire_lock()
 			self.iconview.reload_preview(destination)
+			self.notify_information(_("Page {}").format(self.preferences.get_page_number_as_string()),100)
+			loop.release_lock()
 			print(_("#Preview Updated"))
 			self.preferences.update_page_number()
 			
@@ -954,6 +969,7 @@ class linux_intelligent_ocr_solution():
 		#self.scanner_objects[selected_scanner].cancel()
 		os.system("pkill convert")
 		self.available_ocr_engine_list[self.preferences.ocr_engine].cancel()
+		self.notify_information("Terminated",0.0030)
 		
 	def open_readme(self,widget,data=None):
 		with open(macros.readme_file) as file:
@@ -977,7 +993,9 @@ class linux_intelligent_ocr_solution():
 			progress = progress + progress_step;			
 			text,angle = self.ocr(item,mode,angle)
 			self.insert_text_to_textview(text,self.preferences.insert_position)
+			loop.acquire_lock()
 			self.iconview.reload_preview(item)
+			loop.release_lock()
 			if mode == 1:#Changing partial automatic to Manual
 				mode = 2
 				#self.announce(_("Angle to be rotated = {}").format(angle))
@@ -1047,7 +1065,9 @@ class linux_intelligent_ocr_solution():
 		progress = 0;
 		for item in reversed(self.iconview.get_selected_item_names()):
 			os.system("convert -rotate {0} {1} {1}".format(angle,item))
+			loop.acquire_lock()
 			self.iconview.reload_preview(item)
+			loop.release_lock()
 			self.notify_information(_("Rotating selected image {} to {}")
 			.format(item,angle),progress,None)
 			progress = progress + progress_step;
