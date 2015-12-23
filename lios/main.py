@@ -1093,16 +1093,27 @@ class linux_intelligent_ocr_solution():
 
 
 	def save_selected_images(self,widget):
-		dlg = FileChooserDialog(_("Select Folder to save images"),
-			FileChooserDialog.OPEN_FOLDER,macros.supported_image_formats,
-			macros.home_dir);
-		
-		response = dlg.run()
-		if response == FileChooserDialog.ACCEPT:
-			directory = dlg.get_current_folder()
-			for item in reversed(self.iconview.get_selected_item_names()):
-				shutil.copy(item,directory)
-		dlg.destroy()			
+		item_list = self.iconview.get_selected_item_names()
+		if (len(item_list) == 0):
+			pass
+		elif (len(item_list) == 1):
+			dlg = FileChooserDialog(_("Filename please"),
+				FileChooserDialog.SAVE,macros.supported_image_formats,
+				macros.home_dir);
+			response = dlg.run()
+			if response == FileChooserDialog.ACCEPT:
+				shutil.copy(item_list[0],dlg.get_filename())
+			dlg.destroy()
+		else:
+			dlg = FileChooserDialog(_("Select Folder to save images"),
+				FileChooserDialog.OPEN_FOLDER,macros.supported_image_formats,
+				macros.home_dir);
+			response = dlg.run()
+			if response == FileChooserDialog.ACCEPT:
+				directory = dlg.get_current_folder()
+				for item in reversed(item_list):
+					shutil.copy(item,directory)
+			dlg.destroy()
 
 
 	def save_all_images(self,widget):
