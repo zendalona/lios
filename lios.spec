@@ -1,6 +1,6 @@
 ###########################################################################
 #    Lios - Linux-Intelligent-Ocr-Solution
-#    Copyright (C) 2011-2014 Nalin.x.Linux GPL-3
+#    Copyright (C) 2011-2015 Nalin.x.Linux GPL-3
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -27,16 +27,17 @@ BuildArch:      noarch
 Requires:       espeak 
 Requires:       python3-gobject
 Requires:       python3-enchant
+Requires:       python3-speechd
+Requires:       python3-pillow-sane
 Requires:	PackageKit-gtk3-module
 Requires:       aspell-en 
 Requires:       cuneiform 
 Requires:       tesseract
-Requires:       python3-espeak
-Requires:       python3-pillow-sane
+Requires:       poppler-utils
 
 
 %description
-Lios is a free and open source software for converting print in to text using either scanner or a camera, It can also produce text out of scanned images from other sources such as Pdf, Image or Folder containing Images. Program is given total accessibility for visually impaired. Lios is written in python3, and we release it under GPL-3 license. There are great many possibilities for this program, Feedback is the key to it, Expecting your feedback Nalin.x.Linux@gmail.com
+Lios is a free and open source software for converting print in to text using either scanner or a camera, It can also produce text out of scanned images from other sources such as Pdf, Image, Folder containing Images or screenshot. Program is given total accessibility for visually impaired. Lios is written in python3, and we release it under GPL-3 license. There are great many possibilities for this program, Feedback is the key to it, Expecting your feedback.
 
 %prep
 %setup -q
@@ -50,8 +51,8 @@ python3 setup.py install -O1 --skip-build --prefix=%{_prefix} --root=%{buildroot
 %files
 %defattr(-,root,root)
 %doc COPYING NEWS
-%{python3_sitelib}/lios/
-%{python3_sitelib}/lios-*
+#%{python3_sitelib}/*
+/usr/lib/python3.3/site-packages/*
 
 %{_datadir}/lios/*
 %{_datadir}/applications/*
