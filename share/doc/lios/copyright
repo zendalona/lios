@@ -1,0 +1,30 @@
+This package was developed and debianized by Nalin.x.GNU <nalin.x.linux@gmail.com>
+
+It was cloned from https://gitlab.com/Nalin-x-Linux/lios-3
+
+Copyright: 
+	Copyright (c) 2011-2015	nalin.x.linux (nalin.x.linux@gmail.com)
+
+License: GPL-3
+  http://www.gnu.org/licenses/gpl-3.0.html
+  .
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+  .
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+  .
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  .
+  On Debian systems, the complete text of the GNU General Public License
+  version 3 can be found in `/usr/share/common-licenses/GPL-3'.
+
+Forum : https://groups.google.com/forum/#!forum/lios
+Home Page : http://sourceforge.net/projects/lios/?source=navbar
+Video Tutorials : https://www.youtube.com/playlist?list=PLn29o8rxtRe1zS1r2-yGm1DNMOZCgdU0i
+

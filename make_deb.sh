@@ -8,6 +8,9 @@ git pull
 cp -r lios/* $package_name/usr/lib/python3/dist-packages/lios/
 cp -r share $package_name/usr/
 cp -r bin $package_name/usr/
+printf "See commits : https://gitlab.com/Nalin-x-Linux/lios-3/commits/master\n\n" > $package_name/usr/share/doc/lios/changelog
+git log >> $package_name/usr/share/doc/lios/changelog
+gzip -9 $package_name/usr/share/doc/lios/changelog $package_name/usr/share/doc/lios/changelog.gz
 cp control postinst postrm $package_name/DEBIAN/
 cd $package_name
 find -name "*~" -delete
@@ -15,7 +18,7 @@ find . -type f ! -regex '.*.hg.*' ! -regex '.*?debian-binary.*' ! -regex '.*?DEB
 sudo chown -R root DEBIAN/postinst DEBIAN/postrm DEBIAN/md5sums usr/
 sudo chgrp -R root DEBIAN/postinst DEBIAN/postrm DEBIAN/md5sums usr/
 sudo chmod -R 0755 DEBIAN/postinst DEBIAN/postrm usr/
-sudo chmod -R 0644 DEBIAN/md5sums usr/share/applications/Lios.desktop
+sudo chmod -R 0644 DEBIAN/md5sums usr/share/applications/Lios.desktop usr/share/doc/lios/*
 cd ../
 dpkg -b $package_name
 sudo rm -rf $package_name
