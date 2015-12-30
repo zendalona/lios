@@ -8,14 +8,14 @@ git pull
 cp -r lios/* $package_name/usr/lib/python3/dist-packages/lios/
 cp -r share $package_name/usr/
 cp -r bin $package_name/usr/
-cp control postinst prerm $package_name/DEBIAN/
+cp control postinst postrm $package_name/DEBIAN/
 cd $package_name
 find -name "*~" -delete
 find . -type f ! -regex '.*.hg.*' ! -regex '.*?debian-binary.*' ! -regex '.*?DEBIAN.*' -printf '%P ' | xargs md5sum > DEBIAN/md5sums
-sudo chown -R root DEBIAN/postinst DEBIAN/prerm DEBIAN/md5sums usr/
-sudo chgrp -R root DEBIAN/postinst DEBIAN/prerm DEBIAN/md5sums usr/
-sudo chmod 0755 DEBIAN/postinst DEBIAN/prerm usr/
-sudo chmod 0644 DEBIAN/md5sums
+sudo chown -R root DEBIAN/postinst DEBIAN/postrm DEBIAN/md5sums usr/
+sudo chgrp -R root DEBIAN/postinst DEBIAN/postrm DEBIAN/md5sums usr/
+sudo chmod -R 0755 DEBIAN/postinst DEBIAN/postrm usr/
+sudo chmod -R 0644 DEBIAN/md5sums usr/share/applications/Lios.desktop
 cd ../
 dpkg -b $package_name
 sudo rm -rf $package_name
