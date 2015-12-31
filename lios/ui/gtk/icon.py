@@ -1,3 +1,22 @@
+#!/usr/bin/python3 
+
+###########################################################################
+#    Lios - Linux-Intelligent-Ocr-Solution
+#    Copyright (C) 2015-2016 Nalin.x.Linux GPL-3
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+###########################################################################
 import gettext
 gettext.bindtextdomain('myapplication', '/path/to/my/language/directory')
 gettext.textdomain('myapplication')
@@ -60,8 +79,8 @@ stock_icon_dict = { _("File") :"edit-copy",
 					_("Scan-and-Ocr-Repeatedly"):"scanner",
 					_("Optimise-Scanner-Brightness"):"scanner",
 					_("Scan-Using-Webcam"):"camera-web",
-					_("Take-Screenshort"):"camera-photo",
-					_("Take-and-Recognize-Screenshort"):"camera-photo",
+					_("Take-Screenshot"):"camera-photo",
+					_("Take-and-Recognize-Screenshot"):"camera-photo",
 					_("Preferences"):"gtk-preferences",
 					_("Preferences-Scanning"):"gtk-preferences",
 					_("Preferences-General"):"gtk-preferences",

@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-
 ###########################################################################
 #    Lios - Linux-Intelligent-Ocr-Solution
 #    Copyright (C) 2011-2014 Nalin.x.Linux GPL-3

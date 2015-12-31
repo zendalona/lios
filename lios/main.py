@@ -1,4 +1,4 @@
-
+#!/usr/bin/env python3
 ###########################################################################
 #    Lios - Linux-Intelligent-Ocr-Solution
 #    Copyright (C) 2011-2015 Nalin.x.Linux GPL-3
@@ -202,10 +202,10 @@ class linux_intelligent_ocr_solution():
 			(_("Scan-and-Ocr-Repeatedly"),self.scan_and_ocr_repeatedly,"<Control>F9"),
 			(_("Optimise-Scanner-Brightness"),self.optimize_brightness,"None"),menu.SEPARATOR,
 			(_("Scan-Using-Webcam"),self.scan_using_cam,"F6"),menu.SEPARATOR,
-			[_("Take-Screenshort"),
+			[_("Take-Screenshot"),
 				(_("Selection"),self.take_rectangle_screenshot,"<Control>F6"),
 				(_("Full"),self.take_full_screenshot,"F6")],
-			[_("Take-and-Recognize-Screenshort"),
+			[_("Take-and-Recognize-Screenshot"),
 				(_("Selection"),self.take_and_recognize_rectangle_screenshot,"<Control>F10"),
 				(_("Full"),self.take_and_recognize_full_screenshot,"F10")]],
 		[_("Recognize"),
@@ -243,7 +243,7 @@ class linux_intelligent_ocr_solution():
 		button_scan = widget.Button(_("Scan"))
 		button_scan.connect_function(self.scan_single_image)		
 		toolbar_main = containers.Toolbar(containers.Toolbar.HORIZONTAL,
-			[(_("Take-Screenshort"),self.take_rectangle_screenshot),
+			[(_("Take-Screenshot"),self.take_rectangle_screenshot),
 			(_("Scan-Using-Webcam"),self.scan_using_cam),
 			(_("Preferences"),self.open_preferences_general_page),
 			(_("Video-Tutorials"),self.open_video_tutorials),
@@ -1322,7 +1322,7 @@ class linux_intelligent_ocr_solution():
 		dlg.set_comments(_("Lios is a free and open source software\n \
 			for converting print into text using a scanner or camara.\n\
 			It can also produce text from other sources. Such as images,\n\
-			Pdf, or screenshort. Program is given total accessibility \n\
+			Pdf, or screenshot. Program is given total accessibility \n\
 			for visually impaired. Lios is written in python3 and we release \n\
 			it under GPL3 licence. There are great many possibilities\n\
 			for this program. Feedback is the key to it."))

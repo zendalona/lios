@@ -1,5 +1,4 @@
 #! /usr/bin/python3 
-
 ###########################################################################
 #    Lios - Linux-Intelligent-Ocr-Solution
 #    Copyright (C) 2015-2016 Nalin.x.Linux GPL-3

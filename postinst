@@ -1,5 +1,7 @@
 #! /bin/sh
-sudo ldconfig
+set -e
+
+
 if [ -x "`which update-menus 2>/dev/null`" ]; then
 sudo update-menus
 fi

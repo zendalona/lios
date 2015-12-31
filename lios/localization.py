@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import gettext
 from lios import macros
 gettext.bindtextdomain(macros.app_name, '/usr/share/locale')

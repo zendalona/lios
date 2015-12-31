@@ -1,0 +1,8 @@
+?package(lios):\
+  needs="X11"\
+  section="Applications/Graphics"\
+  title="Linux-intelligent-ocr-solution"\
+  command="/usr/bin/lios"\
+  hints="Easy ocr solution"\
+  icon="/usr/share/pixmaps/lios.xpm"
+
