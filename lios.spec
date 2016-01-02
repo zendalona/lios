@@ -56,6 +56,8 @@ python3 setup.py install -O1 --skip-build --prefix=%{_prefix} --root=%{buildroot
 
 %{_datadir}/lios/*
 %{_datadir}/applications/*
+%{_datadir}/man/man1/*
+%{_datadir}/pixmaps/*
 %{_bindir}/*
 
 
