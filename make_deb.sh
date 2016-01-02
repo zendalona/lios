@@ -18,8 +18,8 @@ find . -type f ! -regex '.*.hg.*' ! -regex '.*?debian-binary.*' ! -regex '.*?DEB
 sudo chown -R root DEBIAN/postinst DEBIAN/postrm DEBIAN/md5sums usr/
 sudo chgrp -R root DEBIAN/postinst DEBIAN/postrm DEBIAN/md5sums usr/
 sudo chmod -R 0755 DEBIAN/postinst DEBIAN/postrm usr/
-sudo chmod -R 0644 DEBIAN/md5sums usr/share/applications/Lios.desktop usr/share/doc/lios/* usr/share/menu/lios
-#sudo chmod -R 0755 usr/share/lios/* usr/share/pixmaps/lios.xpm
+sudo chmod -R 0644 DEBIAN/md5sums usr/share/applications/Lios.desktop usr/share/doc/lios/* usr/share/menu/lios usr/share/man/man1/lios.1.gz
+#sudo chmod -R 0755 usr/share/lios/lios usr/share/lios/readme usr/share/pixmaps/lios.xpm
 cd ../
 dpkg -b $package_name
 sudo rm -rf $package_name
