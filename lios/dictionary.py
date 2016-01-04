@@ -20,8 +20,17 @@
 import enchant
 
 dictionary_language_dict = {"eng" : "en","afr" : "af","am" : "am",
-		"ara" : "ar","ara" : "ar","bul" : "bg","ben" : "bn","br" : "br",
-		"cat" : "ca","ces" : "cs","cy" : "cy","dan" : "da","ger" : "de",
+		"ara" : "ar","ara" : "ar","aze":"az","bel":"be","bul" : "bg",
+
+		#Recently added
+		"ben" : "bn","br" : "br","cat" : "ca","ces" : "cs","cy" : "cy",
+		"dan" : "da","ger" : "de","deu":"du","deu-frak":"du","ell":"el",
+		"epo":"eo","eq":"en","eus":"eu-es","frk":"fk","frm":"fr-classical",
+		"grc":"el","ind":"id","isl":"is","ita-old" : "it","jpn":"jn",
+		"kan":"kn","kor":"ko","mkd":"md","mlt":"mt","msa":"ma","nld":"nl",
+		"nor":"no","spa-old":"es","sqi":"si","srp":"sh","swa":"sw","tha":"th",
+		"tur":"tr","vie":"vi","glg" : "gl",
+
 		"ger" : "de","ell" : "el","eo" : "eo","spa" : "es","est" : "et",
 		"eu" : "eu","fa" : "fa","fin" : "fi","fo" : "fo","fra" : "fr",
 		"ga" : "ga","gl" : "gl","gu" : "gu","heb" : "he","hin" : "hi",
