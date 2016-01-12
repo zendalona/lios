@@ -1147,9 +1147,10 @@ class linux_intelligent_ocr_solution():
 		if response == FileChooserDialog.ACCEPT:
 			file_name = dlg.get_filename()
 			command = "convert " 
-			for item in reversed(self.iconview.get_selected_item_names()):
+			for item in self.iconview.get_selected_item_names():
 				command += item + " "
-			command += file_name
+			command += '"'+file_name+'"'
+			print("File name : ",file_name)
 			os.system(command)
 		dlg.destroy()
 
