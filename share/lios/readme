@@ -1,69 +1,224 @@
-Linux-intelligent-ocr-solution
 
-Lios is a free and open source software for converting print in to text using either scanner or a camera, It can also produce text out of scanned images from other sources such as Pdf, Image, Folder containing Images or screenshot. Program is given total accessibility for visually impaired. Lios is written in python3, and we release it under GPL-3 license. There are great many possibilities for this program, Feedback is the key to it, Expecting your feedback Nalin.x.Linux@gmail.com
+Linux-Intelligent-OCR-Solution 
 
-Features.
+*** What is Lios ***
+Lios is a free and open source software for converting print in to text using either scanner or a camera, It can also produce text out of scanned images from other sources such as Pdf, Image, Folder containing Images or screenshot. Program is given total accessibility for visually impaired. Lios is written in python3, and we release it under GPL-3 license. There are great many possibilities for this program, Feedback is the key to it.
 
-1. Import images from Scanner, PDFs, Folder, or Webcam,
-2. Take and Recognize Screenshot,
-3. Recognize Selected Areas(Rectangle selection),
-4. Support two OCR Engines (Cuneiform,Tesseract),
-5. 24 Language support (Given at the end), 30 more languages can be installed in Tesseract,
-6. Full Auto Rotation for any Language(If aspell installed for the language, Eg : "sudo apt-get install aspell-hi" for Hindi,
-7. Side by side view of image and output
-8. Advanced Scanner Brightness optimizer,
-9. Text Reader for low vision with Highlighting, With user selected Color, Font, and Background Color,
-10. Audio converter(espeak),
-11. Spell-checker(aspell),
-12. Export as pdf (text/images),
-13. Dictionary Support for English(Artha)
-14. Options for save, load and reset settings,
-15. Other options - Find, Find-and-Replace, Go-To-Page, Go-To-Line, Append file, Punch File,
-Selection of starting page number, page numbering mode and number of pages to scan,
-Selection of Scan area, brightness, resolution and time between repeated scanning,
-Output Insert position, image rotation and zoom options, etc
+Report your feedback through : https://groups.google.com/forum/#!forum/lios
 
+*** Features of Lios ***
+1. Import images from Scanner, PDFs, Folder, or Webcam, 
+2. Take and Recognize Screenshot, 
+3. Recognize Selected Areas(Rectangle selection), 
+4. Support two OCR Engines (Cuneiform,Tesseract), 
+5. 24 Language support (Given at the end), 30 more languages can be installed in Tesseract, 
+6. Full Auto Rotation for any Language(If aspell installed for the language, Eg : "sudo apt-get install aspell-hi" for Hindi, 
+7. Side by side view of image and output 
+8. Advanced Scanner Brightness optimizer, 
+9. Text Reader for low vision with Highlighting, With user selected Color, Font, and Background Color, 
+10. Audio converter(espeak), 
+11. Spell-checker(aspell), 
+12. Export as pdf (text/images), 
+13. Dictionary Support for English(Artha) 
+14. Options for save, load and reset settings, 
+15. Other options - Find, Find-and-Replace, Go-To-Page, Go-To-Line, Append file, Punch File, Selection of starting page number, page numbering mode and number of pages to scan, Selection of Scan area, brightness, resolution and time between repeated scanning, Output Insert position, image rotation and zoom options, etc
 
-Short-cut Keys.
-Scan and ocr F9,
-Scan and ocr Repeatedly Ctrl+F9,
-Stop all process Ctrl+F4,
-New Ctrl+N,
-Open file Ctrl+O,
-Save Ctrl+S,
-Scan Image F8,
-Scan Image Repeatedly Ctrl+F8,
-Lios Preferences Ctrl+P,
-Artha Alt+Ctrl+W,
-Spell Checker Ctrl+F7,
-Find Ctrl+F,
-Start Lios Reader F5,
-Stop Lios Reader Ctrl+F5,
-Go To Line Ctrl+L,
-Go To Page Ctrl+G,
-Find and Replace Ctrl+R.
+*** Opening and Closing ***
+For opening Lios launch Application menu > Graphics  > Lios. Or one can search in dash board and start Lios from there.
+
+Open with image items or PDF 
+One can select required images to be imported from the file browser and open the context menu using right click or application key and select open with Lios
+
+Closing 
+Select Quit from File menu or press Ctrl+Q
 
 
-Installed Languages List : Bulgarian, Croatian, Czech, Danish, Dutch, English, Estonian, French, German, Hungarian, Italian, Latvian, Lithuanian, Polish, Portuguese, Romanian, Russian, Russian-English bilingual, Serbian, Slovene, Spanish, Swedish, Turkish, and Ukrainian.
+*** Importing images from various sources ***
 
-Disclaimer
+# Importing image 
+At first choose the import-image from the file menu of Lios. This will cause a file chooser dialogue to appear. One can select a particular image or multiple images files. The images will appear on image list of Lios. 
 
-    Copyright (c) 2011-2015 Lios Development Team 
+# Importing images from PDF 
+At first select import-PDF item from file menu. A file chooser dialogue will appear, here you can select the PDF file to be extracted.
 
-    All rights reserved . Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met: 
+# Importing all images in a folder 
+At first choose the import-folder from the file menu of Lios. This will cause a file chooser dialogue to appear. One can select the folder containing images files. The images will appear on image list of Lios.
 
-    Redistributions of source code must retain the below copyright notice, 
+# Importing image from scanner 
+Before scanning make sure that scan menu is available and select the scanner from the Lios main interface if multiple scanners are connected. You should press Update-Scanner-List when a scanner is connected or removed. 
 
-    this list of conditions and the following disclaimer. 
+The pages and their brightness may be different. So it is important to select apt resolution, brightness and scan area while scanning book. One can change these settings from scanning page of Lios preferences.  Increasing or decreasing resolution can be done  by clicking on '+  - 'button or pressing up and down arrow from the resolution spin button. (Default 300) 
+increasing or decreasing brightness can also be done in the same way. However It's better to use the brightness optimizer to set the exact brightness value for a particular book. (Default 50)  
 
-    Redistributions in binary form must reproduce the below copyright notice, 
+The scan area can be selected using the scan-area combobox. It can be quarter, half or three quarter. (Default - Full) 
+One can make scan using scan-image(F8) button from the scan menu 
 
-    this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution. 
+# Import image from scanner repeatedly 
+	One can set the number of pages to be scanned repeatedly from scanning page of preferences also the  time between the two scanning can be changed. One can start scanning repeatedly using scan-repeatedly(Ctrl+F8) item from scan menu. If you want to stop repeated scanning using stop-all-process(Ctrl+F4) item in the scan menu.
 
-    Neither the name of the nor the Lios team names of its 
+# Take Screenshot
+One can take screenshot and recognize that using this features. There are two modes the first one is capture entire screen and the second one is capture by selecting an area. Both of this options are  placed in scan menu. The second option is more preferred. This feature can be used for recognizing text from videos.  
 
-    contributors may be used to endorse or promote products derived from this software without specific prior written permission. 
+# Capture image using Webcam
+One can start capturing by selecting Scan-Using-Webcam from scan menu. Then adjust the webcam and click on take button to capture the image. After capturing enough images close the window and select image from icon view on left side of lios and process it.   
 
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE." 
+
+
+*** Manipulation of imported Images ***
+Image manipulation options are available in Image Menu of Lios.
+
+# Invert List 
+This is used to change the order of images
+
+# Reposition of image items
+one can click and drag image to any position among other images in the list.
+
+# Rotate selected Images 
+One can rotate bunch  of images that are not in exact rotation. 
+
+# Delete selected Images 
+One can delete all images or selected images from the list.
+
+# Save Images
+Used to save all images or selected images to a folder.
+
+# Save images as PDF
+One can save all images as pdf or save selected images as pdf.  
+
+# OCR images without rotating 
+Before running ocr on images we can set OCR engine, language and insert position.
+These options are in recognition page of Lios preferences. The selection of engine will affect the supported languages combobox.  One can decide the place in which 'output text' is added. It can be at the starting position end position or wherever the cursor blinks.
+
+After setting this, one can ocr images without rotation using ocr-selected-images-without-rotating item from the ocr menu. Or selecting the images from the image list and using the same option from the properties menu(Right click)
+
+# OCR images with rotation
+The mode rotation can be selected from the recognition page of Lios preferences. The options available are Full automatic, Partial automatic and Manual.
+Full automatic – The Lios will automatically select the apt rotation. The detection may take several seconds. Partial automatic- In partial automatic mode first scanned orientation is the model for the rest. Manual – In this you can give any orientation you like for each and every image, The rotation should be set in the recognition page of Lios preferences.  
+
+
+# OCR Rectangle selections
+One can select the region of interest from an image by drawing rectangles in the image using mouse. After selecting the regions one can OCR the items using Recognize-Selected-Areas Button shown left side of image view. For each entry in the list there will be starting X,Y,  width and height. The overlap won't be allowed. 
+
+
+
+
+
+*** Scan and OCR directly ***
+One can do scan and ocr directly using scan-and-ocr(F9) button from scan menu. This will first make a scan and add image to the list then ocr the image with respect to the rotation policy. 
+
+# Scan-and-ocr-repeatedly(Ctrl+F9) will  scan and recognize images repeatedly. The process can be stopped using stop-all-process(Ctrl+F4) button.
+
+*** Manipulation of OCR Output ***
+# New
+One can start a new book or clear the entire text by selecting new(Ctrl+N) from the File menu. This will ask confirmation if text is not saved.
+
+# Open
+To open a file in Lios, select the Open(Ctrl+O) button in File menu. 
+This will cause the Open dialog to appear. Use your mouse or keyboard to select the file that you wish to open, and then click Open. The file that you've selected will open.
+
+# Save/Save As
+To save a file in Lios, select the Save(Ctrl+S) button from the file menu.
+If you are saving a new file, the Save As dialog will appear, and you can select a name for the file, as well as the directory where you would like the file to be saved.
+
+*** Other Basic Options ***
+This includes all text manipulation tools like cut, copy, paste, and delete text.
+
+# Punch
+This is used to open text on a file and paste that text in the current cursor position. This will cause the open dialog to appear, and there you can select the file to be punched.
+
+# Append 
+Same as punch but the text will be added at the end of  the current text. 
+
+# Find
+This can be used for finding out the word in text. Finding the word in Lios can be done via Opening the find tool by Choosing Find(Ctrl+F) item from Edit menu. Enter the text that you wish to search into the Find word field.  To find the next match, click Next. To find the previous match, click Previous. One can see the context for current match above the Previous and Next buttons. Also the matched word will be highlighted. 
+
+# Find and Replace
+Editing text can be time consuming. To save time, Lios includes a Replace function that helps you to find and replace portions of text. In order to replace select Find-and-Replace(Ctrl+R) from Edit menu. Enter the text that you wish to replace into the word field. Enter the new replacement text into the Replace word field. To find the next match, click Next. To find the previous match, click Previous. One can see the context for current match below the Previous and Next buttons. To replace only the current match, click Replace. To replace all occurrences of the searched-for text, click Replace All.
+
+
+# Spell checker
+One can manually check the spelling of a text selection or the entire document. 
+To check the spelling of a text, the appropriate dictionaries must be installed. The spell check starts at the current cursor position, or at the beginning of the text selection. Click in the document, or select the text that you want to check. Choose Spell-Check(Ctrl+F7) from the  Tools menu. When a possible spelling error is encountered, the Spell check dialog opens and Lios offers some suggested corrections. Do one of the following: 
+To accept a correction, click the suggestion, and then click change. Edit the sentence in the upper text box, and then click change. Or to add the unknown word to a user-defined dictionary, click Add to user dict.
+
+
+
+*** Readability ***
+# Font and Color : - General page includes options for changing  Font, Color and  Background colour and same options for highlighting. This can increase the readability of text. 
+
+# Go-to-line 
+Select Go-to-line(Ctrl+L) from Edit menu. The go-to-line dialogue box will appear with current line number. Now type the line number  and press Enter.
+
+# Go-to-page 
+Select Go-to-Page(Ctrl+L) from Edit menu. The Go-to-Page dialogue box will appear, type the page number and press Enter.
+
+# Text Reader
+One can Read the output text using TTS via setting the cursor and activating the Start-Reader(F5) item from tools menu. One can change the speed, rate, voice and reading volume from general page of Lios preferences. One can increase or decrease the speech rate while reading using Increase-Reader-Speed (Ctrl+PageUp) and Decrease-Reader-Speed (Ctrl+PageDown) buttons on the same menu. 
+
+
+
+
+*** Utilities *** 
+# Brightness Optimizer 
+One can find the apt brightness for a book using the brightness optimizer 
+brightness checker is one of the major utilities of Lios. different books demands different brightness level depending on the quality of the paper. ocr process results best on the brightness level set. 
+It can be done using the brightness spin button in the recognition page in the Lios preferences. 
+If one is not familiar with determining the brightness of a book, can use the brightness optimizer in the scan menu. To start optimizer select Optimize-Scanner-Brightness from scan menu. Then Lios will ask you to set the following parameters. 
+
+Note that if mode of rotation in preferences is Full-Automatic or Partial-Automatic then lios will try to detect the rotation using a single scan and pop-up Optimize Scanner-Brightness dialog.
+In optimize dialog the first one is angle-to-be-rotated of rotation for optimizing,  The second one Current-Value that is existing brightness(default value is 50), The third parameter is Start, it means, the value from which the brightness check starts(default start is 10). the forth one is distance, that is, difference between brightness level set for each consecutive scanning(default distance is 10). The forth parameter is End, it means, the value from which the brightness check Ends (default end is 90). If one does not change any value and click the optimize button. 
+
+The program will scan from 10 to 90 with a gap of 10. After each scanning, the total number of words detected will be announced. After ten scanning, one can opt for further accuracy in brightness changing the values  or just click Optimize button to follow the changed default values. In the end click the apply button and ocr process will be done on the brightness level set. It is highly recommended that at the beginning of a new Book, this utility may be used. Also note that a typical page that represents the quality of the book may be selected and no movement of the page kept in the scanner may be made till the process is over.
+
+# Audio converter 
+One can use audio converter to change the text into small pieces of audio  and save it as WAV Files. You can decide the speed, pitch, split time (to decide length of each WAV files) and volume before conversion. 
+
+
+# Artha 
+One can findout the meaning of any word using artha. Select the word and Press Alt+Ctrl+W to get the meaning, synonyms, antonyms,  derivatives, word related to them, and words similar to them.
+
+
+# Saving and Loading Preferences 
+Lios Preferences dialogue box contains three pages, General, Recognition and Scanning. One can save and load preferences for each book. Also one can reset the preferences using Restore item in Preferences menu. 
+
+
+
+*** Scanner Trouble Shooting ***
+These options can be changed from scanning page of Lios Preferences.
+
+# Changing the driver 
+The next item for selecting  driver. If one driver is not working one can select the other one.
+
+# Change to Lineart or binary 
+Lineart and  binary are two modes which allow user to scan directly as black and white image. This is more appropriate for recognition. One can disable this but color scanning will take more time than lineart.
+
+# Cache Calibration
+By enabling Cache Calibration one can avoid heating scanner lamp each time.  
+
+
+
+*** Disclaimer *** 
+
+    Copyright (c) 2011-2015 Lios Development Team All rights reserved . Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following license conditions are met: 
+
+License: GPL-3 
+  http://www.gnu.org/licenses/gpl-3.0.html 
+  . 
+  This program is free software: you can redistribute it and/or modify 
+  it under the terms of the GNU General Public License as published by 
+  the Free Software Foundation, either version 3 of the License, or 
+  (at your option) any later version. 
+  . 
+  This program is distributed in the hope that it will be useful, 
+  but WITHOUT ANY WARRANTY; without even the implied warranty of 
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+  GNU General Public License for more details. 
+  . 
+  You should have received a copy of the GNU General Public License 
+  along with this program.  If not, see <http://www.gnu.org/licenses/>. 
+  . 
+  On Debian systems, the complete text of the GNU General Public License 
+  version 3 can be found in `/usr/share/common-licenses/GPL-3'.
+   
 
 FREE SOFTWARE FREE SOCIETY
