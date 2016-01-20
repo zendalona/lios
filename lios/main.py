@@ -332,12 +332,8 @@ class linux_intelligent_ocr_solution():
 	def new(self,*data):
 		if(self.textview.new()):
 			self.preferences.starting_page_number = 1
-			try:
-				file = open("{}/.lios_recent".format(macros.home_dir),"w")
+			with open("{}/.lios_recent".format(macros.home_dir),"w") as file:
 				file.write("")
-				file.close()
-			except:
-				pass
 
 	def go_to_page(self,*data):
 		spinbutton_page = widget.SpinButton(0,0,self.preferences.starting_page_number,1,5,0)
