@@ -34,10 +34,12 @@ class FileChooserDialog(Gtk.FileChooserDialog):
 		else:
 			super(FileChooserDialog,self).__init__(title,None,action,buttons=(Gtk.STOCK_SAVE,Gtk.ResponseType.OK))
 		
-		filter = Gtk.FileFilter()
-		for item in filters:
-			filter.add_pattern("*."+item)
-		self.add_filter(filter)
+		if (action != Gtk.FileChooserAction.SELECT_FOLDER):
+			filter = Gtk.FileFilter()
+			for item in filters:
+				filter.add_pattern("*."+item)
+			self.add_filter(filter)
+
 		if (dir):
 			self.set_current_folder(dir)
 
