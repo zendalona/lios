@@ -31,10 +31,10 @@ supported_pdf_formats = ["pdf"]
 
 version = "2.0"
 
-logo_file = "/usr/share/lios/lios"
+logo_file = "/usr/share/lios/lios.png"
 
 
-readme_file = "/usr/share/lios/readme"
+readme_file = "/usr/share/lios/readme.text"
 
 app_name = "Linux-intelligent-ocr-solution"
 

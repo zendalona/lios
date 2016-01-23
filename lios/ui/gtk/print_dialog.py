@@ -106,7 +106,7 @@ class print_with_action():
 
 if __name__ == "__main__":
 	data=""
-	file = open("/usr/share/lios/readme","r")
+	file = open("/usr/share/lios/readme.text","r")
 	for x in file.readlines():
 		data = data + x
 	action = Gtk.PrintOperationAction.PREVIEW
