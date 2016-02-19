@@ -26,6 +26,7 @@ from lios import localization
 from lios.ui.gtk import print_dialog
 
 import queue
+import os
 
 _ = localization._
 
@@ -36,6 +37,7 @@ class BasicTextView(text_view.TextView):
 		self.q2 = queue.LifoQueue()
 		self.connect_insert(self.push)
 		self.connect_delete(self.push)
+		self.bookmark_list = []
 		
 		#This variable is to avoid the reverse event 
 		#while pressing undo or redo that again trigger
@@ -93,7 +95,7 @@ class BasicTextView(text_view.TextView):
 			macros.supported_text_formats,macros.home_dir)
 		response = open_file.run()
 		if response == file_chooser.FileChooserDialog.ACCEPT:
-			to_read = open("%s" % (open_file.get_filename()))
+			to_read = open(open_file.get_filename())
 			to_open = to_read.read()
 			try:
 				self.set_text(to_open)
@@ -101,6 +103,7 @@ class BasicTextView(text_view.TextView):
 					pass
 			else:
 				self.save_file_name = open_file.get_filename()
+				self.import_bookmarks_using_filename()
 				#self.textbuffer.place_cursor(self.textbuffer.get_end_iter())
 		open_file.destroy()
 
@@ -118,6 +121,7 @@ class BasicTextView(text_view.TextView):
 			if response == file_chooser.FileChooserDialog.ACCEPT:
 				self.save_file_name = save_file.get_filename()
 				open("%s" %(self.save_file_name),'w').write(text)
+				self.save_bookmark_table()
 				self.set_modified(False)	
 				save_file.destroy()
 				return True
@@ -126,6 +130,7 @@ class BasicTextView(text_view.TextView):
 				return False
 		else:
 			open(self.save_file_name,'w').write(text)
+			self.save_bookmark_table()
 			self.set_modified(False)
 			return True		
 
@@ -156,7 +161,195 @@ class BasicTextView(text_view.TextView):
 			text_to_insert_at_cursor = file.read()
 			self.insert_text(text_to_insert_at_cursor,1,True)
 		insert_at_cursor_dialog.destroy()
+	
+	def open_bookmark_table(self,*data):
+		window_bookmark = window.Window(_("Bookmark Table"))
+		list_view = widget.ListView(_("Select the bookmark"))
+		for item in self.bookmark_list:
+			name = item[0]
+			list_view.add_item(name)
 		
+		def jump(*data):
+			index = list_view.get_selected_item_index()
+			self.move_cursor_to_mark(self.bookmark_list[index][1])
+			self.highlights_cursor_line()
+			window_bookmark.destroy()
+
+		def scroll_to_position(*data):
+			index = list_view.get_selected_item_index()
+			self.move_cursor_to_mark(self.bookmark_list[index][1])
+			self.highlights_cursor_line()
+			
+		
+		def delete(*data):
+			index = list_view.get_selected_item_index()
+			self.bookmark_list.pop(index)
+			list_view.remove_selected_item()
+			self.save_bookmark_table("None")
+
+		def close(*data):
+			window_bookmark.destroy()
+		
+		
+
+		scroll_box_bookmark = containers.ScrollBox()
+		scroll_box_bookmark.add(list_view)
+		
+		button_jump = widget.Button(_("Jump"))
+		button_jump.connect_function(jump)
+		
+		button_scroll_to_position = widget.Button(_("Scroll Text to position"))
+		button_scroll_to_position.connect_function(scroll_to_position)
+			
+		button_delete = widget.Button(_("Delete"))
+		button_delete.connect_function(delete)
+				
+		button_close = widget.Button(_("Close"))
+		button_close.connect_function(close)	
+			
+		list_view.connect_on_select_callback(jump)
+		
+
+		grid_bookmark = containers.Grid()
+		grid_bookmark.add_widgets([(scroll_box_bookmark,4,1),containers.Grid.NEW_ROW,
+			(button_jump,1,1,False,False),(button_scroll_to_position,1,1,False,False),
+			(button_delete,1,1,False,False),(button_close,1,1,False,False)])
+
+		
+		window_bookmark.add(grid_bookmark)
+		window_bookmark.set_default_size(500,200)
+		window_bookmark.show_all()
+
+	def import_bookmarks_using_filename(self):
+		try:
+			self.bookmark_list = []
+			name = self.save_file_name
+			name = name.replace("/","|")
+			name = name.replace(" ","#")
+			with open(macros.bookmarks_dir+name) as file:
+				for line in file:
+					mark = self.get_mark_at_line(int(line.split()[0]))
+					name = line.split()[1:]
+					self.bookmark_list.append((" ".join(name),mark))
+		except:
+			pass		
+
+	def open_all_bookmark_table(self,*data):
+		window_bookmark = window.Window(_("Bookmark Table"))		
+		list_view = widget.ListView(_("Select the bookmark"))
+		for bookmark_file in os.listdir(macros.bookmarks_dir):
+			print("Bookmark File : "+bookmark_file);
+			with open(macros.bookmarks_dir+bookmark_file) as file:
+				for line in file:
+					list_view.add_item(bookmark_file+"~"+line)
+		
+		def jump(*data):
+			item = list_view.get_selected_item()
+			filename = item.split("~")[0].replace("|","/").replace("#"," ")
+			line_number = item.split("~")[1].split()[0]
+			text = open(filename).read()
+			self.set_text(text)
+			
+			#self.move_cursor_to_line(int(line_number))
+			print(int(line_number),filename)
+			
+			self.save_file_name = filename
+			self.import_bookmarks_using_filename()
+			
+			mark = self.get_mark_at_line(int(line_number))
+			self.move_cursor_to_mark(mark)
+			
+			self.highlights_cursor_line()
+			window_bookmark.destroy()			
+		
+		def close(*data):
+			window_bookmark.destroy()
+		
+		
+
+		scroll_box_bookmark = containers.ScrollBox()
+		scroll_box_bookmark.add(list_view)
+		
+		button_jump = widget.Button(_("Jump"))
+		button_jump.connect_function(jump)	
+		button_close = widget.Button(_("Close"))
+		button_close.connect_function(close)		
+		list_view.connect_on_select_callback(jump)
+		
+
+		grid_bookmark = containers.Grid()
+		grid_bookmark.add_widgets([(scroll_box_bookmark,2,1),containers.Grid.NEW_ROW,
+			(button_jump,1,1,False,False),(button_close,1,1,False,False)])
+
+		window_bookmark.add(grid_bookmark)
+		window_bookmark.set_default_size(500,200)
+		window_bookmark.show_all()
+		
+
+	def save_bookmark_table(self,*data):
+		#name = re.sub('[^.-/#0-9a-zA-Z]+', '#', self.save_file_name)
+		name = self.save_file_name
+		name = name.replace("/","|")
+		name = name.replace(" ","#")
+		
+		file = open(macros.bookmarks_dir+name,"w+")
+		for item in self.bookmark_list:
+			line_number = self.get_line_number_of_mark(item[1])
+			file.write("{0} {1} \n".format(line_number,item[0]))
+		file.close()
+
+	def import_bookmarks_from_file(self,*data):
+		open_file = file_chooser.FileChooserDialog(_("Select the bookmark file to import"),
+			file_chooser.FileChooserDialog.OPEN,
+			macros.supported_text_formats,macros.home_dir)
+		response = open_file.run()
+		if response == file_chooser.FileChooserDialog.ACCEPT:
+			with open(open_file.get_filename()) as file:
+				for line in file:
+					mark = self.get_mark_at_line(int(line.split()[0]))
+					name = line.split()[1:]
+					self.bookmark_list.append((" ".join(name),mark))
+		open_file.destroy()
+		
+		
+	def create_bookmark(self,*data):
+		try:
+			self.save_file_name
+		except:
+			dlg = dialog.Dialog(_("Warning!"),(_("Close!"), dialog.Dialog.BUTTON_ID_2))
+			label = widget.Label(_("File must be saved inorder to bookmark the text!"))
+			dlg.add_widget(label)
+			dlg.show_all()
+			response = dlg.run()
+			dlg.destroy()
+			return
+			
+		entry_sentence = widget.Entry()
+		text = self.get_current_line_text()
+		entry_sentence.set_text(text)		
+		dlg = dialog.Dialog(_("Create new Bookmark"),(_("Bookmark"), dialog.Dialog.BUTTON_ID_1,_("Close!"), dialog.Dialog.BUTTON_ID_2))
+		dlg.add_widget_with_label(entry_sentence,_("Name : "))
+		entry_sentence.grab_focus()
+		dlg.show_all()
+		response = dlg.run()
+		
+		if response == dialog.Dialog.BUTTON_ID_1:
+			# Note that this ### string will be deleted automatically 
+			# Because it's considered as line number
+			sentence = entry_sentence.get_text()
+			# Note that this mark can't be used directly
+			# Because it will always hold cursor position
+			mark = self.get_cursor_mark()
+			line_number = self.get_line_number_of_mark(mark)
+			real_mark = self.get_mark_at_line(line_number)
+			self.bookmark_list.append((sentence,real_mark))
+			self.save_bookmark_table("None")
+			dlg.destroy()
+		else:
+			dlg.destroy()		
+
+
+
 	
 	def open_find_dialog(self,*data):
 		entry = widget.Entry()
@@ -364,6 +557,7 @@ class BasicTextView(text_view.TextView):
 		if response == dialog.Dialog.BUTTON_ID_1:
 			to = spinbutton_line.get_value()
 			self.move_cursor_to_line(to)
+			self.highlights_cursor_line()
 			dlg.destroy()
 		else:
 			dlg.destroy()

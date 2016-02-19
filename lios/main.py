@@ -51,12 +51,20 @@ def on_thread(function):
 
 class linux_intelligent_ocr_solution():
 	def __init__ (self,file_list=None):
-		
 		try:
 			os.mkdir(macros.tmp_dir)
 		except:
 			pass
-		
+
+		try:
+			os.mkdir(macros.home_dir+"/lios")
+		except:
+			pass
+
+		try:
+			os.mkdir(macros.bookmarks_dir)
+		except:
+			pass
 
 		#Icon View
 		scroll_box_iconview = containers.ScrollBox()
@@ -153,7 +161,7 @@ class linux_intelligent_ocr_solution():
 		
 		#Load Preferences
 		self.preferences = preferences.lios_preferences()
-		self.preferences.set_from_file("{}/.lios_preferences.cfg".format(macros.home_dir))
+		self.preferences.set_from_file(macros.preferences_file_path)
 		self.preferences.set_avalable_scanner_drivers([ item.name for item in self.available_scanner_driver_list])
 		self.preferences.set_avalable_ocr_engines([ (item.name,item.get_available_languages())
 												for item in self.available_ocr_engine_list ])
@@ -219,6 +227,10 @@ class linux_intelligent_ocr_solution():
 		[_("Tools"),(_("Spell-Check"),self.textview.open_spell_check,"<Control>F7"),
 			(_("Audio-Converter"),self.textview.audio_converter,"None"),
 			(_("Dictionary"),self.artha,"<Control><Alt>W"),
+			(_("Bookmark"),self.textview.create_bookmark,"<Control>D"),
+			(_("Bookmark-Table"),self.textview.open_bookmark_table,"<Control><Alt>D"),
+			(_("Import-Bookmarks"),self.textview.import_bookmarks_from_file,"<Control><Alt>D"),
+			(_("Bookmark-Table-Complete"),self.textview.open_all_bookmark_table,"<Control><Alt><Super>D"),
 			(_("Start-Reader"),self.start_reader,"F5"),
 			(_("Increase-Reader-Speed"),self.increase_reader_speed,"<Ctrl>Prior"),
 			(_("Decrease-Reader-Speed"),self.decrease_reader_speed,"<Ctrl>Next"),
@@ -292,9 +304,13 @@ class linux_intelligent_ocr_solution():
 					text = open(item).read()
 					self.insert_text_to_textview(text)
 					text_updated = True
+					if(len(file_list) == 2):
+						self.textview.save_file_name = file_list[1]
+						self.textview.import_bookmarks_using_filename()
+					
 		if (not text_updated):
 			try:
-				file = open("{}/.lios_recent".format(macros.home_dir),encoding="utf-8")
+				file = open(macros.recent_file_path,encoding="utf-8")
 				self.textview.set_text(file.read())
 			except:
 				pass
@@ -332,7 +348,7 @@ class linux_intelligent_ocr_solution():
 	def new(self,*data):
 		if(self.textview.new()):
 			self.preferences.starting_page_number = 1
-			with open("{}/.lios_recent".format(macros.home_dir),"w") as file:
+			with open(macros.recent_file_path,"w") as file:
 				file.write("")
 
 	def go_to_page(self,*data):
@@ -706,7 +722,7 @@ class linux_intelligent_ocr_solution():
 		self.textview.insert_text(text,self.preferences.insert_position)
 		text = self.textview.get_text()
 		loop.release_lock()
-		with open("{}/.lios_recent".format(macros.home_dir),"w",encoding="utf-8") as file:
+		with open(macros.recent_file_path,"w",encoding="utf-8") as file:
 			file.write(text)
 	
 	@on_thread	
@@ -1285,17 +1301,17 @@ pacman -S aspell-fr""").format(languages[self.preferences.language]))
 	def open_preferences_general_page(self,*data):
 		if(self.preferences.open_configure_dialog(0)):
 			self.make_preferences_effective()
-			self.preferences.save_to_file("{}/.lios_preferences.cfg".format(macros.home_dir))		
+			self.preferences.save_to_file(macros.preferences_file_path)		
 
 	def open_preferences_recognition_page(self,*data):
 		if(self.preferences.open_configure_dialog(1)):
 			self.make_preferences_effective()
-			self.preferences.save_to_file("{}/.lios_preferences.cfg".format(macros.home_dir))		
+			self.preferences.save_to_file(macros.preferences_file_path)		
 
 	def open_preferences_scanning_page(self,*data):
 		if(self.preferences.open_configure_dialog(2)):
 			self.make_preferences_effective()
-			self.preferences.save_to_file("{}/.lios_preferences.cfg".format(macros.home_dir))
+			self.preferences.save_to_file(macros.preferences_file_path)
 
 	def open_text(self,widget,data=None):
 		self.textview.open()
@@ -1378,7 +1394,7 @@ pacman -S aspell-fr""").format(languages[self.preferences.language]))
 		for item in self.scanner_objects:
 			item.close()
 		loop.stop_main_loop()
-		self.preferences.save_to_file("{}/.lios_preferences.cfg".format(macros.home_dir))
+		self.preferences.save_to_file(macros.preferences_file_path)
 
 if __name__ == "__main__":
 	linux_intelligent_ocr_solution()

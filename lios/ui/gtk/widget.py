@@ -107,6 +107,22 @@ class ListView(Gtk.TreeView):
 		tree_selection =  self.get_selection()
 		model,tree_iter = tree_selection.get_selected()
 		return model.get_value(tree_iter,0)
+
+	def get_selected_item_index(self):
+		tree_selection =  self.get_selection()
+		model,tree_iter = tree_selection.get_selected()
+		i = 0;
+		for item in model:
+			if item[0] == model[tree_iter][0]:
+				return i;
+			i = i + 1;
+		return -1;
+
+	def remove_selected_item(self):
+		tree_selection =  self.get_selection()
+		model,tree_iter = tree_selection.get_selected()
+		model.remove(tree_iter)
+
 	
 	def clear(self):
 		model = self.get_model()

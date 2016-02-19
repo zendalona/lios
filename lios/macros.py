@@ -23,6 +23,12 @@ home_dir = os.environ['HOME']
 
 tmp_dir = "/tmp/Lios/"
 
+bookmarks_dir = home_dir+"/lios/bookmarks/"
+
+preferences_file_path = home_dir+"/lios/lios_preferences"
+
+recent_file_path = home_dir+"/lios/lios_recent"
+
 supported_image_formats = ["png","pnm","jpg","jpeg","tif","tiff","bmp","pbm","ppm"]
 
 supported_text_formats = ["txt","text"]

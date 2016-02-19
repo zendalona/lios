@@ -124,7 +124,53 @@ class TextView(Gtk.TextView):
 		start, end = buffer.get_bounds()
 		buffer.delete(start, end)
 	
+	# Placing a bookmark
+	def get_mark_at_line(self,line):
+		buffer = self.get_buffer()
+		iter = buffer.get_iter_at_line(line)
+		return buffer.create_mark(None,iter,True)
+		
+	# Moving to existing bookmark
+	def move_cursor_to_mark(self,mark):
+		buffer = self.get_buffer()
+		iter = buffer.get_iter_at_mark(mark)
+		buffer.place_cursor(iter)
+		self.scroll_to_iter(iter, 0.0,False,0.0,0.0)
+	
+	# For saving Bookmark with line number
+	def get_line_number_of_mark(self,mark):
+		buffer = self.get_buffer()
+		iter = buffer.get_iter_at_mark(mark)
+		return iter.get_line()
+		
+	def get_cursor_mark(self):
+		buffer = self.get_buffer()
+		return buffer.get_insert()
+	
+	# For autofilling new bookmark name
+	def get_current_line_text(self):
+		buffer = self.get_buffer()
+		mark = buffer.get_insert()
+		start_iter = buffer.get_iter_at_mark(mark)
+		end_iter = start_iter.copy()
+		start_iter.backward_sentence_start()
+		end_iter.forward_to_line_end()
+		return buffer.get_text(start_iter,end_iter,True)		
+	
+	# For highlighting bookmark position and go-to-line
+	def highlights_cursor_line(self):
+		buffer = self.get_buffer()
+		self.remove_all_highlights()
+		mark = buffer.get_insert()
+		start_iter = buffer.get_iter_at_mark(mark)
+		end_iter = start_iter.copy()
+		end_iter.forward_to_line_end()
+		self.scroll_to_iter(start_iter, 0.0,False,0.0,0.0)
+		buffer.apply_tag(self.highlight_tag, start_iter, end_iter)
+	
 	#Find , Find and Replace , Spell check , TextReader
+	
+
 	
 	def remove_all_highlights(self):
 		buffer = self.get_buffer()
