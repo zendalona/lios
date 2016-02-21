@@ -237,16 +237,18 @@ class BasicTextView(text_view.TextView):
 			pass		
 
 	def open_all_bookmark_table(self,*data):
+		all_bookmark_list = []
 		window_bookmark = window.Window(_("Bookmark Table"))		
 		list_view = widget.ListView(_("Select the bookmark"))
 		for bookmark_file in os.listdir(macros.bookmarks_dir):
-			print("Bookmark File : "+bookmark_file);
 			with open(macros.bookmarks_dir+bookmark_file) as file:
 				for line in file:
-					list_view.add_item(bookmark_file+"~"+line)
+					all_bookmark_list.append(bookmark_file+"~"+line)
+					list_view.add_item(bookmark_file.split("|")[-1]+" : "+line)
 		
 		def jump(*data):
-			item = list_view.get_selected_item()
+			index = list_view.get_selected_item_index()
+			item = all_bookmark_list[index]
 			filename = item.split("~")[0].replace("|","/").replace("#"," ")
 			line_number = item.split("~")[1].split()[0]
 			text = open(filename).read()
