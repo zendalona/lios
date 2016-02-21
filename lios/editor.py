@@ -115,12 +115,14 @@ class BasicTextView(text_view.TextView):
 			save_file = file_chooser.FileChooserDialog(_("Save "),
 				file_chooser.FileChooserDialog.SAVE,
 				macros.supported_text_formats,None)
-			save_file.set_current_name(text[0:10]);
+			save_file.set_current_name(text[0:10]+".text");
 			save_file.set_do_overwrite_confirmation(True);			
 			response = save_file.run()
 			if response == file_chooser.FileChooserDialog.ACCEPT:
 				self.save_file_name = save_file.get_filename()
-				open("%s" %(self.save_file_name),'w').write(text)
+				if(self.save_file_name.split(".")[-1] not in macros.supported_text_formats):
+					self.save_file_name = self.save_file_name + ".text"
+				open(self.save_file_name,'w').write(text)
 				self.save_bookmark_table()
 				self.set_modified(False)	
 				save_file.destroy()
