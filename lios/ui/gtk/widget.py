@@ -28,6 +28,9 @@ from lios.ui.gtk import icon
 class Entry(Gtk.Entry):
 	def __init__(self):
 		super(Entry,self).__init__()
+		
+	def connect_function(self,function):
+		self.connect("activate",function)
 	#set_text()
 	#get_text()		
 		
@@ -64,6 +67,9 @@ class SpinButton(Gtk.SpinButton):
 		self.set_adjustment(adj)
 		self.set_value(value)
 
+	def connect_function(self,function):
+		self.connect("clicked",function)
+		
 	#def set_value(self,value):
 	#	self.set_value(value)
 	

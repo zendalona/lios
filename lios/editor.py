@@ -376,6 +376,8 @@ class BasicTextView(text_view.TextView):
 		label.set_use_markup(True)
 		label.set_mnemonic_widget(entry)
 		
+		entry.connect_function(find_next)
+		
 		next_button = widget.Button(_("Next"))
 		next_button.connect_function(find_next)	
 		previous_button = widget.Button(_("Previous"))
@@ -429,6 +431,10 @@ class BasicTextView(text_view.TextView):
 		label_replace_word = widget.Label(_("<b> Replace word : </b>"))
 		label_replace_word.set_use_markup(True)
 		label_replace_word.set_mnemonic_widget(entry_replace_word)
+		
+		entry_word.connect_function(find_next)
+		entry_replace_word.connect_function(find_next)
+		
 		
 		button_next = widget.Button(_("Next"))
 		button_next.connect_function(find_next)	
@@ -530,6 +536,7 @@ class BasicTextView(text_view.TextView):
 		close_button.connect_function(close)
 		
 		list_view.connect_on_select_callback(on_suggestion_selected)
+		entry.connect_function(change)
 				
 		grid.add_widgets([(label,1,1,False,False),
 			(entry,6,1,False,False),containers.Grid.NEW_ROW,
