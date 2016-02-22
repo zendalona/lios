@@ -1019,7 +1019,8 @@ class linux_intelligent_ocr_solution():
 			#self.announce(_("Recognising {}").format(self.liststore_images[item[0]][1]))
 			progress = progress + progress_step;			
 			text,angle = self.ocr(item,mode,angle)
-			self.insert_text_to_textview(text,self.preferences.insert_position)
+			self.insert_text_to_textview(text,self.preferences.insert_position,True)
+			self.preferences.update_page_number()
 			loop.acquire_lock()
 			self.iconview.reload_preview(item)
 			loop.release_lock()
@@ -1052,7 +1053,8 @@ class linux_intelligent_ocr_solution():
 			#self.announce(_("Recognising {} without rotating").format(self.liststore_images[item[0]][1]))
 			progress = progress + progress_step;
 			text,angle = self.ocr(item,2,00)
-			self.insert_text_to_textview(text,self.preferences.insert_position)
+			self.insert_text_to_textview(text,self.preferences.insert_position,True)
+			self.preferences.update_page_number()
 			if(self.process_breaker):
 				break
 		self.notify_information(_("completed!"),0.0030,0.01)
