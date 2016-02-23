@@ -301,7 +301,7 @@ class linux_intelligent_ocr_solution():
 					self.import_images_from_pdf(item)
 			
 				if item.split('.')[-1] in macros.supported_text_formats:
-					text = open(item).read()
+					text = editor.read_text_from_file(item)
 					self.insert_text_to_textview(text)
 					text_updated = True
 					if(len(file_list) == 2):

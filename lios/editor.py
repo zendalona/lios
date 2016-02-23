@@ -28,7 +28,42 @@ from lios.ui.gtk import print_dialog
 import queue
 import os
 
+from encodings.aliases import aliases
+
+
 _ = localization._
+
+def read_text_from_file(filename,enc='utf8'):
+	try:
+		text = open(filename,encoding=enc).read()
+		return text
+	except	UnicodeDecodeError:
+		list = sorted(aliases.keys())
+		combobox = widget.ComboBox()
+		for item in macros.major_character_encodings_list:
+			if(item in list):
+				combobox.add_item(item)
+		for item in list:
+			combobox.add_item(item)
+		combobox.set_active(0)
+
+		dlg = dialog.Dialog(_("{} Decode error Select Other Character Encoding".format(enc)),(_("Select"), dialog.Dialog.BUTTON_ID_1))
+		dlg.add_widget_with_label(combobox,_("Character Encoding : "))
+		combobox.grab_focus()
+		dlg.show_all()
+		response = dlg.run()
+
+		if response == dialog.Dialog.BUTTON_ID_1:
+			index = combobox.get_active()
+			dlg.destroy()
+			text = read_text_from_file(filename,enc=list[index])
+			return text
+		else:
+			dlg.destroy()
+			return ""
+
+
+
 
 class BasicTextView(text_view.TextView):
 	def __init__(self):
@@ -95,8 +130,7 @@ class BasicTextView(text_view.TextView):
 			macros.supported_text_formats,macros.home_dir)
 		response = open_file.run()
 		if response == file_chooser.FileChooserDialog.ACCEPT:
-			to_read = open(open_file.get_filename())
-			to_open = to_read.read()
+			to_open = read_text_from_file(open_file.get_filename())
 			try:
 				self.set_text(to_open)
 			except FileNotFoundError:
@@ -149,9 +183,8 @@ class BasicTextView(text_view.TextView):
 			file_chooser.FileChooserDialog.OPEN,macros.supported_text_formats)
 		append_file_dialog.set_current_folder("~/")
 		append_file_dialog.run()
-		with open(append_file_dialog.get_filename()) as file:
-			text_to_append = file.read()
-			self.insert_text(text_to_append,2,True)
+		text_to_append = read_text_from_file(append_file_dialog.get_filename())
+		self.insert_text(text_to_append,2,True)
 		append_file_dialog.destroy()
 	
 	def punch(self,*data):
@@ -159,9 +192,8 @@ class BasicTextView(text_view.TextView):
 			file_chooser.FileChooserDialog.OPEN,macros.supported_text_formats)
 		insert_at_cursor_dialog.set_current_folder("~/")
 		insert_at_cursor_dialog.run()
-		with open(insert_at_cursor_dialog.get_filename()) as file:
-			text_to_insert_at_cursor = file.read()
-			self.insert_text(text_to_insert_at_cursor,1,True)
+		text_to_insert_at_cursor = read_text_from_file(insert_at_cursor_dialog.get_filename())
+		self.insert_text(text_to_insert_at_cursor,1,True)
 		insert_at_cursor_dialog.destroy()
 	
 	def open_bookmark_table(self,*data):
