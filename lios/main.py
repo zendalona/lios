@@ -50,7 +50,7 @@ def on_thread(function):
 
 
 class linux_intelligent_ocr_solution():
-	def __init__ (self,file_list=None):
+	def __init__ (self,file_list=[]):
 		try:
 			os.mkdir(macros.tmp_dir)
 		except:
@@ -73,8 +73,8 @@ class linux_intelligent_ocr_solution():
 		scroll_box_iconview.add(self.iconview)
 		box_iconview = containers.Box(containers.Box.VERTICAL)
 		toolbar_iconview = containers.Toolbar(containers.Toolbar.HORIZONTAL,
-			[(_("Import-Pdf"),self.import_pdf),(_("Import-Image"),self.import_image),
-			(_("Import-Folder"),self.import_folder),(_("Recognize"),self.ocr_selected_images),
+			[('Open',self.open_files),(_("Take-Screenshot"),self.take_rectangle_screenshot),
+			(_("Scan-Using-Webcam"),self.scan_using_cam),(_("Recognize"),self.ocr_selected_images),
 			(_("Clear"),self.iconview_remove_all_images),])
 		#Context menu
 		self.context_menu_iconview = menu.ContextMenu([
@@ -133,7 +133,7 @@ class linux_intelligent_ocr_solution():
 		self.textview.set_hexpand(True)		
 		box_editor = containers.Box(containers.Box.HORIZONTAL)
 		toolbar_editor = containers.Toolbar(containers.Toolbar.VERTICAL,
-			[(_("New"),self.new),('Open',self.open_text),
+			[(_("New"),self.new),('Open',self.open_files),
 			(_("Save"),self.textview.save),containers.Toolbar.SEPARATOR,
 			(_("Spell-Check"),self.textview.open_spell_check),containers.Toolbar.SEPARATOR,
 			(_("Undo"),self.textview.undo),(_("Redo"),self.textview.redo),
@@ -169,9 +169,7 @@ class linux_intelligent_ocr_solution():
 		
 		menubar = menu.MenuBar(
 		[[_("File"),(_("New"),self.textview.new,"<Control>N"),menu.SEPARATOR,
-			(_("Import-Image"),self.import_image,"<Control>I"),(_("Import-Pdf"),self.import_pdf,"None"),
-			(_("Import-Folder"),self.import_folder,"None"),menu.SEPARATOR,
-			(_("Open"),self.open_text,"<Control>O"),		
+			(_("Open"),self.open_files,"<Control>O"),
 			(_("Save"),self.textview.save,"<Control>S"),(_("Save-As"),self.textview.save_as,"<Shift><Control>N"),
 			(_("Export-Text-As-Pdf"),self.textview.print_to_pdf,"<Control>E"),(_("Print"),self.textview.open_print_dialog,"None"),
 			(_("Print-Preview"),self.textview.print_preview,"None"),menu.SEPARATOR,
@@ -255,9 +253,7 @@ class linux_intelligent_ocr_solution():
 		button_scan = widget.Button(_("Scan"))
 		button_scan.connect_function(self.scan_single_image)		
 		toolbar_main = containers.Toolbar(containers.Toolbar.HORIZONTAL,
-			[(_("Take-Screenshot"),self.take_rectangle_screenshot),
-			(_("Scan-Using-Webcam"),self.scan_using_cam),
-			(_("Preferences"),self.open_preferences_general_page),
+			[(_("Preferences"),self.open_preferences_general_page),
 			(_("Video-Tutorials"),self.open_video_tutorials),
 			(_("About"),self.about),
 			(_("Quit"),self.quit)])				
@@ -288,32 +284,16 @@ class linux_intelligent_ocr_solution():
 			(self.statusbar,4,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND),
 			(self.progressbar,1,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND),])
 
-		text_updated = False
-		if(file_list):
-			for item in file_list:
-				if item.split('.')[-1] in macros.supported_image_formats:
-					filename = item.split("/")[-1:][0]
-					destination = "{0}{1}".format(macros.tmp_dir,filename.replace(' ','-'))
-					destination = self.get_feesible_filename_from_filename(destination)
-					self.add_image_to_list(item,destination,False)
-
-				if item.split('.')[-1] in ["pdf","Pdf"]:
-					self.import_images_from_pdf(item)
-			
-				if item.split('.')[-1] in macros.supported_text_formats:
-					text = editor.read_text_from_file(item)
-					self.insert_text_to_textview(text)
-					text_updated = True
-					if(len(file_list) == 2):
-						self.textview.save_file_name = file_list[1]
-						self.textview.import_bookmarks_using_filename()
-					
-		if (not text_updated):
+		if(len(file_list) > 1 ):
+			self.open_list_of_files(file_list[1:])
 			try:
-				file = open(macros.recent_file_path,encoding="utf-8")
-				self.textview.set_text(file.read())
+				self.textview.save_file_name
 			except:
-				pass
+				try:
+					file = open(macros.recent_file_path,encoding="utf-8")
+					self.textview.set_text(file.read())
+				except:
+					pass
 		
 		
 		self.old_language = -1
@@ -410,29 +390,6 @@ class linux_intelligent_ocr_solution():
 		else:
 			shutil.copyfile(file_name_with_directory,destination)		
 		self.iconview.add_item(destination)
-
-	def import_image(self,wedget,data=None):
-		file_chooser_open_image = FileChooserDialog(_("Select image file to import"),
-				FileChooserDialog.OPEN,macros.supported_image_formats,macros.home_dir)		
-		file_chooser_open_image.set_select_multiple(True)
-		response = file_chooser_open_image.run()
-		if response == FileChooserDialog.ACCEPT:
-			for file_name_with_directory in file_chooser_open_image.get_filenames():
-				filename = file_name_with_directory.split("/")[-1:][0]
-				destination = "{0}{1}".format(macros.tmp_dir,filename.replace(' ','-'))
-				destination = self.get_feesible_filename_from_filename(destination)
-				self.add_image_to_list(file_name_with_directory,destination,False)
-		file_chooser_open_image.destroy()
-
-	def import_pdf(self,*data):
-		open_file = FileChooserDialog(_("Select Pdf file to import"),
-				FileChooserDialog.OPEN,["pdf","Pdf"],macros.home_dir)
-		open_file.set_current_folder(macros.home_dir)
-		response = open_file.run()
-		if response == FileChooserDialog.ACCEPT:
-			pdf_filename_full = open_file.get_filename()
-			self.import_images_from_pdf(pdf_filename_full)
-			open_file.destroy()
 	
 	@on_thread
 	def import_images_from_pdf(self,pdf_filename_full):
@@ -467,31 +424,7 @@ class linux_intelligent_ocr_solution():
 					loop.release_lock()
 		os.rmdir(destination.split(".")[0])
 		self.notify_information(_("Completed!"),0.0030,0.01)
-#		self.make_image_widgets_active(lock=True)		
-	
-	def import_folder(self,wedget,data=None):
-		#self.make_image_widgets_inactive()
-		folder = FileChooserDialog(_("Select Folder contains images to import"),
-			FileChooserDialog.OPEN_FOLDER,macros.supported_image_formats,macros.home_dir)		
-		response = folder.run()
-		if response == FileChooserDialog.ACCEPT:
-			image_directory = folder.get_current_folder()
-			folder.destroy()
-			file_list = os.listdir(image_directory)
-			progress_step = len(file_list)/(10^len(file_list));
-			progress = 0;			
-			for image in sorted(file_list):
-				try:
-					if image.split(".")[-1] in macros.supported_image_formats:
-						destination = "{0}{1}".format(macros.tmp_dir,image.replace(' ','-'))
-						self.notify_information(_("Importing image {}").format(destination),progress,None)
-						destination = self.get_feesible_filename_from_filename(destination)
-						self.add_image_to_list("{0}/{1}".format(image_directory,image),destination,False)					
-				except IndexError:
-					pass
-				progress = progress + progress_step;
-			self.notify_information(_("Completed!"),0.0030,0.01)
-		#self.make_image_widgets_active()
+#		self.make_image_widgets_active(lock=True)
 
 	@on_thread	#should continue the loop to get window minimize 
 	def take_full_screenshot(self,data):
@@ -1315,9 +1248,41 @@ pacman -S aspell-fr""").format(languages[self.preferences.language]))
 			self.make_preferences_effective()
 			self.preferences.save_to_file(macros.preferences_file_path)
 
-	def open_text(self,widget,data=None):
-		self.textview.open()
-	
+	def open_files(self,widget,data=None):
+		file_chooser_open_files = FileChooserDialog(_("Select files to open"),
+				FileChooserDialog.OPEN,macros.supported_image_formats+
+				  macros.supported_text_formats+macros.supported_pdf_formats,
+				  macros.home_dir)
+		file_chooser_open_files.set_current_folder(macros.home_dir)
+		file_chooser_open_files.set_select_multiple(True)
+		response = file_chooser_open_files.run()
+		if response == FileChooserDialog.ACCEPT:
+			file_list = file_chooser_open_files.get_filenames()
+			file_chooser_open_files.destroy()
+			self.open_list_of_files(file_list)
+		else:
+			file_chooser_open_files.destroy()
+
+	def open_list_of_files(self,file_list):
+		for item in file_list:
+			if item.split('.')[-1] in macros.supported_image_formats:
+				filename = item.split("/")[-1:][0]
+				destination = "{0}{1}".format(macros.tmp_dir,filename.replace(' ','-'))
+				destination = self.get_feesible_filename_from_filename(destination)
+				self.add_image_to_list(item,destination,False)
+
+			if item.split('.')[-1] in ["pdf","Pdf"]:
+				self.import_images_from_pdf(item)
+
+			if item.split('.')[-1] in macros.supported_text_formats:
+				text = editor.read_text_from_file(item)
+				if(len(file_list) == 1):
+					self.textview.set_text(text)
+					self.textview.save_file_name = file_list[0]
+					self.textview.import_bookmarks_using_filename()
+				else:
+					self.textview.insert_text(text,editor.BasicTextView.AT_END)
+
 	@on_thread
 	def start_reader(self,*data):
 		self.reading_breaker = False
