@@ -118,10 +118,14 @@ class BasicTextView(text_view.TextView):
 				return 0;
 			else:
 				self.delete_all_text()
+				del self.save_file_name
+				self.bookmark_list = []
 				self.grab_focus();
 				return 1;
 		else:
 			self.delete_all_text()
+			del self.save_file_name
+			self.bookmark_list = []
 			return 1;
 
 	def open(self):
