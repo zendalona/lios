@@ -108,6 +108,9 @@ class TreeView(Gtk.TreeView):
 	
 	def connect_cursor_change_function(self,function):
 		self.cursor_change_handler_id = self.connect("cursor-changed", lambda x: function())
+
+	def connect_rows_reordered_function(self,function):
+		self.rows_reordered_handler_id = self.connect("drag-end", lambda x,y: function())
 		
 	def get_selected_row_index(self):
 		item = self.get_selection()

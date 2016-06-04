@@ -57,6 +57,9 @@ class ImageViewer(containers.Paned):
 		#Drawing List Tree View
 		self.treeview = tree_view.TreeView([("X",int,True),("Y",int,True),("Width",int,True),("Height",int,True),("Selected",bool,False)],self.edited_callback)
 		self.treeview.connect_cursor_change_function(self.treeview_cursor_changed)
+		self.treeview.connect_rows_reordered_function(self.treeview_rows_reordered)
+		self.treeview.set_reorderable(True)
+
 		self.rs = []
 
 
@@ -107,7 +110,10 @@ class ImageViewer(containers.Paned):
 		# Note : The set list function should not again - 
 		# trigger cursor-change function 
 		self.treeview.set_list(self.rs)
-		
+
+	def treeview_rows_reordered(self):
+		self.rs = self.treeview.get_list()
+		self.drawingarea.set_rectangle_list(self.rs)
 
 	def load_image(self,filename,list,zoom_level):
 		self.start_type = 0;
@@ -394,6 +400,6 @@ class TestWindow(window.Window):
 
 if __name__ == "__main__":
 	win = TestWindow()
-	win.connect("delete-event", loop.stop_main_loop)
+	win.connect("delete-event", lambda x,y : loop.stop_main_loop())
 	win.show_all()
 	loop.start_main_loop()
