@@ -23,8 +23,8 @@ import shutil
 import re
 from functools import wraps
 
-from lios import scanner, editor, cam, ocr, preferences, speech
-from lios.ui.gtk import widget, containers, loop, menu, image_view, \
+from lios import scanner, editor, imageview, cam, ocr, preferences, speech
+from lios.ui.gtk import widget, containers, loop, menu, \
 	window, icon_view, dialog, about
 
 from lios.ui.gtk.file_chooser import FileChooserDialog
@@ -97,7 +97,7 @@ class linux_intelligent_ocr_solution():
 
 		
 		#Image View	
-		self.imageview = image_view.ImageViewer()
+		self.imageview = imageview.ImageViewer()
 		self.imageview.set_vexpand(True)
 		self.imageview.set_hexpand(True)
 		box_imageview = containers.Box(containers.Box.HORIZONTAL)
@@ -113,7 +113,7 @@ class linux_intelligent_ocr_solution():
 		
 		box_imageview.add(toolbar_imageview)
 		box_imageview.add(self.imageview)
-		self.imageview.load_image(macros.logo_file,[],image_view.ImageViewer.ZOOM_FIT)
+		self.imageview.load_image(macros.logo_file,[],imageview.ImageViewer.ZOOM_FIT)
 		#Context menu
 		self.context_menu_imageview = menu.ContextMenu(
 			[(_("Rotate-Right"),self.rotate_current_images_to_right),
@@ -476,9 +476,9 @@ class linux_intelligent_ocr_solution():
 	def on_iconview_item_selected(self,data):
 		name = self.iconview.get_selected_item_names()
 		if(name):
-			self.imageview.load_image(name[0],[],image_view.ImageViewer.ZOOM_FIT)
+			self.imageview.load_image(name[0],[],imageview.ImageViewer.ZOOM_FIT)
 		else:
-			self.imageview.load_image(macros.logo_file,[],image_view.ImageViewer.ZOOM_FIT)
+			self.imageview.load_image(macros.logo_file,[],imageview.ImageViewer.ZOOM_FIT)
 
 
 	@on_thread
