@@ -281,7 +281,7 @@ class ImageViewer(containers.Paned):
 				return
 			
 			if(image_logics.is_overlapping(self.rs,self.start_row_index,x - self.rs[self.start_row_index][2]/2,
-			y - self.rs[self.start_row_index][3]/2,self.rs[self.start_row_index][2]/2+x,self.rs[self.start_row_index][3]/2+y)):
+			y - self.rs[self.start_row_index][3]/2,self.rs[self.start_row_index][2],self.rs[self.start_row_index][3])):
 				return
 			self.rs[self.start_row_index][0] = x - self.rs[self.start_row_index][2]/2;
 			self.rs[self.start_row_index][1] = y - self.rs[self.start_row_index][3]/2;
