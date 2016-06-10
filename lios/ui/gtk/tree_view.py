@@ -48,7 +48,7 @@ class TreeView(Gtk.TreeView):
 				adjustment = Gtk.Adjustment(0, 0, 10000, 1, 10, 0)
 				cell.set_property("adjustment", adjustment)
 				cell.connect("edited", self.on_int_edited)
-			if(item[1] == bool):
+			elif(item[1] == bool):
 				cell = CellRendererToggle(i)
 				cell.set_radio(True)
 				cell.connect("toggled", self.on_bool_edited)
