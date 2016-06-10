@@ -100,8 +100,8 @@ class TreeView(Gtk.TreeView):
 		self.function(int(path))
 
 	def on_edited(self, widget, path, value):
-		self.rs[path][widget.pos] = value
-		self.function(widget.pos)
+		self.rs[path][widget.pos] = str(value)
+		self.function(int(path))
 	
 	def connect_update_callback(self,function):
 		self.function_update_callback = function
@@ -120,6 +120,11 @@ class TreeView(Gtk.TreeView):
 			return 0;
 		path = path.get_path(iter)
 		return(path.get_indices()[0]);
+	
+	def set_column_visible(self,column_number, value):
+		column = self.get_column(column_number);
+		column.set_visible(value);
+		
 		
 
 class TestWindow(Gtk.Window):
@@ -146,15 +151,28 @@ class TestWindow(Gtk.Window):
         self.button2.connect("clicked", self.on_button2_clicked)        
         self.box.pack_start(self.button2, False, False, 0)
 
+        self.button3 = Gtk.Button(label="Letter Show")
+        self.button3.connect("clicked", self.on_button3_clicked)        
+        self.box.pack_start(self.button3, False, False, 0)
+
+        self.button4 = Gtk.Button(label="Letter Hide")
+        self.button4.connect("clicked", self.on_button4_clicked)        
+        self.box.pack_start(self.button4, False, False, 0)
+
         self.add(self.box)
         self.set_default_size(400,400);
         
     def on_button1_clicked(self, widget):
-		   self.tv.get_selected_row_index()
-		   #print(self.iv.get_selection_list())
+		   print(self.tv.get_list())
 
     def on_button2_clicked(self, widget):
-        self.iv.set_selection_list([(25,10,45,60)])
+        self.tv.set_list([(25,10,45,60)])
+    
+    def on_button3_clicked(self, widget):
+		   self.tv.set_column_visible(4,True);
+		   
+    def on_button4_clicked(self, widget):
+		   self.tv.set_column_visible(4,False);
                
 
 

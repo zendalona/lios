@@ -54,8 +54,8 @@ class DrawingArea(Gtk.DrawingArea):
 		   
 		   for item in self.rectangles:
 			   #cr.move_to(10, 90)
-			   cr.rectangle(item[0], item[1], item[2], item[3])
-			   if item[4] == True:
+			   cr.rectangle(item[1], item[2], item[3], item[4])
+			   if item[0] == True:
 				   cr.set_source_rgb(0.9, 0.1, 0.1)
 			   else:
 				   cr.set_source_rgb(1, 0, 1)

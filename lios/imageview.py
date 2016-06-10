@@ -55,7 +55,11 @@ class ImageViewer(containers.Paned):
 		self.add(scrolled)
 				
 		#Drawing List Tree View
-		self.treeview = tree_view.TreeView([("X",int,True),("Y",int,True),("Width",int,True),("Height",int,True),("Selected",bool,False)],self.edited_callback)
+		self.treeview = tree_view.TreeView([("Selected",bool,False),
+		("X",int,True),("Y",int,True),
+		("Width",int,True),("Height",int,True),
+		("Letter",str,True)],self.edited_callback)
+		
 		self.treeview.connect_cursor_change_function(self.treeview_cursor_changed)
 		self.treeview.connect_rows_reordered_function(self.treeview_rows_reordered)
 		self.treeview.set_reorderable(True)
@@ -93,11 +97,13 @@ class ImageViewer(containers.Paned):
 	def edited_callback(self,row):
 		# Reset the new rectangle list
 		rs = self.treeview.get_list()
-		if(not image_logics.is_overlapping(self.rs,row,rs[row][0],rs[row][1],rs[row][2],rs[row][3])):
+		if(not image_logics.is_overlapping(
+		[ [row[1],row[2],row[3],row[4] ] for row in self.rs ],
+		row,rs[row][1],rs[row][2],rs[row][3],rs[row][4])):
 			self.rs = rs;
 			
 			#applay new rectangle list on drawing area
-			self.drawingarea.set_rectangle_list(self.rs)
+			self.drawingarea.set_rectangle_list([[ row[0], row[1],row[2],row[3],row[4] ] for row in self.rs ])
 			self.drawingarea.redraw()
 		else:
 			self.treeview.set_list(self.rs)
@@ -105,15 +111,15 @@ class ImageViewer(containers.Paned):
 	def treeview_cursor_changed(self):
 		selected_row = self.treeview.get_selected_row_index()
 		self.set_selected_item(selected_row)				
-		self.drawingarea.set_rectangle_list(self.rs)
+		self.drawingarea.set_rectangle_list([[ row[0],row[1],row[2],row[3],row[4] ] for row in self.rs ])
 		self.drawingarea.redraw()
 		# Note : The set list function should not again - 
 		# trigger cursor-change function 
-		self.treeview.set_list(self.rs)
+		#self.treeview.set_list(self.rs)
 
 	def treeview_rows_reordered(self):
 		self.rs = self.treeview.get_list()
-		self.drawingarea.set_rectangle_list(self.rs)
+		self.drawingarea.set_rectangle_list([[ row[0],row[1],row[2],row[3],row[4] ] for row in self.rs ])
 
 	def load_image(self,filename,list,zoom_level):
 		self.start_type = 0;
@@ -125,22 +131,25 @@ class ImageViewer(containers.Paned):
 			list = []
 			for item in self.rs:
 				if (diff>0):
-					list.append([item[0] - (item[0]*(abs(diff)*20)/100),
-					item[1] - (item[1]*(abs(diff)*20)/100),
+					list.append([0,item[1] - (item[1]*(abs(diff)*20)/100),
 					item[2] - (item[2]*(abs(diff)*20)/100),
-					item[3] - (item[3]*(abs(diff)*20)/100),0])
+					item[3] - (item[3]*(abs(diff)*20)/100),
+					item[4] - (item[4]*(abs(diff)*20)/100),item[5]])
 				elif (diff<0):
-					list.append([item[0] - (item[0]*(diff*20)/100),
-					item[1] - (item[1]*(diff*20)/100),
+					list.append([0,item[1] - (item[1]*(diff*20)/100),
 					item[2] - (item[2]*(diff*20)/100),
-					item[3] - (item[3]*(diff*20)/100),0])
+					item[3] - (item[3]*(diff*20)/100),
+					item[4] - (item[4]*(diff*20)/100),item[5]])
 				else:
-					list.append([item[0],item[1],item[2],item[3]])
+					list.append([0,item[1],item[2],item[3],item[4],item[5]])
 		self.rs = list		
 		self.drawingarea.load_image(filename,list,parameter);
 
 	def get_filename(self):
-		return self.filename		
+		return self.filename
+	
+	def set_label_entry_visible(self,value):
+		self.treeview.set_column_visible(5,False);		
 
 	def redraw(self):
 		loop.acquire_lock()
@@ -148,7 +157,8 @@ class ImageViewer(containers.Paned):
 		loop.release_lock()
 
 	def get_selection_list(self):
-		return(self.rs)
+		# return with the pattern x, y , width, height, letter
+		return([[ row[1],row[2],row[3],row[4], row[5] ] for row in self.rs ])
 	
 	def save_sub_image(self,filename,x,y,width,height):
 		self.drawingarea.save_image_rectangle(filename,x,y,width,height)	
@@ -159,13 +169,13 @@ class ImageViewer(containers.Paned):
 	def zoom_in(self,data=None):
 		self.load_image(self.filename,None, self.zoom_level + 1)
 		self.treeview.set_list(self.rs)
-		self.drawingarea.set_rectangle_list(self.rs)
+		self.drawingarea.set_rectangle_list([[ row[0],row[1],row[2],row[3],row[4] ] for row in self.rs ])
 		self.emit('list_updated')
 
 	def zoom_out(self,data=None):
 		self.load_image(self.filename,None, self.zoom_level - 1)
 		self.treeview.set_list(self.rs)
-		self.drawingarea.set_rectangle_list(self.rs)
+		self.drawingarea.set_rectangle_list([[ row[0],row[1],row[2],row[3],row[4] ] for row in self.rs ])
 		self.emit('list_updated')
 
 	def zoom_fit(self,data=None):
@@ -181,7 +191,7 @@ class ImageViewer(containers.Paned):
 	def __drawingarea_button_press_event(self, point, button_type):
 		if(button_type == 1):
 			self.start_x,self.start_y=point
-			self.start_type, self.start_row_index, self.start_position_type = image_logics.get_point_type(self.start_x,self.start_y,self.rs)
+			self.start_type, self.start_row_index, self.start_position_type = image_logics.get_point_type(self.start_x,self.start_y,[ [row[1],row[2],row[3],row[4],row[0] ] for row in self.rs ])
 			
 		return True
     
@@ -196,7 +206,7 @@ class ImageViewer(containers.Paned):
 				return
 			
 			start_x,start_y,end_x,end_y = image_logics.order_rectangle(self.start_x,self.start_y,x,y);
-			if(image_logics.detect_overlap(self.rs,start_x,start_y,end_x,end_y)):
+			if(image_logics.detect_overlap([ [row[1],row[2],row[3],row[4] ] for row in self.rs ],start_x,start_y,end_x,end_y)):
 				return
 
 			self.tmp_finish_x,self.tmp_finish_y = point
@@ -211,87 +221,88 @@ class ImageViewer(containers.Paned):
 				return
 			
 			if(self.start_position_type == 1):
-				if( not image_logics.is_overlapping(self.rs,self.start_row_index,
-				x,y,self.rs[self.start_row_index][2]+(self.rs[self.start_row_index][0] - x),
-				self.rs[self.start_row_index][3]+(self.rs[self.start_row_index][1] - y))):
-					self.rs[self.start_row_index][3] = self.rs[self.start_row_index][3]+(self.rs[self.start_row_index][1] - y)
-					self.rs[self.start_row_index][1] = y
-					self.rs[self.start_row_index][2] = self.rs[self.start_row_index][2]+(self.rs[self.start_row_index][0] - x)
-					self.rs[self.start_row_index][0] = x
+				if( not image_logics.is_overlapping([ [row[1],row[2],row[3],row[4] ] for row in self.rs ],self.start_row_index,
+				x,y,self.rs[self.start_row_index][3]+(self.rs[self.start_row_index][1] - x),
+				self.rs[self.start_row_index][4]+(self.rs[self.start_row_index][2] - y))):
+					self.rs[self.start_row_index][4] = self.rs[self.start_row_index][4]+(self.rs[self.start_row_index][2] - y)
+					self.rs[self.start_row_index][2] = y
+					self.rs[self.start_row_index][3] = self.rs[self.start_row_index][3]+(self.rs[self.start_row_index][1] - x)
+					self.rs[self.start_row_index][1] = x
 				
 			elif(self.start_position_type == 2):
-				if( not image_logics.is_overlapping(self.rs,self.start_row_index,
-				self.rs[self.start_row_index][0],y,self.rs[self.start_row_index][2],y+self.rs[self.start_row_index][3] -y)):
-					self.rs[self.start_row_index][3] = self.rs[self.start_row_index][3]+(self.rs[self.start_row_index][1] - y)
-					self.rs[self.start_row_index][1] = y					
+				if( not image_logics.is_overlapping([ [row[1],row[2],row[3],row[4] ] for row in self.rs ],self.start_row_index,
+				self.rs[self.start_row_index][1],y,self.rs[self.start_row_index][3],y+self.rs[self.start_row_index][4] -y)):
+					self.rs[self.start_row_index][4] = self.rs[self.start_row_index][4]+(self.rs[self.start_row_index][2] - y)
+					self.rs[self.start_row_index][2] = y					
 
 			elif(self.start_position_type == 3):
-				if(not image_logics.is_overlapping(self.rs,self.start_row_index,
-				self.rs[self.start_row_index][0],y,
-				x - self.rs[self.start_row_index][0],
-				self.rs[self.start_row_index][3]+(self.rs[self.start_row_index][1] - y))):
-					self.rs[self.start_row_index][3] = self.rs[self.start_row_index][3]+(self.rs[self.start_row_index][1] - y)
-					self.rs[self.start_row_index][1] = y
-					self.rs[self.start_row_index][2] = x - self.rs[self.start_row_index][0]		
+				if(not image_logics.is_overlapping([ [row[1],row[2],row[3],row[4] ] for row in self.rs ],self.start_row_index,
+				self.rs[self.start_row_index][1],y,
+				x - self.rs[self.start_row_index][1],
+				self.rs[self.start_row_index][4]+(self.rs[self.start_row_index][2] - y))):
+					self.rs[self.start_row_index][4] = self.rs[self.start_row_index][4]+(self.rs[self.start_row_index][2] - y)
+					self.rs[self.start_row_index][2] = y
+					self.rs[self.start_row_index][3] = x - self.rs[self.start_row_index][1]		
 															
 			elif(self.start_position_type == 4):
-				if( not image_logics.is_overlapping(self.rs,self.start_row_index,
-				x,self.rs[self.start_row_index][1],
-				self.rs[self.start_row_index][2]+(self.rs[self.start_row_index][0] - x),
-				self.rs[self.start_row_index][3])):
-					self.rs[self.start_row_index][2] = self.rs[self.start_row_index][2]+(self.rs[self.start_row_index][0] - x)
-					self.rs[self.start_row_index][0] = x
+				if( not image_logics.is_overlapping([ [row[1],row[2],row[3],row[4] ] for row in self.rs ],self.start_row_index,
+				x,self.rs[self.start_row_index][2],
+				self.rs[self.start_row_index][3]+(self.rs[self.start_row_index][1] - x),
+				self.rs[self.start_row_index][4])):
+					self.rs[self.start_row_index][3] = self.rs[self.start_row_index][3]+(self.rs[self.start_row_index][1] - x)
+					self.rs[self.start_row_index][1] = x
 				
 			elif(self.start_position_type == 6):
-				if( not image_logics.is_overlapping(self.rs,self.start_row_index,
-				self.rs[self.start_row_index][0],self.rs[self.start_row_index][1],
-				x - self.rs[self.start_row_index][0],self.rs[self.start_row_index][3])):
-					self.rs[self.start_row_index][2] = x - self.rs[self.start_row_index][0]
+				if( not image_logics.is_overlapping([ [row[1],row[2],row[3],row[4] ] for row in self.rs ],self.start_row_index,
+				self.rs[self.start_row_index][1],self.rs[self.start_row_index][2],
+				x - self.rs[self.start_row_index][1],self.rs[self.start_row_index][4])):
+					self.rs[self.start_row_index][3] = x - self.rs[self.start_row_index][1]
 
 			elif(self.start_position_type == 7):
-				if( not image_logics.is_overlapping(self.rs,self.start_row_index,
-				x,self.rs[self.start_row_index][1],
-				self.rs[self.start_row_index][2]+(self.rs[self.start_row_index][0] - x),
-				y - self.rs[self.start_row_index][1])):
-					self.rs[self.start_row_index][3] = y - self.rs[self.start_row_index][1]
-					self.rs[self.start_row_index][2] = self.rs[self.start_row_index][2]+(self.rs[self.start_row_index][0] - x)
-					self.rs[self.start_row_index][0] = x					
+				if( not image_logics.is_overlapping([ [row[1],row[2],row[3],row[4] ] for row in self.rs ],self.start_row_index,
+				x,self.rs[self.start_row_index][2],
+				self.rs[self.start_row_index][3]+(self.rs[self.start_row_index][1] - x),
+				y - self.rs[self.start_row_index][2])):
+					self.rs[self.start_row_index][4] = y - self.rs[self.start_row_index][2]
+					self.rs[self.start_row_index][3] = self.rs[self.start_row_index][3]+(self.rs[self.start_row_index][1] - x)
+					self.rs[self.start_row_index][1] = x					
 
 			elif(self.start_position_type == 8):
-				if( not image_logics.is_overlapping(self.rs,self.start_row_index,
-				self.rs[self.start_row_index][0],self.rs[self.start_row_index][1],
-				self.rs[self.start_row_index][2],y - self.rs[self.start_row_index][1])):
-					self.rs[self.start_row_index][3] = y - self.rs[self.start_row_index][1]		
+				if( not image_logics.is_overlapping([ [row[1],row[2],row[3],row[4] ] for row in self.rs ],self.start_row_index,
+				self.rs[self.start_row_index][1],self.rs[self.start_row_index][2],
+				self.rs[self.start_row_index][3],y - self.rs[self.start_row_index][2])):
+					self.rs[self.start_row_index][4] = y - self.rs[self.start_row_index][2]		
 		
 			elif(self.start_position_type == 9):
-				if( not image_logics.is_overlapping(self.rs,self.start_row_index,
-				self.rs[self.start_row_index][0],self.rs[self.start_row_index][1],
-				x - self.rs[self.start_row_index][0],y - self.rs[self.start_row_index][1])):
-					self.rs[self.start_row_index][3] = y - self.rs[self.start_row_index][1]
-					self.rs[self.start_row_index][2] = x - self.rs[self.start_row_index][0]
+				if( not image_logics.is_overlapping([ [row[1],row[2],row[3],row[4] ] for row in self.rs ],self.start_row_index,
+				self.rs[self.start_row_index][1],self.rs[self.start_row_index][2],
+				x - self.rs[self.start_row_index][1],y - self.rs[self.start_row_index][2])):
+					self.rs[self.start_row_index][4] = y - self.rs[self.start_row_index][2]
+					self.rs[self.start_row_index][3] = x - self.rs[self.start_row_index][1]
 			
-			self.treeview.set_list(self.rs)		
+			self.treeview.set_list(self.rs)
+			self.drawingarea.set_rectangle_list([[ row[0],row[1],row[2],row[3],row[4] ] for row in self.rs ])		
 		
 
 		# 3 - Moving
 		if (self.start_type == 3):
 			#Detect if anyof the new rectangle porsion is not feesible
-			if(image_logics.detect_out_of_range(x - self.rs[self.start_row_index][2]/2,y - self.rs[self.start_row_index][3]/2,max_width,max_height) or
-			image_logics.detect_out_of_range(x + self.rs[self.start_row_index][2]/2,y + self.rs[self.start_row_index][3]/2,max_width,max_height)):
+			if(image_logics.detect_out_of_range(x - self.rs[self.start_row_index][3]/2,y - self.rs[self.start_row_index][4]/2,max_width,max_height) or
+			image_logics.detect_out_of_range(x + self.rs[self.start_row_index][3]/2,y + self.rs[self.start_row_index][4]/2,max_width,max_height)):
 				return
 			
-			if(image_logics.is_overlapping(self.rs,self.start_row_index,x - self.rs[self.start_row_index][2]/2,
-			y - self.rs[self.start_row_index][3]/2,self.rs[self.start_row_index][2],self.rs[self.start_row_index][3])):
+			if(image_logics.is_overlapping([ [row[1],row[2],row[3],row[4] ] for row in self.rs ],self.start_row_index,x - self.rs[self.start_row_index][3]/2,
+			y - self.rs[self.start_row_index][4]/2,self.rs[self.start_row_index][3],self.rs[self.start_row_index][4])):
 				return
-			self.rs[self.start_row_index][0] = x - self.rs[self.start_row_index][2]/2;
-			self.rs[self.start_row_index][1] = y - self.rs[self.start_row_index][3]/2;
+			self.rs[self.start_row_index][1] = x - self.rs[self.start_row_index][3]/2;
+			self.rs[self.start_row_index][2] = y - self.rs[self.start_row_index][4]/2;
 			
 			self.treeview.set_list(self.rs)
-			self.set_selected_item(self.start_row_index)
+			self.drawingarea.set_rectangle_list([[ row[0],row[1],row[2],row[3],row[4] ] for row in self.rs ])
 		
 		# 0 - Simply hovering 
 		if (self.start_type == 0):
-			_type, row_index, position_type = image_logics.get_point_type(x,y,self.rs)
+			_type, row_index, position_type = image_logics.get_point_type(x,y,[[row[1],row[2],row[3],row[4] ] for row in  self.rs ])
 			self.drawingarea.set_mouse_pointer_type(position_type);
 			self.set_selected_item(row_index)
 			self.treeview.set_list(self.rs);				
@@ -306,10 +317,10 @@ class ImageViewer(containers.Paned):
 			#Swap coordinate if selected in reverse direction
 			self.start_x,self.start_y,self.tmp_finish_x,self.tmp_finish_y = image_logics.order_rectangle(self.start_x,self.start_y,self.tmp_finish_x,self.tmp_finish_y)
 		
-			self.rs.append([self.start_x,self.start_y,self.tmp_finish_x-self.start_x,self.tmp_finish_y-self.start_y,0])
-			self.set_selected_item(len(self.rs)-1)
+			self.rs.append([0,self.start_x,self.start_y,self.tmp_finish_x-self.start_x,self.tmp_finish_y-self.start_y,""])
+			self.set_selected_item(len([ [row[1],row[2],row[3],row[4],row[0] ] for row in self.rs ])-1)
 			self.treeview.set_list(self.rs)
-			self.drawingarea.set_rectangle_list(self.rs);
+			self.drawingarea.set_rectangle_list([[ row[0],row[1],row[2],row[3],row[4] ]  for row in self.rs ]);
 			self.drawingarea.redraw()
 
 			self.emit('list_updated')
@@ -327,27 +338,27 @@ class ImageViewer(containers.Paned):
 	def set_selected_item(self,row):
 		for i in range(0,len(self.rs)):
 			if (i == row):
-				self.rs[i][4] = 1;
+				self.rs[i][0] = 1;
 			else:
-				self.rs[i][4] = 0;	
+				self.rs[i][0] = 0;	
 
 	def __delete_selection(self,widget):
 		list = []
 		for item in self.rs:
-			if (item[4] == 0):
+			if (item[0] == 0):
 				list.append(item)
 		self.rs = list;
 		# Set first element as selected 
 		self.set_selected_item(0)
 		self.treeview.set_list(self.rs)
-		self.drawingarea.set_rectangle_list(self.rs)
+		self.drawingarea.set_rectangle_list([[ row[0],row[1],row[2],row[3],row[4] ] for row in self.rs ])
 		self.drawingarea.redraw()
 		self.emit('list_updated')
 
 	def __clear_selection(self,widget):
 		self.rs = []
 		self.treeview.clear()
-		self.drawingarea.set_rectangle_list(self.rs);
+		self.drawingarea.set_rectangle_list([[ row[0],row[1],row[2],row[3],row[4] ] for row in self.rs ]);
 		self.drawingarea.redraw()
 		self.emit('list_updated')
 
@@ -383,7 +394,7 @@ class TestWindow(window.Window):
 
         self.add(grid)
         grid.show()
-        self.set_default_size(600,600);
+        self.set_default_size(700,600);
 
     def on_button1_clicked(self, widget):
         print(self.iv.get_selection_list())

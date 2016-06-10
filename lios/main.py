@@ -98,6 +98,7 @@ class linux_intelligent_ocr_solution():
 		
 		#Image View	
 		self.imageview = imageview.ImageViewer()
+		self.imageview.set_label_entry_visible(False)
 		self.imageview.set_vexpand(True)
 		self.imageview.set_hexpand(True)
 		box_imageview = containers.Box(containers.Box.HORIZONTAL)
