@@ -63,6 +63,7 @@ def create_menu(item,agr):
 			sub_menu = create_menu(i,agr)
 			menu.append(sub_menu)
 		menu_item.set_submenu(menu)
+		menu_item.set_use_underline(True)
 		return menu_item
 	
 	else:

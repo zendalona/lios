@@ -74,7 +74,7 @@ class linux_intelligent_ocr_solution():
 		box_iconview = containers.Box(containers.Box.VERTICAL)
 		toolbar_iconview = containers.Toolbar(containers.Toolbar.HORIZONTAL,
 			[('Open',self.open_files),(_("Take-Screenshot"),self.take_rectangle_screenshot),
-			(_("Scan-Using-Webcam"),self.scan_using_cam),(_("Recognize"),self.ocr_selected_images),
+			(_("Scan-Using-Webcam"),self.scan_using_cam),(_("_Recognize"),self.ocr_selected_images),
 			(_("Clear"),self.iconview_remove_all_images),])
 		#Context menu
 		self.context_menu_iconview = menu.ContextMenu([
@@ -169,13 +169,13 @@ class linux_intelligent_ocr_solution():
 		
 		
 		menubar = menu.MenuBar(
-		[[_("File"),(_("New"),self.textview.new,"<Control>N"),menu.SEPARATOR,
+		[[_("_File"),(_("New"),self.textview.new,"<Control>N"),menu.SEPARATOR,
 			(_("Open"),self.open_files,"<Control>O"),
 			(_("Save"),self.textview.save,"<Control>S"),(_("Save-As"),self.textview.save_as,"<Shift><Control>N"),
 			(_("Export-Text-As-Pdf"),self.textview.print_to_pdf,"<Control>E"),(_("Print"),self.textview.open_print_dialog,"None"),
 			(_("Print-Preview"),self.textview.print_preview,"None"),menu.SEPARATOR,
 			(_("Quit"),self.quit,"<Control>Q")],
-		[_("Edit"),(_("Undo"),self.textview.undo,"<Control>Z"),(_("Redo"),self.textview.redo,"<Control>Y"),
+		[_("_Edit"),(_("Undo"),self.textview.undo,"<Control>Z"),(_("Redo"),self.textview.redo,"<Control>Y"),
 			menu.SEPARATOR,
 			(_("Punch-Text"),self.textview.punch,"None"),(_("Append-Text"),self.textview.append,"None"),
 			menu.SEPARATOR,(_("Find"),self.textview.open_find_dialog,"<Control>F"),
@@ -185,7 +185,7 @@ class linux_intelligent_ocr_solution():
 			menu.SEPARATOR,
 			(_("Go-To-Line"),self.textview.go_to_line,"<Control>L"),(_("Go-To-Page"),self.go_to_page,"<Control>G"),
 			menu.SEPARATOR,(_("Preferences"),self.open_preferences_general_page,"<Control>P")],
-		[_("Image"),[_("Rotate-Left"),(_("Current"),self.rotate_current_images_to_left,"None"),
+		[_("_Image"),[_("Rotate-Left"),(_("Current"),self.rotate_current_images_to_left,"None"),
 				(_("Selected"),self.rotate_selected_images_to_left,"None"),
 				(_("All"),self.rotate_all_images_to_left,"None")],
 			[_("Rotate-Twice"),(_("Current"),self.rotate_current_images_to_twice,"None"),
@@ -202,7 +202,7 @@ class linux_intelligent_ocr_solution():
 				(_("All-Images"),self.save_all_images_as_pdf,"None")], menu.SEPARATOR,
 			[_("Delete"),(_("Selected-Images"),self.iconview_remove_selected_images,"None"),
 				(_("All-Images"),self.iconview_remove_all_images,"None")],],
-		[_("Scan"),(_("Update-Scanner-List"),self.update_scanner_list,"None"),
+		[_("_Scan"),(_("Update-Scanner-List"),self.update_scanner_list,"None"),
 			(_("Scan-Image"),self.scan_single_image,"F8"),
 			(_("Scan-Image-Repeatedly"),self.scan_image_repeatedly,"<Control>F8"),
 			(_("Scan-and-Ocr"),self.scan_and_ocr,"F9"),
@@ -210,12 +210,12 @@ class linux_intelligent_ocr_solution():
 			(_("Optimise-Scanner-Brightness"),self.optimize_brightness,"None"),menu.SEPARATOR,
 			(_("Scan-Using-Webcam"),self.scan_using_cam,"F6"),menu.SEPARATOR,
 			[_("Take-Screenshot"),
-				(_("Selection"),self.take_rectangle_screenshot,"<Control>F6"),
-				(_("Full"),self.take_full_screenshot,"F6")],
+				(_("Selection"),self.take_rectangle_screenshot,"<Control>F2"),
+				(_("Full"),self.take_full_screenshot,"F2")],
 			[_("Take-and-Recognize-Screenshot"),
-				(_("Selection"),self.take_and_recognize_rectangle_screenshot,"<Control>F10"),
-				(_("Full"),self.take_and_recognize_full_screenshot,"F10")]],
-		[_("Recognize"),
+				(_("Selection"),self.take_and_recognize_rectangle_screenshot,"<Control>F3"),
+				(_("Full"),self.take_and_recognize_full_screenshot,"F3")]],
+		[_("_Recognize"),
 			(_("Recognize-Current-Image"),self.ocr_current_image,"None"),
 			(_("Recognize-Current-Image-With-Rotation"),self.ocr_current_image_with_rotation,"None"),
 			(_("Recognize-Selected-Areas"),self.ocr_selected_areas,"None"),
@@ -223,7 +223,7 @@ class linux_intelligent_ocr_solution():
 			(_("Recognize-All-Images"),self.ocr_all_images,"None"),
 			(_("Recognize-Selected-with-rotation"),self.ocr_selected_images_with_rotation,"None"),
 			(_("Recognize-All-with-rotation"),self.ocr_all_images_with_rotation,"None")],
-		[_("Tools"),(_("Spell-Check"),self.textview.open_spell_check,"<Control>F7"),
+		[_("_Tools"),(_("Spell-Check"),self.textview.open_spell_check,"<Control>F7"),
 			(_("Audio-Converter"),self.textview.audio_converter,"None"),
 			(_("Dictionary"),self.artha,"<Control><Alt>W"),
 			(_("Bookmark"),self.textview.create_bookmark,"<Control>B"),
@@ -235,7 +235,7 @@ class linux_intelligent_ocr_solution():
 			(_("Decrease-Reader-Speed"),self.decrease_reader_speed,"<Ctrl>Next"),
 			(_("Stop-Reader"),self.stop_reader,"<Control>F5"),
 			(_("Stop-All-Process"),self.stop_all_process,"<Control>F4")],
-		[_("Preferences"),(_("Preferences-General"),self.open_preferences_general_page,"None"),
+		[_("_Preferences"),(_("Preferences-General"),self.open_preferences_general_page,"None"),
 			(_("Preferences-Recognition"),self.open_preferences_recognition_page,"None"),
 			(_("Preferences-Scanning"),self.open_preferences_scanning_page,"None"),
 			menu.SEPARATOR,	(_("Save"),self.save_preferences,"None"),
@@ -254,7 +254,7 @@ class linux_intelligent_ocr_solution():
 		button_scan = widget.Button(_("Scan"))
 		button_scan.connect_function(self.scan_single_image)		
 		toolbar_main = containers.Toolbar(containers.Toolbar.HORIZONTAL,
-			[(_("Preferences"),self.open_preferences_general_page),
+			[(_("_Preferences"),self.open_preferences_general_page),
 			(_("Video-Tutorials"),self.open_video_tutorials),
 			(_("About"),self.about),
 			(_("Quit"),self.quit)])				
