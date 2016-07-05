@@ -34,9 +34,19 @@ class TesseractTrainer(window.Window):
 		window.Window.__init__(self, title="Tesseract Trainer")
 		grid = containers.Grid()
 		
+		if( not ocr.ocr_engine_tesseract.OcrEngineTesseract.is_available()):
+			label = widget.Label(_("Tesseract is not installed"))
+			self.add(label)
+			return
+
 		label_language = widget.Label(_("Language "));
-		combobox_language = widget.ComboBox();
-		button_add_language = widget.Button(_("Add new Language"));
+		self.combobox_language = widget.ComboBox();
+
+		self.languages = []
+		for item in ocr.ocr_engine_tesseract.OcrEngineTesseract.get_available_languages():
+			self.combobox_language.add_item(item)
+			self.languages.append(item)
+		self.combobox_language.set_active(0)
 
 		#Notebook
 		notebook = containers.NoteBook()
@@ -171,8 +181,7 @@ class TesseractTrainer(window.Window):
 		button_close.connect_function(self.close_trainer);
 		
 		grid.add_widgets([(label_language,1,1,containers.Grid.NO_HEXPAND,containers.Grid.NO_VEXPAND),
-		(combobox_language,1,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND),
-		(button_add_language,1,1,containers.Grid.NO_HEXPAND,containers.Grid.NO_VEXPAND),
+		(self.combobox_language,2,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND),
 		containers.Grid.NEW_ROW,(paned,3,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND),
 		containers.Grid.NEW_ROW,(button_close,3,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND)])
 		
@@ -232,8 +241,12 @@ class TesseractTrainer(window.Window):
 			for item in boxeditor.get_list():
 				file.write(' '.join([ str(x) for x in list(item)])+" 0\n")
 			
-			#######################################
-			self.output_terminal.run_command("tesseract {0}.tif {0}.box nobatch box.train".format(item_name_without_extension));
+			language = self.languages[self.combobox_language.get_active()]
+			if (os.environ['HOME'] in language):
+				self.output_terminal.run_command("tesseract {0}.tif {0}.box nobatch box.train -l {1} --tessdata-dir {2}".format(item_name_without_extension,language.split('-')[0],os.environ['HOME']));
+				language = language.split('-')[0] #later used for copying 
+			else:
+				self.output_terminal.run_command("tesseract {0}.tif {0}.box nobatch box.train -l {1}".format(item_name_without_extension,language));
 			self.output_terminal.run_command("unicharset_extractor {0}.box".format(item_name_without_extension));
 			
 			font = font_desc.split(" ")[0]
@@ -255,10 +268,19 @@ class TesseractTrainer(window.Window):
 			self.output_terminal.run_command("mv pffmtable {0}.pffmtable".format(item_name_without_extension));
 			self.output_terminal.run_command("mv shapetable {0}.shapetable".format(item_name_without_extension));
 			self.output_terminal.run_command("combine_tessdata {0}.".format(item_name_without_extension));
-			self.output_terminal.run_command("cp {0}.traineddata {1}/tessdata/".format(item_name_without_extension,os.environ['HOME']));
-			
-			
 
+			if (os.path.isfile(os.environ['HOME']+"/tessdata/"+language+".traineddata")):
+				dlg = dialog.Dialog(_("Edit filename to avoid replacing"),(_("Replace"), dialog.Dialog.BUTTON_ID_1,_("Give another filename"), dialog.Dialog.BUTTON_ID_2))
+				entry = widget.Entry()
+				dlg.add_widget_with_label(entry,_("File Name : "))
+				entry.set_text(language)
+				response = dlg.run()
+				if(response == dialog.Dialog.BUTTON_ID_2):
+					language = entry.get_text()
+				dlg.destroy()
+				self.output_terminal.run_command("cp {0}.traineddata {1}/tessdata/{2}.traineddata".format(item_name_without_extension,os.environ['HOME'],language));
+			else:
+				self.output_terminal.run_command("cp {0}.traineddata {1}/tessdata/{2}.traineddata".format(item_name_without_extension,os.environ['HOME'],language));
 
 		boxeditor.connect_close_function(box_closed)
 		
