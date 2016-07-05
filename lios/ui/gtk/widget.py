@@ -152,6 +152,9 @@ class ColorButton(Gtk.ColorButton):
 class FontButton(Gtk.FontButton):
 	def __init__(self):
 		super(FontButton,self).__init__()
+	def connect_function(self,function):
+		self.connect("font-set",function)
+
 	
 	#set_font(font desc)
 	#get_font_name()
