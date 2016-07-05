@@ -32,6 +32,7 @@ class Grid(Gtk.Grid):
 	NO_VEXPAND = 0;
 	NO_HEXPAND = 0;
 	ALIGN_END = Gtk.Align.END
+	ALIGN_START = Gtk.Align.START
 	
 	def __init__(self):
 		super(Grid,self).__init__()
