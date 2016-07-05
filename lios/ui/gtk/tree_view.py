@@ -38,6 +38,7 @@ class TreeView(Gtk.TreeView):
 	def __init__(self,name_type_tuple_list,function):
 		super(TreeView,self).__init__()
 		self.function = function;
+		self.cursor_change_handler_id = None
 		
 		type_list = []
 		i = 0;
@@ -73,11 +74,13 @@ class TreeView(Gtk.TreeView):
 		self.rs.append(item);
 	
 	def set_list(self,list):
-		self.handler_block(self.cursor_change_handler_id)
+		if(self.cursor_change_handler_id):
+			self.handler_block(self.cursor_change_handler_id)
 		self.rs.clear()
 		for item in list:
 			self.rs.append(item)
-		self.handler_unblock(self.cursor_change_handler_id)
+		if(self.cursor_change_handler_id):
+			self.handler_unblock(self.cursor_change_handler_id)
 
 	#def set_selected_row(self,row):
 	#	self.handler_block(self.cursor_change_handler_id)
