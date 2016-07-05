@@ -63,6 +63,8 @@ class ImageViewer(containers.Paned):
 		self.treeview.connect_cursor_change_function(self.treeview_cursor_changed)
 		self.treeview.connect_rows_reordered_function(self.treeview_rows_reordered)
 		self.treeview.set_reorderable(True)
+		scrolled_treeview = containers.ScrollBox()
+		scrolled_treeview.add(self.treeview)
 
 		self.rs = []
 
@@ -74,7 +76,7 @@ class ImageViewer(containers.Paned):
 		button2.connect_function(self.__clear_selection)
 
 		grid = containers.Grid()
-		grid.add_widgets([(self.treeview,2,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND),
+		grid.add_widgets([(scrolled_treeview,2,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND),
 		containers.Grid.NEW_ROW,(button1,1,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND),
 		(button2,1,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND)])
 		self.add(grid)
@@ -127,23 +129,33 @@ class ImageViewer(containers.Paned):
 		diff = self.zoom_level - zoom_level
 		self.zoom_level = zoom_level
 		parameter = self.zoom_list[self.zoom_level]
-		if (list == None):
-			list = []
+		self.set_list(list)
+		self.drawingarea.load_image(filename,list,parameter);
+	def set_list(self,list_):
+		if (list_ == None):
+			list_ = []
 			for item in self.rs:
 				if (diff>0):
-					list.append([0,item[1] - (item[1]*(abs(diff)*20)/100),
+					list_.append([0,item[1] - (item[1]*(abs(diff)*20)/100),
 					item[2] - (item[2]*(abs(diff)*20)/100),
 					item[3] - (item[3]*(abs(diff)*20)/100),
 					item[4] - (item[4]*(abs(diff)*20)/100),item[5]])
 				elif (diff<0):
-					list.append([0,item[1] - (item[1]*(diff*20)/100),
+					list_.append([0,item[1] - (item[1]*(diff*20)/100),
 					item[2] - (item[2]*(diff*20)/100),
 					item[3] - (item[3]*(diff*20)/100),
 					item[4] - (item[4]*(diff*20)/100),item[5]])
 				else:
-					list.append([0,item[1],item[2],item[3],item[4],item[5]])
-		self.rs = list		
-		self.drawingarea.load_image(filename,list,parameter);
+					list_.append([0,item[1],item[2],item[3],item[4],item[5]])
+		self.rs = list(list(x) for x in list_)
+		self.treeview.set_list(self.rs)
+
+
+	def get_list(self):
+		return self.rs
+
+	def get_height(self):
+		return self.drawingarea.get_height();
 
 	def get_filename(self):
 		return self.filename
@@ -305,7 +317,8 @@ class ImageViewer(containers.Paned):
 			_type, row_index, position_type = image_logics.get_point_type(x,y,[[row[1],row[2],row[3],row[4] ] for row in  self.rs ])
 			self.drawingarea.set_mouse_pointer_type(position_type);
 			self.set_selected_item(row_index)
-			self.treeview.set_list(self.rs);				
+			self.treeview.set_list(self.rs);
+			self.drawingarea.set_rectangle_list([[ row[0],row[1],row[2],row[3],row[4] ] for row in self.rs ])
 		self.drawingarea.redraw()						
 				
 
@@ -373,7 +386,8 @@ class TestWindow(window.Window):
         window.Window.__init__(self, title="Hello World")
         
         self.iv = ImageViewer()
-        self.iv.load_image("/usr/share/lios/lios.png",[],ImageViewer.ZOOM_FIT)
+        li = [(0,10,10,10,10,"a"),(0,30,30,10,10,"b"),(0,50,50,10,10,"c")]
+        self.iv.load_image("/usr/share/lios/lios.png",li,ImageViewer.ZOOM_FIT)
 
         button1 = widget.Button("Get List")
         button1.connect_function(self.on_button1_clicked)        

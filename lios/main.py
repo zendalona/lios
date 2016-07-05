@@ -23,7 +23,7 @@ import shutil
 import re
 from functools import wraps
 
-from lios import scanner, editor, imageview, cam, ocr, preferences, speech
+from lios import scanner, editor, imageview, cam, ocr, preferences, speech, train_tesseract
 from lios.ui.gtk import widget, containers, loop, menu, \
 	window, icon_view, dialog, about
 
@@ -224,6 +224,7 @@ class linux_intelligent_ocr_solution():
 			(_("Recognize-Selected-with-rotation"),self.ocr_selected_images_with_rotation,"None"),
 			(_("Recognize-All-with-rotation"),self.ocr_all_images_with_rotation,"None")],
 		[_("_Tools"),(_("Spell-Check"),self.textview.open_spell_check,"<Control>F7"),
+			(_("Train-Tesseract"),self.start_train_tesseract,"None"),
 			(_("Audio-Converter"),self.textview.audio_converter,"None"),
 			(_("Dictionary"),self.artha,"<Control><Alt>W"),
 			(_("Bookmark"),self.textview.create_bookmark,"<Control>B"),
@@ -325,6 +326,14 @@ class linux_intelligent_ocr_solution():
 			self.progressbar.set_pulse_step(percentage)
 		else:
 			self.progressbar.set_fraction(percentage)
+
+	def start_train_tesseract(self,*data):
+		image_list = self.iconview.get_selected_item_names()
+		if(image_list == []):
+			self.iconview.select_all()
+			image_list = self.iconview.get_selected_item_names()
+		train_window = train_tesseract.TesseractTrainer(image_list)
+		train_window.show()
 		
 	def new(self,*data):
 		if(self.textview.new()):
@@ -969,7 +978,7 @@ class linux_intelligent_ocr_solution():
 		#self.make_image_widgets_active(lock=True)
 				
 	def ocr_all_images_with_rotation(self,widget):
-		self.image_icon_view.select_all()
+		self.iconview.select_all()
 		self.ocr_selected_images(None)
 
 
@@ -998,7 +1007,7 @@ class linux_intelligent_ocr_solution():
 		#self.make_image_widgets_active(lock=True)
 			
 	def ocr_all_images(self,widget):
-		self.image_icon_view.select_all()
+		self.iconview.select_all()
 		self.ocr_selected_images_without_rotating(self)
 
 
@@ -1048,15 +1057,15 @@ class linux_intelligent_ocr_solution():
 
 
 	def rotate_all_images_to_right(self,widget):
-		self.image_icon_view.select_all()
+		self.iconview.select_all()
 		self.rotate_selected_images_to_right(None)
 
 	def rotate_all_images_to_left(self,widget):
-		self.image_icon_view.select_all()
+		self.iconview.select_all()
 		self.rotate_selected_images_to_left(None)
 
 	def rotate_all_images_to_twice(self,widget):
-		self.image_icon_view.select_all()
+		self.iconview.select_all()
 		self.rotate_selected_images_to_twice(None)
 
 	def rotate_current_images_to_right(self,widget):
