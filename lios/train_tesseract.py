@@ -37,6 +37,8 @@ class TesseractTrainer(window.Window):
 		if( not ocr.ocr_engine_tesseract.OcrEngineTesseract.is_available()):
 			label = widget.Label(_("Tesseract is not installed"))
 			self.add(label)
+			label.show()
+			self.set_default_size(400,200)
 			return
 
 		label_language = widget.Label(_("Language "));
