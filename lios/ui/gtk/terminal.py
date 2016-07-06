@@ -5,13 +5,23 @@ from gi.repository import GLib
 class Terminal(Vte.Terminal):
 	def __init__(self,path):
 		super(Terminal,self).__init__()
-		self.spawn_sync(Vte.PtyFlags.DEFAULT, #default is fine
-                path, #where to start the command?
-                ["/bin/sh"], #where is the emulator?
-                [], #it's ok to leave this list empty
-                GLib.SpawnFlags.DO_NOT_REAP_CHILD,
-                None, #at least None is required
-                None);
+		if hasattr(self, 'spawn_sync'):
+			self.spawn_sync(Vte.PtyFlags.DEFAULT, #default is fine
+			path, #where to start the command?
+			["/bin/sh"], #where is the emulator?
+			[], #it's ok to leave this list empty
+			GLib.SpawnFlags.DO_NOT_REAP_CHILD,
+			None, #at least None is required
+			None);
+		else:
+			self.fork_command_full(Vte.PtyFlags.DEFAULT, #default is fine
+			path, #where to start the command?
+			["/bin/sh"], #where is the emulator?
+			[], #it's ok to leave this list empty
+			GLib.SpawnFlags.DO_NOT_REAP_CHILD,
+			None, #at least None is required
+			None);
+
 	def run_command(self,command):
 		command = command+"\n"
 		length = len(command)
