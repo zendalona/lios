@@ -79,7 +79,8 @@ class OcrEngineTesseract(OcrEngineBase):
 					langs.append(lang)
 
 		#Adding user languages
-		for filename in os.listdir(os.environ['HOME']+"/tessdata"):
+		if( os.path.exists(os.environ['HOME']+"/tessdata")):
+			for filename in os.listdir(os.environ['HOME']+"/tessdata"):
 				if filename.lower().endswith(TESSDATA_EXTENSION):
 					lang = filename[:(-1 * len(TESSDATA_EXTENSION))]+"-"+os.environ['HOME']+"/tessdata"
 					langs.append(lang)
