@@ -134,5 +134,5 @@ def get_point_type(x,y,rs):
 			y <= rs[i][1]+rs[i][3]-scope_scale_y):
 				return (3,i,5)
 
-	return (1,0,0)
+	return (1,-1,0)
 				
