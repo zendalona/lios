@@ -62,6 +62,7 @@ class ImageViewer(containers.Paned):
 		
 		self.treeview.connect_cursor_change_function(self.treeview_cursor_changed)
 		self.treeview.connect_rows_reordered_function(self.treeview_rows_reordered)
+		self.treeview.set_column_visible(0,False);
 		self.treeview.set_reorderable(True)
 		scrolled_treeview = containers.ScrollBox()
 		scrolled_treeview.add(self.treeview)
@@ -316,9 +317,11 @@ class ImageViewer(containers.Paned):
 		if (self.start_type == 0):
 			_type, row_index, position_type = image_logics.get_point_type(x,y,[[row[1],row[2],row[3],row[4] ] for row in  self.rs ])
 			self.drawingarea.set_mouse_pointer_type(position_type);
-			self.set_selected_item(row_index)
-			self.treeview.set_list(self.rs);
-			self.drawingarea.set_rectangle_list([[ row[0],row[1],row[2],row[3],row[4] ] for row in self.rs ])
+			if ( row_index != -1):
+				self.set_selected_item(row_index)
+				self.treeview.set_list(self.rs);
+				self.drawingarea.set_rectangle_list([[ row[0],row[0],row[1],row[2],row[3] ] for row in self.rs ])
+				self.treeview.set_cursor(row_index)
 		self.drawingarea.redraw()						
 				
 
