@@ -56,9 +56,9 @@ class DrawingArea(Gtk.DrawingArea):
 			   #cr.move_to(10, 90)
 			   cr.rectangle(item[1], item[2], item[3], item[4])
 			   if item[0] == True:
-				   cr.set_source_rgb(0.9, 0.1, 0.1)
+				   cr.set_source_rgb(0, 0.1, 1)
 			   else:
-				   cr.set_source_rgb(1, 0, 1)
+				   cr.set_source_rgb(0.9, 0, 0)
 			   cr.set_line_width (2.0);
 			   #cr.fill()
 			   cr.stroke()
