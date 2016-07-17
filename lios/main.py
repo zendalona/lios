@@ -122,6 +122,7 @@ class linux_intelligent_ocr_solution():
 			(_("Rotate-Left"),self.rotate_current_images_to_left),menu.SEPARATOR,
 			(_("Zoom-In"),self.imageview.zoom_in),(_("Zoom-Fit"),self.imageview.zoom_fit),
 			(_("Zoom-Out"),self.imageview.zoom_out),menu.SEPARATOR,
+			(_("Train-Selected-Area"),self.train_selected_area),
 			(_("Recognize-Selected-Areas"),self.ocr_selected_areas),
 			(_("Recognize-Current-Image"),self.ocr_current_image),
 			(_("Recognize-Current-Image-With-Rotation"),self.ocr_current_image_with_rotation)]);
@@ -334,6 +335,13 @@ class linux_intelligent_ocr_solution():
 			image_list = self.iconview.get_selected_item_names()
 		train_window = train_tesseract.TesseractTrainer(image_list)
 		train_window.show()
+
+	def train_selected_area(self,*data):
+		if (len(self.imageview.get_selection_list()) > 0):
+			item = self.imageview.get_selection_list()[0]
+			self.imageview.save_sub_image("{0}train_area.png".format(macros.tmp_dir),item[0],item[1],item[2],item[3])
+			train_window = train_tesseract.TesseractTrainer(["{0}train_area.png".format(macros.tmp_dir)])
+			train_window.show()
 		
 	def new(self,*data):
 		if(self.textview.new()):
