@@ -49,8 +49,7 @@ class OcrEngineTesseract(OcrEngineBase):
 		os.system("convert {} /tmp/{}_for_ocr.png".format(file_name,file_name.split("/")[-1]))
 
 		if os.environ['HOME'] in self.language:
-			os.system("tesseract /tmp/{0}_for_ocr.png /tmp/{0}_output -l {1} --tessdata-dir {2}".format(file_name.split("/")[-1],self.language.split("-")[0],os.environ['HOME']))
-			print("tesseract /tmp/{0}_for_ocr.png /tmp/{0}_output -l {1} --tessdir {2}".format(file_name.split("/")[-1],self.language.split("-")[0],os.environ['HOME']))
+			os.system("tesseract /tmp/{0}_for_ocr.png /tmp/{0}_output -l {1} --tessdir {2}".format(file_name.split("/")[-1],self.language.split("-")[0],os.environ['HOME']))
 		else:
 			os.system("tesseract /tmp/{0}_for_ocr.png /tmp/{0}_output -l {1}".format(file_name.split("/")[-1],self.language))
 		os.remove("/tmp/{0}_for_ocr.png".format(file_name.split("/")[-1]))
