@@ -130,9 +130,9 @@ class ImageViewer(containers.Paned):
 		diff = self.zoom_level - zoom_level
 		self.zoom_level = zoom_level
 		parameter = self.zoom_list[self.zoom_level]
-		self.set_list(list)
+		self.set_list(list,diff)
 		self.drawingarea.load_image(filename,list,parameter);
-	def set_list(self,list_):
+	def set_list(self,list_,diff):
 		if (list_ == None):
 			list_ = []
 			for item in self.rs:
