@@ -18,7 +18,7 @@
 ###########################################################################
 
 
-from lios import scanner, editor, imageview, cam, ocr, preferences, speech
+from lios import imageview, ocr
 from lios.ui.gtk import widget, containers, loop, menu, \
 	window, icon_view, dialog, about, tree_view, text_view, terminal
 
@@ -43,6 +43,8 @@ class TesseractTrainer(window.Window):
 
 		label_language = widget.Label(_("Language "));
 		self.combobox_language = widget.ComboBox();
+		self.combobox_language.connect_change_callback_function(self.language_combobox_changed);
+
 
 		self.languages = []
 		for item in ocr.ocr_engine_tesseract.OcrEngineTesseract.get_available_languages():
@@ -205,12 +207,15 @@ class TesseractTrainer(window.Window):
 	def tree_view_image_list_edited_callback(self,*data):
 		print("hello");
 	
+	def language_combobox_changed(self,*data):
+		active = self.combobox_language.get_active()
+		self.language = self.languages[active]
+
 	def button_manual_train_clicked(self,*data):
 		index = self.tree_view_image_list.get_selected_row_index()
 		items = self.tree_view_image_list.get_list()
 		item = items[index][0]
 		item_name_without_extension = item.split(".")[0]
-		self.language = "eng"
 		
 		font_desc = self.entry_font_manual.get_text()
 		
@@ -218,7 +223,7 @@ class TesseractTrainer(window.Window):
 		if (os.path.isfile("/tmp/batch.nochop.box")):
 			os.remove("/tmp/batch.nochop.box");
 		self.output_terminal.run_command("convert {0} -background white -flatten {1}.tif".format(item,item_name_without_extension));
-		self.output_terminal.run_command("tesseract {0}.tif -l {1} batch.nochop makebox".format(item_name_without_extension,self.language));
+		self.output_terminal.run_command("tesseract {0}.tif -l {1} batch.nochop makebox".format(item_name_without_extension,self.language.split("-")[0]));
 			
 		self.output_terminal.run_command("cp /tmp/batch.nochop.box {}.box".format(item_name_without_extension));
 		
@@ -243,7 +248,7 @@ class TesseractTrainer(window.Window):
 			for item in boxeditor.get_list():
 				file.write(' '.join([ str(x) for x in list(item)])+" 0\n")
 			
-			language = self.languages[self.combobox_language.get_active()]
+			language = self.language
 			if (os.environ['HOME'] in language):
 				self.output_terminal.run_command("tesseract {0}.tif {0}.box nobatch box.train -l {1} --tessdata-dir {2}".format(item_name_without_extension,language.split('-')[0],os.environ['HOME']));
 				language = language.split('-')[0] #later used for copying 
@@ -300,8 +305,14 @@ class BoxEditor(window.Window):
 		self.imageview = imageview.ImageViewer()
 		button_close = widget.Button(_("Close"))
 		button_close.connect_function(self.close)
+		button_zoom_in = widget.Button(_("Zoom-In"))
+		button_zoom_in.connect_function(self.imageview.zoom_in)
+		button_zoom_out = widget.Button(_("Zoom-Out"))
+		button_zoom_out.connect_function(self.imageview.zoom_out)
 		box = containers.Box(containers.Box.VERTICAL)
 		box.add(self.imageview)
+		box.add(button_zoom_in)
+		box.add(button_zoom_out)
 		box.add(button_close)
 		self.add(box)
 		self.imageview.show()
@@ -319,7 +330,7 @@ class BoxEditor(window.Window):
 			y = image_height-item[2]-height
 			list_.append((0,item[1],y,width,height,item[0]))
 		
-		self.imageview.set_list(list_)
+		self.imageview.set_list(list_,0)
 	
 	def get_list(self):
 		image_height = self.imageview.get_height()
