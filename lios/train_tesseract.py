@@ -271,6 +271,9 @@ class TesseractTrainer(window.Window):
 			self.output_terminal.run_command("mv shapetable {0}.shapetable".format(item_name_without_extension));
 			self.output_terminal.run_command("combine_tessdata {0}.".format(item_name_without_extension));
 
+			# Create tessdata dir if not existing
+			self.output_terminal.run_command("mkdir -p "+os.environ['HOME']+"/tessdata/");
+
 			if (os.path.isfile(os.environ['HOME']+"/tessdata/"+language+".traineddata")):
 				dlg = dialog.Dialog(_("Edit filename to avoid replacing"),(_("Replace"), dialog.Dialog.BUTTON_ID_1,_("Give another filename"), dialog.Dialog.BUTTON_ID_2))
 				entry = widget.Entry()
