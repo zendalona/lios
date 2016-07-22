@@ -44,11 +44,17 @@ class TreeView(Gtk.TreeView):
 		i = 0;
 		for item in name_type_tuple_list:
 			type_list.append(item[1])
-			if(item[1] == int):
+			if(item[1] == float):
 				cell = CellRendererSpin(i)
 				adjustment = Gtk.Adjustment(0, 0, 10000, 1, 10, 0)
 				cell.set_property("adjustment", adjustment)
-				cell.connect("edited", self.on_int_edited)
+				cell.set_property("digits", 3)
+				cell.connect("edited", self.on_float_edited)
+			elif(item[1] == int):
+				cell = CellRendererSpin(i)
+				adjustment = Gtk.Adjustment(0, 0, 10000, 1, 10, 0)
+				cell.set_property("adjustment", adjustment)
+				cell.connect("edited", self.on_float_edited)
 			elif(item[1] == bool):
 				cell = CellRendererToggle(i)
 				cell.set_radio(True)
@@ -94,8 +100,8 @@ class TreeView(Gtk.TreeView):
 	def clear(self):
 		self.rs.clear()
 	
-	def on_int_edited(self, widget, path, value):
-		self.rs[path][widget.pos] = int(value)
+	def on_float_edited(self, widget, path, value):
+		self.rs[path][widget.pos] = float(value)
 		self.function(int(path))
 
 	def on_bool_edited(self, widget, path):
@@ -137,7 +143,7 @@ class TestWindow(Gtk.Window):
     def __init__(self):
         Gtk.Window.__init__(self, title="Hello World")
         
-        self.tv = TreeView([("X",int,True),("Y",int,True),("Width",int,True),("Height",int,True),("Letter",str,True)],self.function)
+        self.tv = TreeView([("X",float,True),("Y",float,True),("Width",float,True),("Height",float,True),("Letter",str,True)],self.function)
         self.tv.append([10,20,40,40,"a"]);
         self.tv.append([20,30,40,40,"b"]);
 

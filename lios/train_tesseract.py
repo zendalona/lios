@@ -237,7 +237,7 @@ class TesseractTrainer(window.Window):
 		
 		for line in open(item_name_without_extension+".box"):
 			spl = line.split(" ")
-			list_.append((spl[0],int(spl[1]),int(spl[2]),int(spl[3]),int(spl[4]),int(spl[5])))
+			list_.append((spl[0],float(spl[1]),float(spl[2]),float(spl[3]),float(spl[4]),float(spl[5])))
 		
 		# [("a",40,40,60,60,0),("a",80,90,100,60,110)]	
 		boxeditor.set_list(list_)		

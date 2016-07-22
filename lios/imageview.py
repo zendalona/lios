@@ -56,8 +56,8 @@ class ImageViewer(containers.Paned):
 				
 		#Drawing List Tree View
 		self.treeview = tree_view.TreeView([("Selected",bool,False),
-		("X",int,True),("Y",int,True),
-		("Width",int,True),("Height",int,True),
+		("X",float,True),("Y",float,True),
+		("Width",float,True),("Height",float,True),
 		("Letter",str,True)],self.edited_callback)
 		
 		self.treeview.connect_cursor_change_function(self.treeview_cursor_changed)
