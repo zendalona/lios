@@ -122,7 +122,8 @@ class linux_intelligent_ocr_solution():
 			(_("Rotate-Left"),self.rotate_current_images_to_left),menu.SEPARATOR,
 			(_("Zoom-In"),self.imageview.zoom_in),(_("Zoom-Fit"),self.imageview.zoom_fit),
 			(_("Zoom-Out"),self.imageview.zoom_out),menu.SEPARATOR,
-			(_("Train-Selected-Area"),self.train_selected_area),
+			(_("Train-Selected-Areas"),self.train_selected_areas),
+			(_("Save-Selected-Areas"),self.save_selected_areas),
 			(_("Recognize-Selected-Areas"),self.ocr_selected_areas),
 			(_("Recognize-Current-Image"),self.ocr_current_image),
 			(_("Recognize-Current-Image-With-Rotation"),self.ocr_current_image_with_rotation)]);
@@ -329,19 +330,45 @@ class linux_intelligent_ocr_solution():
 			self.progressbar.set_fraction(percentage)
 
 	def start_train_tesseract(self,*data):
-		image_list = self.iconview.get_selected_item_names()
-		if(image_list == []):
-			self.iconview.select_all()
-			image_list = self.iconview.get_selected_item_names()
-		train_window = train_tesseract.TesseractTrainer(image_list)
+		list_ = []
+		if (len(self.imageview.get_selection_list()) > 0):
+			# User alrady selected some areas
+			i = 0;
+			for item in self.imageview.get_selection_list():
+				self.imageview.save_sub_image("{0}train_area{1}.png".format(macros.tmp_dir,i),item[0],item[1],item[2],item[3])
+				list_.append("{0}train_area{1}.png".format(macros.tmp_dir,i))
+				i = i + 1;
+		else:
+			# No area selected so seeking for selected images
+			list_ = self.iconview.get_selected_item_names()
+			if(list_ == []):
+				# No images selected so selecting all
+				self.iconview.select_all()
+				list_ = self.iconview.get_selected_item_names()
+
+		train_window = train_tesseract.TesseractTrainer(list_)
 		train_window.show()
 
-	def train_selected_area(self,*data):
+	def train_selected_areas(self,*data):
 		if (len(self.imageview.get_selection_list()) > 0):
-			item = self.imageview.get_selection_list()[0]
-			self.imageview.save_sub_image("{0}train_area.png".format(macros.tmp_dir),item[0],item[1],item[2],item[3])
-			train_window = train_tesseract.TesseractTrainer(["{0}train_area.png".format(macros.tmp_dir)])
+			area_list = []
+			i = 0;
+			for item in self.imageview.get_selection_list():
+				self.imageview.save_sub_image("{0}train_area{1}.png".format(macros.tmp_dir,i),item[0],item[1],item[2],item[3])
+				area_list.append("{0}train_area{1}.png".format(macros.tmp_dir,i))
+				i = i + 1;
+			train_window = train_tesseract.TesseractTrainer(area_list)
 			train_window.show()
+
+	@on_thread
+	def save_selected_areas(self,*data):
+		for item in self.imageview.get_selection_list():
+			destination = self.get_feesible_filename_from_filename("{}{}.png".format(macros.tmp_dir,self.preferences.starting_page_number))
+			self.imageview.save_sub_image(destination,item[0],item[1],item[2],item[3])
+			loop.acquire_lock()
+			self.iconview.add_item(destination)
+			loop.release_lock()
+			self.preferences.update_page_number()
 		
 	def new(self,*data):
 		if(self.textview.new()):
