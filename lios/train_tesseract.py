@@ -229,9 +229,6 @@ class TesseractTrainer(window.Window):
 		
 		# Wait for box file
 		os.system("while [ ! -f {0}.box ]; do sleep 1; done".format(item_name_without_extension))
-
-		boxeditor = BoxEditor()
-		boxeditor.set_image(item)
 		
 		list_ = []
 		
@@ -239,11 +236,7 @@ class TesseractTrainer(window.Window):
 			spl = line.split(" ")
 			list_.append((spl[0],float(spl[1]),float(spl[2]),float(spl[3]),float(spl[4]),float(spl[5])))
 		
-		# [("a",40,40,60,60,0),("a",80,90,100,60,110)]	
-		boxeditor.set_list(list_)		
-		boxeditor.show_all()
-		
-		def box_closed(*data):
+		def train_with_boxes(*data):
 			file = open(item_name_without_extension+".box","w")
 			for item in boxeditor.get_list():
 				file.write(' '.join([ str(x) for x in list(item)])+" 0\n")
@@ -280,43 +273,58 @@ class TesseractTrainer(window.Window):
 			self.output_terminal.run_command("mkdir -p "+os.environ['HOME']+"/tessdata/");
 
 			if (os.path.isfile(os.environ['HOME']+"/tessdata/"+language+".traineddata")):
-				dlg = dialog.Dialog(_("Edit filename to avoid replacing"),(_("Replace"), dialog.Dialog.BUTTON_ID_1,_("Give another filename"), dialog.Dialog.BUTTON_ID_2))
+				dlg = dialog.Dialog(language+_(" Alrady exist! Please edit name to avoid replacing"),
+				(_("Place it"), dialog.Dialog.BUTTON_ID_1))
+
 				entry = widget.Entry()
 				dlg.add_widget_with_label(entry,_("File Name : "))
 				entry.set_text(language)
 				response = dlg.run()
-				if(response == dialog.Dialog.BUTTON_ID_2):
-					language = entry.get_text()
+				language = entry.get_text()
 				dlg.destroy()
 				self.output_terminal.run_command("cp {0}.traineddata {1}/tessdata/{2}.traineddata".format(item_name_without_extension,os.environ['HOME'],language));
 			else:
 				self.output_terminal.run_command("cp {0}.traineddata {1}/tessdata/{2}.traineddata".format(item_name_without_extension,os.environ['HOME'],language));
 
-		boxeditor.connect_close_function(box_closed)
+		boxeditor = BoxEditorDialog()
+		boxeditor.set_image(item)
+
+		boxeditor.set_list(list_)
+		response = boxeditor.run()
+
+		if (response == dialog.Dialog.BUTTON_ID_1):
+			boxeditor.destroy()
+			train_with_boxes()
+		else:
+			boxeditor.destroy()
 		
 
 		
 		
 
 
-class BoxEditor(window.Window):
+class BoxEditorDialog(dialog.Dialog):
 	def __init__(self):
-		window.Window.__init__(self, title="Tesseract Trainer")
+		dialog.Dialog.__init__(self, _("Tesseract Trainer"),(_("Train"), dialog.Dialog.BUTTON_ID_1,_("Close!"), dialog.Dialog.BUTTON_ID_2));
 		self.imageview = imageview.ImageViewer()
-		button_close = widget.Button(_("Close"))
-		button_close.connect_function(self.close)
 		button_zoom_in = widget.Button(_("Zoom-In"))
 		button_zoom_in.connect_function(self.imageview.zoom_in)
 		button_zoom_out = widget.Button(_("Zoom-Out"))
 		button_zoom_out.connect_function(self.imageview.zoom_out)
 		box = containers.Box(containers.Box.VERTICAL)
 		box.add(self.imageview)
-		box.add(button_zoom_in)
-		box.add(button_zoom_out)
-		box.add(button_close)
-		self.add(box)
+		box1 = containers.Box(containers.Box.HORIZONTAL)
+		box1.add(button_zoom_in)
+		box1.add(button_zoom_out)
+		box1.set_hexpand(True)
+		button_zoom_in.set_hexpand(True)
+		button_zoom_out.set_hexpand(True)
+		box.add(box1)
 		self.imageview.show()
 		self.maximize()
+		self.add_widget(box)
+		box.show_all()
+
 	
 	def set_image(self,image):
 		self.imageview.load_image(image,[],imageview.ImageViewer.ZOOM_FIT)
