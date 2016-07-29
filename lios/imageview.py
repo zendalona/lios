@@ -332,8 +332,14 @@ class ImageViewer(containers.Paned):
 			
 			#Swap coordinate if selected in reverse direction
 			self.start_x,self.start_y,self.tmp_finish_x,self.tmp_finish_y = image_logics.order_rectangle(self.start_x,self.start_y,self.tmp_finish_x,self.tmp_finish_y)
-		
-			self.rs.append([0,self.start_x,self.start_y,self.tmp_finish_x-self.start_x,self.tmp_finish_y-self.start_y,""])
+
+			# finding the index of new box inside the box list
+			index = image_logics.find_index_for_new_box(self.start_x,self.start_y,self.tmp_finish_x,self.tmp_finish_y,
+			[[ row[1],row[2],row[3],row[4] ]  for row in self.rs ]);
+
+			# Inserting the new box to the list
+			self.rs.insert(index,[0,self.start_x,self.start_y,self.tmp_finish_x-self.start_x,self.tmp_finish_y-self.start_y,""])
+
 			self.set_selected_item(len([ [row[1],row[2],row[3],row[4],row[0] ] for row in self.rs ])-1)
 			self.treeview.set_list(self.rs)
 			self.drawingarea.set_rectangle_list([[ row[0],row[1],row[2],row[3],row[4] ]  for row in self.rs ]);
@@ -352,11 +358,14 @@ class ImageViewer(containers.Paned):
 		self.start_type = 0;
 	
 	def set_selected_item(self,row):
+		self.selected_item = row;
 		for i in range(0,len(self.rs)):
 			if (i == row):
 				self.rs[i][0] = 1;
 			else:
 				self.rs[i][0] = 0;	
+	def get_selected_item_index(self):
+		return self.selected_item;
 
 	def __delete_selection(self,widget):
 		list = []

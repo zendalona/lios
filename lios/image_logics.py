@@ -135,4 +135,60 @@ def get_point_type(x,y,rs):
 				return (3,i,5)
 
 	return (1,-1,0)
-				
+
+
+# Used to find the index of new box inside the box list 
+# The box list is arranged in top-left to bottom-right order
+def find_index_for_new_box(new_s_x,new_s_y,new_e_x,new_e_y,rl):
+
+	length = len(rl);
+	index = length-1;
+
+	min_x_dist = 99999;
+	min_y_dist = 99999;
+
+	for i in range (0,length):
+		cur_s_x = rl[i][0]
+		cur_s_y = rl[i][1]
+		cur_e_x = cur_s_x+rl[i][2]
+		cur_e_y = cur_s_y+rl[i][3]
+
+		# Checking it's on the right side or not
+		if(cur_s_x < new_s_x):
+			# Checking new top and new bottom are inside the current one's y axis
+			if(cur_s_y <= new_s_y <= cur_e_y or
+			new_s_y <= cur_s_y <= new_e_y or
+			cur_s_y <= new_e_y <= cur_e_y or
+			new_s_y <= cur_e_y <= new_e_y):
+				dist = new_s_x - cur_s_x;
+				# The new box is residing on right side so
+				# if cur box having minimum x distance to new then it's more close
+				if ( dist < min_x_dist):
+					min_x_dist = dist;
+					index = i+1;
+
+		#if nothing in parallel to the right then new box will be drawed in first from left
+		if (min_x_dist == 99999):
+			if(cur_e_y <= new_s_y):
+				# Checking the vertical distance bitween new box and cur box
+				# if it's very low then find the right most parallel one
+				dist1 = new_s_y - cur_s_y;
+				dist2 = new_s_y - cur_e_y;
+				dist = (dist1+dist2)/2;
+				if (dist < min_y_dist):
+					min_y_dist = dist
+					# Checking if any box in parallel to right side
+					j = i+1;
+					index = i+1;
+
+					#cur_e_y >= rl[j][1] is used to skip symbols like single quotes
+					while(j < length and cur_s_x < rl[j][0] and (cur_s_y <= rl[j][1] <= cur_e_y or
+						rl[j][1] <= cur_s_y <= (rl[j][1]+rl[j][3]) or
+						cur_s_y <= (rl[j][1]+rl[j][3]) <= cur_e_y or
+						rl[j][1] <= cur_e_y <= (rl[j][1]+rl[j][3]) or cur_e_y >= rl[j][1] )):
+							j = j + 1;
+							index = j;
+							# Stop if end reached
+							if(j == length):
+								break;
+	return index;
