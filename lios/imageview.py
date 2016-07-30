@@ -68,6 +68,7 @@ class ImageViewer(containers.Paned):
 		scrolled_treeview.add(self.treeview)
 
 		self.rs = []
+		self.start_row_index = -1
 
 
 		button1 = widget.Button("Delete")
@@ -318,10 +319,18 @@ class ImageViewer(containers.Paned):
 			_type, row_index, position_type = image_logics.get_point_type(x,y,[[row[1],row[2],row[3],row[4] ] for row in  self.rs ])
 			self.drawingarea.set_mouse_pointer_type(position_type);
 			if ( row_index != -1):
+				# The mouse is over the box at row_index
 				self.set_selected_item(row_index)
 				self.treeview.set_list(self.rs);
 				self.drawingarea.set_rectangle_list([[ row[0],row[0],row[1],row[2],row[3] ] for row in self.rs ])
 				self.treeview.set_cursor(row_index)
+			else:
+				# If user made a selection then it should be preserved even after hovering other boxes
+				if (self.start_row_index != -1):
+					self.set_selected_item(self.start_row_index)
+					self.treeview.set_list(self.rs);
+					self.drawingarea.set_rectangle_list([[ row[0],row[0],row[1],row[2],row[3] ] for row in self.rs ])
+					self.treeview.set_cursor(self.start_row_index)
 		self.drawingarea.redraw()						
 				
 
@@ -375,6 +384,8 @@ class ImageViewer(containers.Paned):
 		self.rs = list;
 		# Set first element as selected 
 		self.set_selected_item(0)
+		# reset selection index
+		self.start_row_index = -1;
 		self.treeview.set_list(self.rs)
 		self.drawingarea.set_rectangle_list([[ row[0],row[1],row[2],row[3],row[4] ] for row in self.rs ])
 		self.drawingarea.redraw()
@@ -383,6 +394,8 @@ class ImageViewer(containers.Paned):
 	def __clear_selection(self,widget):
 		self.rs = []
 		self.treeview.clear()
+		# reset selection index
+		self.start_row_index = -1;
 		self.drawingarea.set_rectangle_list([[ row[0],row[1],row[2],row[3],row[4] ] for row in self.rs ]);
 		self.drawingarea.redraw()
 		self.emit('list_updated')
