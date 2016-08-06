@@ -71,10 +71,12 @@ class ImageViewer(containers.Paned):
 		self.start_row_index = -1
 
 
-		button1 = widget.Button("Delete")
+		button1 = widget.Button(_("_Delete"))
+		button1.set_use_underline(True)
+		button1.set_tooltip_text(_("Shortcut Alt+D"))
 		button1.connect_function(self.__delete_selection)
 
-		button2 = widget.Button("Clear")
+		button2 = widget.Button(_("Clear"))
 		button2.connect_function(self.__clear_selection)
 
 		grid = containers.Grid()
