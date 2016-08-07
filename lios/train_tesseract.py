@@ -20,7 +20,7 @@
 
 from lios import imageview, ocr
 from lios.ui.gtk import widget, containers, loop, menu, \
-	window, icon_view, dialog, about, tree_view, text_view, terminal
+	window, icon_view, dialog, about, tree_view, text_view, terminal, file_chooser
 
 from lios.ui.gtk.file_chooser import FileChooserDialog
 from lios import macros
@@ -222,6 +222,11 @@ class TesseractTrainer(window.Window):
 		
 		if (os.path.isfile("/tmp/batch.nochop.box")):
 			os.remove("/tmp/batch.nochop.box");
+
+		if (os.path.isfile("{0}.box".format(item_name_without_extension))):
+			print("Deleting {0}.box".format(item_name_without_extension))
+			os.remove("{0}.box".format(item_name_without_extension));
+
 		self.output_terminal.run_command("convert {0} -background white -flatten {1}.tif".format(item,item_name_without_extension));
 		self.output_terminal.run_command("tesseract {0}.tif -l {1} batch.nochop makebox".format(item_name_without_extension,self.language.split("-")[0]));
 			
@@ -230,16 +235,10 @@ class TesseractTrainer(window.Window):
 		# Wait for box file
 		os.system("while [ ! -f {0}.box ]; do sleep 1; done".format(item_name_without_extension))
 		
-		list_ = []
-		
-		for line in open(item_name_without_extension+".box"):
-			spl = line.split(" ")
-			list_.append((spl[0],float(spl[1]),float(spl[2]),float(spl[3]),float(spl[4]),float(spl[5])))
-		
+		boxeditor = BoxEditorDialog()
+
 		def train_with_boxes(*data):
-			file = open(item_name_without_extension+".box","w")
-			for item in boxeditor.get_list():
-				file.write(' '.join([ str(x) for x in list(item)])+" 0\n")
+			boxeditor.save_boxes_to_file(item_name_without_extension+".box")
 			
 			language = self.language
 			if (os.environ['HOME'] in language):
@@ -286,10 +285,9 @@ class TesseractTrainer(window.Window):
 			else:
 				self.output_terminal.run_command("cp {0}.traineddata {1}/tessdata/{2}.traineddata".format(item_name_without_extension,os.environ['HOME'],language));
 
-		boxeditor = BoxEditorDialog()
 		boxeditor.set_image(item)
+		boxeditor.load_boxes_from_file(item_name_without_extension+".box")
 
-		boxeditor.set_list(list_)
 		response = boxeditor.run()
 
 		if (response == dialog.Dialog.BUTTON_ID_1):
@@ -297,7 +295,6 @@ class TesseractTrainer(window.Window):
 			train_with_boxes()
 		else:
 			boxeditor.destroy()
-		
 
 		
 		
@@ -307,25 +304,69 @@ class BoxEditorDialog(dialog.Dialog):
 	def __init__(self):
 		dialog.Dialog.__init__(self, _("Tesseract Trainer"),(_("Train"), dialog.Dialog.BUTTON_ID_1,_("Close!"), dialog.Dialog.BUTTON_ID_2));
 		self.imageview = imageview.ImageViewer()
+
 		button_zoom_in = widget.Button(_("Zoom-In"))
 		button_zoom_in.connect_function(self.imageview.zoom_in)
 		button_zoom_out = widget.Button(_("Zoom-Out"))
 		button_zoom_out.connect_function(self.imageview.zoom_out)
+		button_save = widget.Button(_("Save-Boxes"))
+		button_save.connect_function(self.save_boxes_dialog)
+		button_load = widget.Button(_("Load-Boxes"))
+		button_load.connect_function(self.load_boxes_dialog)
 		box = containers.Box(containers.Box.VERTICAL)
 		box.add(self.imageview)
 		box1 = containers.Box(containers.Box.HORIZONTAL)
 		box1.add(button_zoom_in)
 		box1.add(button_zoom_out)
+		box1.add(button_save)
+		box1.add(button_load)
 		box1.set_hexpand(True)
 		button_zoom_in.set_hexpand(True)
 		button_zoom_out.set_hexpand(True)
+		button_save.set_hexpand(True)
+		button_load.set_hexpand(True)
 		box.add(box1)
 		self.imageview.show()
 		self.maximize()
 		self.add_widget(box)
 		box.show_all()
 
+	def save_boxes_to_file(self,filename):
+		file = open(filename,"w")
+		for item in self.get_list():
+			file.write("{0} {1} {2} {3} {4} 0\n".format(str(item[0]),
+			str(int(item[1])),str(int(item[2])),
+			str(int(item[3])),str(int(item[4]))))
+
+	def load_boxes_from_file(self,filename):
+		list_ = []
+		for line in open(filename):
+			spl = line.split(" ")
+			list_.append((spl[0],float(spl[1]),float(spl[2]),float(spl[3]),float(spl[4]),float(spl[5])))
+		self.set_list(list_)
 	
+	def save_boxes_dialog(self,*data):
+		save_file = file_chooser.FileChooserDialog(_("Save "),
+			file_chooser.FileChooserDialog.SAVE,
+			"*",None)
+		save_file.set_current_name(".box");
+		save_file.set_do_overwrite_confirmation(True);
+		response = save_file.run()
+		if response == file_chooser.FileChooserDialog.ACCEPT:
+			self.save_boxes_to_file(save_file.get_filename())
+		save_file.destroy()
+
+	def load_boxes_dialog(self,*data):
+		open_file = file_chooser.FileChooserDialog(_("Select the file to open"),
+			file_chooser.FileChooserDialog.OPEN,
+			"*",macros.home_dir)
+
+		response = open_file.run()
+		if response == file_chooser.FileChooserDialog.ACCEPT:
+			self.load_boxes_from_file(open_file.get_filename())
+		open_file.destroy()
+
+
 	def set_image(self,image):
 		self.imageview.load_image(image,[],imageview.ImageViewer.ZOOM_FIT)
 
