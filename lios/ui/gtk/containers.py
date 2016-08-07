@@ -82,6 +82,17 @@ class ScrollBox(Gtk.ScrolledWindow):
 		super(ScrollBox,self).__init__()
 		self.set_border_width(2)
 
+	def scroll(self,h_value,v_value):
+		adj = self.get_vadjustment()
+		adj.set_value(v_value)
+		adj = self.get_hadjustment()
+		adj.set_value(h_value)
+
+	def get_size_on_screen(self):
+		alc = self.get_allocation()
+		return (alc.width,alc.height)
+
+
 class NoteBook(Gtk.Notebook):
 	def __init__(self):
 		super(NoteBook,self).__init__()

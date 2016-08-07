@@ -88,6 +88,14 @@ class TreeView(Gtk.TreeView):
 		if(self.cursor_change_handler_id):
 			self.handler_unblock(self.cursor_change_handler_id)
 
+	def block_cursor_change_signal(self):
+		if(self.cursor_change_handler_id):
+			self.handler_block(self.cursor_change_handler_id)
+
+	def unblock_cursor_change_signal(self):
+		if(self.cursor_change_handler_id):
+			self.handler_unblock(self.cursor_change_handler_id)
+
 	#def set_selected_row(self,row):
 	#	self.handler_block(self.cursor_change_handler_id)
 	#	self.set_cursor(row);
