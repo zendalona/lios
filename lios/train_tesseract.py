@@ -305,6 +305,8 @@ class BoxEditorDialog(dialog.Dialog):
 		dialog.Dialog.__init__(self, _("Tesseract Trainer"),(_("Train"), dialog.Dialog.BUTTON_ID_1,_("Close!"), dialog.Dialog.BUTTON_ID_2));
 		self.imageview = imageview.ImageViewer()
 
+		self.image_name = ""
+
 		button_zoom_in = widget.Button(_("Zoom-In"))
 		button_zoom_in.connect_function(self.imageview.zoom_in)
 		button_zoom_out = widget.Button(_("Zoom-Out"))
@@ -349,7 +351,7 @@ class BoxEditorDialog(dialog.Dialog):
 		save_file = file_chooser.FileChooserDialog(_("Save "),
 			file_chooser.FileChooserDialog.SAVE,
 			"*",None)
-		save_file.set_current_name(".box");
+		save_file.set_current_name(self.image_name+".box");
 		save_file.set_do_overwrite_confirmation(True);
 		response = save_file.run()
 		if response == file_chooser.FileChooserDialog.ACCEPT:
@@ -369,6 +371,7 @@ class BoxEditorDialog(dialog.Dialog):
 
 	def set_image(self,image):
 		self.imageview.load_image(image,[],imageview.ImageViewer.ZOOM_FIT)
+		self.image_name = "".join(image.split(".")[:-1])
 
 	def set_list(self,list):
 		image_height = self.imageview.get_height()
