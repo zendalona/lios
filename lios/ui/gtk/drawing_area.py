@@ -55,17 +55,21 @@ class DrawingArea(Gtk.DrawingArea):
 		   for item in self.rectangles:
 			   #cr.move_to(10, 90)
 			   cr.rectangle(item[1], item[2], item[3], item[4])
+
+			   # Red color for selected item blue for unselected items
 			   if item[0] == True:
-				   cr.set_source_rgb(0, 0.1, 1)
-			   else:
 				   cr.set_source_rgb(0.9, 0, 0)
+			   else:
+				   cr.set_source_rgb(0, 0.1, 1)
+
 			   cr.set_line_width (2.0);
 			   #cr.fill()
 			   cr.stroke()
 		   
 		   if (self.drawing_rectangle):
 			   cr.rectangle(self.drawing_rectangle[0],self.drawing_rectangle[1],self.drawing_rectangle[2],self.drawing_rectangle[3])
-			   cr.set_source_rgb(0, 0, 1.0)
+			   # Green Color for currently drawing rectangle
+			   cr.set_source_rgb(0, 1.0, 0)
 			   cr.set_line_width (2.0);
 			   cr.stroke()
 		   return True
