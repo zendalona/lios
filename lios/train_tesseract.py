@@ -209,7 +209,10 @@ class TesseractTrainer(window.Window):
 	
 	def language_combobox_changed(self,*data):
 		active = self.combobox_language.get_active()
-		self.language = self.languages[active]
+
+		# While resetting combobox after training the active will be -1
+		if ( active <= len(self.languages) and active != -1 ):
+			self.language = self.languages[active]
 
 	def button_manual_train_clicked(self,*data):
 		index = self.tree_view_image_list.get_selected_row_index()
@@ -284,6 +287,14 @@ class TesseractTrainer(window.Window):
 				self.output_terminal.run_command("cp {0}.traineddata {1}/tessdata/{2}.traineddata".format(item_name_without_extension,os.environ['HOME'],language));
 			else:
 				self.output_terminal.run_command("cp {0}.traineddata {1}/tessdata/{2}.traineddata".format(item_name_without_extension,os.environ['HOME'],language));
+				# This dialog is to wait till exicution completes
+				dlg = dialog.Dialog(_("Info"),
+				(_("Ok"), dialog.Dialog.BUTTON_ID_1))
+				label = widget.Label(_("Trained data is placed in {0}/tessdata/{1}.traineddata").format(macros.home_dir,language))
+				dlg.add_widget(label);
+				label.show()
+				dlg.run()
+				dlg.destroy()
 
 		boxeditor.set_image(item)
 		boxeditor.load_boxes_from_file(item_name_without_extension+".box")
@@ -293,6 +304,12 @@ class TesseractTrainer(window.Window):
 		if (response == dialog.Dialog.BUTTON_ID_1):
 			boxeditor.destroy()
 			train_with_boxes()
+			self.languages = []
+			self.combobox_language.clear()
+			for item in ocr.ocr_engine_tesseract.OcrEngineTesseract.get_available_languages():
+				self.combobox_language.add_item(item)
+				self.languages.append(item)
+			self.combobox_language.set_active(0)
 		else:
 			boxeditor.destroy()
 

@@ -348,6 +348,12 @@ class linux_intelligent_ocr_solution():
 
 		train_window = train_tesseract.TesseractTrainer(list_)
 		train_window.show()
+		train_window.connect_close_function(self.reload_language_list)
+
+	def reload_language_list(self,*data):
+		languages_available = self.available_ocr_engine_list[self.preferences.ocr_engine].get_available_languages()
+		self.preferences.set_avalable_ocr_engines([ (item.name,item.get_available_languages())
+												for item in self.available_ocr_engine_list ])
 
 	def train_selected_areas(self,*data):
 		if (len(self.imageview.get_selection_list()) > 0):
@@ -359,6 +365,8 @@ class linux_intelligent_ocr_solution():
 				i = i + 1;
 			train_window = train_tesseract.TesseractTrainer(area_list)
 			train_window.show()
+			train_window.connect_close_function(self.reload_language_list)
+
 
 	@on_thread
 	def save_selected_areas(self,*data):
@@ -1209,6 +1217,9 @@ class linux_intelligent_ocr_solution():
 		if (self.old_language != self.preferences.language):
 			languages = self.available_ocr_engine_list[self.preferences.ocr_engine].get_available_languages()
 			self.old_language = self.preferences.language
+			if (self.preferences.language >= len(languages)):
+				self.old_language = 0;
+				self.preferences.language = 0;
 			try:
 				self.dict = dictionary.Dict(dictionary.dictionary_language_dict[languages[self.preferences.language]])
 			except:
