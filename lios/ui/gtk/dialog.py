@@ -40,6 +40,9 @@ class Dialog(Gtk.Dialog):
 		box = self.get_content_area();
 		box.add(new_box)
 		box.show_all()		
+
+	def connect_configure_event_handler(self,function):
+		self.connect("configure-event",function)
 		
 	#show_all()
 	#run()

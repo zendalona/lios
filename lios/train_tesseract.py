@@ -355,10 +355,16 @@ class BoxEditorDialog(dialog.Dialog):
 		button_save.set_hexpand(True)
 		button_load.set_hexpand(True)
 		box.add(box1)
+		self.connect_configure_event_handler(self.configure_event)
 		self.imageview.show()
 		self.maximize()
 		self.add_widget(box)
 		box.show_all()
+
+	def configure_event(self,*arg):
+		width,height = self.get_size()
+		self.imageview.set_position(width-400)
+
 
 	def save_boxes_to_file(self,filename):
 		file = open(filename,"w")
