@@ -68,10 +68,15 @@ class TesseractTrainer(window.Window):
 		
 		label_select_images = widget.Label(_("Select scanned images for training"));
 		
-		self.tree_view_image_list = tree_view.TreeView([("File name ",str,False)],self.tree_view_image_list_edited_callback)
+		self.icon_view_image_list = icon_view.IconView()
+		scroll_box_iconview = containers.ScrollBox()
+		self.icon_view_image_list.set_vexpand(True)
+		scroll_box_iconview.add(self.icon_view_image_list)
 		
 		for item in image_list:
-			self.tree_view_image_list.append((item,));
+			self.icon_view_image_list.add_item(item);
+		self.icon_view_image_list.show()
+
 		button_train = widget.Button("Start Training");
 		button_train.connect_function(self.button_manual_train_clicked);
 
@@ -89,7 +94,7 @@ class TesseractTrainer(window.Window):
 		containers.Grid.NEW_ROW,
 		(seperator_select_images,3,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND),
 		containers.Grid.NEW_ROW,
-		(self.tree_view_image_list,2,2,containers.Grid.HEXPAND,containers.Grid.VEXPAND),
+		(scroll_box_iconview,2,2,containers.Grid.HEXPAND,containers.Grid.VEXPAND),
 		(button_add_image,1,1,containers.Grid.NO_HEXPAND,containers.Grid.VEXPAND),
 		containers.Grid.NEW_ROW,
 		(button_train,1,1,containers.Grid.NO_HEXPAND,containers.Grid.VEXPAND)])		
@@ -210,9 +215,6 @@ class TesseractTrainer(window.Window):
 	def ambiguous_edited_callback(self,*data):
 		print ("edited")
 	
-	def tree_view_image_list_edited_callback(self,*data):
-		print("hello");
-	
 	def language_combobox_changed(self,*data):
 		active = self.combobox_language.get_active()
 
@@ -231,14 +233,13 @@ class TesseractTrainer(window.Window):
 			image_list = file_chooser.get_filenames()
 			file_chooser.destroy()
 			for item in image_list:
-				self.tree_view_image_list.append((item,));
+				self.icon_view_image_list.add_item(item);
 		else:
 			file_chooser.destroy()
 
 	def button_manual_train_clicked(self,*data):
-		index = self.tree_view_image_list.get_selected_row_index()
-		items = self.tree_view_image_list.get_list()
-		item = items[index][0]
+		items = self.icon_view_image_list.get_selected_item_names()
+		item = items[0]
 		item_name_without_extension = item.split(".")[0]
 		
 		font_desc = self.entry_font_manual.get_text()
