@@ -55,58 +55,7 @@ class TesseractTrainer(window.Window):
 		#Notebook
 		notebook = containers.NoteBook()
 		notebook.show_all()
-		
-		#Ambiguous Editor
-		self.treeview_ambiguous = tree_view.TreeView([("match",str,False),
-		("Replacement",int,True),("Mandatory",int,True)],self.ambiguous_edited_callback)
-		notebook.add_page("Ambiguous",self.treeview_ambiguous);
-		
-		#Dictionary Editor
-		label_select_word_dict = widget.Label(_("Select Word dict "));
-		button_select_word_dict = widget.Button(_("Select word dict"));
-		label_select_freequent_word_dict = widget.Label(_("Select Freequent Word dict "));
-		button_select_freequent_word_dict = widget.Button(_("Select Freequent Word dict"));
-		label_select_punctation_dict = widget.Label(_("Select Punctuation dict "));
-		button_select_punctation_dict = widget.Button(_("Select Punctuation dict "));
-		label_select_number_dict = widget.Label(_("Select Number dict "));
-		button_select_number_dict = widget.Button(_("Select Number dict "));
-		label_select_word_with_digit_dict = widget.Label(_("Select Word with digit  dict "));
-		button_select_word_with_digit_dict = widget.Button(_("Select Word with digit  dict "));
-		
-		seperator_user_words = widget.Separator()
-		
-		label_user_words = widget.Label(_("User Words "));
-		text_view_user_words = text_view.TextView()
-		text_view_user_words.set_border_width(10);
-		
-		button_set_dictionary = widget.Button("Apply Dictionary's ")
-		
-		
-		grid_set_dictionary = containers.Grid()
-		grid_set_dictionary.add_widgets([(label_select_word_dict,1,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND,containers.Grid.ALIGN_START),
-		(button_select_word_dict,1,1,containers.Grid.NO_HEXPAND,containers.Grid.NO_VEXPAND),
-		containers.Grid.NEW_ROW,
-		(label_select_freequent_word_dict,1,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND,containers.Grid.ALIGN_START),
-		(button_select_freequent_word_dict,1,1,containers.Grid.NO_HEXPAND,containers.Grid.NO_VEXPAND),
-		containers.Grid.NEW_ROW,		
-		(label_select_punctation_dict,1,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND,containers.Grid.ALIGN_START),
-		(button_select_punctation_dict,1,1,containers.Grid.NO_HEXPAND,containers.Grid.NO_VEXPAND),
-		containers.Grid.NEW_ROW,		
-		(label_select_number_dict,1,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND,containers.Grid.ALIGN_START),
-		(button_select_number_dict,1,1,containers.Grid.NO_HEXPAND,containers.Grid.NO_VEXPAND),
-		containers.Grid.NEW_ROW,		
-		(label_select_word_with_digit_dict,1,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND,containers.Grid.ALIGN_START),
-		(button_select_word_with_digit_dict,1,1,containers.Grid.NO_HEXPAND,containers.Grid.NO_VEXPAND),
-		containers.Grid.NEW_ROW,
-		(seperator_user_words,2,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND,containers.Grid.ALIGN_START),
-		containers.Grid.NEW_ROW,
-		(label_user_words,2,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND),
-		containers.Grid.NEW_ROW,
-		(text_view_user_words,2,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND),
-		containers.Grid.NEW_ROW,
-		(button_set_dictionary,2,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND)]);
-		notebook.add_page(_("Dictionary's"),grid_set_dictionary);		
-		
+
 		# Manual Training (using scanned images)
 		label_font_manual = widget.Label("Font ");
 		self.entry_font_manual = widget.Entry()
@@ -169,7 +118,58 @@ class TesseractTrainer(window.Window):
 		(label_writing_mode,1,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND,containers.Grid.ALIGN_START),
 		(combobox_writing_mode,1,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND)])		
 		
-		notebook.add_page(_("Automatic Training (using fonts)"),grid_manual_methord);	
+		notebook.add_page(_("Automatic Training (using fonts)"),grid_manual_methord);
+		
+		#Ambiguous Editor
+		self.treeview_ambiguous = tree_view.TreeView([("match",str,False),
+		("Replacement",int,True),("Mandatory",int,True)],self.ambiguous_edited_callback)
+		notebook.add_page("Ambiguous",self.treeview_ambiguous);
+		
+		#Dictionary Editor
+		label_select_word_dict = widget.Label(_("Select Word dict "));
+		button_select_word_dict = widget.Button(_("Select word dict"));
+		label_select_freequent_word_dict = widget.Label(_("Select Freequent Word dict "));
+		button_select_freequent_word_dict = widget.Button(_("Select Freequent Word dict"));
+		label_select_punctation_dict = widget.Label(_("Select Punctuation dict "));
+		button_select_punctation_dict = widget.Button(_("Select Punctuation dict "));
+		label_select_number_dict = widget.Label(_("Select Number dict "));
+		button_select_number_dict = widget.Button(_("Select Number dict "));
+		label_select_word_with_digit_dict = widget.Label(_("Select Word with digit  dict "));
+		button_select_word_with_digit_dict = widget.Button(_("Select Word with digit  dict "));
+		
+		seperator_user_words = widget.Separator()
+		
+		label_user_words = widget.Label(_("User Words "));
+		text_view_user_words = text_view.TextView()
+		text_view_user_words.set_border_width(10);
+		
+		button_set_dictionary = widget.Button("Apply Dictionary's ")
+		
+		
+		grid_set_dictionary = containers.Grid()
+		grid_set_dictionary.add_widgets([(label_select_word_dict,1,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND,containers.Grid.ALIGN_START),
+		(button_select_word_dict,1,1,containers.Grid.NO_HEXPAND,containers.Grid.NO_VEXPAND),
+		containers.Grid.NEW_ROW,
+		(label_select_freequent_word_dict,1,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND,containers.Grid.ALIGN_START),
+		(button_select_freequent_word_dict,1,1,containers.Grid.NO_HEXPAND,containers.Grid.NO_VEXPAND),
+		containers.Grid.NEW_ROW,		
+		(label_select_punctation_dict,1,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND,containers.Grid.ALIGN_START),
+		(button_select_punctation_dict,1,1,containers.Grid.NO_HEXPAND,containers.Grid.NO_VEXPAND),
+		containers.Grid.NEW_ROW,		
+		(label_select_number_dict,1,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND,containers.Grid.ALIGN_START),
+		(button_select_number_dict,1,1,containers.Grid.NO_HEXPAND,containers.Grid.NO_VEXPAND),
+		containers.Grid.NEW_ROW,		
+		(label_select_word_with_digit_dict,1,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND,containers.Grid.ALIGN_START),
+		(button_select_word_with_digit_dict,1,1,containers.Grid.NO_HEXPAND,containers.Grid.NO_VEXPAND),
+		containers.Grid.NEW_ROW,
+		(seperator_user_words,2,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND,containers.Grid.ALIGN_START),
+		containers.Grid.NEW_ROW,
+		(label_user_words,2,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND),
+		containers.Grid.NEW_ROW,
+		(text_view_user_words,2,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND),
+		containers.Grid.NEW_ROW,
+		(button_set_dictionary,2,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND)]);
+		notebook.add_page(_("Dictionary's"),grid_set_dictionary);	
 		 
 		
 		self.output_terminal = terminal.Terminal("/tmp")
