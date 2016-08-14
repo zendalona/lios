@@ -28,10 +28,11 @@ from lios import localization
 _ = localization._
 
 import os
+import subprocess
 
 class TesseractTrainer(window.Window):
 	def __init__(self,image_list=None):
-		window.Window.__init__(self, title="Tesseract Trainer")
+		window.Window.__init__(self, title=_("Tesseract Trainer"))
 		grid = containers.Grid()
 		
 		if( not ocr.ocr_engine_tesseract.OcrEngineTesseract.is_available()):
@@ -300,11 +301,26 @@ class TesseractTrainer(window.Window):
 				response = dlg.run()
 				language = entry.get_text()
 				dlg.destroy()
-				os.system("gksudo cp {0}.traineddata /usr/share/tessdata/{1}.traineddata".format(item_name_without_extension,language));
-				#self.output_terminal.run_command("gksudo cp {0}.traineddata /usr/share/tessdata/{1}.traineddata".format(item_name_without_extension,language));
+			if(os.access('/usr/share/tessdata/', os.W_OK)):
+				os.system("cp {0}.traineddata /usr/share/tessdata/{1}.traineddata".format(item_name_without_extension,language));
 			else:
-				os.system("gksudo cp {0}.traineddata /usr/share/tessdata/{1}.traineddata".format(item_name_without_extension,language));
-				#self.output_terminal.run_command("gksudo cp {0}.traineddata /usr/share/tessdata/{1}.traineddata".format(item_name_without_extension,language));
+				if ("/bin/pkexec" in subprocess.getoutput("whereis pkexec")):
+					os.system("pkexec cp {0}.traineddata /usr/share/tessdata/{1}.traineddata".format(item_name_without_extension,language));
+				elif ("/bin/gksudo" in subprocess.getoutput("whereis gksudo")):
+					os.system("gksudo cp {0}.traineddata /usr/share/tessdata/{1}.traineddata".format(item_name_without_extension,language));
+				elif ("/bin/kdesudo" in subprocess.getoutput("whereis kdesudo")):
+					os.system("kdesudo cp {0}.traineddata /usr/share/tessdata/{1}.traineddata".format(item_name_without_extension,language));
+				elif ("/bin/gksu" in subprocess.getoutput("whereis gksu")):
+					os.system("gksu cp {0}.traineddata /usr/share/tessdata/{1}.traineddata".format(item_name_without_extension,language));
+				else:
+					dlg = dialog.Dialog(_("Copying output file failed"),
+					(_("Ok"), dialog.Dialog.BUTTON_ID_1))
+					label = widget.Label(_("Can't copy output trained data. Please make sure you have write access to /usr/share/tessdata/"))
+					dlg.add_widget(label)
+					label.show()
+					response = dlg.run()
+					dlg.destroy()
+
 
 		boxeditor.set_image(item)
 		boxeditor.load_boxes_from_file(item_name_without_extension+".box")
