@@ -424,9 +424,11 @@ class BoxEditorDialog(dialog.Dialog):
 	def close(self,*data):
 		self.destroy()
 		
-
+class TesseractTrainerGUI(TesseractTrainer):
+	def __init__(self,image_list = []):
+		win = TesseractTrainer(image_list)
+		win.show()
+		loop.start_main_loop()
 
 if __name__ == "__main__":
-	win = TesseractTrainer([])
-	win.show()
-	loop.start_main_loop()		
+	TesseractTrainerGUI([])
