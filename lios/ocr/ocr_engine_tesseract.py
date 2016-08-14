@@ -48,10 +48,7 @@ class OcrEngineTesseract(OcrEngineBase):
 	def ocr_image_to_text(self,file_name):
 		os.system("convert {} /tmp/{}_for_ocr.png".format(file_name,file_name.split("/")[-1]))
 
-		if os.environ['HOME'] in self.language:
-			os.system("tesseract /tmp/{0}_for_ocr.png /tmp/{0}_output -l {1} --tessdir {2}".format(file_name.split("/")[-1],self.language.split("-")[0],os.environ['HOME']))
-		else:
-			os.system("tesseract /tmp/{0}_for_ocr.png /tmp/{0}_output -l {1}".format(file_name.split("/")[-1],self.language))
+		os.system("tesseract /tmp/{0}_for_ocr.png /tmp/{0}_output -l {1}".format(file_name.split("/")[-1],self.language))
 		os.remove("/tmp/{0}_for_ocr.png".format(file_name.split("/")[-1]))
 		
 		try:
@@ -75,13 +72,6 @@ class OcrEngineTesseract(OcrEngineBase):
 			for filename in os.listdir(dirpath):
 				if filename.lower().endswith(TESSDATA_EXTENSION):
 					lang = filename[:(-1 * len(TESSDATA_EXTENSION))]
-					langs.append(lang)
-
-		#Adding user languages
-		if( os.path.exists(os.environ['HOME']+"/tessdata")):
-			for filename in os.listdir(os.environ['HOME']+"/tessdata"):
-				if filename.lower().endswith(TESSDATA_EXTENSION):
-					lang = filename[:(-1 * len(TESSDATA_EXTENSION))]+"-"+os.environ['HOME']+"/tessdata"
 					langs.append(lang)
 		return langs
 

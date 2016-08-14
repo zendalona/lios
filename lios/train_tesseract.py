@@ -244,11 +244,7 @@ class TesseractTrainer(window.Window):
 			boxeditor.save_boxes_to_file(item_name_without_extension+".box")
 			
 			language = self.language
-			if (os.environ['HOME'] in language):
-				self.output_terminal.run_command("tesseract {0}.tif {0}.box nobatch box.train -l {1} --tessdata-dir {2}".format(item_name_without_extension,language.split('-')[0],os.environ['HOME']));
-				language = language.split('-')[0] #later used for copying 
-			else:
-				self.output_terminal.run_command("tesseract {0}.tif {0}.box nobatch box.train -l {1}".format(item_name_without_extension,language));
+			self.output_terminal.run_command("tesseract {0}.tif {0}.box nobatch box.train -l {1}".format(item_name_without_extension,language));
 			self.output_terminal.run_command("unicharset_extractor {0}.box".format(item_name_without_extension));
 			
 			font = font_desc.split(" ")[0]
@@ -274,7 +270,7 @@ class TesseractTrainer(window.Window):
 			# Create tessdata dir if not existing
 			self.output_terminal.run_command("mkdir -p "+os.environ['HOME']+"/tessdata/");
 
-			if (os.path.isfile(os.environ['HOME']+"/tessdata/"+language+".traineddata")):
+			if (os.path.isfile("/usr/share/tessdata/"+language+".traineddata")):
 				dlg = dialog.Dialog(language+_(" Alrady exist! Please edit name to avoid replacing"),
 				(_("Place it"), dialog.Dialog.BUTTON_ID_1))
 
@@ -284,17 +280,11 @@ class TesseractTrainer(window.Window):
 				response = dlg.run()
 				language = entry.get_text()
 				dlg.destroy()
-				self.output_terminal.run_command("cp {0}.traineddata {1}/tessdata/{2}.traineddata".format(item_name_without_extension,os.environ['HOME'],language));
+				os.system("gksudo cp {0}.traineddata /usr/share/tessdata/{1}.traineddata".format(item_name_without_extension,language));
+				#self.output_terminal.run_command("gksudo cp {0}.traineddata /usr/share/tessdata/{1}.traineddata".format(item_name_without_extension,language));
 			else:
-				self.output_terminal.run_command("cp {0}.traineddata {1}/tessdata/{2}.traineddata".format(item_name_without_extension,os.environ['HOME'],language));
-				# This dialog is to wait till exicution completes
-				dlg = dialog.Dialog(_("Info"),
-				(_("Ok"), dialog.Dialog.BUTTON_ID_1))
-				label = widget.Label(_("Trained data is placed in {0}/tessdata/{1}.traineddata").format(macros.home_dir,language))
-				dlg.add_widget(label);
-				label.show()
-				dlg.run()
-				dlg.destroy()
+				os.system("gksudo cp {0}.traineddata /usr/share/tessdata/{1}.traineddata".format(item_name_without_extension,language));
+				#self.output_terminal.run_command("gksudo cp {0}.traineddata /usr/share/tessdata/{1}.traineddata".format(item_name_without_extension,language));
 
 		boxeditor.set_image(item)
 		boxeditor.load_boxes_from_file(item_name_without_extension+".box")
