@@ -3,7 +3,7 @@ Priority: optional
 Section: graphics
 Installed-Size: 250
 Architecture: all
-Version: 2.0
+Version: 2.2
 Depends: python3,python3-imaging-sane|python3-sane,python3-speechd,tesseract-ocr,imagemagick,cuneiform,espeak,poppler-utils,python3-enchant,aspell-en
 Maintainer: Nalin.x.Linux <nalin.x.linux@gmail.com>
 Homepage: http://sourceforge.net/projects/lios/
