@@ -73,6 +73,9 @@ class TesseractTrainer(window.Window):
 			self.tree_view_image_list.append((item,));
 		button_train = widget.Button("Start Training");
 		button_train.connect_function(self.button_manual_train_clicked);
+
+		button_add_image = widget.Button("Add Image");
+		button_add_image.connect_function(self.button_manual_add_image);
 			
 		
 		grid_manual_methord = containers.Grid()
@@ -84,8 +87,10 @@ class TesseractTrainer(window.Window):
 		containers.Grid.NEW_ROW,		
 		containers.Grid.NEW_ROW,
 		(seperator_select_images,3,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND),
-		containers.Grid.NEW_ROW,		
-		(self.tree_view_image_list,2,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND),		
+		containers.Grid.NEW_ROW,
+		(self.tree_view_image_list,2,2,containers.Grid.HEXPAND,containers.Grid.VEXPAND),
+		(button_add_image,1,1,containers.Grid.NO_HEXPAND,containers.Grid.VEXPAND),
+		containers.Grid.NEW_ROW,
 		(button_train,1,1,containers.Grid.NO_HEXPAND,containers.Grid.VEXPAND)])		
 		
 		notebook.add_page(_("Manual Training (using scanned images)"),grid_manual_methord);		
@@ -213,6 +218,21 @@ class TesseractTrainer(window.Window):
 		# While resetting combobox after training the active will be -1
 		if ( active <= len(self.languages) and active != -1 ):
 			self.language = self.languages[active]
+
+	def button_manual_add_image(self,*data):
+		file_chooser = FileChooserDialog(_("Select images to add"),
+				FileChooserDialog.OPEN,macros.supported_image_formats,
+				  macros.home_dir)
+		file_chooser.set_current_folder(macros.home_dir)
+		file_chooser.set_select_multiple(True)
+		response = file_chooser.run()
+		if response == FileChooserDialog.ACCEPT:
+			image_list = file_chooser.get_filenames()
+			file_chooser.destroy()
+			for item in image_list:
+				self.tree_view_image_list.append((item,));
+		else:
+			file_chooser.destroy()
 
 	def button_manual_train_clicked(self,*data):
 		index = self.tree_view_image_list.get_selected_row_index()
@@ -407,9 +427,6 @@ class BoxEditorDialog(dialog.Dialog):
 
 
 if __name__ == "__main__":
-	win = TesseractTrainer(["/home/linux/Desktop/TrainingNet/test.png",
-							"/home/linux/Desktop/TrainingNet/test3.png",
-							"/home/linux/Desktop/test2.png",
-							"/home/linux/Desktop/test3.png"])
+	win = TesseractTrainer([])
 	win.show()
 	loop.start_main_loop()		
