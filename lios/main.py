@@ -1051,7 +1051,7 @@ class linux_intelligent_ocr_solution():
 			
 	def ocr_all_images(self,widget):
 		self.iconview.select_all()
-		self.ocr_selected_images_without_rotating(self)
+		self.ocr_selected_images(self)
 
 
 	def iconview_remove_all_images(self,widget):
