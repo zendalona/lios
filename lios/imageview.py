@@ -69,6 +69,7 @@ class ImageViewer(containers.Paned):
 
 		self.rs = []
 		self.start_row_index = -1
+		self.previus_row_index = -1
 
 
 		button1 = widget.Button(_("_Delete"))
@@ -168,6 +169,7 @@ class ImageViewer(containers.Paned):
 					list_.append([0,item[1],item[2],item[3],item[4],item[5]])
 		self.rs = list(list(x) for x in list_)
 		self.treeview.set_list(self.rs)
+		self.drawingarea.redraw()
 
 
 	def get_list(self):
@@ -223,7 +225,6 @@ class ImageViewer(containers.Paned):
 		if(button_type == 1):
 			self.start_x,self.start_y=point
 			self.start_type, self.start_row_index, self.start_position_type = image_logics.get_point_type(self.start_x,self.start_y,[ [row[1],row[2],row[3],row[4],row[0] ] for row in self.rs ])
-			
 		return True
     
 	def __drawingarea_motion_notify_event(self, point):
@@ -339,23 +340,28 @@ class ImageViewer(containers.Paned):
 			# While hovering over boxes the treeview cursor change handler function should not be called
 			# because it simply scroll drawing area for each boxes which leads to flicker
 			self.treeview.block_cursor_change_signal()
-			if ( row_index != -1):
-				# The mouse is over the box at row_index
-				self.set_selected_item(row_index)
-				self.treeview.set_list(self.rs);
-				self.drawingarea.set_rectangle_list([[ row[0],row[0],row[1],row[2],row[3] ] for row in self.rs ])
-				self.treeview.set_cursor(row_index)
-			else:
-				# If user made a selection then it should be preserved even after hovering other boxes
-				if (self.start_row_index != -1):
+
+			# if self.previus_row_index not equll to row_index then the
+			# mouse pointer moved from current box so we draw it
+
+			if (self.previus_row_index != row_index):
+				if ( row_index != -1 ):
+					# The mouse is over the box at row_index
+					self.set_selected_item(row_index)
+					self.treeview.set_list(self.rs);
+					self.drawingarea.set_rectangle_list([[ row[0],row[0],row[1],row[2],row[3] ] for row in self.rs ])
+					self.treeview.set_cursor(row_index)
+				elif( self.start_row_index != -1 ):
+					# If user made a selection then it should be preserved even after hovering other boxes
 					self.set_selected_item(self.start_row_index)
 					self.treeview.set_list(self.rs);
 					self.drawingarea.set_rectangle_list([[ row[0],row[0],row[1],row[2],row[3] ] for row in self.rs ])
 					self.treeview.set_cursor(self.start_row_index)
-			self.drawingarea.set_rectangle_list([[ row[0],row[1],row[2],row[3],row[4] ] for row in self.rs ])
-			self.drawingarea.redraw()
+
+				self.drawingarea.set_rectangle_list([[ row[0],row[1],row[2],row[3],row[4] ] for row in self.rs ])
+				self.drawingarea.redraw()
 			self.treeview.unblock_cursor_change_signal()
-		self.drawingarea.redraw()						
+			self.previus_row_index = row_index;
 				
 
 	def __drawingarea_button_release_event(self, point, button_type):
