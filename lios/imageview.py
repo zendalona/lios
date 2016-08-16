@@ -313,7 +313,7 @@ class ImageViewer(containers.Paned):
 					self.rs[self.start_row_index][3] = x - self.rs[self.start_row_index][1]
 			
 			self.treeview.set_list(self.rs)
-			self.drawingarea.set_rectangle_list([[ row[0],row[1],row[2],row[3],row[4] ] for row in self.rs ])		
+			self.drawingarea.set_rectangle_list([[ row[0],row[1],row[2],row[3],row[4] ] for row in self.rs ])
 		
 
 		# 3 - Moving
@@ -337,14 +337,13 @@ class ImageViewer(containers.Paned):
 			_type, row_index, position_type = image_logics.get_point_type(x,y,[[row[1],row[2],row[3],row[4] ] for row in  self.rs ])
 			self.drawingarea.set_mouse_pointer_type(position_type);
 
-			# While hovering over boxes the treeview cursor change handler function should not be called
-			# because it simply scroll drawing area for each boxes which leads to flicker
-			self.treeview.block_cursor_change_signal()
-
 			# if self.previus_row_index not equll to row_index then the
 			# mouse pointer moved from current box so we draw it
 
 			if (self.previus_row_index != row_index):
+				# While hovering over boxes the treeview cursor change handler function should not be called
+				# because it simply scroll drawing area for each boxes which leads to flicker
+				self.treeview.block_cursor_change_signal()
 				if ( row_index != -1 ):
 					# The mouse is over the box at row_index
 					self.set_selected_item(row_index)
@@ -359,9 +358,9 @@ class ImageViewer(containers.Paned):
 					self.treeview.set_cursor(self.start_row_index)
 
 				self.drawingarea.set_rectangle_list([[ row[0],row[1],row[2],row[3],row[4] ] for row in self.rs ])
-				self.drawingarea.redraw()
-			self.treeview.unblock_cursor_change_signal()
+				self.treeview.unblock_cursor_change_signal()
 			self.previus_row_index = row_index;
+		self.drawingarea.redraw()
 				
 
 	def __drawingarea_button_release_event(self, point, button_type):
