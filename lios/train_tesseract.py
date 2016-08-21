@@ -29,6 +29,7 @@ _ = localization._
 
 import os
 import subprocess
+import shutil
 
 class TesseractTrainer(window.Window):
 	def __init__(self,image_list=None):
@@ -42,16 +43,13 @@ class TesseractTrainer(window.Window):
 			self.set_default_size(400,200)
 			return
 
-		label_language = widget.Label(_("Language "));
-		self.combobox_language = widget.ComboBox();
-		self.combobox_language.connect_change_callback_function(self.language_combobox_changed);
+		if(not os.path.isdir("/tmp/tesseract-train/")):
+			os.mkdir("/tmp/tesseract-train/")
 
+		self.output_terminal = terminal.Terminal("")
+		scroll_box_output = containers.ScrollBox()
+		scroll_box_output.add(self.output_terminal)
 
-		self.languages = []
-		for item in ocr.ocr_engine_tesseract.OcrEngineTesseract.get_available_languages():
-			self.combobox_language.add_item(item)
-			self.languages.append(item)
-		self.combobox_language.set_active(0)
 
 		#Notebook
 		notebook = containers.NoteBook()
@@ -178,9 +176,53 @@ class TesseractTrainer(window.Window):
 		notebook.add_page(_("Train using fonts"),grid_manual_methord);
 		
 		#Ambiguous Editor
-		self.treeview_ambiguous = tree_view.TreeView([("match",str,False),
-		("Replacement",int,True),("Mandatory",int,True)],self.ambiguous_edited_callback)
-		notebook.add_page("Ambiguous",self.treeview_ambiguous);
+		self.treeview_ambiguous = tree_view.TreeView([("match",str,True),
+		("Replacement",str,True),("Mandatory",int,True)],self.ambiguous_edited_callback)
+
+		button_ambiguous_train = widget.Button(_("Train"));
+		button_ambiguous_train.connect_function(self.button_ambiguous_train_clicked)
+
+		button_ambiguous_add = widget.Button(_("Add"));
+		button_ambiguous_add.connect_function(self.button_ambiguous_add_clicked)
+
+		button_ambiguous_delete = widget.Button(_("Delete"));
+		button_ambiguous_delete.connect_function(self.button_ambiguous_delete_clicked)
+
+		button_ambiguous_delete_all = widget.Button(_("Delete-All"));
+		button_ambiguous_delete_all.connect_function(self.button_ambiguous_delete_all_clicked)
+
+		button_ambiguous_import = widget.Button(_("Import"));
+		button_ambiguous_import.connect_function(self.button_ambiguous_import_clicked)
+
+		button_ambiguous_export = widget.Button(_("Export"));
+		button_ambiguous_export.connect_function(self.button_ambiguous_export_clicked)
+
+		scrolled_ambiguous = containers.ScrollBox()
+		scrolled_ambiguous.add(self.treeview_ambiguous)
+
+		box_ambiguous_buttons = containers.Box(containers.Box.VERTICAL)
+		box_ambiguous_buttons.add(button_ambiguous_add),
+		box_ambiguous_buttons.add(button_ambiguous_delete)
+		box_ambiguous_buttons.add(button_ambiguous_delete_all)
+		box_ambiguous_buttons.add(button_ambiguous_import)
+		box_ambiguous_buttons.add(button_ambiguous_export)
+		box_ambiguous_buttons.set_homogeneous(True)
+
+		self.combobox_ambiguous_write_format = widget.ComboBox()
+		self.combobox_ambiguous_write_format.add_item("Write in V1")
+		self.combobox_ambiguous_write_format.add_item("Write in V2")
+
+		grid_set_ambiguous = containers.Grid()
+		grid_set_ambiguous.add_widgets([
+		(scrolled_ambiguous,1,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND),
+		(box_ambiguous_buttons,1,1,containers.Grid.NO_HEXPAND,containers.Grid.VEXPAND),
+		containers.Grid.NEW_ROW,
+		(self.combobox_ambiguous_write_format,2,1,containers.Grid.NO_HEXPAND,containers.Grid.NO_VEXPAND),
+		containers.Grid.NEW_ROW,
+		(button_ambiguous_train,2,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND)])
+
+		notebook.add_page("Ambiguous",grid_set_ambiguous);
+
 		
 		#Dictionary Editor
 		label_select_word_dict = widget.Label(_("Select Word dict "));
@@ -229,9 +271,17 @@ class TesseractTrainer(window.Window):
 		notebook.add_page(_("Dictionary's"),grid_set_dictionary);	
 		 
 		
-		self.output_terminal = terminal.Terminal("/tmp")
-		scroll_box_output = containers.ScrollBox()
-		scroll_box_output.add(self.output_terminal)
+		label_language = widget.Label(_("Language "));
+		self.combobox_language = widget.ComboBox();
+		self.combobox_language.connect_change_callback_function(self.language_combobox_changed);
+
+
+		self.languages = []
+		for item in ocr.ocr_engine_tesseract.OcrEngineTesseract.get_available_languages():
+			self.combobox_language.add_item(item)
+			self.languages.append(item)
+		self.combobox_language.set_active(0)
+
 		paned = containers.Paned(containers.Paned.VERTICAL)
 		paned.add(notebook);
 		paned.add(scroll_box_output);
@@ -251,6 +301,84 @@ class TesseractTrainer(window.Window):
 		grid.show_all()
 		self.maximize()
 	
+	def import_ambiguous_list_from_file(self,filename):
+		lines = open(filename).read().split("\n")
+		if("V2" in lines):
+			version = 2
+			self.combobox_ambiguous_write_format.set_active(1)
+		else:
+			version = 1
+			self.combobox_ambiguous_write_format.set_active(0)
+
+		for line in lines[1:-1]:
+			if(version == 1):
+				items = line.split("\t")
+				self.treeview_ambiguous.append((items[1],items[3],int(items[4])))
+
+	def export_ambiguous_list_to_file(self,filename):
+		file = open(filename,"w")
+		active = self.combobox_ambiguous_write_format.get_active()
+		file.write(["V1","V2"][active]+"\n")
+		if(active == 0):
+			for line in self.treeview_ambiguous.get_list():
+				file.write("{0}\t{1}\t{2}\t{3}\t{4}\n".format(str(len(line[0].replace(" ",""))),
+				line[0],str(len(line[1].replace(" ",""))),line[1],str(line[2])))
+		else:
+			for line in self.treeview_ambiguous.get_list():
+				file.write("{0}\t{1}\t{2}\n".format(line[0],line[1],str(line[2])))
+
+	def button_ambiguous_train_clicked(self,*data):
+		self.export_ambiguous_list_to_file("/tmp/tesseract-train/file.unicharambigs")
+		self.output_terminal.run_command("""cp /usr/share/tesseract-ocr/tessdata/{0}.traineddata \
+		/tmp/tesseract-train/file.traineddata""".format(self.language))
+		cmd = "combine_tessdata -o /tmp/tesseract-train/file.traineddata /tmp/tesseract-train/file.unicharambigs"
+		self.output_terminal.run_command(cmd)
+		self.place_traineddata("/tmp/tesseract-train/file.traineddata",self.language)
+
+	def button_ambiguous_add_clicked(self,*data):
+		dlg = dialog.Dialog(_("Add new ambiguous"),
+		(_("Close"), dialog.Dialog.BUTTON_ID_1,_("Add"), dialog.Dialog.BUTTON_ID_2))
+		entry_match = widget.Entry()
+		entry_replace = widget.Entry()
+		combobox_mandatory = widget.ComboBox()
+		combobox_mandatory.add_item(_("No"))
+		combobox_mandatory.add_item(_("Yes"))
+		combobox_mandatory.set_active(0)
+		dlg.add_widget_with_label(entry_match,_("Match    "))
+		dlg.add_widget_with_label(entry_replace,_("Replace  "))
+		dlg.add_widget_with_label(combobox_mandatory,_("Mandatory"))
+		response = dlg.run()
+		if(response == dialog.Dialog.BUTTON_ID_2):
+			self.treeview_ambiguous.append((entry_match.get_text(),
+			entry_replace.get_text(),combobox_mandatory.get_active()))
+		dlg.destroy()
+
+	def button_ambiguous_delete_clicked(self,*data):
+		index = self.treeview_ambiguous.get_selected_row_index()
+		self.treeview_ambiguous.remove(index)
+
+	def button_ambiguous_delete_all_clicked(self,*data):
+		self.treeview_ambiguous.clear()
+
+	def button_ambiguous_import_clicked(self,*data):
+		file_chooser_open_files = FileChooserDialog(_("Select files to import"),
+				FileChooserDialog.OPEN,"*",
+				  macros.home_dir)
+		file_chooser_open_files.set_current_folder(macros.home_dir)
+		response = file_chooser_open_files.run()
+		if response == FileChooserDialog.ACCEPT:
+			filename = file_chooser_open_files.get_filename()
+			self.import_ambiguous_list_from_file(filename)
+		file_chooser_open_files.destroy()
+
+	def button_ambiguous_export_clicked(self,*data):
+		save_file = file_chooser.FileChooserDialog(_("Save filename"),file_chooser.FileChooserDialog.SAVE,"*",None);
+		save_file.set_do_overwrite_confirmation(True);
+		response = save_file.run()
+		if response == file_chooser.FileChooserDialog.ACCEPT:
+			self.export_ambiguous_list_to_file(save_file.get_filename())
+		save_file.destroy()
+
 	def font_manual_changed(self,*data):
 		fontname = self.fontbutton_manual.get_font_name()
 		self.entry_font_manual.set_text(fontname)
@@ -288,7 +416,7 @@ class TesseractTrainer(window.Window):
 		self.destroy();
 	
 	def ambiguous_edited_callback(self,*data):
-		print ("edited")
+		pass
 	
 	def language_combobox_changed(self,*data):
 		active = self.combobox_language.get_active()
@@ -296,6 +424,18 @@ class TesseractTrainer(window.Window):
 		# While resetting combobox after training the active will be -1
 		if ( active <= len(self.languages) and active != -1 ):
 			self.language = self.languages[active]
+
+			#Removing all files in /tmp/tesseract-train/
+			shutil.rmtree("/tmp/tesseract-train/")
+			os.mkdir("/tmp/tesseract-train/")
+
+			cmd = "combine_tessdata -u /usr/share/tesseract-ocr/tessdata/{}.traineddata /tmp/tesseract-train/file".format(self.language)
+			self.output_terminal.run_command(cmd)
+			os.system("while [ ! -f /tmp/tesseract-train/file.unicharset ]; do sleep 0.1; done")
+
+			#setting ambiguous table
+			self.treeview_ambiguous.clear()
+			self.import_ambiguous_list_from_file("/tmp/tesseract-train/file.unicharambigs")
 
 	def button_manual_add_image(self,*data):
 		file_chooser = FileChooserDialog(_("Select images to add"),
@@ -333,16 +473,20 @@ class TesseractTrainer(window.Window):
 		ligature = int(self.check_button_writing_ligature_mode_automatic.get_active())
 
 		if(os.path.exists(input_file)):
-			cmd = "text2image --text={0} --outputbase=/tmp/tmp_tess_image --font={1} --ptsize={2} --writing_mode={3} \
+			# Remove previous image
+			if (os.path.isfile("/tmp/tesseract-train/tmp_tess_image.tif")):
+				os.remove("/tmp/tesseract-train/tmp_tess_image.tif");
+
+			#generating image
+			cmd = "text2image --text={0} --outputbase=/tmp/tesseract-train/tmp_tess_image --font={1} --ptsize={2} --writing_mode={3} \
 			--char_spacing={4} --resolution={5} --exposure={6} --degrade_image={7} --ligatures={8} \
 			--fonts_dir={9}".format(input_file,font,font_size,writing_mode,char_space,resolution,exposure,degrade,ligature,fonts_dir)
 			print(cmd)
-			if (os.path.isfile("/tmp/tmp_tess_image.tif")):
-				os.remove("/tmp/tmp_tess_image.tif");
 			self.output_terminal.run_command(cmd)
+
 			# Wait for image file
-			os.system("while [ ! -f /tmp/tmp_tess_image.tif ]; do sleep 1; done")
-			self.train_image("/tmp/tmp_tess_image.tif",font)
+			os.system("while [ ! -f /tmp/tesseract-train/tmp_tess_image.tif ]; do sleep 1; done")
+			self.train_image("/tmp/tesseract-train/tmp_tess_image.tif",font)
 		else:
 			dlg = dialog.Dialog(_("Input file not selected"),
 			(_("Ok"), dialog.Dialog.BUTTON_ID_1))
@@ -357,32 +501,63 @@ class TesseractTrainer(window.Window):
 		font_desc = self.entry_font_manual.get_text()
 		self.train_image(items[0],font_desc)
 
+	def place_traineddata(self,source,language):
+		if (os.path.isfile("/usr/share/tesseract-ocr/tessdata/"+language+".traineddata")):
+			dlg = dialog.Dialog(language+_(" Alrady exist! Please edit name to avoid replacing"),
+			(_("Place it"), dialog.Dialog.BUTTON_ID_1))
+
+			entry = widget.Entry()
+			dlg.add_widget_with_label(entry,_("File Name : "))
+			entry.set_text(language)
+			response = dlg.run()
+			language = entry.get_text()
+			dlg.destroy()
+		if(os.access('/usr/share/tesseract-ocr/tessdata/', os.W_OK)):
+			os.system("cp {0} /usr/share/tesseract-ocr/tessdata/{1}.traineddata".format(source,language));
+		else:
+			if ("/bin/pkexec" in subprocess.getoutput("whereis pkexec")):
+				os.system("pkexec cp {0} /usr/share/tesseract-ocr/tessdata/{1}.traineddata".format(source,language));
+			elif ("/bin/gksudo" in subprocess.getoutput("whereis gksudo")):
+				os.system("gksudo cp {0} /usr/share/tesseract-ocr/tessdata/{1}.traineddata".format(source,language));
+			elif ("/bin/kdesudo" in subprocess.getoutput("whereis kdesudo")):
+				os.system("kdesudo cp {0} /usr/share/tesseract-ocr/tessdata/{1}.traineddata".format(source,language));
+			elif ("/bin/gksu" in subprocess.getoutput("whereis gksu")):
+				os.system("gksu cp {0} /usr/share/tesseract-ocr/tessdata/{1}.traineddata".format(source,language));
+			else:
+				dlg = dialog.Dialog(_("Copying output file failed"),
+				(_("Ok"), dialog.Dialog.BUTTON_ID_1))
+				label = widget.Label(_("Can't copy output trained data. Please make sure you have write access to /usr/share/tesseract-ocr/tessdata/"))
+				dlg.add_widget(label)
+				label.show()
+				response = dlg.run()
+				dlg.destroy()
+		self.languages = []
+		self.combobox_language.clear()
+		for item in ocr.ocr_engine_tesseract.OcrEngineTesseract.get_available_languages():
+			self.combobox_language.add_item(item)
+			self.languages.append(item)
+		self.combobox_language.set_active(0)
+
 	def train_image(self,filename,font_desc):
-		file_name_without_extension = filename.split(".")[0]
-		
-		if (os.path.isfile("/tmp/batch.nochop.box")):
-			os.remove("/tmp/batch.nochop.box");
 
-		if (os.path.isfile("{0}.box".format(file_name_without_extension))):
-			print("Deleting {0}.box".format(file_name_without_extension))
-			os.remove("{0}.box".format(file_name_without_extension));
-
-		self.output_terminal.run_command("convert {0} -background white -flatten {1}.tif".format(filename,file_name_without_extension));
-		self.output_terminal.run_command("tesseract {0}.tif -l {1} batch.nochop makebox".format(file_name_without_extension,self.language.split("-")[0]));
-			
-		self.output_terminal.run_command("cp /tmp/batch.nochop.box {}.box".format(file_name_without_extension));
+		# Removing previous box files if exist -- Bugs exist :(
+		#self.output_terminal.run_command("rm -f /tmp/tesseract-train/batch.nochop.box")
+		#os.system("rm -f /tmp/tesseract-train/batch.nochop.box")
 		
+		self.output_terminal.run_command("cd /tmp/tesseract-train/")
+		self.output_terminal.run_command("convert {0} -background white -flatten file.tif".format(filename));
+		self.output_terminal.run_command("tesseract file.tif -l {0} batch.nochop makebox".format(self.language));
+
 		# Wait for box file
-		os.system("while [ ! -f {0}.box ]; do sleep 1; done".format(file_name_without_extension))
+		os.system("while [ ! -f /tmp/tesseract-train/batch.nochop.box ]; do sleep .1; done")
 
 		boxeditor = BoxEditorDialog()
 
 		def train_with_boxes(*data):
-			boxeditor.save_boxes_to_file(file_name_without_extension+".box")
+			boxeditor.save_boxes_to_file("/tmp/tesseract-train/file.box")
 			
-			language = self.language
-			self.output_terminal.run_command("tesseract {0}.tif {0}.box nobatch box.train -l {1}".format(file_name_without_extension,language));
-			self.output_terminal.run_command("unicharset_extractor {0}.box".format(file_name_without_extension));
+			self.output_terminal.run_command("tesseract -l {0} file.tif file.box nobatch box.train".format(self.language));
+			self.output_terminal.run_command("unicharset_extractor file.box");
 			
 			font = font_desc.split(" ")[0]
 			italic = 0;
@@ -394,64 +569,28 @@ class TesseractTrainer(window.Window):
 				bold = 1;
 				 
 			self.output_terminal.run_command("echo '{0} {1} {2} 0 0 0' > font_properties".format(font,italic,bold));
-			self.output_terminal.run_command("shapeclustering -F font_properties -U unicharset {0}.box.tr".format(file_name_without_extension));
-			self.output_terminal.run_command("mftraining -F font_properties -U unicharset -O {0}.unicharset {0}.box.tr".format(file_name_without_extension));
-			self.output_terminal.run_command("cntraining {0}.box.tr".format(file_name_without_extension));
+			self.output_terminal.run_command("shapeclustering -F font_properties -U unicharset file.box.tr");
+			self.output_terminal.run_command("mftraining -F font_properties -U unicharset -O file.unicharset file.box.tr");
+			self.output_terminal.run_command("cntraining file.box.tr");
+
+			self.output_terminal.run_command("mv inttemp file.inttemp");
+			self.output_terminal.run_command("mv normproto file.normproto");
+
+			self.output_terminal.run_command("mv pffmtable file.pffmtable");
+			self.output_terminal.run_command("mv shapetable file.shapetable");
+			self.output_terminal.run_command("combine_tessdata file.");
 			
-			self.output_terminal.run_command("mv inttemp {0}.inttemp".format(file_name_without_extension));
-			self.output_terminal.run_command("mv normproto {0}.normproto".format(file_name_without_extension));
-			self.output_terminal.run_command("mv pffmtable {0}.pffmtable".format(file_name_without_extension));
-			self.output_terminal.run_command("mv shapetable {0}.shapetable".format(file_name_without_extension));
-			self.output_terminal.run_command("combine_tessdata {0}.".format(file_name_without_extension));
-
-			# Create tessdata dir if not existing
-			self.output_terminal.run_command("mkdir -p "+os.environ['HOME']+"/tessdata/");
-
-			if (os.path.isfile("/usr/share/tessdata/"+language+".traineddata")):
-				dlg = dialog.Dialog(language+_(" Alrady exist! Please edit name to avoid replacing"),
-				(_("Place it"), dialog.Dialog.BUTTON_ID_1))
-
-				entry = widget.Entry()
-				dlg.add_widget_with_label(entry,_("File Name : "))
-				entry.set_text(language)
-				response = dlg.run()
-				language = entry.get_text()
-				dlg.destroy()
-			if(os.access('/usr/share/tessdata/', os.W_OK)):
-				os.system("cp {0}.traineddata /usr/share/tessdata/{1}.traineddata".format(file_name_without_extension,language));
-			else:
-				if ("/bin/pkexec" in subprocess.getoutput("whereis pkexec")):
-					os.system("pkexec cp {0}.traineddata /usr/share/tessdata/{1}.traineddata".format(file_name_without_extension,language));
-				elif ("/bin/gksudo" in subprocess.getoutput("whereis gksudo")):
-					os.system("gksudo cp {0}.traineddata /usr/share/tessdata/{1}.traineddata".format(file_name_without_extension,language));
-				elif ("/bin/kdesudo" in subprocess.getoutput("whereis kdesudo")):
-					os.system("kdesudo cp {0}.traineddata /usr/share/tessdata/{1}.traineddata".format(file_name_without_extension,language));
-				elif ("/bin/gksu" in subprocess.getoutput("whereis gksu")):
-					os.system("gksu cp {0}.traineddata /usr/share/tessdata/{1}.traineddata".format(file_name_without_extension,language));
-				else:
-					dlg = dialog.Dialog(_("Copying output file failed"),
-					(_("Ok"), dialog.Dialog.BUTTON_ID_1))
-					label = widget.Label(_("Can't copy output trained data. Please make sure you have write access to /usr/share/tessdata/"))
-					dlg.add_widget(label)
-					label.show()
-					response = dlg.run()
-					dlg.destroy()
+			self.place_traineddata("/tmp/tesseract-train/file.traineddata",self.language)
 
 
 		boxeditor.set_image(filename)
-		boxeditor.load_boxes_from_file(file_name_without_extension+".box")
+		boxeditor.load_boxes_from_file("/tmp/tesseract-train/batch.nochop.box")
 
 		response = boxeditor.run()
 
 		if (response == dialog.Dialog.BUTTON_ID_1):
 			boxeditor.destroy()
 			train_with_boxes()
-			self.languages = []
-			self.combobox_language.clear()
-			for item in ocr.ocr_engine_tesseract.OcrEngineTesseract.get_available_languages():
-				self.combobox_language.add_item(item)
-				self.languages.append(item)
-			self.combobox_language.set_active(0)
 		else:
 			boxeditor.destroy()
 
@@ -509,7 +648,7 @@ class BoxEditorDialog(dialog.Dialog):
 		list_ = []
 		for line in open(filename):
 			spl = line.split(" ")
-			list_.append((spl[0],float(spl[1]),float(spl[2]),float(spl[3]),float(spl[4]),float(spl[5])))
+			list_.append((spl[0],float(spl[1]),float(spl[2]),float(spl[3]),float(spl[4]),int(spl[5])))
 		self.set_list(list_)
 	
 	def save_boxes_dialog(self,*data):
