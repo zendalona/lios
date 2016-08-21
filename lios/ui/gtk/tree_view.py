@@ -78,6 +78,10 @@ class TreeView(Gtk.TreeView):
 	
 	def append(self,item):
 		self.rs.append(item);
+
+	def remove(self,index):
+		iter = self.rs.get_iter(index)
+		self.rs.remove(iter);
 	
 	def set_list(self,list):
 		if(self.cursor_change_handler_id):
