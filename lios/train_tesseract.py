@@ -275,6 +275,12 @@ class TesseractTrainer(window.Window):
 		self.combobox_language = widget.ComboBox();
 		self.combobox_language.connect_change_callback_function(self.language_combobox_changed);
 
+		button_import_language = widget.Button(_("Import"))
+		button_import_language.connect_function(self.button_import_language_clicked)
+		button_export_language = widget.Button(_("Export"))
+		button_export_language.connect_function(self.button_export_language_clicked)
+		button_remove_language = widget.Button(_("Remove"))
+		button_remove_language.connect_function(self.button_remove_language_clicked)
 
 		self.languages = []
 		for item in ocr.ocr_engine_tesseract.OcrEngineTesseract.get_available_languages():
@@ -291,10 +297,13 @@ class TesseractTrainer(window.Window):
 		button_close = widget.Button(_("Close"));
 		button_close.connect_function(self.close_trainer);
 		
-		grid.add_widgets([(label_language,1,1,containers.Grid.NO_HEXPAND,containers.Grid.NO_VEXPAND),
-		(self.combobox_language,2,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND),
-		containers.Grid.NEW_ROW,(paned,3,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND),
-		containers.Grid.NEW_ROW,(button_close,3,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND)])
+		grid.add_widgets([(label_language,1,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND),
+		(self.combobox_language,1,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND),
+		(button_import_language,1,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND),
+		(button_export_language,1,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND),
+		(button_remove_language,1,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND),
+		containers.Grid.NEW_ROW,(paned,5,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND),
+		containers.Grid.NEW_ROW,(button_close,5,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND)])
 		
 		
 		self.add(grid)
@@ -418,6 +427,35 @@ class TesseractTrainer(window.Window):
 	def ambiguous_edited_callback(self,*data):
 		pass
 	
+
+	def button_import_language_clicked(self,*data):
+		file_chooser = FileChooserDialog(_("Select language file"),
+				FileChooserDialog.OPEN,["traineddata"])
+		response = file_chooser.run()
+		if response == FileChooserDialog.ACCEPT:
+			file = file_chooser.get_filename()
+			file_chooser.destroy()
+			if (os.path.isfile(file)):
+				name = file.split("/")[-1].split(".")[0]
+				self.place_traineddata(file,name)
+		else:
+			file_chooser.destroy()
+
+	def button_export_language_clicked(self,*data):
+		save_file = file_chooser.FileChooserDialog(_("Save filename"),file_chooser.FileChooserDialog.SAVE,["traineddata"]);
+		save_file.set_do_overwrite_confirmation(True);
+		save_file.set_filename(self.language+".traineddata")
+		response = save_file.run()
+		if response == file_chooser.FileChooserDialog.ACCEPT:
+			command = "cp /usr/share/tesseract-ocr/tessdata/{0}.traineddata {1}".format(self.language, save_file.get_filename())
+			os.system(command)
+		save_file.destroy()
+
+	def button_remove_language_clicked(self,*data):
+		command = "rm /usr/share/tesseract-ocr/tessdata/{}.traineddata".format(self.language)
+		self.run_command_in_super_user_mode(command,"/usr/share/tesseract-ocr/tessdata/")
+		self.update_language_list()
+
 	def language_combobox_changed(self,*data):
 		active = self.combobox_language.get_active()
 
@@ -512,31 +550,38 @@ class TesseractTrainer(window.Window):
 			response = dlg.run()
 			language = entry.get_text()
 			dlg.destroy()
-		if(os.access('/usr/share/tesseract-ocr/tessdata/', os.W_OK)):
-			os.system("cp {0} /usr/share/tesseract-ocr/tessdata/{1}.traineddata".format(source,language));
-		else:
-			if ("/bin/pkexec" in subprocess.getoutput("whereis pkexec")):
-				os.system("pkexec cp {0} /usr/share/tesseract-ocr/tessdata/{1}.traineddata".format(source,language));
-			elif ("/bin/gksudo" in subprocess.getoutput("whereis gksudo")):
-				os.system("gksudo cp {0} /usr/share/tesseract-ocr/tessdata/{1}.traineddata".format(source,language));
-			elif ("/bin/kdesudo" in subprocess.getoutput("whereis kdesudo")):
-				os.system("kdesudo cp {0} /usr/share/tesseract-ocr/tessdata/{1}.traineddata".format(source,language));
-			elif ("/bin/gksu" in subprocess.getoutput("whereis gksu")):
-				os.system("gksu cp {0} /usr/share/tesseract-ocr/tessdata/{1}.traineddata".format(source,language));
-			else:
-				dlg = dialog.Dialog(_("Copying output file failed"),
-				(_("Ok"), dialog.Dialog.BUTTON_ID_1))
-				label = widget.Label(_("Can't copy output trained data. Please make sure you have write access to /usr/share/tesseract-ocr/tessdata/"))
-				dlg.add_widget(label)
-				label.show()
-				response = dlg.run()
-				dlg.destroy()
+		command = "cp {0} /usr/share/tesseract-ocr/tessdata/{1}.traineddata".format(source,language)
+		self.run_command_in_super_user_mode(command,'/usr/share/tesseract-ocr/tessdata/')
+		self.update_language_list()
+
+	def update_language_list(self):
 		self.languages = []
 		self.combobox_language.clear()
 		for item in ocr.ocr_engine_tesseract.OcrEngineTesseract.get_available_languages():
 			self.combobox_language.add_item(item)
 			self.languages.append(item)
 		self.combobox_language.set_active(0)
+
+	def run_command_in_super_user_mode(self, command, directory):
+		if(os.access(directory, os.W_OK)):
+			os.system(command);
+		else:
+			if ("/bin/pkexec" in subprocess.getoutput("whereis pkexec")):
+				os.system("pkexec "+command);
+			elif ("/bin/gksudo" in subprocess.getoutput("whereis gksudo")):
+				os.system("gksudo "+command);
+			elif ("/bin/kdesudo" in subprocess.getoutput("whereis kdesudo")):
+				os.system("kdesudo "+command);
+			elif ("/bin/gksu" in subprocess.getoutput("whereis gksu")):
+				os.system("gksu "+command);
+			else:
+				dlg = dialog.Dialog(_("Error : running command failed"),
+				(_("Ok"), dialog.Dialog.BUTTON_ID_1))
+				label = widget.Label(_("Can't run command : {0}\n Please make sure you have write access to {1}".format(command,directory)))
+				dlg.add_widget(label)
+				label.show()
+				response = dlg.run()
+				dlg.destroy()
 
 	def train_image(self,filename,font_desc):
 
