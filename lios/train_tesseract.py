@@ -444,7 +444,8 @@ class TesseractTrainer(window.Window):
 	def button_export_language_clicked(self,*data):
 		save_file = file_chooser.FileChooserDialog(_("Save filename"),file_chooser.FileChooserDialog.SAVE,["traineddata"]);
 		save_file.set_do_overwrite_confirmation(True);
-		save_file.set_filename(self.language+".traineddata")
+		save_file.set_current_name(self.language+".traineddata")
+		save_file.set_current_folder(macros.home_dir)
 		response = save_file.run()
 		if response == file_chooser.FileChooserDialog.ACCEPT:
 			command = "cp /usr/share/tesseract-ocr/tessdata/{0}.traineddata {1}".format(self.language, save_file.get_filename())
