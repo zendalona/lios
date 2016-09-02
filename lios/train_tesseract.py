@@ -587,15 +587,15 @@ class TesseractTrainer(window.Window):
 	def train_image(self,filename,font_desc):
 
 		# Removing previous box files if exist -- Bugs exist :(
-		#self.output_terminal.run_command("rm -f /tmp/tesseract-train/batch.nochop.box")
-		#os.system("rm -f /tmp/tesseract-train/batch.nochop.box")
+		self.output_terminal.run_command("rm -f /tmp/tesseract-train/batch.nochop.box")
 		
 		self.output_terminal.run_command("cd /tmp/tesseract-train/")
-		self.output_terminal.run_command("convert {0} -background white -flatten file.tif".format(filename));
+		self.output_terminal.run_command("convert {0} -background white -flatten +matte file.tif".format(filename));
 		self.output_terminal.run_command("tesseract file.tif -l {0} batch.nochop makebox".format(self.language));
 
 		# Wait for box file
 		os.system("while [ ! -f /tmp/tesseract-train/batch.nochop.box ]; do sleep .1; done")
+		os.system("count=100; while [ ! -s /tmp/tesseract-train/batch.nochop.box ] && [ $count -ge 0 ]; do sleep .1; count=$(($count-1)); done")
 
 		boxeditor = BoxEditorDialog()
 
