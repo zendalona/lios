@@ -22,14 +22,12 @@ import subprocess
 from lios.ocr.ocr_engine_base import OcrEngineBase
 
 TESSDATA_POSSIBLE_PATHS = [
-    "/usr/local/share/tessdata",
-    "/usr/share/tessdata",
-    "/usr/share/tesseract/tessdata",
-    "/usr/local/share/tesseract-ocr/tessdata",
-    "/usr/share/tesseract-ocr/tessdata",
-    "/app/vendor/tesseract-ocr/tessdata",  # Heroku
-    "/opt/local/share/tessdata",  # OSX MacPorts
-]
+	"/usr/share/tesseract-ocr/tessdata",
+	"/usr/share/tesseract/tessdata",
+	"/usr/share/tessdata",
+	"/usr/local/share/tesseract-ocr/tessdata",
+	"/usr/local/share/tesseract/tessdata",
+	"/usr/local/share/tessdata" ]
 
 TESSDATA_EXTENSION = ".traineddata"
 
@@ -63,16 +61,43 @@ class OcrEngineTesseract(OcrEngineBase):
 		os.system("pkill tesseract")
 		
 	
-
-	def get_available_languages():
+	def get_available_languages_in_dirpath(dirpath):
 		langs = []
-		for dirpath in TESSDATA_POSSIBLE_PATHS:
-			if not os.access(dirpath, os.R_OK):
-				continue
+		if os.access(dirpath, os.R_OK):
 			for filename in os.listdir(dirpath):
 				if filename.lower().endswith(TESSDATA_EXTENSION):
 					lang = filename[:(-1 * len(TESSDATA_EXTENSION))]
 					langs.append(lang)
 		return langs
 
+	def get_available_languages():
+		langs = []
+		for dirpath in TESSDATA_POSSIBLE_PATHS[::-1]:
+			if (os.path.isfile(dirpath+"/configs/box.train")):
+				for item in OcrEngineTesseract.get_available_languages_in_dirpath(dirpath):
+					langs.append(item)
+				return langs
+		return langs
 
+	def get_all_available_dirs():
+		result = []
+		for root, dirs, files in os.walk("/"):
+			if "tessdata" in dirs:
+				dir = os.path.join(root, "tessdata")
+				if (os.path.isfile(dir+"/configs/box.train")):
+					result.append(dir)
+
+		# Sorting according to possible list
+		# [::-1] is used to reverse
+		for path in TESSDATA_POSSIBLE_PATHS[::-1]:
+			if (path in result):
+				result.insert(0, result.pop(result.index(path)))
+		return result
+
+	def get_available_dirs():
+		dir_list = [];
+		for path in TESSDATA_POSSIBLE_PATHS:
+			if (os.path.exists(path)):
+				if (os.path.isfile(path+"/configs/box.train")):
+					dir_list.append(path);
+		return dir_list;

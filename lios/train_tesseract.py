@@ -269,11 +269,20 @@ class TesseractTrainer(window.Window):
 		containers.Grid.NEW_ROW,
 		(button_set_dictionary,2,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND)]);
 		notebook.add_page(_("Dictionary's"),grid_set_dictionary);	
-		 
-		
+
 		label_language = widget.Label(_("Language "));
 		self.combobox_language = widget.ComboBox();
 		self.combobox_language.connect_change_callback_function(self.language_combobox_changed);
+
+		label_tessdata_dir = widget.Label(_("Tessdata directory "));
+		self.combobox_tessdata_dir = widget.ComboBox();
+		self.combobox_tessdata_dir.connect_change_callback_function(self.tessdata_dir_combobox_changed);
+
+		self.tessdata_dir_available_list = []
+		for item in ocr.ocr_engine_tesseract.OcrEngineTesseract.get_all_available_dirs():
+			self.combobox_tessdata_dir.add_item(item)
+			self.tessdata_dir_available_list.append(item)
+		self.combobox_tessdata_dir.set_active(0)
 
 		button_import_language = widget.Button(_("Import"))
 		button_import_language.connect_function(self.button_import_language_clicked)
@@ -281,12 +290,6 @@ class TesseractTrainer(window.Window):
 		button_export_language.connect_function(self.button_export_language_clicked)
 		button_remove_language = widget.Button(_("Remove"))
 		button_remove_language.connect_function(self.button_remove_language_clicked)
-
-		self.languages = []
-		for item in ocr.ocr_engine_tesseract.OcrEngineTesseract.get_available_languages():
-			self.combobox_language.add_item(item)
-			self.languages.append(item)
-		self.combobox_language.set_active(0)
 
 		paned = containers.Paned(containers.Paned.VERTICAL)
 		paned.add(notebook);
@@ -297,7 +300,10 @@ class TesseractTrainer(window.Window):
 		button_close = widget.Button(_("Close"));
 		button_close.connect_function(self.close_trainer);
 		
-		grid.add_widgets([(label_language,1,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND),
+		grid.add_widgets([(label_tessdata_dir,1,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND),
+		(self.combobox_tessdata_dir,4,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND),
+		containers.Grid.NEW_ROW,
+		(label_language,1,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND),
 		(self.combobox_language,1,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND),
 		(button_import_language,1,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND),
 		(button_export_language,1,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND),
@@ -448,14 +454,26 @@ class TesseractTrainer(window.Window):
 		save_file.set_current_folder(macros.home_dir)
 		response = save_file.run()
 		if response == file_chooser.FileChooserDialog.ACCEPT:
-			command = "cp /usr/share/tesseract-ocr/tessdata/{0}.traineddata {1}".format(self.language, save_file.get_filename())
+			command = "cp {0}/{1}.traineddata {2}".format(self.tessdata_dir,self.language, save_file.get_filename())
 			os.system(command)
 		save_file.destroy()
 
 	def button_remove_language_clicked(self,*data):
-		command = "rm /usr/share/tesseract-ocr/tessdata/{}.traineddata".format(self.language)
-		self.run_command_in_super_user_mode(command,"/usr/share/tesseract-ocr/tessdata/")
+		command = "rm {0}/{1}.traineddata".format(self.tessdata_dir,self.language)
+		self.run_command_in_super_user_mode(command,self.tessdata_dir)
 		self.update_language_list()
+
+	def tessdata_dir_combobox_changed(self,*data):
+		active = self.combobox_tessdata_dir.get_active()
+		self.tessdata_dir = self.tessdata_dir_available_list[active];
+
+		#Resetting language combobox
+		self.combobox_language.clear()
+		self.languages = []
+		for item in ocr.ocr_engine_tesseract.OcrEngineTesseract.get_available_languages_in_dirpath(self.tessdata_dir):
+			self.combobox_language.add_item(item)
+			self.languages.append(item)
+		self.combobox_language.set_active(0)
 
 	def language_combobox_changed(self,*data):
 		active = self.combobox_language.get_active()
@@ -468,7 +486,7 @@ class TesseractTrainer(window.Window):
 			shutil.rmtree("/tmp/tesseract-train/")
 			os.mkdir("/tmp/tesseract-train/")
 
-			cmd = "combine_tessdata -u /usr/share/tesseract-ocr/tessdata/{}.traineddata /tmp/tesseract-train/file".format(self.language)
+			cmd = "combine_tessdata -u {0}/{1}.traineddata /tmp/tesseract-train/file".format(self.tessdata_dir,self.language)
 			self.output_terminal.run_command(cmd)
 			os.system("while [ ! -f /tmp/tesseract-train/file.unicharset ]; do sleep 0.1; done")
 
@@ -541,7 +559,7 @@ class TesseractTrainer(window.Window):
 		self.train_image(items[0],font_desc)
 
 	def place_traineddata(self,source,language):
-		if (os.path.isfile("/usr/share/tesseract-ocr/tessdata/"+language+".traineddata")):
+		if (os.path.isfile(self.tessdata_dir+"/"+language+".traineddata")):
 			dlg = dialog.Dialog(language+_(" Alrady exist! Please edit name to avoid replacing"),
 			(_("Place it"), dialog.Dialog.BUTTON_ID_1))
 
@@ -551,14 +569,14 @@ class TesseractTrainer(window.Window):
 			response = dlg.run()
 			language = entry.get_text()
 			dlg.destroy()
-		command = "cp {0} /usr/share/tesseract-ocr/tessdata/{1}.traineddata".format(source,language)
-		self.run_command_in_super_user_mode(command,'/usr/share/tesseract-ocr/tessdata/')
+		command = "cp {0} {1}/{2}.traineddata".format(source,self.tessdata_dir,language)
+		self.run_command_in_super_user_mode(command,self.tessdata_dir)
 		self.update_language_list()
 
 	def update_language_list(self):
 		self.languages = []
 		self.combobox_language.clear()
-		for item in ocr.ocr_engine_tesseract.OcrEngineTesseract.get_available_languages():
+		for item in ocr.ocr_engine_tesseract.OcrEngineTesseract.get_available_languages_in_dirpath(self.tessdata_dir):
 			self.combobox_language.add_item(item)
 			self.languages.append(item)
 		self.combobox_language.set_active(0)
@@ -591,7 +609,7 @@ class TesseractTrainer(window.Window):
 		
 		self.output_terminal.run_command("cd /tmp/tesseract-train/")
 		self.output_terminal.run_command("convert {0} -background white -flatten +matte file.tif".format(filename));
-		self.output_terminal.run_command("tesseract file.tif -l {0} batch.nochop makebox".format(self.language));
+		self.output_terminal.run_command("tesseract file.tif --tessdata-dir {0} -l {1} batch.nochop makebox".format(self.tessdata_dir,self.language));
 
 		# Wait for box file
 		os.system("while [ ! -f /tmp/tesseract-train/batch.nochop.box ]; do sleep .1; done")
@@ -602,7 +620,7 @@ class TesseractTrainer(window.Window):
 		def train_with_boxes(*data):
 			boxeditor.save_boxes_to_file("/tmp/tesseract-train/file.box")
 			
-			self.output_terminal.run_command("tesseract -l {0} file.tif file.box nobatch box.train".format(self.language));
+			self.output_terminal.run_command("tesseract --tessdata-dir {0} -l {1} file.tif file.box nobatch box.train".format(self.tessdata_dir,self.language));
 			self.output_terminal.run_command("unicharset_extractor file.box");
 			
 			font = font_desc.split(" ")[0]
