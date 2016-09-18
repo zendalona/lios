@@ -278,12 +278,6 @@ class TesseractTrainer(window.Window):
 		self.combobox_tessdata_dir = widget.ComboBox();
 		self.combobox_tessdata_dir.connect_change_callback_function(self.tessdata_dir_combobox_changed);
 
-		self.tessdata_dir_available_list = []
-		for item in ocr.ocr_engine_tesseract.OcrEngineTesseract.get_all_available_dirs():
-			self.combobox_tessdata_dir.add_item(item)
-			self.tessdata_dir_available_list.append(item)
-		self.combobox_tessdata_dir.set_active(0)
-
 		button_import_language = widget.Button(_("Import"))
 		button_import_language.connect_function(self.button_import_language_clicked)
 		button_export_language = widget.Button(_("Export"))
@@ -315,6 +309,24 @@ class TesseractTrainer(window.Window):
 		self.add(grid)
 		grid.show_all()
 		self.maximize()
+
+		dlg = dialog.Dialog(_("Search entire filesystem for tessdata ?"),
+		(_("Yes"), dialog.Dialog.BUTTON_ID_1,_("No"), dialog.Dialog.BUTTON_ID_2))
+		label = widget.Label(_("Do you want to search entire filesystem for tessdata ?\nThis may take awhile!"))
+		dlg.add_widget(label)
+		label.show()
+		response = dlg.run()
+		if (response == dialog.Dialog.BUTTON_ID_1):
+			dir_list = ocr.ocr_engine_tesseract.OcrEngineTesseract.get_all_available_dirs()
+		else:
+			dir_list = ocr.ocr_engine_tesseract.OcrEngineTesseract.get_available_dirs()
+		dlg.destroy()
+
+		self.tessdata_dir_available_list = []
+		for item in dir_list:
+			self.combobox_tessdata_dir.add_item(item)
+			self.tessdata_dir_available_list.append(item)
+		self.combobox_tessdata_dir.set_active(0)
 	
 	def import_ambiguous_list_from_file(self,filename):
 		lines = open(filename).read().split("\n")
