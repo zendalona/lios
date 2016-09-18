@@ -2,7 +2,7 @@
 Version=1.0
 Type=Application
 Terminal=false
-Exec=tesseract-trainer %U
+Exec=train-tesseract %U
 Name=Tesseract-Trainer
 Comment=Train tesseract-ocr
 Icon=/usr/share/lios/lios.png
