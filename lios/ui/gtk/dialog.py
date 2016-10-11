@@ -35,6 +35,7 @@ class Dialog(Gtk.Dialog):
 	def add_widget_with_label(self,widget,label_text):
 		new_box = Gtk.Box()
 		label = Gtk.Label(label_text)
+		label.set_mnemonic_widget(widget)
 		new_box.pack_start(label, True, True, 0)
 		new_box.pack_start(widget, True, True, 0)
 		box = self.get_content_area();
