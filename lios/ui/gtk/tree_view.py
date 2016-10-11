@@ -125,7 +125,7 @@ class TreeView(Gtk.TreeView):
 		self.function(int(path))
 	
 	def connect_update_callback(self,function):
-		self.function_update_callback = function
+		self.function = function
 	
 	def connect_cursor_change_function(self,function):
 		self.cursor_change_handler_id = self.connect("cursor-changed", lambda x: function())
