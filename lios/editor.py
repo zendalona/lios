@@ -17,7 +17,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###########################################################################
 
-from lios.ui.gtk import text_view, widget, dialog, file_chooser, containers, window
+from lios.ui.gtk import text_view, tree_view, widget, dialog, file_chooser, containers, window
 
 from lios.text_to_audio import text_to_audio_converter
 from lios import macros
@@ -73,6 +73,7 @@ class BasicTextView(text_view.TextView):
 		self.connect_insert(self.push)
 		self.connect_delete(self.push)
 		self.bookmark_list = []
+		self.text_cleaner_list = []
 		
 		#This variable is to avoid the reverse event 
 		#while pressing undo or redo that again trigger
@@ -199,6 +200,149 @@ class BasicTextView(text_view.TextView):
 		text_to_insert_at_cursor = read_text_from_file(insert_at_cursor_dialog.get_filename())
 		self.insert_text(text_to_insert_at_cursor,1,True)
 		insert_at_cursor_dialog.destroy()
+
+
+	def set_text_cleaner_list_from_file(self,filename):
+		self.text_cleaner_list = []
+		try:
+			with open(filename) as file:
+				for line in file:
+					self.text_cleaner_list.append((line.split("==")[0],line.split("==")[1][:-1]))
+		except:
+			pass
+
+	def save_text_cleaner_list_to_file(self,filename):
+		try:
+			file = open(filename,"w")
+			for item in self.text_cleaner_list:
+				file.write(item[0]+"=="+item[1]+"\n")
+		except:
+			pass
+
+	def export_text_cleaner_list(self,*data):
+		open_file = file_chooser.FileChooserDialog(_("Filename please"),
+		file_chooser.FileChooserDialog.SAVE,
+		macros.supported_text_formats,macros.home_dir)
+		open_file.set_current_name(".txt")
+		response = open_file.run()
+		if response == file_chooser.FileChooserDialog.ACCEPT:
+			self.save_text_cleaner_list_to_file(open_file.get_filename())
+		open_file.destroy()
+
+	def import_text_cleaner_list(self,*data):
+		open_file = file_chooser.FileChooserDialog(_("Select the file to import"),
+		file_chooser.FileChooserDialog.OPEN,
+		"*",macros.home_dir)
+		response = open_file.run()
+		if response == file_chooser.FileChooserDialog.ACCEPT:
+			self.set_text_cleaner_list_from_file(open_file.get_filename())
+			self.save_text_cleaner_list_to_file(macros.text_cleaner_list_file);
+		open_file.destroy()
+
+	def open_text_cleaner(self,*data):
+		window_text_cleaner = window.Window(_("Text Cleaner"))
+		scroll_box = containers.ScrollBox()
+		treeview = tree_view.TreeView([("Match",str,True),("Replace",str,True)],None)
+		scroll_box.add(treeview)
+		treeview.set_list(self.text_cleaner_list)
+
+		def add_clicked(*data):
+			entry_match = widget.Entry()
+			entry_replace = widget.Entry()
+			dlg = dialog.Dialog(_("Give match and replace"),(_("Ok"), dialog.Dialog.BUTTON_ID_1,_("Close!"), dialog.Dialog.BUTTON_ID_2))
+			dlg.add_widget_with_label(entry_match,_("Match : "))
+			dlg.add_widget_with_label(entry_replace,_("Replace : "))
+			entry_match.grab_focus()
+			dlg.show_all()
+			response = dlg.run()
+			if (response == dialog.Dialog.BUTTON_ID_1):
+				treeview.append((entry_match.get_text(),entry_replace.get_text()))
+				self.text_cleaner_list = treeview.get_list()
+				self.save_text_cleaner_list_to_file(macros.text_cleaner_list_file);
+			dlg.destroy()
+
+		def remove_clicked(*data):
+			index = treeview.get_selected_row_index()
+			treeview.remove(index)
+			self.text_cleaner_list = treeview.get_list()
+			self.save_text_cleaner_list_to_file(macros.text_cleaner_list_file);
+
+		def export_list(*data):
+			self.export_text_cleaner_list()
+
+		def import_list(*data):
+			self.import_text_cleaner_list()
+			treeview.set_list(self.text_cleaner_list)
+			self.save_text_cleaner_list_to_file(macros.text_cleaner_list_file);
+
+		def restore(*data):
+			self.set_text_cleaner_list_from_file(macros.default_text_cleaner_list_file)
+			treeview.set_list(self.text_cleaner_list)
+			self.save_text_cleaner_list_to_file(macros.text_cleaner_list_file);
+
+		def clear(*data):
+			self.text_cleaner_list = []
+			treeview.set_list(self.text_cleaner_list)
+			self.save_text_cleaner_list_to_file(macros.text_cleaner_list_file);
+
+		def list_updated(*data):
+			self.text_cleaner_list = treeview.get_list()
+			self.save_text_cleaner_list_to_file(macros.text_cleaner_list_file);
+
+		def close(*data):
+			window_text_cleaner.close()
+
+		treeview.connect_update_callback(list_updated)
+
+		button_add = widget.Button(_("Add"))
+		button_add.connect_function(add_clicked);
+		button_remove = widget.Button(_("Remove"))
+		button_remove.connect_function(remove_clicked)
+
+		button_import = widget.Button(_("Import"))
+		button_import.connect_function(import_list);
+		button_export = widget.Button(_("Export"))
+		button_export.connect_function(export_list)
+
+		button_clear = widget.Button(_("Clear"))
+		button_clear.connect_function(clear);
+		button_restore = widget.Button(_("Restore"))
+		button_restore.connect_function(restore)
+
+		button_apply_from_cursor = widget.Button(_("Apply from cursor"))
+		button_apply_from_cursor.connect_function(self.apply_text_cleaner_from_cursor)
+
+		button_apply = widget.Button(_("Apply on entire text"))
+		button_apply.connect_function(self.apply_text_cleaner_entire_text)
+
+		button_close = widget.Button(_("Close"))
+		button_close.connect_function(close)
+
+		grid = containers.Grid()
+		grid.add_widgets([(scroll_box,3,1),containers.Grid.NEW_ROW,
+			(button_add,1,1,False,False),(button_remove,1,1,False,False),(button_clear,1,1,False,False),containers.Grid.NEW_ROW,
+			(button_restore,1,1,False,False),(button_apply_from_cursor,1,1,False,False),(button_apply,1,1,False,False),containers.Grid.NEW_ROW,
+			(button_import,1,1,False,False),(button_export,1,1,False,False),(button_close,1,1,False,False)])
+
+		window_text_cleaner.add(grid);
+		window_text_cleaner.set_default_size(400,500)
+		window_text_cleaner.show_all();
+
+	def apply_text_cleaner_from_cursor(self,*data):
+		text = self.get_text_from_cursor_to_end()
+		text = self.get_text_cleaner_out(text)
+		self.delete_text_from_cursor_to_end()
+		self.insert_text(text,text_view.TextView.AT_END)
+
+	def apply_text_cleaner_entire_text(self,*data):
+		text = self.get_text()
+		text = self.get_text_cleaner_out(text)
+		self.set_text(text)
+
+	def get_text_cleaner_out(self,text):
+		for item in self.text_cleaner_list:
+			text = text.replace(item[0],item[1]);
+		return text
 	
 	def open_bookmark_table(self,*data):
 		window_bookmark = window.Window(_("Bookmark Table"))

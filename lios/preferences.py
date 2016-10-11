@@ -47,7 +47,7 @@ class lios_preferences:
 		self.ocr_engine=0;self.language=0;self.mode_of_rotation=0;
 		self.number_of_pages_to_scan=100;self.page_numbering_type=0;
 		self.starting_page_number=1;self.scanner_mode_switching=0;
-		self.rotation_angle=00;
+		self.run_text_cleaner=0;self.rotation_angle=00;
 
 
 	def set_avalable_scanner_drivers(self,list):
@@ -79,6 +79,7 @@ class lios_preferences:
 				self.rotation_angle = int(config.get('cfg',"rotation_angle"))		
 				self.page_numbering_type=int(config.get('cfg',"numbering_type"))
 				self.scanner_mode_switching=int(config.get('cfg',"scanner_mode_switching"))
+				self.run_text_cleaner=int(config.get('cfg',"run_text_cleaner"))
 				self.scanner_cache_calibration=int(config.get('cfg',"scanner_cache_calibration"))						
 				self.starting_page_number=int(config.get('cfg',"starting_page_number"))
 				self.background_color=config.get('cfg',"background_color")
@@ -119,6 +120,7 @@ class lios_preferences:
 		config.set('cfg',"rotation_angle",str(self.rotation_angle))
 		config.set('cfg',"numbering_type",str(self.page_numbering_type))
 		config.set('cfg',"scanner_mode_switching",str(self.scanner_mode_switching))
+		config.set('cfg',"run_text_cleaner",str(self.run_text_cleaner))
 		config.set('cfg',"scanner_cache_calibration",str(self.scanner_cache_calibration))				
 		config.set('cfg',"starting_page_number",str(self.starting_page_number))
 		config.set('cfg',"background_color",str(self.background_color))
@@ -271,6 +273,10 @@ class lios_preferences:
 		#setting current engine - This can't be done before creating language combobox
 		combobox_engine.set_active(self.ocr_engine)
 		combobox_language.set_active(self.language)
+
+		#Run text cleaner
+		checkbutton_run_text_cleaner = widget.CheckButton(_("Run Text Cleaner"))
+		checkbutton_run_text_cleaner.set_active(self.run_text_cleaner)
 		
 		#insert_position
 		label_insert_position = widget.Label(_("Insert Position"))
@@ -323,6 +329,7 @@ class lios_preferences:
 		grid_recognition.add_widgets([
 			(label_engine,1,1),(combobox_engine,1,1),containers.Grid.NEW_ROW,
 			(label_language,1,1),(combobox_language,1,1),containers.Grid.NEW_ROW,
+			(checkbutton_run_text_cleaner,1,1),containers.Grid.NEW_ROW,
 			(label_insert_position,1,1),(combobox_insert_position,1,1),containers.Grid.NEW_ROW,
 			(seperator_1,2,1),containers.Grid.NEW_ROW,
 			(label_mode_of_rotation,1,1),(combobox_mode_of_rotation,1,1),containers.Grid.NEW_ROW,
@@ -439,6 +446,7 @@ class lios_preferences:
 			self.number_of_pages_to_scan=spin_number_of_pages_to_scan.get_value_as_int();
 			self.time_between_repeated_scanning=spin_time_bitween_repeted_scanning.get_value_as_int();
 			self.scanner_mode_switching=int(checkbutton_scan_mode_switching.get_active())
+			self.run_text_cleaner=int(checkbutton_run_text_cleaner.get_active())
 			self.scanner_cache_calibration=int(checkbutton_scanner_cache_calibration.get_active())
 			
 			dlg.destroy()

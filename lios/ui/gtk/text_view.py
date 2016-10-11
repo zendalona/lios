@@ -51,6 +51,22 @@ class TextView(Gtk.TextView):
 		start,end = buffer.get_bounds()
 		text = buffer.get_text(start,end,False)
 		return text
+
+	# For Text Cleaner
+	def get_text_from_cursor_to_end(self):
+		buffer = self.get_buffer()
+		end = buffer.get_end_iter()
+		mark = buffer.get_insert()
+		start = buffer.get_iter_at_mark(mark)
+		text = buffer.get_text(start,end,False)
+		return text
+
+	def delete_text_from_cursor_to_end(self):
+		buffer = self.get_buffer()
+		end = buffer.get_end_iter()
+		mark = buffer.get_insert()
+		start = buffer.get_iter_at_mark(mark)
+		buffer.delete(start,end)
 	
 	def insert_text(self,text,position,place_cursor=False):
 		buffer = self.get_buffer()

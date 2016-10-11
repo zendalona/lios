@@ -153,7 +153,11 @@ class linux_intelligent_ocr_solution():
 		box_editor.add(toolbar_editor)
 		scroll_box_editor = containers.ScrollBox()
 		scroll_box_editor.add(self.textview)
-		box_editor.add(scroll_box_editor)		
+		box_editor.add(scroll_box_editor)
+
+		#Load TextCleaner List
+		self.textview.set_text_cleaner_list_from_file(macros.text_cleaner_list_file);
+
 
 		#OCR Engine
 		self.available_ocr_engine_list = ocr.get_available_engines()
@@ -227,6 +231,12 @@ class linux_intelligent_ocr_solution():
 			(_("Recognize-All-with-rotation"),self.ocr_all_images_with_rotation,"None")],
 		[_("_Tools"),(_("Spell-Check"),self.textview.open_spell_check,"<Control>F7"),
 			(_("Train-Tesseract"),self.start_train_tesseract,"None"),
+			[_("Text-Cleaner"),
+				(_("Text-Cleaner"),self.textview.open_text_cleaner,"None"),
+				(_("Import"),self.textview.import_text_cleaner_list,"None"),
+				(_("Export"),self.textview.export_text_cleaner_list,"None"),
+				(_("Apply-From-Cursor"),self.textview.apply_text_cleaner_from_cursor,"None"),
+				(_("Apply-Entire"),self.textview.apply_text_cleaner_entire_text,"None")],
 			(_("Audio-Converter"),self.textview.audio_converter,"None"),
 			(_("Dictionary"),self.artha,"<Control><Alt>W"),
 			(_("Bookmark"),self.textview.create_bookmark,"<Control>B"),
@@ -702,6 +712,8 @@ class linux_intelligent_ocr_solution():
 	############## OCR  END ################################
 
 	def insert_text_to_textview(self,text,place_cursor = False,give_page_number = False):
+		if(self.preferences.run_text_cleaner):
+			text = self.textview.get_text_cleaner_out(text)
 		loop.acquire_lock()
 		if (give_page_number):
 			text = "\nPage-{}\n{}".format(self.preferences.get_page_number_as_string(),text)

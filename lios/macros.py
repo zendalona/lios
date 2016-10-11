@@ -25,6 +25,8 @@ tmp_dir = "/tmp/Lios/"
 
 bookmarks_dir = home_dir+"/lios/bookmarks/"
 
+text_cleaner_list_file = home_dir+"/lios/text_cleaner_list"
+
 preferences_file_path = home_dir+"/lios/lios_preferences"
 
 recent_file_path = home_dir+"/lios/lios_recent"
@@ -41,6 +43,8 @@ logo_file = "/usr/share/lios/lios.png"
 
 
 readme_file = "/usr/share/lios/readme.text"
+
+default_text_cleaner_list_file = "/usr/share/lios/text_cleaner_list.text"
 
 app_name = "Linux-intelligent-ocr-solution"
 
