@@ -12,16 +12,18 @@ Features
 3. Recognize Selected Areas(Rectangle selection),
 4. Support two OCR Engines (Cuneiform,Tesseract),
 5. 24 Language support (Given at the end), 30 more languages can be installed in Tesseract,
-6. Full Auto Rotation for any Language(If aspell installed for the language, Eg : "sudo apt-get install aspell-hi" for Hindi,
-7. Side by side view of image and output
-8. Advanced Scanner Brightness optimizer,
-9. Text Reader for low vision with Highlighting, With user selected Color, Font, and Background Color,
-10. Audio converter(espeak),
-11. Spell-checker(aspell),
-12. Export as pdf (text/images),
-13. Dictionary Support for English(Artha)
-14. Options for save, load and reset settings,
-15. Other options - Find, Find-and-Replace, Go-To-Page, Go-To-Line, Append file, Punch File,
+6. Text-Cleaner - Post process your output with match-replace dialog,
+7. Tesseract-Trainer - Train your tesseract ocr engine to improve the accuracy, 
+8. Full Auto Rotation for any Language(If aspell installed for the language, Eg : "sudo apt-get install aspell-hi" for Hindi,
+9. Side by side view of image and output
+10. Advanced Scanner Brightness optimizer,
+11. Text Reader for low vision with Highlighting, With user selected Color, Font, and Background Color,
+12. Audio converter(espeak),
+13. Spell-checker(aspell),
+14. Export as pdf (text/images),
+15. Dictionary Support for English(Artha)
+16. Options for save, load and reset settings,
+17. Other options - Find, Find-and-Replace, Go-To-Page, Go-To-Line, Append file, Punch File,
 Selection of starting page number, page numbering mode and number of pages to scan,
 Selection of Scan area, brightness, resolution and time between repeated scanning,
 Output Insert position, image rotation and zoom options, etc
