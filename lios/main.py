@@ -603,7 +603,7 @@ class linux_intelligent_ocr_solution():
 	def scan_single_image(self,widget):
 		#self.make_scanner_widgets_inactive(lock=True)
 		#self.make_preferences_widgets_inactive(lock=True)
-		destination = "{0}{1}.pnm".format(macros.tmp_dir,self.preferences.get_page_number_as_string())
+		destination = "{0}{1}.jpg".format(macros.tmp_dir,self.preferences.get_page_number_as_string())
 		destination = self.get_feesible_filename_from_filename(destination)
 		t = threading.Thread(target=self.scan,args=(destination,))
 		t.start()
@@ -620,7 +620,7 @@ class linux_intelligent_ocr_solution():
 		#self.make_preferences_widgets_inactive(lock=True)
 		self.process_breaker = False
 		for i in range(0,self.preferences.number_of_pages_to_scan):
-			destination = "{0}{1}.pnm".format(macros.tmp_dir,self.preferences.get_page_number_as_string())
+			destination = "{0}{1}.jpg".format(macros.tmp_dir,self.preferences.get_page_number_as_string())
 			destination = self.get_feesible_filename_from_filename(destination)
 			t = threading.Thread(target=self.scan,args=(destination,))
 			t.start()
@@ -650,7 +650,7 @@ class linux_intelligent_ocr_solution():
 		p = multiprocessing.Process(target=(self.scanner_objects[selected_scanner].scan),
 		args=(filename,self.preferences.scan_resolution,
 		self.preferences.scan_brightness,self.preferences.scan_area))
-		
+
 		p.start()
 		while(p.is_alive()):
 			pass
@@ -729,7 +729,7 @@ class linux_intelligent_ocr_solution():
 		#self.make_preferences_widgets_inactive(lock=True)
 		#self.make_ocr_widgets_inactive(lock=True)
 		self.process_breaker = False
-		destination = "{0}{1}.pnm".format(macros.tmp_dir,self.preferences.get_page_number_as_string())
+		destination = "{0}{1}.jpg".format(macros.tmp_dir,self.preferences.get_page_number_as_string())
 		destination = self.get_feesible_filename_from_filename(destination)
 		t = threading.Thread(target=self.scan,args=(destination,))
 		t.start()
@@ -763,7 +763,7 @@ class linux_intelligent_ocr_solution():
 		angle = self.preferences.rotation_angle
 		self.process_breaker = False
 		for i in range(0,self.preferences.number_of_pages_to_scan):
-			destination = "{0}{1}.pnm".format(macros.tmp_dir,self.preferences.get_page_number_as_string())
+			destination = "{0}{1}.jpg".format(macros.tmp_dir,self.preferences.get_page_number_as_string())
 			destination = self.get_feesible_filename_from_filename(destination)
 			print(_("#Scanning"))
 			t = threading.Thread(target=self.scan,args=(destination,))
