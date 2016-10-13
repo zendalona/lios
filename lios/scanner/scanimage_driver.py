@@ -80,7 +80,8 @@ class DriverScanimage(DriverBase):
 				
 		command += (" > {}".format(filename))
 		print(command)
-		os.system(command)		
+		os.system(command)
+		os.system("convert -strip -quality 90 {0} {0}".format(filename))
 				
 
 
