@@ -44,7 +44,7 @@ class OcrEngineTesseract(OcrEngineBase):
 			return False
 			
 	def ocr_image_to_text(self,file_name):
-		os.system("convert {} /tmp/{}_for_ocr.png".format(file_name,file_name.split("/")[-1]))
+		os.system("convert {} -background white -flatten +matte /tmp/{}_for_ocr.png".format(file_name,file_name.split("/")[-1]))
 
 		os.system("tesseract /tmp/{0}_for_ocr.png /tmp/{0}_output -l {1}".format(file_name.split("/")[-1],self.language))
 		os.remove("/tmp/{0}_for_ocr.png".format(file_name.split("/")[-1]))
