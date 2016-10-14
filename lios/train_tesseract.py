@@ -656,7 +656,32 @@ class TesseractTrainer(window.Window):
 			self.output_terminal.run_command("mv shapetable file.shapetable");
 			self.output_terminal.run_command("combine_tessdata file.");
 			
-			self.place_traineddata("/tmp/tesseract-train/file.traineddata",self.language)
+			# getting output with the same image
+			self.output_terminal.run_command("mkdir /tmp/tesseract-train/tessdata");
+			self.output_terminal.run_command("cp /tmp/tesseract-train/file.traineddata /tmp/tesseract-train/tessdata/");
+			self.output_terminal.run_command("tesseract /tmp/tesseract-train/file.tif /tmp/tesseract-train/output --tessdata-dir /tmp/tesseract-train/ -l file");
+
+			# Wait for output
+			os.system("while [ ! -f /tmp/tesseract-train/output.txt ]; do sleep .1; done")
+			os.system("count=100; while [ ! -s /tmp/tesseract-train/output.txt ] && [ $count -ge 0 ]; do sleep .1; count=$(($count-1)); done")
+
+			dlg = dialog.Dialog(_("Do you want to place this traineddata ?"),(_("Place"), dialog.Dialog.BUTTON_ID_1,_("Close"), dialog.Dialog.BUTTON_ID_2));
+			label = widget.Label(_("The output after training is given below.\nIf it improved, then you can place the trained data in your tessdata directory by clicking Place button.\nIf not, then simply close and train again"))
+
+			tv = text_view.TextView()
+			sb = containers.ScrollBox()
+			sb.add(tv)
+			tv.set_vexpand(True)
+			tv.set_hexpand(True)
+			tv.set_text(open("/tmp/tesseract-train/output.txt").read())
+			dlg.add_widget(label)
+			dlg.set_default_size(500,400)
+			dlg.add_widget(sb)
+			dlg.show_all()
+			response = dlg.run()
+			if(response == dialog.Dialog.BUTTON_ID_1):
+				self.place_traineddata("/tmp/tesseract-train/file.traineddata",self.language)
+			dlg.destroy()
 
 
 		boxeditor.set_image(filename)
