@@ -317,7 +317,7 @@ class linux_intelligent_ocr_solution():
 		#so scanner combobox should be inetialised
 		self.make_preferences_effective()
 		
-		self.notify_information(_("Welcome to {} Version {}").format(macros.app_name,macros.version),0.0030,10)
+		self.notify_information(_("Welcome to {} Version {}").format(macros.app_name,macros.version),0)
 
 		#For connecting menubar accell group Gtk
 		self.window.connect_menubar(menubar)
@@ -332,11 +332,13 @@ class linux_intelligent_ocr_solution():
 		loop.start_main_loop()	
 
 	
-	def notify_information(self,text,percentage,pulsate=None):
+	def notify_information(self,text,percentage = -1):
 		self.statusbar.set_text(text)
-		if(pulsate):
-			self.progressbar.set_pulse_step(percentage)
+		if(percentage == -1):
+			self.progressbar.set_pulse_mode(True)
+			self.progressbar.set_pulse_step(0.030)
 		else:
+			self.progressbar.set_pulse_mode(False)
 			self.progressbar.set_fraction(percentage)
 
 	def start_train_tesseract(self,*data):
@@ -464,7 +466,7 @@ class linux_intelligent_ocr_solution():
 		shutil.copyfile(pdf_filename_full,destination)
 		os.makedirs(destination.split(".")[0],exist_ok=True)
 		
-		self.notify_information(_("Extracting images from Pdf"),0.0030,0.001)
+		self.notify_information(_("Extracting images from Pdf"))
 		
 		p = multiprocessing.Process(target=lambda : os.system("pdfimages {} {}/{}"
 		.format(destination,destination.split(".")[0],pdf_filename.split(".")[0])) , args=())
@@ -486,7 +488,7 @@ class linux_intelligent_ocr_solution():
 					self.add_image_to_list("{}/{}".format(destination.split(".")[0],image),filename,True)
 					loop.release_lock()
 		os.rmdir(destination.split(".")[0])
-		self.notify_information(_("Completed!"),0.0030,0.01)
+		self.notify_information(_("Completed!"),0)
 #		self.make_image_widgets_active(lock=True)
 
 	@on_thread	#should continue the loop to get window minimize 
@@ -557,7 +559,7 @@ class linux_intelligent_ocr_solution():
 		#self.make_preferences_widgets_inactive(lock=True)
 		#self.make_scanner_widgets_inactive(lock=True)
 		
-		self.notify_information(_("Getting devices"),0.0030,0.001)
+		self.notify_information(_("Getting devices"))
 		#Tuple - List Convertion is used to get all items in devices list
 		
 		
@@ -574,7 +576,7 @@ class linux_intelligent_ocr_solution():
 		driver = self.available_scanner_driver_list[self.preferences.scan_driver]
 		list_ = list(parent_conn.recv())
 		for device in list_:
-			self.notify_information(_("Setting Scanner {}").format(device),0.0030,0.0030)			
+			self.notify_information(_("Setting Scanner {}").format(device))
 			scanner = driver(device,self.preferences.scanner_mode_switching,
 				self.preferences.scan_resolution,self.preferences.scan_brightness,
 				self.preferences.scan_area)
@@ -589,12 +591,12 @@ class linux_intelligent_ocr_solution():
 		if (len(self.scanner_objects) != 0):
 			self.combobox_scanners.set_active(0)
 			#self.make_scanner_widgets_active(lock=True)
-			self.notify_information(_("Completed!"),0.0030,0.01)
+			self.notify_information(_("Completed!"),0)
 		else:
 			#self.button_refresh.set_sensitive(True)
 			#self.spinner.set_state(False)
 			#self.spinner.hide()
-			self.notify_information(_("No Scanner Detected!"),0.0030,0.01)
+			self.notify_information(_("No Scanner Detected!"),0)
 			pass
 		#self.make_preferences_widgets_active(lock=True)
 		loop.release_lock()
@@ -632,7 +634,7 @@ class linux_intelligent_ocr_solution():
 			time.sleep(self.preferences.time_between_repeated_scanning)
 			if(self.process_breaker):
 				break
-		self.notify_information(_("Job completed!"),100)
+		self.notify_information(_("completed!"),0)
 		#self.make_scanner_widgets_active(lock=True)
 		#self.make_preferences_widgets_active(lock=True)
 
@@ -645,7 +647,7 @@ class linux_intelligent_ocr_solution():
 			return;
 
 		self.notify_information(_("Scanning {} with resolution={} brightness={}").
-		format(filename,self.preferences.scan_resolution,self.preferences.scan_brightness),0.0030,0.0030)
+		format(filename,self.preferences.scan_resolution,self.preferences.scan_brightness))
 		
 		p = multiprocessing.Process(target=(self.scanner_objects[selected_scanner].scan),
 		args=(filename,self.preferences.scan_resolution,
@@ -654,7 +656,7 @@ class linux_intelligent_ocr_solution():
 		p.start()
 		while(p.is_alive()):
 			pass
-		self.notify_information(_("Scan Completed!"),0.0030,0.01)
+		self.notify_information(_("Scan Completed!"),0)
 			
 		if(self.process_breaker):
 			return
@@ -739,14 +741,15 @@ class linux_intelligent_ocr_solution():
 			#self.make_scanner_widgets_active(lock=True)
 			#self.make_ocr_widgets_active(lock=True)
 			#self.make_preferences_widgets_active(lock=True)
-			return			
+			return
+		self.notify_information(_("Recognizing {}").format(destination))
 		text,angle = self.ocr(destination,self.preferences.mode_of_rotation,self.preferences.rotation_angle)
 		self.insert_text_to_textview(text,self.preferences.insert_position)
 		self.imageview.redraw()
 		loop.acquire_lock()
 		self.iconview.reload_preview(destination)
 		loop.release_lock()
-		self.notify_information(_("Page {}").format(self.preferences.get_page_number_as_string()),10)
+		self.notify_information(_("Page {}").format(self.preferences.get_page_number_as_string()),0)
 		self.preferences.update_page_number()
 		#self.make_scanner_widgets_active(lock=True)
 		#self.make_ocr_widgets_active(lock=True)
@@ -777,6 +780,7 @@ class linux_intelligent_ocr_solution():
 			if(self.process_breaker):
 				break
 			print(_("#Running OCR"))	
+			self.notify_information(_("Recognizing {}").format(destination))
 			text,angle = self.ocr(destination,mode,angle)	
 			print(_("#Placing text and cursor"))
 			if (i == 0):
@@ -789,7 +793,7 @@ class linux_intelligent_ocr_solution():
 			print(_("#Redraw Compleated"))
 			loop.acquire_lock()
 			self.iconview.reload_preview(destination)
-			self.notify_information(_("Page {}").format(self.preferences.get_page_number_as_string()),100)
+			self.notify_information(_("Page {}").format(self.preferences.get_page_number_as_string()),0)
 			loop.release_lock()
 			print(_("#Preview Updated"))
 			self.preferences.update_page_number()
@@ -801,6 +805,7 @@ class linux_intelligent_ocr_solution():
 			if(self.process_breaker):
 				break
 			print(_("#Compleated "),i);
+		self.notify_information(_("Compleated"),0)
 		#self.announce(_("Job completed!")
 		#self.make_scanner_widgets_active(lock=True)
 		#self.make_ocr_widgets_active(lock=True)
@@ -822,7 +827,7 @@ class linux_intelligent_ocr_solution():
 		mode = self.preferences.mode_of_rotation
 		if (mode == 0 or mode == 1):
 			self.notify_information(_("Scanning with resolution={} brightness={} for detecting angle of rotation")
-			.format(self.preferences.scan_resolution,self.preferences.scan_brightness),0.0030,0.0030)
+			.format(self.preferences.scan_resolution,self.preferences.scan_brightness))
 			
 			p = multiprocessing.Process(target=(self.scanner_objects[selected_scanner].scan),
 			args=("{0}rotate.pnm".format(macros.tmp_dir),self.preferences.scan_resolution,
@@ -832,7 +837,7 @@ class linux_intelligent_ocr_solution():
 			while(p.is_alive()):
 				pass
 			text,angle = self.ocr("{0}rotate.pnm".format(macros.tmp_dir),mode,00)
-			self.notify_information("Image at {} angle.".format(angle),0.0030)
+			self.notify_information("Image at {} angle.".format(angle),0)
 		else:
 			angle = self.preferences.rotation_angle		
 		value = self.preferences.scan_brightness;
@@ -904,7 +909,7 @@ class linux_intelligent_ocr_solution():
 					self.preferences.mode_of_rotation = 2
 					self.preferences.rotation_angle = [00,90,180,270].index(angle)
 					self.notify_information(_("Rotation mode changed to manual at angle {} degree").
-						format(self.preferences.rotation_angle),0.0030)
+						format(self.preferences.rotation_angle),0)
 				dlg_set_mode.destroy()
 				loop.release_lock()
 				#self.make_scanner_widgets_active(lock=True)
@@ -953,10 +958,10 @@ class linux_intelligent_ocr_solution():
 			else:
 				if (count != -1):
 					self.notify_information(_("Got {} words at brightness {}. Scanning with resolution={} brightness={}")
-					.format(count,pos-distance,self.preferences.scan_resolution,pos),0.0030,0.0030)
+					.format(count,pos-distance,self.preferences.scan_resolution,pos))
 				else:
 					self.notify_information(_("Scanning with resolution={} brightness={}")
-					.format(self.preferences.scan_resolution,pos),0.0030,0.0030)
+					.format(self.preferences.scan_resolution,pos))
 				
 				p = multiprocessing.Process(target=(self.scanner_objects[selected_scanner].scan),
 				args=("{0}test.pnm".format(macros.tmp_dir,self.preferences.get_page_number_as_string()),
@@ -968,11 +973,13 @@ class linux_intelligent_ocr_solution():
 				if(self.process_breaker):
 					list = sorted(list, key=lambda item: item[0],reverse=True)
 					return (list)
+				self.notify_information(_("Recognizing {0}test.pnm").format(macros.tmp_dir))
 				text,angle = self.ocr("{0}test.pnm".format(macros.tmp_dir),2,angle)
 				count = self.count_dict_words(text)
 				list.append((count,pos))
 				#self.announce(_("Got {} words at brightness {}.".format(count,pos)))
 			pos = pos + distance
+		self.notify_information(_("completed!"),0)
 		list = sorted(list, key=lambda item: item[0],reverse=True)
 		return (list)
 
@@ -982,7 +989,7 @@ class linux_intelligent_ocr_solution():
 		#self.scanner_objects[selected_scanner].cancel()
 		os.system("pkill convert")
 		self.available_ocr_engine_list[self.preferences.ocr_engine].cancel()
-		self.notify_information("Terminated",0.0030)
+		self.notify_information("Terminated",0)
 		
 	def open_readme(self,*data):
 		if(self.textview.get_modified()):
@@ -1012,7 +1019,7 @@ class linux_intelligent_ocr_solution():
 		angle = self.preferences.rotation_angle
 		for item in reversed(self.iconview.get_selected_item_names()):
 			self.notify_information(_("Running OCR on selected image {}")
-			.format(item),progress,None)
+			.format(item))
 			
 			#self.announce(_("Recognising {}").format(self.liststore_images[item[0]][1]))
 			progress = progress + progress_step;			
@@ -1031,6 +1038,7 @@ class linux_intelligent_ocr_solution():
 		#self.make_ocr_widgets_active(lock=True)
 		#self.make_preferences_widgets_active(lock=True)
 		#self.make_image_widgets_active(lock=True)
+		self.notify_information(_("completed!"),0)
 				
 	def ocr_all_images_with_rotation(self,widget):
 		self.iconview.select_all()
@@ -1046,7 +1054,7 @@ class linux_intelligent_ocr_solution():
 		progress = 0;
 		for item in reversed(self.iconview.get_selected_item_names()):
 			self.notify_information(_("Running OCR on selected image {} (without rotating)")
-			.format(item),progress,0.0030,)
+			.format(item))
 			
 			#self.announce(_("Recognising {} without rotating").format(self.liststore_images[item[0]][1]))
 			progress = progress + progress_step;
@@ -1055,7 +1063,7 @@ class linux_intelligent_ocr_solution():
 			self.preferences.update_page_number()
 			if(self.process_breaker):
 				break
-		self.notify_information(_("completed!"),0.0030,0.01)
+		self.notify_information(_("completed!"),0)
 		#self.announce(_("Completed!"))
 		#self.make_ocr_widgets_active(lock=True)
 		#self.make_preferences_widgets_active(lock=True)
@@ -1086,7 +1094,7 @@ class linux_intelligent_ocr_solution():
 	@on_thread
 	def rotate_selected_images_to_angle(self,angle):
 		if(len(self.iconview.get_selected_item_names()) == 0):
-			self.notify_information(_("Nothing selected"),0.0030,0.01)
+			self.notify_information(_("Nothing selected"),0)
 			return
 		progress_step = 1/len(self.iconview.get_selected_item_names())
 		progress = 0;
@@ -1096,10 +1104,10 @@ class linux_intelligent_ocr_solution():
 			self.iconview.reload_preview(item)
 			loop.release_lock()
 			self.notify_information(_("Rotating selected image {} to {}")
-			.format(item,angle),progress,None)
+			.format(item,angle),progress)
 			progress = progress + progress_step;
 		self.imageview.redraw()
-		self.notify_information(_("completed!"),0.0030,0.01)
+		self.notify_information(_("completed!"),0)
 
 	def rotate_selected_images_to_right(self,widget):
 		self.rotate_selected_images_to_angle(90)
@@ -1207,7 +1215,7 @@ class linux_intelligent_ocr_solution():
 		progress = 0;
 		for item in self.imageview.get_selection_list():
 			self.notify_information(_("Running OCR on selected Area [ X={} Y={} Width={} Height={} ]")
-			.format(item[0],item[1],item[2],item[3]),progress,None)
+			.format(item[0],item[1],item[2],item[3]))
 			
 			progress = progress + progress_step;
 			self.imageview.save_sub_image("{0}tmp".format(macros.tmp_dir),
@@ -1219,7 +1227,7 @@ class linux_intelligent_ocr_solution():
 			if(self.process_breaker):
 				break;
 
-		self.notify_information(_("completed!"),0.0030,0.01)
+		self.notify_information(_("completed!"),0)
 		#self.make_preferences_widgets_active(lock=True)
 		#self.make_ocr_widgets_active(lock=True)
 		#self.make_image_widgets_active(lock=True)
@@ -1280,7 +1288,7 @@ pacman -S aspell-fr""").format(languages[self.preferences.language]))
 		response = save_preferences_dlg.run()		
 		if response == FileChooserDialog.ACCEPT:
 			self.preferences.save_to_file(save_preferences_dlg.get_filename()+".cfg")
-			self.notify_information(_("Preferences saved to ")+save_preferences_dlg.get_filename()+".cfg",0.0030)
+			self.notify_information(_("Preferences saved to ")+save_preferences_dlg.get_filename()+".cfg",0)
 		save_preferences_dlg.destroy()
 
 
@@ -1292,14 +1300,14 @@ pacman -S aspell-fr""").format(languages[self.preferences.language]))
 		if response == FileChooserDialog.ACCEPT:
 			self.preferences.set_from_file(load_preferences_dlg.get_filename())
 			self.make_preferences_effective()
-			self.notify_information(_("Preferences loaded from ")+load_preferences_dlg.get_filename(),0.0030)
+			self.notify_information(_("Preferences loaded from ")+load_preferences_dlg.get_filename(),0)
 		load_preferences_dlg.destroy()
 
 
 	def restore_preferences(self,*data):
 		self.preferences.__init__()
 		self.make_preferences_effective()
-		self.notify_information(_("Preferences Restored"),0.0030)		
+		self.notify_information(_("Preferences Restored"),0)
 	
 	def open_preferences_general_page(self,*data):
 		if(self.preferences.open_configure_dialog(0)):

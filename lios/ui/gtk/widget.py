@@ -177,12 +177,15 @@ class ProgressBar(Gtk.ProgressBar):
 	def progressbar_timeout(self, user_data):
 		if self.activity_mode:
 			self.pulse()
-		else:
-			new_value = self.get_fraction() + 0.01
-			if new_value > 1:
-				new_value = 0
-			self.set_fraction(new_value)
+		#else:
+		#	new_value = self.get_fraction() + 0.01
+		#	if new_value > 1:
+		#		new_value = 0
+		#	self.set_fraction(new_value)
 		return True	
+
+	def set_pulse_mode(self,mode):
+		self.activity_mode = mode;
 
 class Statusbar(Gtk.Frame):
 	def __init__(self):
