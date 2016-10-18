@@ -1020,7 +1020,7 @@ class linux_intelligent_ocr_solution():
 		progress = 0;
 		mode = self.preferences.mode_of_rotation
 		angle = self.preferences.rotation_angle
-		for item in reversed(self.iconview.get_selected_item_names()):
+		for item in self.iconview.get_selected_item_names():
 			self.notify_information(_("Running OCR on selected image {}")
 			.format(item))
 			
@@ -1055,7 +1055,7 @@ class linux_intelligent_ocr_solution():
 		#self.make_image_widgets_inactive(lock=True)
 		progress_step = 1/len(self.iconview.get_selected_item_names())
 		progress = 0;
-		for item in reversed(self.iconview.get_selected_item_names()):
+		for item in self.iconview.get_selected_item_names():
 			self.notify_information(_("Running OCR on selected image {} (without rotating)")
 			.format(item))
 			
