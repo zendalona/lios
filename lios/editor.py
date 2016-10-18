@@ -209,7 +209,8 @@ class BasicTextView(text_view.TextView):
 				for line in file:
 					self.text_cleaner_list.append((line.split("==")[0],line.split("==")[1][:-1]))
 		except:
-			pass
+			return False
+		return True
 
 	def save_text_cleaner_list_to_file(self,filename):
 		try:
@@ -236,7 +237,7 @@ class BasicTextView(text_view.TextView):
 		response = open_file.run()
 		if response == file_chooser.FileChooserDialog.ACCEPT:
 			self.set_text_cleaner_list_from_file(open_file.get_filename())
-			self.save_text_cleaner_list_to_file(macros.text_cleaner_list_file);
+			self.save_text_cleaner_list_to_file(macros.local_text_cleaner_list_file);
 		open_file.destroy()
 
 	def open_text_cleaner(self,*data):
@@ -258,14 +259,14 @@ class BasicTextView(text_view.TextView):
 			if (response == dialog.Dialog.BUTTON_ID_1):
 				treeview.append((entry_match.get_text(),entry_replace.get_text()))
 				self.text_cleaner_list = treeview.get_list()
-				self.save_text_cleaner_list_to_file(macros.text_cleaner_list_file);
+				self.save_text_cleaner_list_to_file(macros.local_text_cleaner_list_file);
 			dlg.destroy()
 
 		def remove_clicked(*data):
 			index = treeview.get_selected_row_index()
 			treeview.remove(index)
 			self.text_cleaner_list = treeview.get_list()
-			self.save_text_cleaner_list_to_file(macros.text_cleaner_list_file);
+			self.save_text_cleaner_list_to_file(macros.local_text_cleaner_list_file);
 
 		def export_list(*data):
 			self.export_text_cleaner_list()
@@ -273,21 +274,21 @@ class BasicTextView(text_view.TextView):
 		def import_list(*data):
 			self.import_text_cleaner_list()
 			treeview.set_list(self.text_cleaner_list)
-			self.save_text_cleaner_list_to_file(macros.text_cleaner_list_file);
+			self.save_text_cleaner_list_to_file(macros.local_text_cleaner_list_file);
 
 		def restore(*data):
 			self.set_text_cleaner_list_from_file(macros.default_text_cleaner_list_file)
 			treeview.set_list(self.text_cleaner_list)
-			self.save_text_cleaner_list_to_file(macros.text_cleaner_list_file);
+			self.save_text_cleaner_list_to_file(macros.local_text_cleaner_list_file);
 
 		def clear(*data):
 			self.text_cleaner_list = []
 			treeview.set_list(self.text_cleaner_list)
-			self.save_text_cleaner_list_to_file(macros.text_cleaner_list_file);
+			self.save_text_cleaner_list_to_file(macros.local_text_cleaner_list_file);
 
 		def list_updated(*data):
 			self.text_cleaner_list = treeview.get_list()
-			self.save_text_cleaner_list_to_file(macros.text_cleaner_list_file);
+			self.save_text_cleaner_list_to_file(macros.local_text_cleaner_list_file);
 
 		def close(*data):
 			window_text_cleaner.close()

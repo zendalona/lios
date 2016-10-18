@@ -156,7 +156,10 @@ class linux_intelligent_ocr_solution():
 		box_editor.add(scroll_box_editor)
 
 		#Load TextCleaner List
-		self.textview.set_text_cleaner_list_from_file(macros.text_cleaner_list_file);
+		if(not self.textview.set_text_cleaner_list_from_file(macros.local_text_cleaner_list_file)):
+			self.textview.set_text_cleaner_list_from_file(macros.default_text_cleaner_list_file)
+			self.textview.save_text_cleaner_list_to_file(macros.local_text_cleaner_list_file)
+
 
 
 		#OCR Engine

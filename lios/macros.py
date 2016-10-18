@@ -25,7 +25,9 @@ tmp_dir = "/tmp/Lios/"
 
 bookmarks_dir = home_dir+"/lios/bookmarks/"
 
-text_cleaner_list_file = home_dir+"/lios/text_cleaner_list"
+local_text_cleaner_list_file = home_dir+"/lios/text_cleaner_list.text"
+
+default_text_cleaner_list_file = "/usr/share/lios/text_cleaner_list.text"
 
 preferences_file_path = home_dir+"/lios/lios_preferences"
 
