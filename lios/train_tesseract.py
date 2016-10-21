@@ -140,6 +140,12 @@ class TesseractTrainer(window.Window):
 
 		self.check_button_writing_ligature_mode_automatic = widget.CheckButton(_("Ligatur-Mode"))
 
+		self.generate_and_train_text_view = text_view.TextView()
+		scroll_box = containers.ScrollBox()
+		scroll_box.set_size_request(-1,100);
+		scroll_box.set_border_width(20);
+		scroll_box.add(self.generate_and_train_text_view)
+
 		button_generate_and_train = widget.Button(_("Generate and Train"))
 		button_generate_and_train.connect_function(self.button_generate_and_train_clicked)
 		
@@ -155,6 +161,8 @@ class TesseractTrainer(window.Window):
 		(label_select_input_text,1,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND,containers.Grid.ALIGN_START),
 		(self.entry_input_text_automatic,1,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND),
 		(button_select_input_text,2,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND),
+		containers.Grid.NEW_ROW,
+		(scroll_box,4,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND),
 		containers.Grid.NEW_ROW,
 		(label_writing_mode,1,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND,containers.Grid.ALIGN_START),
 		(self.combobox_writing_mode,3,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND),
@@ -413,6 +421,8 @@ class TesseractTrainer(window.Window):
 	def fontbutton_automatic_clicked(self,*data):
 		fontname = self.fontbutton_automatic.get_font_name()
 		self.entry_font_automatic.set_text(fontname)
+		self.generate_and_train_text_view.set_font(fontname)
+		self.spin_font_size.set_value(int(fontname.split()[-1]))
 
 	def button_choose_font_automatic_clicked(self,*data):
 		file_chooser = FileChooserDialog(_("Select font file"),
@@ -424,6 +434,7 @@ class TesseractTrainer(window.Window):
 			file_chooser.destroy()
 			if (os.path.isfile(font_file)):
 				self.entry_font_automatic.set_text(font_file)
+				self.generate_and_train_text_view.set_font("FreeMono")
 		else:
 			file_chooser.destroy()
 
@@ -432,10 +443,11 @@ class TesseractTrainer(window.Window):
 				FileChooserDialog.OPEN,macros.supported_text_formats,macros.home_dir)
 		response = file_chooser.run()
 		if response == FileChooserDialog.ACCEPT:
-			font_file = file_chooser.get_filename()
+			input_file = file_chooser.get_filename()
 			file_chooser.destroy()
-			if (os.path.isfile(font_file)):
-				self.entry_input_text_automatic.set_text(font_file)
+			if (os.path.isfile(input_file)):
+				self.entry_input_text_automatic.set_text(input_file)
+				self.generate_and_train_text_view.set_text(open(input_file).read())
 		else:
 			file_chooser.destroy()
 
@@ -522,6 +534,8 @@ class TesseractTrainer(window.Window):
 			file_chooser.destroy()
 
 	def button_generate_and_train_clicked(self,*data):
+		#saving the text in textview to /tmp/tesseract-train/input_file.txt
+		open("/tmp/tesseract-train/input_file.txt","w").write(self.generate_and_train_text_view.get_text())
 		font = self.entry_font_automatic.get_text()
 		font = font.split(" ")[0]
 		fonts_dir = "/usr/share/fonts"
@@ -541,15 +555,15 @@ class TesseractTrainer(window.Window):
 		degrade = int(self.check_button_writing_degrade_image_automatic.get_active())
 		ligature = int(self.check_button_writing_ligature_mode_automatic.get_active())
 
-		if(os.path.exists(input_file)):
+		if(self.generate_and_train_text_view.get_text() != ""):
 			# Remove previous image
 			if (os.path.isfile("/tmp/tesseract-train/tmp_tess_image.tif")):
 				os.remove("/tmp/tesseract-train/tmp_tess_image.tif");
 
 			#generating image
-			cmd = "text2image --text={0} --outputbase=/tmp/tesseract-train/tmp_tess_image --font={1} --ptsize={2} --writing_mode={3} \
-			--char_spacing={4} --resolution={5} --exposure={6} --degrade_image={7} --ligatures={8} \
-			--fonts_dir={9}".format(input_file,font,font_size,writing_mode,char_space,resolution,exposure,degrade,ligature,fonts_dir)
+			cmd = "text2image --text=/tmp/tesseract-train/input_file.txt --outputbase=/tmp/tesseract-train/tmp_tess_image --font={0} --ptsize={1} --writing_mode={2} \
+			--char_spacing={3} --resolution={4} --exposure={5} --degrade_image={6} --ligatures={7} \
+			--fonts_dir={8}".format(font,font_size,writing_mode,char_space,resolution,exposure,degrade,ligature,fonts_dir)
 			print(cmd)
 			self.output_terminal.run_command(cmd)
 
@@ -557,9 +571,9 @@ class TesseractTrainer(window.Window):
 			os.system("while [ ! -f /tmp/tesseract-train/tmp_tess_image.tif ]; do sleep 1; done")
 			self.train_image("/tmp/tesseract-train/tmp_tess_image.tif",font)
 		else:
-			dlg = dialog.Dialog(_("Input file not selected"),
+			dlg = dialog.Dialog(_("Input text not set!"),
 			(_("Ok"), dialog.Dialog.BUTTON_ID_1))
-			label = widget.Label(_("Please set the input text file"))
+			label = widget.Label(_("Please set the input text"))
 			dlg.add_widget(label)
 			label.show()
 			response = dlg.run()
