@@ -30,6 +30,7 @@ _ = localization._
 import os
 import subprocess
 import shutil
+import time
 
 class TesseractTrainer(window.Window):
 	def __init__(self,image_list=None):
@@ -47,6 +48,7 @@ class TesseractTrainer(window.Window):
 			os.mkdir("/tmp/tesseract-train/")
 
 		self.output_terminal = terminal.Terminal("")
+		self.output_terminal.set_scrollback_lines(10000)
 		scroll_box_output = containers.ScrollBox()
 		scroll_box_output.add(self.output_terminal)
 
@@ -54,19 +56,17 @@ class TesseractTrainer(window.Window):
 		#Notebook
 		notebook = containers.NoteBook()
 		notebook.show_all()
-
-		# Manual Training (using scanned images)
-		label_font_manual = widget.Label("Font ");
-		self.entry_font_manual = widget.Entry()
-		self.fontbutton_manual = widget.FontButton();
-		self.fontbutton_manual.connect_function(self.font_manual_changed)
-		self.entry_font_manual.set_text(self.fontbutton_manual.get_font_name())
 		
+		paned_notebook_and_output_terminal = containers.Paned(containers.Paned.VERTICAL)
+		paned_notebook_and_output_terminal.add(notebook)
+		paned_notebook_and_output_terminal.add(scroll_box_output)
+		
+
+		# Train image-box pairs
 		seperator_select_images = widget.Separator()
 		
-		label_select_images = widget.Label(_("Select scanned images for training"));
-		
 		self.icon_view_image_list = icon_view.IconView()
+		self.icon_view_image_list.connect_on_selected_callback(self.on_iconview_item_selected)
 		scroll_box_iconview = containers.ScrollBox()
 		self.icon_view_image_list.set_vexpand(True)
 		scroll_box_iconview.add(self.icon_view_image_list)
@@ -74,115 +74,51 @@ class TesseractTrainer(window.Window):
 		for item in image_list:
 			self.icon_view_image_list.add_item(item);
 		self.icon_view_image_list.show()
-
-		button_train = widget.Button("Start Training");
-		button_train.connect_function(self.button_manual_train_clicked);
-
-		button_add_image = widget.Button("Add Image");
-		button_add_image.connect_function(self.button_manual_add_image);
-			
 		
-		grid_manual_methord = containers.Grid()
-		grid_manual_methord.add_widgets([(label_font_manual,1,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND),
-		(self.entry_font_manual,1,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND),
-		(self.fontbutton_manual,1,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND),
-		containers.Grid.NEW_ROW,
-		(label_select_images,3,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND),
-		containers.Grid.NEW_ROW,		
-		containers.Grid.NEW_ROW,
-		(seperator_select_images,3,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND),
-		containers.Grid.NEW_ROW,
-		(scroll_box_iconview,2,2,containers.Grid.HEXPAND,containers.Grid.VEXPAND),
-		(button_add_image,1,1,containers.Grid.NO_HEXPAND,containers.Grid.VEXPAND),
-		containers.Grid.NEW_ROW,
-		(button_train,1,1,containers.Grid.NO_HEXPAND,containers.Grid.VEXPAND)])		
+		box_buttons = containers.Box(containers.Box.VERTICAL)
+
+		button_add_image_box_pair = widget.Button("Add Image-Box pairs");
+		button_add_image_box_pair.connect_function(self.button_add_image_box_pair_clicked);
+		box_buttons.add(button_add_image_box_pair)
+
+		button_generate_image = widget.Button("Generate-Image-Using-Fonts");
+		button_generate_image.connect_function(self.button_generate_image_clicked);
+		box_buttons.add(button_generate_image)
+
+		button_remove_image_box_pair = widget.Button("Remove Image-Box pair");
+		button_remove_image_box_pair.connect_function(self.button_remove_image_box_pair_clicked);
+		box_buttons.add(button_remove_image_box_pair)
+
+		button_annotate_image = widget.Button("Auto-Annotate(Detect boxes)");
+		button_annotate_image.connect_function(self.button_annotate_image_clicked);
+		box_buttons.add(button_annotate_image)
+
+		button_ocr_and_view = widget.Button("OCR & View Output");
+		button_ocr_and_view.connect_function(self.button_ocr_and_view_clicked);
+		box_buttons.add(button_ocr_and_view)
+
+		button_train_image_box_pairs = widget.Button("Train Image-Box pairs");
+		button_train_image_box_pairs.connect_function(self.train_image_box_pairs_clicked);
+
+		self.box_editor = BoxEditor(self.on_image_view_box_list_updated)
+		self.font_box = FontBox()
 		
-		notebook.add_page(_("Manual Training (using scanned images)"),grid_manual_methord);		
+		box_font_and_box = containers.Box(containers.Box.VERTICAL)
+		box_font_and_box.add(self.font_box)
+		box_font_and_box.add(self.box_editor)
+		box_font_and_box.add(button_train_image_box_pairs)
+
+		box_iconview_and_buttons = containers.Box(containers.Box.VERTICAL) 
+		box_iconview_and_buttons.add(scroll_box_iconview)
+		box_iconview_and_buttons.add(box_buttons)
+
+		paned_iconview_and_image_view = containers.Paned(containers.Paned.HORIZONTAL)
+		paned_iconview_and_image_view.add(box_iconview_and_buttons)
+		paned_iconview_and_image_view.add(box_font_and_box)
+
+		notebook.add_page(_("Train images-box"),paned_iconview_and_image_view);		
 
 
-		# Automatic Training (using fonts)
-		label_font_automatic = widget.Label(_("Font"));
-		self.entry_font_automatic = widget.Entry()
-		self.fontbutton_automatic = widget.FontButton();
-		self.fontbutton_automatic.set_font("FreeMono")
-		self.entry_font_automatic.set_editable(False)
-		self.entry_font_automatic.set_text(self.fontbutton_automatic.get_font_name())
-		self.fontbutton_automatic.connect_function(self.fontbutton_automatic_clicked)
-		button_choose_font_automatic = widget.Button(_("Choose-Font-File"));
-		button_choose_font_automatic.connect_function(self.button_choose_font_automatic_clicked)
-
-		label_font_size = widget.Label(_("Font Size"));
-		self.spin_font_size = widget.SpinButton(10,8,96)
-
-		label_select_input_text = widget.Label(_("Input Text File"));
-		self.entry_input_text_automatic = widget.Entry()
-		self.entry_input_text_automatic.set_editable(False)
-		button_select_input_text = widget.Button(_("Choose"));
-		button_select_input_text.connect_function(self.button_select_input_text_clicked)
-
-		label_writing_mode = widget.Label(_("Writing Mode"));
-		self.combobox_writing_mode = widget.ComboBox();
-		self.combobox_writing_mode.add_item("horizontal")
-		self.combobox_writing_mode.add_item("vertical")
-		self.combobox_writing_mode.add_item("vertical-upright")
-		self.combobox_writing_mode.set_active(0)
-
-		label_writing_char_spacing_automatic = widget.Label(_("Inter-character space"));
-		self.spinbutton_writing_char_spacing_automatic = widget.SpinButton(0,0,50)
-
-		label_writing_resolution_automatic = widget.Label(_("Resolution"));
-		self.spinbutton_writing_resolution_automatic = widget.SpinButton(300,100,1200)
-
-		self.check_button_writing_degrade_image_automatic = widget.CheckButton(_("Degrade-image"))
-
-		label_writing_exposure_level_automatic = widget.Label(_("Exposure-Level"));
-		self.spinbutton_writing_exposure_level_automatic = widget.SpinButton(0,0,50)
-
-		self.check_button_writing_ligature_mode_automatic = widget.CheckButton(_("Ligatur-Mode"))
-
-		self.generate_and_train_text_view = text_view.TextView()
-		scroll_box = containers.ScrollBox()
-		scroll_box.set_size_request(-1,100);
-		scroll_box.set_border_width(20);
-		scroll_box.add(self.generate_and_train_text_view)
-
-		button_generate_and_train = widget.Button(_("Generate and Train"))
-		button_generate_and_train.connect_function(self.button_generate_and_train_clicked)
-		
-		grid_manual_methord = containers.Grid()
-		grid_manual_methord.add_widgets([(label_font_automatic,1,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND,containers.Grid.ALIGN_START),
-		(self.entry_font_automatic,1,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND),
-		(self.fontbutton_automatic,1,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND),
-		(button_choose_font_automatic,1,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND),
-		containers.Grid.NEW_ROW,
-		(label_font_size,1,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND,containers.Grid.ALIGN_START),
-		(self.spin_font_size,3,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND),
-		containers.Grid.NEW_ROW,
-		(label_select_input_text,1,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND,containers.Grid.ALIGN_START),
-		(self.entry_input_text_automatic,1,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND),
-		(button_select_input_text,2,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND),
-		containers.Grid.NEW_ROW,
-		(scroll_box,4,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND),
-		containers.Grid.NEW_ROW,
-		(label_writing_mode,1,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND,containers.Grid.ALIGN_START),
-		(self.combobox_writing_mode,3,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND),
-		containers.Grid.NEW_ROW,
-		(label_writing_char_spacing_automatic,1,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND,containers.Grid.ALIGN_START),
-		(self.spinbutton_writing_char_spacing_automatic,3,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND),
-		containers.Grid.NEW_ROW,
-		(label_writing_resolution_automatic,1,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND,containers.Grid.ALIGN_START),
-		(self.spinbutton_writing_resolution_automatic,3,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND),
-		containers.Grid.NEW_ROW,
-		(label_writing_exposure_level_automatic,1,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND,containers.Grid.ALIGN_START),
-		(self.spinbutton_writing_exposure_level_automatic,3,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND),
-		containers.Grid.NEW_ROW,
-		(self.check_button_writing_degrade_image_automatic,2,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND),
-		(self.check_button_writing_ligature_mode_automatic,2,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND),
-		containers.Grid.NEW_ROW,
-		(button_generate_and_train,4,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND)])
-		
-		notebook.add_page(_("Train using fonts"),grid_manual_methord);
-		
 		#Ambiguous Editor
 		self.treeview_ambiguous = tree_view.TreeView([("match",str,True),
 		("Replacement",str,True),("Mandatory",int,True)],self.ambiguous_edited_callback)
@@ -293,9 +229,6 @@ class TesseractTrainer(window.Window):
 		button_remove_language = widget.Button(_("Remove"))
 		button_remove_language.connect_function(self.button_remove_language_clicked)
 
-		paned = containers.Paned(containers.Paned.VERTICAL)
-		paned.add(notebook);
-		paned.add(scroll_box_output);
 		
 		
 		
@@ -310,7 +243,7 @@ class TesseractTrainer(window.Window):
 		(button_import_language,1,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND),
 		(button_export_language,1,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND),
 		(button_remove_language,1,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND),
-		containers.Grid.NEW_ROW,(paned,5,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND),
+		containers.Grid.NEW_ROW,(paned_notebook_and_output_terminal,5,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND),
 		containers.Grid.NEW_ROW,(button_close,5,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND)])
 		
 		
@@ -319,7 +252,7 @@ class TesseractTrainer(window.Window):
 		self.maximize()
 
 		dlg = dialog.Dialog(_("Search entire filesystem for tessdata ?"),
-		(_("Yes"), dialog.Dialog.BUTTON_ID_1,_("No"), dialog.Dialog.BUTTON_ID_2))
+		(_("No"), dialog.Dialog.BUTTON_ID_2,_("Yes"), dialog.Dialog.BUTTON_ID_1))
 		label = widget.Label(_("Do you want to search entire filesystem for tessdata ?\nThis may take awhile!"))
 		dlg.add_widget(label)
 		label.show()
@@ -414,42 +347,177 @@ class TesseractTrainer(window.Window):
 			self.export_ambiguous_list_to_file(save_file.get_filename())
 		save_file.destroy()
 
-	def font_manual_changed(self,*data):
-		fontname = self.fontbutton_manual.get_font_name()
-		self.entry_font_manual.set_text(fontname)
 
-	def fontbutton_automatic_clicked(self,*data):
-		fontname = self.fontbutton_automatic.get_font_name()
-		self.entry_font_automatic.set_text(fontname)
-		self.generate_and_train_text_view.set_font(fontname)
-		self.spin_font_size.set_value(int(fontname.split()[-1]))
 
-	def button_choose_font_automatic_clicked(self,*data):
-		file_chooser = FileChooserDialog(_("Select font file"),
-				FileChooserDialog.OPEN,"*",
-				  "/usr/share/fonts/")
-		response = file_chooser.run()
-		if response == FileChooserDialog.ACCEPT:
-			font_file = file_chooser.get_filename()
-			file_chooser.destroy()
-			if (os.path.isfile(font_file)):
-				self.entry_font_automatic.set_text(font_file)
-				self.generate_and_train_text_view.set_font("FreeMono")
-		else:
-			file_chooser.destroy()
+	def button_generate_image_clicked(self,*data):
+		#Create image (using fonts)
+		label_font_automatic = widget.Label(_("Font"));
+		entry_font_automatic = widget.Entry()
+		fontbutton_automatic = widget.FontButton();
+		fontbutton_automatic.set_font("FreeMono")
+		entry_font_automatic.set_editable(False)
+		entry_font_automatic.set_text(fontbutton_automatic.get_font_name())
+		button_choose_font_automatic = widget.Button(_("Choose-Font-File"));
 
-	def button_select_input_text_clicked(self,*data):
-		file_chooser = FileChooserDialog(_("Select input file"),
-				FileChooserDialog.OPEN,macros.supported_text_formats,macros.home_dir)
-		response = file_chooser.run()
-		if response == FileChooserDialog.ACCEPT:
-			input_file = file_chooser.get_filename()
-			file_chooser.destroy()
-			if (os.path.isfile(input_file)):
-				self.entry_input_text_automatic.set_text(input_file)
-				self.generate_and_train_text_view.set_text(open(input_file).read())
-		else:
-			file_chooser.destroy()
+		generate_and_train_text_view = text_view.TextView()
+		scroll_box = containers.ScrollBox()
+		scroll_box.set_size_request(-1,100);
+		scroll_box.set_border_width(20);
+		scroll_box.add(generate_and_train_text_view)
+
+		def fontbutton_automatic_clicked(*data):
+			fontname = fontbutton_automatic.get_font_name()
+			entry_font_automatic.set_text(fontname)
+			generate_and_train_text_view.set_font(fontname)
+			spin_font_size.set_value(int(fontname.split()[-1]))
+
+		def button_choose_font_automatic_clicked(*data):
+			file_chooser = FileChooserDialog(_("Select font file"),
+					FileChooserDialog.OPEN,"*",
+					"/usr/share/fonts/")
+			response = file_chooser.run()
+			if response == FileChooserDialog.ACCEPT:
+				font_file = file_chooser.get_filename()
+				file_chooser.destroy()
+				if (os.path.isfile(font_file)):
+					entry_font_automatic.set_text(font_file)
+					generate_and_train_text_view.set_font("FreeMono")
+			else:
+				file_chooser.destroy()
+
+		def button_select_input_text_clicked(*data):
+			file_chooser = FileChooserDialog(_("Select input file"),
+					FileChooserDialog.OPEN,macros.supported_text_formats,macros.home_dir)
+			response = file_chooser.run()
+			if response == FileChooserDialog.ACCEPT:
+				input_file = file_chooser.get_filename()
+				file_chooser.destroy()
+				if (os.path.isfile(input_file)):
+					entry_input_text_automatic.set_text(input_file)
+					generate_and_train_text_view.set_text(open(input_file).read())
+			else:
+				file_chooser.destroy()
+
+		fontbutton_automatic.connect_function(fontbutton_automatic_clicked)		
+		button_choose_font_automatic.connect_function(button_choose_font_automatic_clicked)
+
+		label_font_size = widget.Label(_("Font Size"));
+		spin_font_size = widget.SpinButton(10,8,96)
+
+		label_select_input_text = widget.Label(_("Input Text File"));
+		entry_input_text_automatic = widget.Entry()
+		entry_input_text_automatic.set_editable(False)
+		button_select_input_text = widget.Button(_("Choose"));
+		button_select_input_text.connect_function(button_select_input_text_clicked)
+
+		label_writing_mode = widget.Label(_("Writing Mode"));
+		combobox_writing_mode = widget.ComboBox();
+		combobox_writing_mode.add_item("horizontal")
+		combobox_writing_mode.add_item("vertical")
+		combobox_writing_mode.add_item("vertical-upright")
+		combobox_writing_mode.set_active(0)
+
+		label_writing_char_spacing_automatic = widget.Label(_("Inter-character space"));
+		spinbutton_writing_char_spacing_automatic = widget.SpinButton(0,0,50)
+
+		label_writing_resolution_automatic = widget.Label(_("Resolution"));
+		spinbutton_writing_resolution_automatic = widget.SpinButton(300,100,1200)
+
+		check_button_writing_degrade_image_automatic = widget.CheckButton(_("Degrade-image"))
+
+		label_writing_exposure_level_automatic = widget.Label(_("Exposure-Level"));
+		spinbutton_writing_exposure_level_automatic = widget.SpinButton(0,0,50)
+
+		check_button_writing_ligature_mode_automatic = widget.CheckButton(_("Ligatur-Mode"))
+
+
+		grid_manual_methord = containers.Grid()
+		grid_manual_methord.add_widgets([(label_font_automatic,1,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND,containers.Grid.ALIGN_START),
+		(entry_font_automatic,1,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND),
+		(fontbutton_automatic,1,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND),
+		(button_choose_font_automatic,1,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND),
+		containers.Grid.NEW_ROW,
+		(label_font_size,1,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND,containers.Grid.ALIGN_START),
+		(spin_font_size,3,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND),
+		containers.Grid.NEW_ROW,
+		(label_select_input_text,1,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND,containers.Grid.ALIGN_START),
+		(entry_input_text_automatic,1,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND),
+		(button_select_input_text,2,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND),
+		containers.Grid.NEW_ROW,
+		(scroll_box,4,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND),
+		containers.Grid.NEW_ROW,
+		(label_writing_mode,1,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND,containers.Grid.ALIGN_START),
+		(combobox_writing_mode,3,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND),
+		containers.Grid.NEW_ROW,
+		(label_writing_char_spacing_automatic,1,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND,containers.Grid.ALIGN_START),
+		(spinbutton_writing_char_spacing_automatic,3,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND),
+		containers.Grid.NEW_ROW,
+		(label_writing_resolution_automatic,1,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND,containers.Grid.ALIGN_START),
+		(spinbutton_writing_resolution_automatic,3,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND),
+		containers.Grid.NEW_ROW,
+		(label_writing_exposure_level_automatic,1,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND,containers.Grid.ALIGN_START),
+		(spinbutton_writing_exposure_level_automatic,3,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND),
+		containers.Grid.NEW_ROW,
+		(check_button_writing_degrade_image_automatic,2,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND),
+		(check_button_writing_ligature_mode_automatic,2,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND)])
+
+		dlg = dialog.Dialog(_("Generate-Image"),(_("Generate"), dialog.Dialog.BUTTON_ID_1,_("Close!"), dialog.Dialog.BUTTON_ID_2))
+		dlg.add_widget(grid_manual_methord)
+		grid_manual_methord.show_all()
+
+		response = dlg.run();
+		if(response == dialog.Dialog.BUTTON_ID_1):
+			#saving the text in textview to /tmp/tesseract-train/input_file.txt
+			open("/tmp/tesseract-train/input_file.txt","w").write(generate_and_train_text_view.get_text())
+			font = entry_font_automatic.get_text()
+			font = font.split(" ")[0]
+			fonts_dir = "/usr/share/fonts"
+			if("/" in font):
+				fonts_dir = "/".join(font.split("/")[:-1])
+				font = font.split("/")[-1].split(".")[0]
+
+			font_size = spin_font_size.get_value()
+			input_file = entry_input_text_automatic.get_text()
+
+			active = combobox_writing_mode.get_active()
+			writing_mode = ["horizontal","vertical","vertical-upright"][active]
+
+			char_space = spinbutton_writing_char_spacing_automatic.get_value()
+			resolution = spinbutton_writing_resolution_automatic.get_value()
+			exposure = spinbutton_writing_exposure_level_automatic.get_value()
+			degrade = int(check_button_writing_degrade_image_automatic.get_active())
+			ligature = int(check_button_writing_ligature_mode_automatic.get_active())
+
+			# Remove previous image
+			if (os.path.isfile("/tmp/tesseract-train/tmp_tess_image.tif")):
+				os.remove("/tmp/tesseract-train/tmp_tess_image.tif");
+			#generating image
+			name = time.strftime("%Y-%m-%d,%H:%M:%S")
+			cmd = "text2image --text=/tmp/tesseract-train/input_file.txt --font={0} --ptsize={1} --writing_mode={2} \
+			--char_spacing={3} --resolution={4} --exposure={5} --degrade_image={6} --ligatures={7} \
+			--fonts_dir={8} --outputbase=/tmp/tesseract-train/{9}".format(font,font_size,writing_mode,char_space,resolution,exposure,degrade,ligature,fonts_dir,name)
+			print(cmd)
+			self.output_terminal.run_command(cmd)
+
+			# Wait for image file
+			os.system("while [ ! -f /tmp/tesseract-train/{0}.tif ]; do sleep 1; done".format(name))
+			self.icon_view_image_list.add_item("/tmp/tesseract-train/{0}.tif".format(name))
+			self.make_box_file_for_image("/tmp/tesseract-train/{0}.tif".format(name))
+			f = open("/tmp/tesseract-train/{0}.tif.font_desc".format(name),"w")
+			f.write(font)
+			f.close()
+		dlg.destroy()
+
+	def on_iconview_item_selected(self,data):
+		name = self.icon_view_image_list.get_selected_item_names()
+		if(name):
+			self.box_editor.set_image(name[0])
+			try:
+				self.box_editor.load_boxes_from_file(".".join(name[0].split(".")[:-1])+".box")
+				font = open(name[0]+".font_desc").read()
+				self.font_box.set_font(font)
+			except:
+				pass
 
 	def close_trainer(self,*data):
 		self.destroy();
@@ -518,8 +586,8 @@ class TesseractTrainer(window.Window):
 			self.treeview_ambiguous.clear()
 			self.import_ambiguous_list_from_file("/tmp/tesseract-train/file.unicharambigs")
 
-	def button_manual_add_image(self,*data):
-		file_chooser = FileChooserDialog(_("Select images to add"),
+	def button_add_image_box_pair_clicked(self,*data):
+		file_chooser = FileChooserDialog(_("Select images to import"),
 				FileChooserDialog.OPEN,macros.supported_image_formats,
 				  macros.home_dir)
 		file_chooser.set_current_folder(macros.home_dir)
@@ -528,61 +596,57 @@ class TesseractTrainer(window.Window):
 		if response == FileChooserDialog.ACCEPT:
 			image_list = file_chooser.get_filenames()
 			file_chooser.destroy()
+			no_box_file_image_list = []
+			no_font_desc_file_image_list = []
 			for item in image_list:
 				self.icon_view_image_list.add_item(item);
+				if (not os.path.isfile(".".join(item.split(".")[:-1])+".box")):
+					no_box_file_image_list.append(item)
+				if (not os.path.isfile(item+".font_desc")):
+					no_font_desc_file_image_list.append(item)
+
+			if (no_box_file_image_list != []):
+				dlg = dialog.Dialog(_("No curresponding box files found!"),
+				(_("No"), dialog.Dialog.BUTTON_ID_2,_("Yes"), dialog.Dialog.BUTTON_ID_1))
+				label = widget.Label(_("Do you want to auto annotate box file with existing language ?\nThis may take awhile!"))
+				dlg.add_widget(label)
+				label.show()
+				response = dlg.run()
+				if (response == dialog.Dialog.BUTTON_ID_1):
+					dlg.destroy()
+					for image_file in no_box_file_image_list:
+						self.make_box_file_for_image(image_file)
+				dlg.destroy()
+
+			if (no_font_desc_file_image_list != []):
+				dlg = dialog.Dialog(_("No curresponding font_desc files found!"),
+				(_("No"), dialog.Dialog.BUTTON_ID_2,_("Yes"), dialog.Dialog.BUTTON_ID_1))
+				label = widget.Label(_("Do you want to fill it with following font ?"))
+				fontbox = FontBox()
+				fontbox.set_font("Sans 10")
+				dlg.add_widget(label)
+				dlg.add_widget(fontbox)
+				label.show()
+				response = dlg.run()
+				if (response == dialog.Dialog.BUTTON_ID_1):
+					font = fontbox.get_font()
+					dlg.destroy()
+					for image_file in no_font_desc_file_image_list:
+						f = open(image_file+".font_desc","w")
+						f.write(font)
+						f.close()
+				dlg.destroy()
 		else:
 			file_chooser.destroy()
 
-	def button_generate_and_train_clicked(self,*data):
-		#saving the text in textview to /tmp/tesseract-train/input_file.txt
-		open("/tmp/tesseract-train/input_file.txt","w").write(self.generate_and_train_text_view.get_text())
-		font = self.entry_font_automatic.get_text()
-		font = font.split(" ")[0]
-		fonts_dir = "/usr/share/fonts"
-		if("/" in font):
-			fonts_dir = "/".join(font.split("/")[:-1])
-			font = font.split("/")[-1].split(".")[0]
+	def button_remove_image_box_pair_clicked(self,*data):
+		self.icon_view_image_list.remove_selected_items()
 
-		font_size = self.spin_font_size.get_value()
-		input_file = self.entry_input_text_automatic.get_text()
 
-		active = self.combobox_writing_mode.get_active()
-		writing_mode = ["horizontal","vertical","vertical-upright"][active]
-
-		char_space = self.spinbutton_writing_char_spacing_automatic.get_value()
-		resolution = self.spinbutton_writing_resolution_automatic.get_value()
-		exposure = self.spinbutton_writing_exposure_level_automatic.get_value()
-		degrade = int(self.check_button_writing_degrade_image_automatic.get_active())
-		ligature = int(self.check_button_writing_ligature_mode_automatic.get_active())
-
-		if(self.generate_and_train_text_view.get_text() != ""):
-			# Remove previous image
-			if (os.path.isfile("/tmp/tesseract-train/tmp_tess_image.tif")):
-				os.remove("/tmp/tesseract-train/tmp_tess_image.tif");
-
-			#generating image
-			cmd = "text2image --text=/tmp/tesseract-train/input_file.txt --outputbase=/tmp/tesseract-train/tmp_tess_image --font={0} --ptsize={1} --writing_mode={2} \
-			--char_spacing={3} --resolution={4} --exposure={5} --degrade_image={6} --ligatures={7} \
-			--fonts_dir={8}".format(font,font_size,writing_mode,char_space,resolution,exposure,degrade,ligature,fonts_dir)
-			print(cmd)
-			self.output_terminal.run_command(cmd)
-
-			# Wait for image file
-			os.system("while [ ! -f /tmp/tesseract-train/tmp_tess_image.tif ]; do sleep 1; done")
-			self.train_image("/tmp/tesseract-train/tmp_tess_image.tif",font)
-		else:
-			dlg = dialog.Dialog(_("Input text not set!"),
-			(_("Ok"), dialog.Dialog.BUTTON_ID_1))
-			label = widget.Label(_("Please set the input text"))
-			dlg.add_widget(label)
-			label.show()
-			response = dlg.run()
-			dlg.destroy()
-
-	def button_manual_train_clicked(self,*data):
-		items = self.icon_view_image_list.get_selected_item_names()
-		font_desc = self.entry_font_manual.get_text()
-		self.train_image(items[0],font_desc)
+	def button_annotate_image_clicked(self,*data):
+		image_list = self.icon_view_image_list.get_selected_item_names()
+		for image in image_list:
+			self.make_box_file_for_image(image)
 
 	def place_traineddata(self,source,language):
 		if (os.path.isfile(self.tessdata_dir+"/"+language+".traineddata")):
@@ -628,8 +692,7 @@ class TesseractTrainer(window.Window):
 				response = dlg.run()
 				dlg.destroy()
 
-	def train_image(self,filename,font_desc):
-
+	def make_box_file_for_image(self,filename):
 		# Removing previous box files if exist -- Bugs exist :(
 		self.output_terminal.run_command("rm -f /tmp/tesseract-train/batch.nochop.box")
 		
@@ -640,83 +703,120 @@ class TesseractTrainer(window.Window):
 		# Wait for box file
 		os.system("while [ ! -f /tmp/tesseract-train/batch.nochop.box ]; do sleep .1; done")
 		os.system("count=100; while [ ! -s /tmp/tesseract-train/batch.nochop.box ] && [ $count -ge 0 ]; do sleep .1; count=$(($count-1)); done")
+		os.system("cp /tmp/tesseract-train/batch.nochop.box {0}.box".format(".".join(filename.split(".")[:-1])))
 
-		boxeditor = BoxEditorDialog()
 
-		def train_with_boxes(*data):
-			boxeditor.save_boxes_to_file("/tmp/tesseract-train/file.box")
+	def train_image_box_pairs_clicked(self,*data):
+		image_list = self.icon_view_image_list.get_selected_item_names()
+		self.output_terminal.run_command("cd /tmp/tesseract-train/")
+
+		if (image_list == []):
+			return
+
+		tr_list = ""
+		for image in image_list:
+			image_name_without_extension = ".".join(image.split(".")[:-1])
+			tr_name =  ".".join((image.split("/")[-1]).split(".")[:-1])+".box.tr"
+
+			self.output_terminal.run_command("tesseract --tessdata-dir {0} -l {1} {2} {3}.box nobatch box.train".format(self.tessdata_dir,self.language,image,image_name_without_extension));
+			self.output_terminal.run_command("mv {0}.box.tr /tmp/tesseract-train/{1}".format(image_name_without_extension,tr_name))
 			
-			self.output_terminal.run_command("tesseract --tessdata-dir {0} -l {1} file.tif file.box nobatch box.train".format(self.tessdata_dir,self.language));
-			self.output_terminal.run_command("unicharset_extractor file.box");
-			
-			font = font_desc.split(" ")[0]
+			#font = font_desc.split(" ")[0]
 			italic = 0;
-			if ("italic" in font_desc.lower()):
-				italic = 1;
+			#if ("italic" in font_desc.lower()):
+			#	italic = 1;
 			
 			bold = 0
-			if ("bold" in font_desc.lower()):
-				bold = 1;
-				 
-			self.output_terminal.run_command("echo '{0} {1} {2} 0 0 0' > font_properties".format(font,italic,bold));
-			self.output_terminal.run_command("shapeclustering -F font_properties -U unicharset file.box.tr");
-			self.output_terminal.run_command("mftraining -F font_properties -U unicharset -O file.unicharset file.box.tr");
-			self.output_terminal.run_command("cntraining file.box.tr");
-
-			self.output_terminal.run_command("mv inttemp file.inttemp");
-			self.output_terminal.run_command("mv normproto file.normproto");
-
-			self.output_terminal.run_command("mv pffmtable file.pffmtable");
-			self.output_terminal.run_command("mv shapetable file.shapetable");
-			self.output_terminal.run_command("combine_tessdata file.");
+			#if ("bold" in font_desc.lower()):
+			#	bold = 1;
 			
-			# getting output with the same image
-			self.output_terminal.run_command("mkdir /tmp/tesseract-train/tessdata");
-			self.output_terminal.run_command("cp /tmp/tesseract-train/file.traineddata /tmp/tesseract-train/tessdata/");
-			self.output_terminal.run_command("tesseract /tmp/tesseract-train/file.tif /tmp/tesseract-train/output --tessdata-dir /tmp/tesseract-train/ -l file");
+			font="sans"
+			tr_list = tr_list+tr_name+" "
 
-			# Wait for output
-			os.system("while [ ! -f /tmp/tesseract-train/output.txt ]; do sleep .1; done")
-			os.system("count=100; while [ ! -s /tmp/tesseract-train/output.txt ] && [ $count -ge 0 ]; do sleep .1; count=$(($count-1)); done")
+		self.output_terminal.run_command("unicharset_extractor -D /tmp/tesseract-train/ "+(" ".join(image_list).replace(".tif",".box")));
 
-			dlg = dialog.Dialog(_("Do you want to place this traineddata ?"),(_("Place"), dialog.Dialog.BUTTON_ID_1,_("Close"), dialog.Dialog.BUTTON_ID_2));
-			label = widget.Label(_("The output after training is given below.\nIf it improved, then you can place the trained data in your tessdata directory by clicking Place button.\nIf not, then simply close and train again"))
+		self.output_terminal.run_command("echo '{0} {1} {2} 0 0 0' > font_properties".format(font,italic,bold));
+		self.output_terminal.run_command("shapeclustering -F font_properties -U unicharset "+tr_list);
+		self.output_terminal.run_command("mftraining -F font_properties -U unicharset -O unicharset "+tr_list);
+		self.output_terminal.run_command("cntraining "+tr_list);
 
-			tv = text_view.TextView()
-			sb = containers.ScrollBox()
-			sb.add(tv)
-			tv.set_vexpand(True)
-			tv.set_hexpand(True)
-			tv.set_text(open("/tmp/tesseract-train/output.txt").read())
-			dlg.add_widget(label)
-			dlg.set_default_size(500,400)
-			dlg.add_widget(sb)
-			dlg.show_all()
-			response = dlg.run()
-			if(response == dialog.Dialog.BUTTON_ID_1):
-				self.place_traineddata("/tmp/tesseract-train/file.traineddata",self.language)
-			dlg.destroy()
+		self.output_terminal.run_command("mv inttemp file.inttemp");
+		self.output_terminal.run_command("mv normproto file.normproto");
 
+		self.output_terminal.run_command("mv pffmtable file.pffmtable");
+		self.output_terminal.run_command("mv shapetable file.shapetable");
+		self.output_terminal.run_command("mv unicharset file.unicharset")
+		self.output_terminal.run_command("combine_tessdata file.");
+		self.place_traineddata("/tmp/tesseract-train/file.traineddata",self.language)
 
-		boxeditor.set_image(filename)
-		boxeditor.load_boxes_from_file("/tmp/tesseract-train/batch.nochop.box")
+	def button_ocr_and_view_clicked(self,*data):
+		name = self.icon_view_image_list.get_selected_item_names()
+		if(name == []):
+			return;
 
-		response = boxeditor.run()
+		#self.output_terminal.run_command("mkdir /tmp/tesseract-train/tessdata");
+		#self.output_terminal.run_command("cp /tmp/tesseract-train/file.traineddata /tmp/tesseract-train/tessdata/");
+		#self.output_terminal.run_command("tesseract /tmp/tesseract-train/file.tif /tmp/tesseract-train/output --tessdata-dir /tmp/tesseract-train/ -l"+image);
+		self.output_terminal.run_command("tesseract {0} /tmp/tesseract-train/output -l {1}".format(name[0],self.language));
 
-		if (response == dialog.Dialog.BUTTON_ID_1):
-			boxeditor.destroy()
-			train_with_boxes()
-		else:
-			boxeditor.destroy()
+		# Wait for output
+		os.system("while [ ! -f /tmp/tesseract-train/output.txt ]; do sleep .1; done")
+		os.system("count=100; while [ ! -s /tmp/tesseract-train/output.txt ] && [ $count -ge 0 ]; do sleep .1; count=$(($count-1)); done")
 
-		
-		
+		dlg = dialog.Dialog(_("Ocr output"),(_("Close"), dialog.Dialog.BUTTON_ID_1))
+		tv = text_view.TextView()
+		sb = containers.ScrollBox()
+		sb.add(tv)
+		tv.set_vexpand(True)
+		tv.set_hexpand(True)
+		tv.set_text(open("/tmp/tesseract-train/output.txt").read())
+		os.system("rm /tmp/tesseract-train/output.txt")
+		dlg.set_default_size(500,400)
+		dlg.add_widget(sb)
+		dlg.show_all()
+		response = dlg.run()
+		dlg.destroy()
 
+	def on_image_view_box_list_updated(self,*data):
+		name = self.icon_view_image_list.get_selected_item_names()
+		if(name):
+			self.box_editor.save_boxes_to_file(".".join(name[0].split(".")[:-1])+".box")
 
-class BoxEditorDialog(dialog.Dialog):
+class FontBox(containers.Box):
 	def __init__(self):
-		dialog.Dialog.__init__(self, _("Tesseract Trainer"),(_("Train"), dialog.Dialog.BUTTON_ID_1,_("Close!"), dialog.Dialog.BUTTON_ID_2));
+		containers.Box.__init__(self,containers.Box.HORIZONTAL)
+		label = widget.Label("Font ");
+		label.set_hexpand(True)
+		self.entry = widget.Entry()
+		self.entry.set_hexpand(True)
+		self.fontbutton = widget.FontButton();
+		self.fontbutton.set_hexpand(True)
+		self.fontbutton.connect_function(self.font_changed)
+		self.entry.set_text(self.fontbutton.get_font_name())
+		self.add(label)
+		self.add(self.entry)
+		self.add(self.fontbutton)
+		self.show_all()
+
+	def font_changed(self,*data):
+		fontname = self.fontbutton.get_font_name()
+		self.entry.set_text(fontname)
+		
+	def set_font(self,font_desc):
+		self.fontbutton.set_font_name(font_desc)
+		self.entry.set_text(self.fontbutton.get_font_name())
+
+	def get_font(self):
+		return self.entry.get_text()
+		
+
+
+class BoxEditor(containers.Box):
+	def __init__(self,update_handler):
+		containers.Box.__init__(self,containers.Box.VERTICAL)
 		self.imageview = imageview.ImageViewer()
+		self.imageview.connect("list_updated",self.list_updated_event_handler);
+		self.update_handler = update_handler
 
 		self.image_name = ""
 
@@ -724,12 +824,11 @@ class BoxEditorDialog(dialog.Dialog):
 		button_zoom_in.connect_function(self.imageview.zoom_in)
 		button_zoom_out = widget.Button(_("Zoom-Out"))
 		button_zoom_out.connect_function(self.imageview.zoom_out)
-		button_save = widget.Button(_("Save-Boxes"))
+		button_save = widget.Button(_("Export-Boxes"))
 		button_save.connect_function(self.save_boxes_dialog)
 		button_load = widget.Button(_("Load-Boxes"))
 		button_load.connect_function(self.load_boxes_dialog)
-		box = containers.Box(containers.Box.VERTICAL)
-		box.add(self.imageview)
+		self.add(self.imageview)
 		box1 = containers.Box(containers.Box.HORIZONTAL)
 		box1.add(button_zoom_in)
 		box1.add(button_zoom_out)
@@ -740,16 +839,17 @@ class BoxEditorDialog(dialog.Dialog):
 		button_zoom_out.set_hexpand(True)
 		button_save.set_hexpand(True)
 		button_load.set_hexpand(True)
-		box.add(box1)
-		self.connect_configure_event_handler(self.configure_event)
+		self.add(box1)
+		#self.connect_configure_event_handler(self.configure_event)
 		self.imageview.show()
-		self.maximize()
-		self.add_widget(box)
-		box.show_all()
+		self.show_all()
 
 	def configure_event(self,*arg):
 		width,height = self.get_size()
-		self.imageview.set_position(width-400)
+		self.imageview.set_position(width-200)
+
+	def list_updated_event_handler(self,*arg):
+		self.update_handler();
 
 
 	def save_boxes_to_file(self,filename):
@@ -763,7 +863,10 @@ class BoxEditorDialog(dialog.Dialog):
 		list_ = []
 		for line in open(filename):
 			spl = line.split(" ")
-			list_.append((spl[0],float(spl[1]),float(spl[2]),float(spl[3]),float(spl[4]),int(spl[5])))
+			try:
+				list_.append((spl[0],float(spl[1]),float(spl[2]),float(spl[3]),float(spl[4]),int(spl[5])))
+			except:
+				pass
 		self.set_list(list_)
 	
 	def save_boxes_dialog(self,*data):
@@ -785,6 +888,7 @@ class BoxEditorDialog(dialog.Dialog):
 		response = open_file.run()
 		if response == file_chooser.FileChooserDialog.ACCEPT:
 			self.load_boxes_from_file(open_file.get_filename())
+			self.update_handler();
 		open_file.destroy()
 
 
@@ -811,10 +915,7 @@ class BoxEditorDialog(dialog.Dialog):
 			end_y = y+item[4]
 			end_x = item[1]+item[3]
 			list_.append((item[5],item[1],y,end_x,end_y))
-		return list_		
-	
-	def close(self,*data):
-		self.destroy()
+		return list_
 		
 class TesseractTrainerGUI(TesseractTrainer):
 	def __init__(self,image_list = []):

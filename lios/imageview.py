@@ -142,6 +142,7 @@ class ImageViewer(containers.Paned):
 	def treeview_rows_reordered(self):
 		self.rs = self.treeview.get_list()
 		self.drawingarea.set_rectangle_list([[ row[0],row[1],row[2],row[3],row[4] ] for row in self.rs ])
+		self.emit('list_updated')
 
 	def load_image(self,filename,list,zoom_level):
 		self.start_type = 0;
@@ -170,7 +171,6 @@ class ImageViewer(containers.Paned):
 		self.rs = list(list(x) for x in list_)
 		self.treeview.set_list(self.rs)
 		self.drawingarea.redraw()
-
 
 	def get_list(self):
 		return self.rs
@@ -391,6 +391,7 @@ class ImageViewer(containers.Paned):
 		if(self.start_type == 2 or self.start_type == 3):
 			self.set_selected_item(self.start_row_index)
 			self.treeview.set_list(self.rs);
+			self.emit('list_updated')
 			
 
 		self.start_type = 0;

@@ -122,6 +122,9 @@ class Box(Gtk.Box):
 		super(Box,self).__init__()
 		self.set_orientation(orientation)
 
+	def connect_configure_event_handler(self,function):
+		self.connect("configure-event",function)
+
 class Toolbar(Gtk.Toolbar):
 	HORIZONTAL = Gtk.Orientation.HORIZONTAL;
 	VERTICAL = Gtk.Orientation.VERTICAL;
