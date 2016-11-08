@@ -49,10 +49,11 @@ class IconView(Gtk.IconView):
 			self.queue_draw()
 			del buff
 
-	def remove_selected_items(self):
+	def remove_selected_items(self,remove_file_too=True):
 		for item in self.get_selected_items():
 			iter = self.liststore_images.get_iter_from_string(item.to_string())
-			os.remove(self.liststore_images.get_value(iter, 1))
+			if(remove_file_too):
+				os.remove(self.liststore_images.get_value(iter, 1))
 			self.liststore_images.remove(iter)
 	
 	def select_all_items(self):
