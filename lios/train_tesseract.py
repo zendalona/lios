@@ -268,6 +268,8 @@ class TesseractTrainer(window.Window):
 			self.combobox_tessdata_dir.add_item(item)
 			self.tessdata_dir_available_list.append(item)
 		self.combobox_tessdata_dir.set_active(0)
+		self.box_editor.set_image("/usr/share/lios/lios.png")
+
 	
 	def import_ambiguous_list_from_file(self,filename):
 		lines = open(filename).read().split("\n")
@@ -418,7 +420,7 @@ class TesseractTrainer(window.Window):
 		combobox_writing_mode.set_active(0)
 
 		label_writing_char_spacing_automatic = widget.Label(_("Inter-character space"));
-		spinbutton_writing_char_spacing_automatic = widget.SpinButton(0,0,50)
+		spinbutton_writing_char_spacing_automatic = widget.SpinButton(5,0,50)
 
 		label_writing_resolution_automatic = widget.Label(_("Resolution"));
 		spinbutton_writing_resolution_automatic = widget.SpinButton(300,100,1200)
@@ -588,7 +590,7 @@ class TesseractTrainer(window.Window):
 
 	def button_add_image_box_pair_clicked(self,*data):
 		file_chooser = FileChooserDialog(_("Select images to import"),
-				FileChooserDialog.OPEN,macros.supported_image_formats,
+				FileChooserDialog.OPEN,["tif"],
 				  macros.home_dir)
 		file_chooser.set_current_folder(macros.home_dir)
 		file_chooser.set_select_multiple(True)
@@ -640,7 +642,24 @@ class TesseractTrainer(window.Window):
 			file_chooser.destroy()
 
 	def button_remove_image_box_pair_clicked(self,*data):
-		self.icon_view_image_list.remove_selected_items()
+		dlg = dialog.Dialog(_("Delete file too ?"),
+		(_("No"), dialog.Dialog.BUTTON_ID_2,_("Yes"), dialog.Dialog.BUTTON_ID_1,_("Close"), dialog.Dialog.BUTTON_ID_3))
+		label = widget.Label(_("Do you want to delete file too ?"))
+		dlg.add_widget(label)
+		label.show()
+		response = dlg.run()
+		if (response == dialog.Dialog.BUTTON_ID_1):
+			image_list = self.icon_view_image_list.get_selected_item_names()
+			for image in image_list:
+				os.remove(image.replace(".tif",".box"));
+			self.icon_view_image_list.remove_selected_items(True)
+
+		elif (response == dialog.Dialog.BUTTON_ID_2):
+			self.icon_view_image_list.remove_selected_items(False)
+
+		dlg.destroy()
+		self.box_editor.set_image("/usr/share/lios/lios.png")
+
 
 
 	def button_annotate_image_clicked(self,*data):
