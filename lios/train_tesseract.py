@@ -44,6 +44,16 @@ class TesseractTrainer(window.Window):
 			self.set_default_size(400,200)
 			return
 
+		if( not ocr.ocr_engine_tesseract.OcrEngineTesseract.is_training_executables_available()):
+			label = widget.Label(_("""Tesseract training executable are not installed. 
+Please make sure following exicutables are installed
+\ncombine_tessdata, unicharset_extractor, shapeclustering, mftraining, cntraining and text2image.
+\nIf you forget to build training tools then use 'make training' and 'sudo make training-install' to build it """))
+			self.add(label)
+			label.show()
+			self.set_default_size(400,200)
+			return
+
 		if(not os.path.isdir("/tmp/tesseract-train/")):
 			os.mkdir("/tmp/tesseract-train/")
 
