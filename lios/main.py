@@ -99,6 +99,7 @@ class linux_intelligent_ocr_solution():
 		#Image View	
 		self.imageview = imageview.ImageViewer()
 		self.imageview.set_label_entry_visible(False)
+		self.imageview.connect("list_updated",self.list_updated_event_handler);
 		self.imageview.set_vexpand(True)
 		self.imageview.set_hexpand(True)
 		box_imageview = containers.Box(containers.Box.HORIZONTAL)
@@ -382,6 +383,13 @@ class linux_intelligent_ocr_solution():
 			train_window.show()
 			train_window.connect_close_function(self.reload_language_list)
 
+	def list_updated_event_handler(self,*data):
+		filename = self.imageview.get_filename()
+		file = open(filename+".box","w")
+		for item in self.imageview.get_list():
+			file.write("{0} {1} {2} {3} {4} 0\n".format(str(item[0]),
+			str(int(item[1])),str(int(item[2])),
+			str(int(item[3])),str(int(item[4]))))
 
 	@on_thread
 	def save_selected_areas(self,*data):
@@ -545,6 +553,17 @@ class linux_intelligent_ocr_solution():
 		name = self.iconview.get_selected_item_names()
 		if(name):
 			self.imageview.load_image(name[0],[],imageview.ImageViewer.ZOOM_FIT)
+			list_ = []
+			if (not os.path.exists(name[0]+".box")):
+				return
+
+			for line in open(name[0]+".box"):
+				spl = line.split(" ")
+				try:
+					list_.append((int(spl[0]),float(spl[1]),float(spl[2]),float(spl[3]),float(spl[4]),str(spl[5])))
+				except:
+					pass
+			self.imageview.set_list(list_,0)
 		else:
 			self.imageview.load_image(macros.logo_file,[],imageview.ImageViewer.ZOOM_FIT)
 
