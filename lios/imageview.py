@@ -170,6 +170,7 @@ class ImageViewer(containers.Paned):
 					list_.append([0,item[1],item[2],item[3],item[4],item[5]])
 		self.rs = list(list(x) for x in list_)
 		self.treeview.set_list(self.rs)
+		self.drawingarea.set_rectangle_list([[ row[0],row[1],row[2],row[3],row[4] ] for row in self.rs ])
 		self.drawingarea.redraw()
 
 	def get_list(self):
