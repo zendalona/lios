@@ -32,6 +32,18 @@ import subprocess
 import shutil
 import time
 
+
+import threading
+from functools import wraps
+
+def on_thread(function):
+	@wraps(function)
+	def inner(*args):
+		print(function.__name__+" Started")
+		#function(*args);
+		threading.Thread(target=function,args=args).start()
+	return inner
+
 class TesseractTrainer(window.Window):
 	def __init__(self,image_list=None):
 		window.Window.__init__(self, title=_("Tesseract Trainer"))
@@ -239,8 +251,8 @@ Please make sure following exicutables are installed
 		button_remove_language = widget.Button(_("Remove"))
 		button_remove_language.connect_function(self.button_remove_language_clicked)
 
-		
-		
+		self.progress_bar = widget.ProgressBar()
+		self.progress_bar.set_show_text(True)
 		
 		button_close = widget.Button(_("Close"));
 		button_close.connect_function(self.close_trainer);
@@ -254,7 +266,8 @@ Please make sure following exicutables are installed
 		(button_export_language,1,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND),
 		(button_remove_language,1,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND),
 		containers.Grid.NEW_ROW,(paned_notebook_and_output_terminal,5,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND),
-		containers.Grid.NEW_ROW,(button_close,5,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND)])
+		containers.Grid.NEW_ROW,(self.progress_bar,4,1,containers.Grid.NO_HEXPAND,containers.Grid.NO_VEXPAND),
+		(button_close,1,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND)])
 		
 		
 		self.add(grid)
@@ -280,6 +293,17 @@ Please make sure following exicutables are installed
 		self.combobox_tessdata_dir.set_active(0)
 		self.box_editor.set_image("/usr/share/lios/lios.png")
 
+		#By default the progressbar should be hidden
+		self.hide_progress_bar()
+
+	def show_progress_bar(self,text):
+		self.progress_bar.set_pulse_mode(True)
+		self.progress_bar.show()
+		self.progress_bar.set_text(text)
+
+	def hide_progress_bar(self):
+		self.progress_bar.set_pulse_mode(False)
+		self.progress_bar.hide()
 	
 	def import_ambiguous_list_from_file(self,filename):
 		lines = open(filename).read().split("\n")
@@ -358,7 +382,6 @@ Please make sure following exicutables are installed
 		if response == file_chooser.FileChooserDialog.ACCEPT:
 			self.export_ambiguous_list_to_file(save_file.get_filename())
 		save_file.destroy()
-
 
 
 	def button_generate_image_clicked(self,*data):
@@ -479,6 +502,7 @@ Please make sure following exicutables are installed
 
 		response = dlg.run();
 		if(response == dialog.Dialog.BUTTON_ID_1):
+			self.show_progress_bar("Generating image...");
 			#saving the text in textview to /tmp/tesseract-train/input_file.txt
 			open("/tmp/tesseract-train/input_file.txt","w").write(generate_and_train_text_view.get_text())
 			font = entry_font_automatic.get_text()
@@ -499,26 +523,29 @@ Please make sure following exicutables are installed
 			exposure = spinbutton_writing_exposure_level_automatic.get_value()
 			degrade = int(check_button_writing_degrade_image_automatic.get_active())
 			ligature = int(check_button_writing_ligature_mode_automatic.get_active())
-
-			# Remove previous image
-			if (os.path.isfile("/tmp/tesseract-train/tmp_tess_image.tif")):
-				os.remove("/tmp/tesseract-train/tmp_tess_image.tif");
-			#generating image
-			name = time.strftime("%Y-%m-%d,%H:%M:%S")
-			cmd = "text2image --text=/tmp/tesseract-train/input_file.txt --font={0} --ptsize={1} --writing_mode={2} \
-			--char_spacing={3} --resolution={4} --exposure={5} --degrade_image={6} --ligatures={7} \
-			--fonts_dir={8} --outputbase=/tmp/tesseract-train/{9}".format(font,font_size,writing_mode,char_space,resolution,exposure,degrade,ligature,fonts_dir,name)
-			print(cmd)
-			self.output_terminal.run_command(cmd)
-
-			# Wait for image file
-			os.system("while [ ! -f /tmp/tesseract-train/{0}.tif ]; do sleep 1; done".format(name))
-			self.icon_view_image_list.add_item("/tmp/tesseract-train/{0}.tif".format(name))
-			self.make_box_file_for_image("/tmp/tesseract-train/{0}.tif".format(name))
-			f = open("/tmp/tesseract-train/{0}.tif.font_desc".format(name),"w")
-			f.write(font)
-			f.close()
+			self.generate_image_with_spec(font,font_size,writing_mode,char_space,resolution,exposure,degrade,ligature,fonts_dir)
 		dlg.destroy()
+
+	@on_thread
+	def generate_image_with_spec(self,font,font_size,writing_mode,char_space,resolution,exposure,degrade,ligature,fonts_dir):
+		# Remove previous image
+		if (os.path.isfile("/tmp/tesseract-train/tmp_tess_image.tif")):
+			os.remove("/tmp/tesseract-train/tmp_tess_image.tif");
+		#generating image
+		name = time.strftime("%Y-%m-%d,%H:%M:%S")
+		cmd = "text2image --text=/tmp/tesseract-train/input_file.txt --font={0} --ptsize={1} --writing_mode={2} \
+		--char_spacing={3} --resolution={4} --exposure={5} --degrade_image={6} --ligatures={7} \
+		--fonts_dir={8} --outputbase=/tmp/tesseract-train/{9}".format(font,font_size,writing_mode,char_space,resolution,exposure,degrade,ligature,fonts_dir,name)
+		self.output_terminal.run_command(cmd)
+
+		# Wait for image file
+		os.system("while [ ! -f /tmp/tesseract-train/{0}.tif ]; do sleep 1; done".format(name))
+		self.icon_view_image_list.add_item("/tmp/tesseract-train/{0}.tif".format(name))
+		self.make_box_file_for_images(["/tmp/tesseract-train/{0}.tif".format(name)])
+		f = open("/tmp/tesseract-train/{0}.tif.font_desc".format(name),"w")
+		f.write(font)
+		f.close()
+		self.hide_progress_bar()
 
 	def on_iconview_item_selected(self,data):
 		name = self.icon_view_image_list.get_selected_item_names()
@@ -626,8 +653,7 @@ Please make sure following exicutables are installed
 				response = dlg.run()
 				if (response == dialog.Dialog.BUTTON_ID_1):
 					dlg.destroy()
-					for image_file in no_box_file_image_list:
-						self.make_box_file_for_image(image_file)
+					self.make_box_file_for_images(no_box_file_image_list)
 				dlg.destroy()
 
 			if (no_font_desc_file_image_list != []):
@@ -674,8 +700,7 @@ Please make sure following exicutables are installed
 
 	def button_annotate_image_clicked(self,*data):
 		image_list = self.icon_view_image_list.get_selected_item_names()
-		for image in image_list:
-			self.make_box_file_for_image(image)
+		self.make_box_file_for_images(image_list)
 
 	def place_traineddata(self,source,language):
 		if (os.path.isfile(self.tessdata_dir+"/"+language+".traineddata")):
@@ -721,18 +746,22 @@ Please make sure following exicutables are installed
 				response = dlg.run()
 				dlg.destroy()
 
-	def make_box_file_for_image(self,filename):
-		# Removing previous box files if exist -- Bugs exist :(
-		self.output_terminal.run_command("rm -f /tmp/tesseract-train/batch.nochop.box")
+	@on_thread
+	def make_box_file_for_images(self,filenames_list):
+		for filename in filenames_list:
+			self.show_progress_bar("Making box file for "+filename)
+			# Removing previous box files if exist -- Bugs exist :(
+			self.output_terminal.run_command("rm -f /tmp/tesseract-train/batch.nochop.box")
 		
-		self.output_terminal.run_command("cd /tmp/tesseract-train/")
-		self.output_terminal.run_command("convert {0} -background white -flatten +matte file.tif".format(filename));
-		self.output_terminal.run_command("tesseract file.tif --tessdata-dir {0} -l {1} batch.nochop makebox".format(self.tessdata_dir,self.language));
+			self.output_terminal.run_command("cd /tmp/tesseract-train/")
+			self.output_terminal.run_command("convert {0} -background white -flatten +matte file.tif".format(filename));
+			self.output_terminal.run_command("tesseract file.tif --tessdata-dir {0} -l {1} batch.nochop makebox".format(self.tessdata_dir,self.language));
 
-		# Wait for box file
-		os.system("while [ ! -f /tmp/tesseract-train/batch.nochop.box ]; do sleep .1; done")
-		os.system("count=100; while [ ! -s /tmp/tesseract-train/batch.nochop.box ] && [ $count -ge 0 ]; do sleep .1; count=$(($count-1)); done")
-		os.system("cp /tmp/tesseract-train/batch.nochop.box {0}.box".format(".".join(filename.split(".")[:-1])))
+			# Wait for box file
+			os.system("while [ ! -f /tmp/tesseract-train/batch.nochop.box ]; do sleep .1; done")
+			os.system("count=100; while [ ! -s /tmp/tesseract-train/batch.nochop.box ] && [ $count -ge 0 ]; do sleep .1; count=$(($count-1)); done")
+			os.system("cp /tmp/tesseract-train/batch.nochop.box {0}.box".format(".".join(filename.split(".")[:-1])))
+			self.hide_progress_bar()
 
 
 	def train_image_box_pairs_clicked(self,*data):
@@ -741,7 +770,7 @@ Please make sure following exicutables are installed
 
 		if (image_list == []):
 			return
-
+		self.show_progress_bar("Training images...")
 		tr_list = ""
 		for image in image_list:
 			image_name_without_extension = ".".join(image.split(".")[:-1])
@@ -776,13 +805,16 @@ Please make sure following exicutables are installed
 		self.output_terminal.run_command("mv shapetable file.shapetable");
 		self.output_terminal.run_command("mv unicharset file.unicharset")
 		self.output_terminal.run_command("combine_tessdata file.");
+		self.hide_progress_bar()
 		self.place_traineddata("/tmp/tesseract-train/file.traineddata",self.language)
 
+	@on_thread
 	def button_ocr_and_view_clicked(self,*data):
 		name = self.icon_view_image_list.get_selected_item_names()
 		if(name == []):
 			return;
 
+		self.show_progress_bar("Running ocr... Please wait");
 		#self.output_terminal.run_command("mkdir /tmp/tesseract-train/tessdata");
 		#self.output_terminal.run_command("cp /tmp/tesseract-train/file.traineddata /tmp/tesseract-train/tessdata/");
 		#self.output_terminal.run_command("tesseract /tmp/tesseract-train/file.tif /tmp/tesseract-train/output --tessdata-dir /tmp/tesseract-train/ -l"+image);
@@ -791,6 +823,8 @@ Please make sure following exicutables are installed
 		# Wait for output
 		os.system("while [ ! -f /tmp/tesseract-train/output.txt ]; do sleep .1; done")
 		os.system("count=100; while [ ! -s /tmp/tesseract-train/output.txt ] && [ $count -ge 0 ]; do sleep .1; count=$(($count-1)); done")
+		self.hide_progress_bar()
+		loop.acquire_lock()
 
 		dlg = dialog.Dialog(_("Ocr output"),(_("Close"), dialog.Dialog.BUTTON_ID_1))
 		tv = text_view.TextView()
@@ -805,6 +839,7 @@ Please make sure following exicutables are installed
 		dlg.show_all()
 		response = dlg.run()
 		dlg.destroy()
+		loop.release_lock()
 
 	def on_image_view_box_list_updated(self,*data):
 		name = self.icon_view_image_list.get_selected_item_names()
