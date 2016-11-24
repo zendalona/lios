@@ -124,6 +124,7 @@ Please make sure following exicutables are installed
 
 		self.box_editor = BoxEditor(self.on_image_view_box_list_updated)
 		self.font_box = FontBox()
+		self.font_box.connect_change_handler(self.font_changed)
 		
 		box_font_and_box = containers.Box(containers.Box.VERTICAL)
 		box_font_and_box.add(self.font_box)
@@ -295,6 +296,13 @@ Please make sure following exicutables are installed
 
 		#By default the progressbar should be hidden
 		self.hide_progress_bar()
+
+	def font_changed(self,text):
+		name = self.icon_view_image_list.get_selected_item_names()
+		if(name):
+			font_desc = self.font_box.get_font()
+			f = open(name[0]+".font_desc","w")
+			f.write(font_desc)
 
 	def show_progress_bar(self,text):
 		self.progress_bar.set_pulse_mode(True)
@@ -553,10 +561,10 @@ Please make sure following exicutables are installed
 			self.box_editor.set_image(name[0])
 			try:
 				self.box_editor.load_boxes_from_file(".".join(name[0].split(".")[:-1])+".box")
-				font = open(name[0]+".font_desc").read()
-				self.font_box.set_font(font)
 			except:
 				pass
+			font = open(name[0]+".font_desc").read()
+			self.font_box.set_font(font)
 
 	def close_trainer(self,*data):
 		self.destroy();
@@ -661,7 +669,7 @@ Please make sure following exicutables are installed
 				(_("No"), dialog.Dialog.BUTTON_ID_2,_("Yes"), dialog.Dialog.BUTTON_ID_1))
 				label = widget.Label(_("Do you want to fill it with following font ?"))
 				fontbox = FontBox()
-				fontbox.set_font("Sans 10")
+				fontbox.set_font("Sans 0 0 0 0 0")
 				dlg.add_widget(label)
 				dlg.add_widget(fontbox)
 				label.show()
@@ -772,6 +780,7 @@ Please make sure following exicutables are installed
 			return
 		self.show_progress_bar("Training images...")
 		tr_list = ""
+		font_set = set()
 		for image in image_list:
 			image_name_without_extension = ".".join(image.split(".")[:-1])
 			tr_name =  ".".join((image.split("/")[-1]).split(".")[:-1])+".box.tr"
@@ -779,21 +788,23 @@ Please make sure following exicutables are installed
 			self.output_terminal.run_command("tesseract --tessdata-dir {0} -l {1} {2} {3}.box nobatch box.train".format(self.tessdata_dir,self.language,image,image_name_without_extension));
 			self.output_terminal.run_command("mv {0}.box.tr /tmp/tesseract-train/{1}".format(image_name_without_extension,tr_name))
 			
-			#font = font_desc.split(" ")[0]
-			italic = 0;
-			#if ("italic" in font_desc.lower()):
-			#	italic = 1;
-			
-			bold = 0
-			#if ("bold" in font_desc.lower()):
-			#	bold = 1;
-			
-			font="sans"
+			# getting each font desc
+			try:
+				font = open(image+".font_desc").read()
+				font_set.add(font)
+			except:
+				pass
+
 			tr_list = tr_list+tr_name+" "
 
 		self.output_terminal.run_command("unicharset_extractor -D /tmp/tesseract-train/ "+(" ".join(image_list).replace(".tif",".box")));
 
-		self.output_terminal.run_command("echo '{0} {1} {2} 0 0 0' > font_properties".format(font,italic,bold));
+		# Saving all font desc
+		f = open("/tmp/tesseract-train/font_properties","w")
+		for item in font_set:
+			f.write(item+"\n")
+		f.close()
+
 		self.output_terminal.run_command("shapeclustering -F font_properties -U unicharset "+tr_list);
 		self.output_terminal.run_command("mftraining -F font_properties -U unicharset -O unicharset "+tr_list);
 		self.output_terminal.run_command("cntraining "+tr_list);
@@ -815,9 +826,6 @@ Please make sure following exicutables are installed
 			return;
 
 		self.show_progress_bar("Running ocr... Please wait");
-		#self.output_terminal.run_command("mkdir /tmp/tesseract-train/tessdata");
-		#self.output_terminal.run_command("cp /tmp/tesseract-train/file.traineddata /tmp/tesseract-train/tessdata/");
-		#self.output_terminal.run_command("tesseract /tmp/tesseract-train/file.tif /tmp/tesseract-train/output --tessdata-dir /tmp/tesseract-train/ -l"+image);
 		self.output_terminal.run_command("tesseract {0} /tmp/tesseract-train/output -l {1}".format(name[0],self.language));
 
 		# Wait for output
@@ -855,24 +863,63 @@ class FontBox(containers.Box):
 		self.entry.set_hexpand(True)
 		self.fontbutton = widget.FontButton();
 		self.fontbutton.set_hexpand(True)
+		self.fontbutton.set_font("Sans 10")
+		self.entry.set_text("Sans")
 		self.fontbutton.connect_function(self.font_changed)
-		self.entry.set_text(self.fontbutton.get_font_name())
+		self.cb_italic = widget.CheckButton("Italic")
+		self.cb_bold = widget.CheckButton("Bold")
+		self.cb_fixed = widget.CheckButton("Fixed")
+		self.cb_serif = widget.CheckButton("Serif")
+		self.cb_fraktur = widget.CheckButton("Fraktur")
 		self.add(label)
 		self.add(self.entry)
 		self.add(self.fontbutton)
+		self.add(self.cb_italic)
+		self.add(self.cb_bold)
+		self.add(self.cb_fixed)
+		self.add(self.cb_serif)
+		self.add(self.cb_fraktur)
 		self.show_all()
+
+	def connect_change_handler(self,handler):
+		self.fontbutton.connect_function(handler)
+		self.entry.connect_change_handler(handler)
+		self.cb_italic.connect_handler_function(handler)
+		self.cb_bold.connect_handler_function(handler)
+		self.cb_fixed.connect_handler_function(handler)
+		self.cb_serif.connect_handler_function(handler)
+		self.cb_fraktur.connect_handler_function(handler)
 
 	def font_changed(self,*data):
 		fontname = self.fontbutton.get_font_name()
-		self.entry.set_text(fontname)
-		
+		# The last token in fontname will be it's size so we trim it
+		self.entry.set_text(' '.join(fontname.split(" ")[:-1]))
+		if ("bold" in fontname.lower()):
+			self.cb_bold.set_active(True)
+		if ("italic" in fontname.lower()):
+			self.cb_italic.set_active(True)
+		if ("serif" in fontname.lower()):
+			self.cb_serif.set_active(True)
+
 	def set_font(self,font_desc):
-		self.fontbutton.set_font_name(font_desc)
-		self.entry.set_text(self.fontbutton.get_font_name())
+		desc = font_desc.split(" ")
+		self.fontbutton.set_font("".join(desc[:-5]).replace("_"," "))
+		self.entry.set_text("".join(desc[:-5]).replace("_"," "))
+		self.cb_italic.set_active(int(desc[-5]))
+		self.cb_bold.set_active(int(desc[-4]))
+		self.cb_fixed.set_active(int(desc[-3]))
+		self.cb_serif.set_active(int(desc[-2]))
+		self.cb_fraktur.set_active(int(desc[-1]))
 
 	def get_font(self):
-		return self.entry.get_text()
-		
+		text = self.entry.get_text().replace(" ","_")
+		italic = int(self.cb_italic.get_active())
+		bold = int(self.cb_bold.get_active())
+		fixed = int(self.cb_fixed.get_active())
+		serif = int(self.cb_serif.get_active())
+		fraktur = int(self.cb_fraktur.get_active())
+		line = "{0} {1} {2} {3} {4} {5}".format(text,italic,bold,fixed,serif,fraktur)
+		return line
 
 
 class BoxEditor(containers.Box):
