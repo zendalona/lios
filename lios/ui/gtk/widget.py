@@ -29,8 +29,8 @@ class Entry(Gtk.Entry):
 	def __init__(self):
 		super(Entry,self).__init__()
 		
-	def connect_function(self,function):
-		self.connect("activate",function)
+	def connect_change_handler(self,function):
+		self.connect("changed",function)
 	#set_text()
 	#get_text()		
 		
@@ -167,6 +167,9 @@ class CheckButton(Gtk.CheckButton):
 	def __int__(self,label):
 		super(CheckButton,self).__int__()
 		self.set_label(label)	
+
+	def connect_handler_function(self,function):
+		self.connect("clicked",function)
 
 class ProgressBar(Gtk.ProgressBar):
 	def __init__(self):
