@@ -933,6 +933,8 @@ class BoxEditor(containers.Box):
 
 		button_zoom_in = widget.Button(_("Zoom-In"))
 		button_zoom_in.connect_function(self.imageview.zoom_in)
+		button_zoom_fit = widget.Button(_("Zoom-Fit"))
+		button_zoom_fit.connect_function(self.imageview.zoom_fit)
 		button_zoom_out = widget.Button(_("Zoom-Out"))
 		button_zoom_out.connect_function(self.imageview.zoom_out)
 		button_save = widget.Button(_("Export-Boxes"))
@@ -942,11 +944,13 @@ class BoxEditor(containers.Box):
 		self.add(self.imageview)
 		box1 = containers.Box(containers.Box.HORIZONTAL)
 		box1.add(button_zoom_in)
+		box1.add(button_zoom_fit)
 		box1.add(button_zoom_out)
 		box1.add(button_save)
 		box1.add(button_load)
 		box1.set_hexpand(True)
 		button_zoom_in.set_hexpand(True)
+		button_zoom_fit.set_hexpand(True)
 		button_zoom_out.set_hexpand(True)
 		button_save.set_hexpand(True)
 		button_load.set_hexpand(True)
@@ -1008,7 +1012,7 @@ class BoxEditor(containers.Box):
 		self.image_name = "".join(image.split(".")[:-1])
 
 	def set_list(self,list):
-		image_height = self.imageview.get_height()
+		image_height = self.imageview.get_original_height()
 		list_ = []
 		for item in list:
 			width = item[3]-item[1]
@@ -1019,7 +1023,7 @@ class BoxEditor(containers.Box):
 		self.imageview.set_list(list_,0)
 	
 	def get_list(self):
-		image_height = self.imageview.get_height()
+		image_height = self.imageview.get_original_height()
 		list_ = []
 		for item in self.imageview.get_list():
 			y = image_height-(item[2]+item[4])

@@ -147,37 +147,59 @@ class ImageViewer(containers.Paned):
 	def load_image(self,filename,list,zoom_level):
 		self.start_type = 0;
 		self.filename = filename
+		self.old_zoom_level = self.zoom_level
 		diff = self.zoom_level - zoom_level
 		self.zoom_level = zoom_level
 		parameter = self.zoom_list[self.zoom_level]
 		self.set_list(list,diff)
 		self.drawingarea.load_image(filename,list,parameter);
+
+
 	def set_list(self,list_,diff):
 		if (list_ == None):
+			old_factor = self.old_zoom_level - 4
+			new_factor = self.zoom_level - 4
+
 			list_ = []
+			# Here we have to revert to the original because we always
+			# zoom in/out on the original image with factors to keep the quality
+			# ie zoom the image from original instead of zooming the zoomed image
 			for item in self.rs:
-				if (diff>0):
-					list_.append([0,item[1] - (item[1]*(abs(diff)*20)/100),
-					item[2] - (item[2]*(abs(diff)*20)/100),
-					item[3] - (item[3]*(abs(diff)*20)/100),
-					item[4] - (item[4]*(abs(diff)*20)/100),item[5]])
-				elif (diff<0):
-					list_.append([0,item[1] - (item[1]*(diff*20)/100),
-					item[2] - (item[2]*(diff*20)/100),
-					item[3] - (item[3]*(diff*20)/100),
-					item[4] - (item[4]*(diff*20)/100),item[5]])
-				else:
-					list_.append([0,item[1],item[2],item[3],item[4],item[5]])
+				x_orig = item[1]*100/((old_factor*20)+100)
+				x = x_orig+((x_orig*20*new_factor)/100)
+				y_orig = item[2]*100/((old_factor*20)+100)
+				y = y_orig+((y_orig*20*new_factor)/100)
+				width_orig = item[3]*100/((old_factor*20)+100)
+				width = width_orig+((width_orig*20*new_factor)/100)
+				height_orig = item[4]*100/((old_factor*20)+100)
+				height = height_orig+((height_orig*20*new_factor)/100)
+				list_.append([0,x,y,width,height,item[5]])
+
+
 		self.rs = list(list(x) for x in list_)
 		self.treeview.set_list(self.rs)
 		self.drawingarea.set_rectangle_list([[ row[0],row[1],row[2],row[3],row[4] ] for row in self.rs ])
 		self.drawingarea.redraw()
 
 	def get_list(self):
-		return self.rs
+		old_factor = self.zoom_level - 4
+		list_ = []
+		# Here we have to return the original because we always
+		# zoom in/out on the original image with factors to keep the quality
+		# ie zoom the image from original instead of zooming the zoomed image
+		for item in self.rs:
+			x_orig = item[1]*100/((old_factor*20)+100)
+			y_orig = item[2]*100/((old_factor*20)+100)
+			width_orig = item[3]*100/((old_factor*20)+100)
+			height_orig = item[4]*100/((old_factor*20)+100)
+			list_.append([0,x_orig,y_orig,width_orig,height_orig,item[5]])
+		return list(list(x) for x in list_)
 
 	def get_height(self):
 		return self.drawingarea.get_height();
+
+	def get_original_height(self):
+		return self.drawingarea.get_original_height()
 
 	def get_filename(self):
 		return self.filename
@@ -214,6 +236,7 @@ class ImageViewer(containers.Paned):
 
 	def zoom_fit(self,data=None):
 		self.load_image(self.filename,None,self.ZOOM_FIT)
+		self.drawingarea.set_rectangle_list([[ row[0],row[1],row[2],row[3],row[4] ] for row in self.rs ])
 		self.emit('list_updated')
 	
 	def get_zoom_level(self):

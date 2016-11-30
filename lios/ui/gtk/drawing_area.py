@@ -92,15 +92,23 @@ class DrawingArea(Gtk.DrawingArea):
 		
 		self.pixbuf = GdkPixbuf.Pixbuf.new_from_file(filename)
 		self.pixbuf_file_name = filename
+
+		width = self.pixbuf.get_width()
+		height = self.pixbuf.get_height()
+		self.orig_height = height
+
 		if (parameter != 1 ):
-			self.set_size_request(self.pixbuf.get_width()*parameter,self.pixbuf.get_height()*parameter)
-			self.pixbuf = self.pixbuf.scale_simple(self.pixbuf.get_width()*parameter,self.pixbuf.get_height()*parameter,GdkPixbuf.InterpType.HYPER)
+			self.set_size_request(width*parameter,height*parameter)
+			self.pixbuf = self.pixbuf.scale_simple(width*parameter,height*parameter,GdkPixbuf.InterpType.HYPER)
 		else:
-			self.set_size_request(self.pixbuf.get_width(),self.pixbuf.get_height())
+			self.set_size_request(width,height)
 		
 		self.rectangles = list;	
 		self.queue_draw()
 	
+	def get_original_height(self):
+		return self.orig_height
+
 	def set_mouse_pointer_type(self,_type):
 		list = [Gdk.CursorType.ARROW,
 		Gdk.CursorType.TOP_LEFT_CORNER,Gdk.CursorType.SB_V_DOUBLE_ARROW,Gdk.CursorType.TOP_RIGHT_CORNER,
