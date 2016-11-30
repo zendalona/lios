@@ -216,7 +216,14 @@ class ImageViewer(containers.Paned):
 		# return with the pattern x, y , width, height, letter
 		return([[ row[1],row[2],row[3],row[4], row[5] ] for row in self.rs ])
 	
+	# inorder to maintain the qulity the sub-image should be created from
+	# original image so the rectangle coordinates should be in original points
 	def save_sub_image(self,filename,x,y,width,height):
+		factor = self.zoom_level - 4
+		x = x*100/((factor*20)+100)
+		y = y*100/((factor*20)+100)
+		width = width*100/((factor*20)+100)
+		height = height*100/((factor*20)+100)
 		self.drawingarea.save_image_rectangle(filename,x,y,width,height)	
 	
 	def get_pixbuf(self):

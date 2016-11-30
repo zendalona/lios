@@ -74,7 +74,7 @@ class DrawingArea(Gtk.DrawingArea):
 			   cr.stroke()
 		   return True
 	def save_image_rectangle(self,filename,x,y,width,height):
-		new_pixbuf = self.pixbuf.new_subpixbuf(x,y,width,height)
+		new_pixbuf = self.pixbuf_original.new_subpixbuf(x,y,width,height)
 		new_pixbuf.savev(filename, "png",[],[])		
 
 	
@@ -92,6 +92,9 @@ class DrawingArea(Gtk.DrawingArea):
 		
 		self.pixbuf = GdkPixbuf.Pixbuf.new_from_file(filename)
 		self.pixbuf_file_name = filename
+
+		# Keeping a original copy, later used to create sub-images
+		self.pixbuf_original = self.pixbuf.copy();
 
 		width = self.pixbuf.get_width()
 		height = self.pixbuf.get_height()
