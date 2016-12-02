@@ -44,6 +44,9 @@ def on_thread(function):
 		threading.Thread(target=function,args=args).start()
 	return inner
 
+DICT_LIST = ["/tmp/tesseract-train/file."+x for x in ["word-dawg","freq-dawg","punc-dawg","number-dawg","bigram-dawg"]]
+
+
 class TesseractTrainer(window.Window):
 	def __init__(self,image_list=None):
 		window.Window.__init__(self, title=_("Tesseract Trainer"))
@@ -190,51 +193,22 @@ Please make sure following exicutables are installed
 
 		notebook.add_page("Ambiguous",grid_set_ambiguous);
 
-		
+
 		#Dictionary Editor
-		label_select_word_dict = widget.Label(_("Select Word dict "));
-		button_select_word_dict = widget.Button(_("Select word dict"));
-		label_select_freequent_word_dict = widget.Label(_("Select Freequent Word dict "));
-		button_select_freequent_word_dict = widget.Button(_("Select Freequent Word dict"));
-		label_select_punctation_dict = widget.Label(_("Select Punctuation dict "));
-		button_select_punctation_dict = widget.Button(_("Select Punctuation dict "));
-		label_select_number_dict = widget.Label(_("Select Number dict "));
-		button_select_number_dict = widget.Button(_("Select Number dict "));
-		label_select_word_with_digit_dict = widget.Label(_("Select Word with digit  dict "));
-		button_select_word_with_digit_dict = widget.Button(_("Select Word with digit  dict "));
-		
-		seperator_user_words = widget.Separator()
-		
-		label_user_words = widget.Label(_("User Words "));
-		text_view_user_words = text_view.TextView()
-		text_view_user_words.set_border_width(10);
-		
-		button_set_dictionary = widget.Button("Apply Dictionary's ")
-		
-		
+		notebook_dicts = containers.NoteBook()
+		self.dictionary_objects = []
+		for item in DICT_LIST+[macros.home_dir+"/lios/user-words"]:
+			dict_object = Dictionary(item)
+			notebook_dicts.add_page(item.split("/")[-1],dict_object)
+			self.dictionary_objects.append(dict_object)
+
+		button_bind_dictionarys = widget.Button("Bind Dictionary's ")
+		button_bind_dictionarys.connect_function(self.button_bind_dictionarys_clicked)
+
 		grid_set_dictionary = containers.Grid()
-		grid_set_dictionary.add_widgets([(label_select_word_dict,1,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND,containers.Grid.ALIGN_START),
-		(button_select_word_dict,1,1,containers.Grid.NO_HEXPAND,containers.Grid.NO_VEXPAND),
+		grid_set_dictionary.add_widgets([(notebook_dicts,1,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND),
 		containers.Grid.NEW_ROW,
-		(label_select_freequent_word_dict,1,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND,containers.Grid.ALIGN_START),
-		(button_select_freequent_word_dict,1,1,containers.Grid.NO_HEXPAND,containers.Grid.NO_VEXPAND),
-		containers.Grid.NEW_ROW,		
-		(label_select_punctation_dict,1,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND,containers.Grid.ALIGN_START),
-		(button_select_punctation_dict,1,1,containers.Grid.NO_HEXPAND,containers.Grid.NO_VEXPAND),
-		containers.Grid.NEW_ROW,		
-		(label_select_number_dict,1,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND,containers.Grid.ALIGN_START),
-		(button_select_number_dict,1,1,containers.Grid.NO_HEXPAND,containers.Grid.NO_VEXPAND),
-		containers.Grid.NEW_ROW,		
-		(label_select_word_with_digit_dict,1,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND,containers.Grid.ALIGN_START),
-		(button_select_word_with_digit_dict,1,1,containers.Grid.NO_HEXPAND,containers.Grid.NO_VEXPAND),
-		containers.Grid.NEW_ROW,
-		(seperator_user_words,2,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND,containers.Grid.ALIGN_START),
-		containers.Grid.NEW_ROW,
-		(label_user_words,2,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND),
-		containers.Grid.NEW_ROW,
-		(text_view_user_words,2,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND),
-		containers.Grid.NEW_ROW,
-		(button_set_dictionary,2,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND)]);
+		(button_bind_dictionarys,2,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND)]);
 		notebook.add_page(_("Dictionary's"),grid_set_dictionary);	
 
 		label_language = widget.Label(_("Language "));
@@ -312,6 +286,29 @@ Please make sure following exicutables are installed
 	def hide_progress_bar(self):
 		self.progress_bar.set_pulse_mode(False)
 		self.progress_bar.hide()
+
+#	@on_thread
+	def button_bind_dictionarys_clicked(self,*data):
+		self.show_progress_bar("Combining dictionarys...")
+		# Saving all dictionarys to it's text files
+		for dictionary in self.dictionary_objects:
+			dictionary.save()
+
+		# Copying the original in which later components will be overwrited
+		self.output_terminal.run_command("""cp /usr/share/tesseract-ocr/tessdata/{0}.traineddata \
+		/tmp/tesseract-train/file.traineddata""".format(self.language))
+
+		# converting text files to DAWG
+		for item in DICT_LIST:
+			if os.path.isfile(item):
+				cmd = "wordlist2dawg {0}.txt {0} /tmp/tesseract-train/file.unicharset".format(item)
+				self.output_terminal.run_command(cmd)
+				os.system("count=100; while [ ! -r {0} ] && [ $count -ge 0 ]; do sleep .1; count=$(($count-1)); done".format(item))
+
+				cmd = "combine_tessdata -o /tmp/tesseract-train/file.traineddata "+item
+				self.output_terminal.run_command(cmd)
+		self.hide_progress_bar()
+		self.place_traineddata("/tmp/tesseract-train/file.traineddata",self.language)
 	
 	def import_ambiguous_list_from_file(self,filename):
 		lines = open(filename).read().split("\n")
@@ -627,11 +624,28 @@ Please make sure following exicutables are installed
 
 			cmd = "combine_tessdata -u {0}/{1}.traineddata /tmp/tesseract-train/file".format(self.tessdata_dir,self.language)
 			self.output_terminal.run_command(cmd)
-			os.system("while [ ! -f /tmp/tesseract-train/file.unicharset ]; do sleep 0.1; done")
+			os.system("while [ ! -r /tmp/tesseract-train/file.unicharset ]; do sleep 0.1; done")
 
 			#setting ambiguous table
 			self.treeview_ambiguous.clear()
 			self.import_ambiguous_list_from_file("/tmp/tesseract-train/file.unicharambigs")
+			for item in DICT_LIST:
+				if os.path.isfile(item):
+					cmd = "dawg2wordlist /tmp/tesseract-train/file.unicharset {0} {0}.txt".format(item)
+					self.output_terminal.run_command(cmd)
+					os.system("count=100; while [ ! -r {0}.txt ] && [ $count -ge 0 ]; do sleep .1; count=$(($count-1)); done".format(item))
+				else:
+					f = open(item+".txt","w")
+					f.close()
+
+			# Create user dictionary if not exist
+			if not os.path.isfile(macros.home_dir+"/lios/user-words.txt"):
+				f = open(macros.home_dir+"/lios/user-words.txt","w")
+				f.close()
+
+			# Loading each dictionarys
+			for d_obj in self.dictionary_objects:
+				d_obj.load()
 
 	def button_add_image_box_pair_clicked(self,*data):
 		file_chooser = FileChooserDialog(_("Select images to import"),
@@ -1031,7 +1045,53 @@ class BoxEditor(containers.Box):
 			end_x = item[1]+item[3]
 			list_.append((item[5],item[1],y,end_x,end_y))
 		return list_
+
+class Dictionary(containers.Box):
+	def __init__(self,file_path):
+		containers.Box.__init__(self,containers.Box.VERTICAL)
+		self.file_path = file_path
 		
+		box = containers.Box(containers.Box.HORIZONTAL)
+		label = widget.Label(_("Find :"))
+		box.add(label)
+		self.entry = widget.Entry()
+		self.entry.connect_activate_function(self.entry_activated)
+		self.entry.set_hexpand(True)
+		box.add(self.entry)
+		self.add(box)
+
+		self.textview = text_view.TextView()
+		self.textview.set_highlight_color("#1572ffff0000")
+		scrolled = containers.ScrollBox()
+		scrolled.add(self.textview)
+		scrolled.set_vexpand(True)
+		self.add(scrolled)
+
+	def load(self):
+		f = open(self.file_path+".txt")
+		self.textview.set_text(f.read())
+		self.textview.move_cursor_to_line(1)
+
+	def save(self):
+		f = open(self.file_path+".txt","w")
+		f.write(self.textview.get_text())
+		f.close()
+
+	def entry_activated(self,*data):
+		text = self.entry.get_text()
+		if(not self.textview.move_forward_to_word(text)):
+			dlg = dialog.Dialog(_("Not found!"),(_("Yes"),
+			dialog.Dialog.BUTTON_ID_1,_("No"), dialog.Dialog.BUTTON_ID_2))
+			label = widget.Label(_("The word '{0}' not found! Search from start ?".format(text)))
+			dlg.add_widget(label)
+			label.show()
+			response = dlg.run()
+			if response == dialog.Dialog.BUTTON_ID_1:
+				self.textview.move_cursor_to_line(1)
+				dlg.destroy()
+				self.entry_activated()
+			dlg.destroy()
+
 class TesseractTrainerGUI(TesseractTrainer):
 	def __init__(self,image_list = []):
 		win = TesseractTrainer(image_list)

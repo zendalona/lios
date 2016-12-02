@@ -31,6 +31,10 @@ class Entry(Gtk.Entry):
 		
 	def connect_change_handler(self,function):
 		self.connect("changed",function)
+
+	def connect_activate_function(self,function):
+		self.connect("activate",function)
+
 	#set_text()
 	#get_text()		
 		
