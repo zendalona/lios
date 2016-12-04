@@ -77,7 +77,10 @@ Please make sure following exicutables are installed
 		self.output_terminal.set_scrollback_lines(10000)
 		scroll_box_output = containers.ScrollBox()
 		scroll_box_output.add(self.output_terminal)
-
+		self.output_terminal.connect_context_menu_button_callback(self.terminal_popup_context_menu)
+		self.context_menu_terminal = menu.ContextMenu(
+			[(_("Copy"),self.terminal_copy_clipboard),
+			(_("Paste"),self.terminal_paste_clipboard)])
 
 		#Notebook
 		notebook = containers.NoteBook()
@@ -278,6 +281,15 @@ Please make sure following exicutables are installed
 			font_desc = self.font_box.get_font()
 			f = open(name[0]+".font_desc","w")
 			f.write(font_desc)
+
+	def terminal_popup_context_menu(self,*data):
+		self.context_menu_terminal.pop_up()
+
+	def terminal_copy_clipboard(self,*data):
+		self.output_terminal.copy_clipboard()
+
+	def terminal_paste_clipboard(self,*data):
+		self.output_terminal.paste_clipboard()
 
 	def show_progress_bar(self,text):
 		self.progress_bar.set_pulse_mode(True)

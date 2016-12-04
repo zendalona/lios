@@ -1,6 +1,6 @@
 from gi.repository import Gtk, GObject, Vte
 from gi.repository import GLib
-
+from gi.repository import Gdk
 
 class Terminal(Vte.Terminal):
 	def __init__(self,path):
@@ -29,8 +29,14 @@ class Terminal(Vte.Terminal):
 
 	def connect_child_exit(self,function):
 		self.connect ("child-exited", function)  
-         
-		
+
+	def connect_context_menu_button_callback(self,function):
+		def fun(widget,event):
+			if ((event.type == Gdk.EventType.BUTTON_RELEASE and event.button == 3) or
+				(event.type == Gdk.EventType.KEY_PRESS and event.hardware_keycode == 135)):
+				function()
+		self.connect("button-release-event",fun)
+		self.connect("key-press-event",fun)
 
 class TheWindow(Gtk.Window):
 
