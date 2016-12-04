@@ -633,7 +633,7 @@ Please make sure following exicutables are installed
 				if os.path.isfile(item):
 					cmd = "dawg2wordlist /tmp/tesseract-train/file.unicharset {0} {0}.txt".format(item)
 					self.output_terminal.run_command(cmd)
-					os.system("count=100; while [ ! -r {0}.txt ] && [ $count -ge 0 ]; do sleep .1; count=$(($count-1)); done".format(item))
+					os.system("while kill -0 $(pidof dawg2wordlist) 2> /dev/null; do sleep .1; done")
 				else:
 					f = open(item+".txt","w")
 					f.close()
@@ -1068,9 +1068,10 @@ class Dictionary(containers.Box):
 		self.add(scrolled)
 
 	def load(self):
-		f = open(self.file_path+".txt")
-		self.textview.set_text(f.read())
-		self.textview.move_cursor_to_line(1)
+		with open(self.file_path+".txt") as file:
+			text = file.read()
+			self.textview.set_text(text)
+			self.textview.move_cursor_to_line(1)
 
 	def save(self):
 		f = open(self.file_path+".txt","w")
