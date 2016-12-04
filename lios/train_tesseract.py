@@ -1040,10 +1040,10 @@ class BoxEditor(containers.Box):
 		image_height = self.imageview.get_original_height()
 		list_ = []
 		for item in self.imageview.get_list():
-			y = image_height-(item[2]+item[4])
-			end_y = y+item[4]
-			end_x = item[1]+item[3]
-			list_.append((item[5],item[1],y,end_x,end_y))
+			y = round(image_height-(item[2]+item[4]))
+			end_y = round(y+item[4])
+			end_x = round(item[1]+item[3])
+			list_.append((item[5],round(item[1]),y,end_x,end_y))
 		return list_
 
 class Dictionary(containers.Box):
