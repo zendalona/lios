@@ -289,6 +289,8 @@ class linux_intelligent_ocr_solution():
 		self.progressbar = widget.ProgressBar() 
 
 		self.window = window.Window(macros.app_name)
+		self.window.set_taskbar_icon(macros.logo_file)
+
 		grid_main = containers.Grid()
 		grid_main.add_widgets([
 			(menubar,5,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND),containers.Grid.NEW_ROW,

@@ -50,6 +50,7 @@ DICT_LIST = ["/tmp/tesseract-train/file."+x for x in ["word-dawg","freq-dawg","p
 class TesseractTrainer(window.Window):
 	def __init__(self,image_list=None):
 		window.Window.__init__(self, title=_("Tesseract Trainer"))
+		self.set_taskbar_icon(macros.logo_file)
 		grid = containers.Grid()
 		
 		if( not ocr.ocr_engine_tesseract.OcrEngineTesseract.is_available()):

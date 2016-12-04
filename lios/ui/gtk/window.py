@@ -18,6 +18,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###########################################################################
 from gi.repository import Gtk
+from gi.repository import GdkPixbuf
 	
 class Window(Gtk.Window):
 	def __init__(self,title):
@@ -33,6 +34,10 @@ class Window(Gtk.Window):
 	
 	def connect_configure_event_handler(self,function):
 		self.connect("configure-event",function)
+
+	def set_taskbar_icon(self,file_path):
+		pixbuf = GdkPixbuf.Pixbuf.new_from_file(file_path)
+		self.set_icon(pixbuf)
 		
 
 	#add()
