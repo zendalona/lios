@@ -660,6 +660,11 @@ Please make sure following exicutables are installed
 			for d_obj in self.dictionary_objects:
 				d_obj.load()
 
+	def get_shell_filename(self,filename):
+		for item in " [()]":
+			filename = filename.replace(item,"\{0}".format(item))
+		return filename
+
 	def button_add_image_box_pair_clicked(self,*data):
 		file_chooser = FileChooserDialog(_("Select images to import"),
 				FileChooserDialog.OPEN,["tif"],
@@ -783,8 +788,9 @@ Please make sure following exicutables are installed
 
 	@on_thread
 	def make_box_file_for_images(self,filenames_list):
-		for filename in filenames_list:
-			self.show_progress_bar("Making box file for "+filename)
+		for file_ in filenames_list:
+			filename = self.get_shell_filename(file_)
+			self.show_progress_bar("Making box file for "+file_)
 			# Removing previous box files if exist -- Bugs exist :(
 			self.output_terminal.run_command("rm -f /tmp/tesseract-train/batch.nochop.box")
 		
@@ -808,7 +814,10 @@ Please make sure following exicutables are installed
 		self.show_progress_bar("Training images...")
 		tr_list = ""
 		font_set = set()
-		for image in image_list:
+		image_list_shell_type = []
+		for img in image_list:
+			image = self.get_shell_filename(img)
+			image_list_shell_type.append(image)
 			image_name_without_extension = ".".join(image.split(".")[:-1])
 			tr_name =  ".".join((image.split("/")[-1]).split(".")[:-1])+".box.tr"
 
@@ -824,7 +833,7 @@ Please make sure following exicutables are installed
 
 			tr_list = tr_list+tr_name+" "
 
-		self.output_terminal.run_command("unicharset_extractor -D /tmp/tesseract-train/ "+(" ".join(image_list).replace(".tif",".box")));
+		self.output_terminal.run_command("unicharset_extractor -D /tmp/tesseract-train/ "+(" ".join(image_list_shell_type).replace(".tif",".box")));
 
 		# Saving all font desc
 		f = open("/tmp/tesseract-train/font_properties","w")
@@ -853,7 +862,8 @@ Please make sure following exicutables are installed
 			return;
 
 		self.show_progress_bar("Running ocr... Please wait");
-		self.output_terminal.run_command("tesseract {0} /tmp/tesseract-train/output -l {1}".format(name[0],self.language));
+		image_file = self.get_shell_filename(name[0])
+		self.output_terminal.run_command("tesseract {0} /tmp/tesseract-train/output -l {1}".format(image_file,self.language));
 
 		# Wait for output
 		os.system("while [ ! -f /tmp/tesseract-train/output.txt ]; do sleep .1; done")
