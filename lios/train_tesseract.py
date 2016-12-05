@@ -720,14 +720,17 @@ Please make sure following exicutables are installed
 	def button_remove_image_box_pair_clicked(self,*data):
 		dlg = dialog.Dialog(_("Delete file too ?"),
 		(_("No"), dialog.Dialog.BUTTON_ID_2,_("Yes"), dialog.Dialog.BUTTON_ID_1,_("Close"), dialog.Dialog.BUTTON_ID_3))
-		label = widget.Label(_("Do you want to delete file too ?"))
+		label = widget.Label(_("Do you want to delete files(image,box,font_desc) too ?"))
 		dlg.add_widget(label)
 		label.show()
 		response = dlg.run()
 		if (response == dialog.Dialog.BUTTON_ID_1):
 			image_list = self.icon_view_image_list.get_selected_item_names()
 			for image in image_list:
-				os.remove(image.replace(".tif",".box"));
+				if (os.path.exists(image.replace(".tif",".box"))):
+					os.remove(image.replace(".tif",".box"));
+				if (os.path.exists(image+".font_desc")):
+					os.remove(image+".font_desc");
 			self.icon_view_image_list.remove_selected_items(True)
 
 		elif (response == dialog.Dialog.BUTTON_ID_2):
