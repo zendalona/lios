@@ -272,9 +272,6 @@ Please make sure following exicutables are installed
 		self.combobox_tessdata_dir.set_active(0)
 		self.box_editor.set_image("/usr/share/lios/lios.png")
 
-		#By default the progressbar should be hidden
-		self.hide_progress_bar()
-
 	def font_changed(self,text):
 		name = self.icon_view_image_list.get_selected_item_names()
 		if(name):
@@ -624,12 +621,15 @@ Please make sure following exicutables are installed
 			self.languages.append(item)
 		self.combobox_language.set_active(0)
 
+	@on_thread
 	def language_combobox_changed(self,*data):
 		active = self.combobox_language.get_active()
 
 		# While resetting combobox after training the active will be -1
 		if ( active <= len(self.languages) and active != -1 ):
 			self.language = self.languages[active]
+
+			self.show_progress_bar("Loading components of "+self.language)
 
 			#Removing all files in /tmp/tesseract-train/
 			shutil.rmtree("/tmp/tesseract-train/")
@@ -640,13 +640,17 @@ Please make sure following exicutables are installed
 			os.system("while [ ! -r /tmp/tesseract-train/file.unicharset ]; do sleep 0.1; done")
 
 			#setting ambiguous table
+			loop.acquire_lock()
 			self.treeview_ambiguous.clear()
+			loop.release_lock()
+			os.system("while [ ! -r /tmp/tesseract-train/file.unicharambigs ]; do sleep 0.1; done")
 			self.import_ambiguous_list_from_file("/tmp/tesseract-train/file.unicharambigs")
 			for item in DICT_LIST:
 				if os.path.isfile(item):
 					cmd = "dawg2wordlist /tmp/tesseract-train/file.unicharset {0} {0}.txt".format(item)
 					self.output_terminal.run_command(cmd)
 					os.system("while kill -0 $(pidof dawg2wordlist) 2> /dev/null; do sleep .1; done")
+					os.system("count=100; while [ ! -r {0}.txt ] && [ $count -ge 0 ]; do sleep .1; count=$(($count-1)); done".format(item))
 				else:
 					f = open(item+".txt","w")
 					f.close()
@@ -658,7 +662,10 @@ Please make sure following exicutables are installed
 
 			# Loading each dictionarys
 			for d_obj in self.dictionary_objects:
+				loop.acquire_lock()
 				d_obj.load()
+				loop.release_lock()
+			self.hide_progress_bar()
 
 	def get_shell_filename(self,filename):
 		for item in " [()]":
