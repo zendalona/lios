@@ -62,7 +62,15 @@ def is_overlapping(rs,index,a,b,c,d):
 	
 	
 		
-def get_point_type(x,y,rs):
+def get_point_type(x,y,area_x_start, area_y_start,width,height,rs):
+
+	# If pointer is at the edge of drawing area then mouse pointer must become normal
+	if (x < area_x_start+10 or
+	(area_x_start+width-20) <= x <= area_x_start+width or
+	y < area_y_start+10 or
+	(area_y_start+height-20) <= y <= area_y_start+height):
+		return (1,-1,0)
+
 	for i in range(0,len(rs)):
 		scope_scale_y = (rs[i][3])/10
 		scope_scale_x = (rs[i][2])/10

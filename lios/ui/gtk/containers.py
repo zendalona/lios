@@ -92,6 +92,12 @@ class ScrollBox(Gtk.ScrolledWindow):
 		alc = self.get_allocation()
 		return (alc.width,alc.height)
 
+	def get_current_start_points(self):
+		hadj = self.get_hadjustment()
+		start_x = hadj.get_value()
+		vadj = self.get_vadjustment()
+		start_y = vadj.get_value()
+		return start_x,start_y
 
 class NoteBook(Gtk.Notebook):
 	def __init__(self):

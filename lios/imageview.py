@@ -107,6 +107,9 @@ class ImageViewer(containers.Paned):
 	def get_image_view_size_on_screen(self):
 		return self.scrolled.get_size_on_screen()
 
+	def get_image_view_scrolled_start_points(self):
+		return self.scrolled.get_current_start_points()
+
 	def edited_callback(self,row):
 		# Reset the new rectangle list
 		rs = self.treeview.get_list()
@@ -255,7 +258,9 @@ class ImageViewer(containers.Paned):
 	def __drawingarea_button_press_event(self, point, button_type):
 		if(button_type == 1):
 			self.start_x,self.start_y=point
-			self.start_type, self.start_row_index, self.start_position_type = image_logics.get_point_type(self.start_x,self.start_y,[ [row[1],row[2],row[3],row[4],row[0] ] for row in self.rs ])
+			width,height = self.get_image_view_size_on_screen()
+			area_x_start, area_y_start = self.get_image_view_scrolled_start_points()
+			self.start_type, self.start_row_index, self.start_position_type = image_logics.get_point_type(self.start_x,self.start_y, area_x_start, area_y_start, width, height,[ [row[1],row[2],row[3],row[4],row[0] ] for row in self.rs ])
 		return True
     
 	def __drawingarea_motion_notify_event(self, point):
@@ -365,7 +370,9 @@ class ImageViewer(containers.Paned):
 		
 		# 0 - Simply hovering 
 		if (self.start_type == 0):
-			_type, row_index, position_type = image_logics.get_point_type(x,y,[[row[1],row[2],row[3],row[4] ] for row in  self.rs ])
+			area_x_start, area_y_start = self.get_image_view_scrolled_start_points()
+			width,height = self.get_image_view_size_on_screen()
+			_type, row_index, position_type = image_logics.get_point_type(x,y,area_x_start, area_y_start, width, height,[[row[1],row[2],row[3],row[4] ] for row in  self.rs ])
 			self.drawingarea.set_mouse_pointer_type(position_type);
 
 			# if self.previus_row_index not equll to row_index then the
@@ -392,7 +399,6 @@ class ImageViewer(containers.Paned):
 				self.treeview.unblock_cursor_change_signal()
 			self.previus_row_index = row_index;
 		self.drawingarea.redraw()
-				
 
 	def __drawingarea_button_release_event(self, point, button_type):
 		if(self.start_type == 1):
