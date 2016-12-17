@@ -881,7 +881,8 @@ Please make sure following exicutables are installed
 		self.hide_progress_bar()
 		loop.acquire_lock()
 
-		dlg = dialog.Dialog(_("Ocr output"),(_("Close"), dialog.Dialog.BUTTON_ID_1))
+		window_output = window.Window(_("Recognised text from image {0} with {1}".format(image_file.split("/")[-1],self.language)))
+		window_output.set_taskbar_icon(macros.logo_file)
 		tv = text_view.TextView()
 		sb = containers.ScrollBox()
 		sb.add(tv)
@@ -889,11 +890,9 @@ Please make sure following exicutables are installed
 		tv.set_hexpand(True)
 		tv.set_text(open("/tmp/tesseract-train/output.txt").read())
 		os.system("rm /tmp/tesseract-train/output.txt")
-		dlg.set_default_size(500,400)
-		dlg.add_widget(sb)
-		dlg.show_all()
-		response = dlg.run()
-		dlg.destroy()
+		window_output.set_default_size(500,400)
+		window_output.add(sb)
+		window_output.show_all()
 		loop.release_lock()
 
 	def on_image_view_box_list_updated(self,*data):
