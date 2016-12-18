@@ -118,9 +118,13 @@ Please make sure following exicutables are installed
 		button_remove_image_box_pair.connect_function(self.button_remove_image_box_pair_clicked);
 		box_buttons.add(button_remove_image_box_pair)
 
-		button_annotate_image = widget.Button("Auto-Annotate(Detect boxes)");
+		button_annotate_image = widget.Button("Annotate(Detect boxes)");
 		button_annotate_image.connect_function(self.button_annotate_image_clicked);
 		box_buttons.add(button_annotate_image)
+
+		button_re_annotate_image = widget.Button("Re-Annotate(Detect boxes)");
+		button_re_annotate_image.connect_function(self.button_annotate_image_clicked);
+		box_buttons.add(button_re_annotate_image)
 
 		button_ocr_and_view = widget.Button("OCR & View Output");
 		button_ocr_and_view.connect_function(self.button_ocr_and_view_clicked);
