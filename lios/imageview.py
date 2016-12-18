@@ -148,14 +148,15 @@ class ImageViewer(containers.Paned):
 		self.emit('list_updated')
 
 	def load_image(self,filename,list,zoom_level):
-		self.start_type = 0;
-		self.filename = filename
-		self.old_zoom_level = self.zoom_level
-		diff = self.zoom_level - zoom_level
-		self.zoom_level = zoom_level
-		parameter = self.zoom_list[self.zoom_level]
-		self.set_list(list,diff)
-		self.drawingarea.load_image(filename,list,parameter);
+		if(0 <= zoom_level <= 9):
+			self.start_type = 0;
+			self.filename = filename
+			self.old_zoom_level = self.zoom_level
+			diff = self.zoom_level - zoom_level
+			self.zoom_level = zoom_level
+			parameter = self.zoom_list[self.zoom_level]
+			self.set_list(list,diff)
+			self.drawingarea.load_image(filename,list,parameter);
 
 
 	def set_list(self,list_,diff):
