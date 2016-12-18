@@ -121,6 +121,7 @@ class ImageViewer(containers.Paned):
 			#applay new rectangle list on drawing area
 			self.drawingarea.set_rectangle_list([[ row[0], row[1],row[2],row[3],row[4] ] for row in self.rs ])
 			self.drawingarea.redraw()
+			self.emit('list_updated')
 		else:
 			self.treeview.set_list(self.rs)
 	
