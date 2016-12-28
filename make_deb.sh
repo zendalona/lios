@@ -18,7 +18,7 @@ find . -type f ! -regex '.*.hg.*' ! -regex '.*?debian-binary.*' ! -regex '.*?DEB
 sudo chown -R root DEBIAN/postinst DEBIAN/postrm DEBIAN/md5sums usr/
 sudo chgrp -R root DEBIAN/postinst DEBIAN/postrm DEBIAN/md5sums usr/
 sudo chmod -R 0755 DEBIAN/postinst DEBIAN/postrm usr/
-sudo chmod -R 0644 DEBIAN/md5sums usr/share/applications/Lios.desktop usr/share/applications/Tesseract-Trainer.desktop usr/share/doc/lios/* usr/share/menu/lios usr/share/man/man1/lios.1.gz
+sudo chmod -R 0644 DEBIAN/md5sums usr/share/applications/Lios.desktop usr/share/applications/Tesseract-Trainer.desktop usr/share/doc/lios/* usr/share/menu/lios usr/share/man/man1/lios.1.gz usr/share/man/man1/train-tesseract.1.gz
 sudo chmod -R 0644 usr/share/lios/lios.png usr/share/lios/readme.text usr/share/lios/text_cleaner_list.text usr/share/pixmaps/lios.xpm
 cd ../
 dpkg -b $package_name
