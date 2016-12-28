@@ -11,7 +11,7 @@ Features
 2. Take and Recognize Screenshot,
 3. Recognize Selected Areas(Rectangle selection),
 4. Support two OCR Engines (Cuneiform,Tesseract),
-5. 24 Language support (Given at the end), 30 more languages can be installed in Tesseract,
+5. Tesseract Trainer GUI - Train your Tesseract to improve accuracy,
 6. Text-Cleaner - Post process your output with match-replace dialog,
 7. Tesseract-Trainer - Train your tesseract ocr engine to improve the accuracy, 
 8. Full Auto Rotation for any Language(If aspell installed for the language, Eg : "sudo apt-get install aspell-hi" for Hindi,
