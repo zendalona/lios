@@ -869,6 +869,19 @@ Please make sure following exicutables are installed
 		self.output_terminal.run_command("mv pffmtable file.pffmtable");
 		self.output_terminal.run_command("mv shapetable file.shapetable");
 		self.output_terminal.run_command("mv unicharset file.unicharset")
+
+		dlg = dialog.Dialog(_("Combine with dictionarys too ?"),
+		(_("No"), dialog.Dialog.BUTTON_ID_2,_("Yes"), dialog.Dialog.BUTTON_ID_1))
+		label = widget.Label(_("Do you want to add dictionarys ? \
+		\nDo it if only all characters used in dictionarys are going to be trained!"))
+		dlg.add_widget(label)
+		label.show()
+		response = dlg.run()
+		if (response != dialog.Dialog.BUTTON_ID_1):
+			for item in DICT_LIST:
+				os.remove(item)
+		dlg.destroy()
+
 		self.output_terminal.run_command("combine_tessdata file.");
 		self.hide_progress_bar()
 		self.place_traineddata("/tmp/tesseract-train/file.traineddata",self.language)
