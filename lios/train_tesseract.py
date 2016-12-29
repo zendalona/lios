@@ -821,10 +821,14 @@ Please make sure following exicutables are installed
 
 	def train_image_box_pairs_clicked(self,*data):
 		image_list = self.icon_view_image_list.get_selected_item_names()
+		if (image_list == []):
+			self.icon_view_image_list.select_all_items()
+			image_list = self.icon_view_image_list.get_selected_item_names()
+			if (image_list == []):
+				return
+
 		self.output_terminal.run_command("cd /tmp/tesseract-train/")
 
-		if (image_list == []):
-			return
 		self.show_progress_bar("Training images...")
 		tr_list = ""
 		font_set = set()
