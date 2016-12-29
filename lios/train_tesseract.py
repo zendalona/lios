@@ -827,6 +827,20 @@ Please make sure following exicutables are installed
 			if (image_list == []):
 				return
 
+		dlg = dialog.Dialog(_("Training images..."),
+		(_("Close"), dialog.Dialog.BUTTON_ID_2,_("Train"), dialog.Dialog.BUTTON_ID_1))
+		label = widget.Label(_("Images to be trained \n{0}\n \
+		\nLanguage used : {1}\nOutput tessdata directory : {2}".format("\n".join(image_list),self.language,self.tessdata_dir)))
+		label.set_ellipsize(True)
+		dlg.add_widget(label)
+		label.show()
+		response = dlg.run()
+		if (response != dialog.Dialog.BUTTON_ID_1):
+			dlg.destroy()
+			return
+		dlg.destroy()
+
+
 		self.output_terminal.run_command("cd /tmp/tesseract-train/")
 
 		self.show_progress_bar("Training images...")
