@@ -893,7 +893,8 @@ Please make sure following exicutables are installed
 		response = dlg.run()
 		if (response != dialog.Dialog.BUTTON_ID_1):
 			for item in DICT_LIST:
-				os.remove(item)
+				if os.path.exists(item):
+					os.remove(item)
 		dlg.destroy()
 
 		self.output_terminal.run_command("combine_tessdata file.");
