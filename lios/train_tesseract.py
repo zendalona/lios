@@ -1052,6 +1052,7 @@ class BoxEditor(containers.Box):
 
 		response = open_file.run()
 		if response == file_chooser.FileChooserDialog.ACCEPT:
+			self.imageview.zoom_fit()
 			self.load_boxes_from_file(open_file.get_filename())
 			self.update_handler();
 		open_file.destroy()
