@@ -809,12 +809,13 @@ Please make sure following exicutables are installed
 			self.output_terminal.run_command("rm -f /tmp/tesseract-train/batch.nochop.box")
 		
 			self.output_terminal.run_command("cd /tmp/tesseract-train/")
-			self.output_terminal.run_command("convert {0} -background white -flatten +matte file.tif".format(filename));
-			self.output_terminal.run_command("tesseract file.tif --tessdata-dir {0} -l {1} batch.nochop makebox".format(self.tessdata_dir,self.language));
+			self.output_terminal.run_command("convert {0} -background white -flatten +matte file.tif".format(filename))
+			self.output_terminal.run_command("")
+			self.output_terminal.run_command("tesseract file.tif --tessdata-dir {0} -l {1} batch.nochop makebox".format(self.tessdata_dir,self.language))
 
 			# Wait for box file
 			os.system("while [ ! -f /tmp/tesseract-train/batch.nochop.box ]; do sleep .1; done")
-			os.system("count=100; while [ ! -s /tmp/tesseract-train/batch.nochop.box ] && [ $count -ge 0 ]; do sleep .1; count=$(($count-1)); done")
+			os.system("count=200; while [ ! -s /tmp/tesseract-train/batch.nochop.box ] && [ $count -ge 0 ]; do sleep .1; count=$(($count-1)); done")
 			os.system("cp /tmp/tesseract-train/batch.nochop.box {0}.box".format(".".join(filename.split(".")[:-1])))
 			self.hide_progress_bar()
 
