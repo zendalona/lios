@@ -27,7 +27,7 @@ class Window(Gtk.Window):
 		
 	
 	def connect_close_function(self,function):
-		self.connect("destroy",function)
+		self.connect("delete-event",function)
 	
 	def connect_menubar(self,menubar):
 		self.add_accel_group(menubar.get_accel_group())
