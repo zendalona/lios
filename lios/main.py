@@ -577,60 +577,67 @@ class linux_intelligent_ocr_solution():
 		# Variable to check before quit process
 		self.is_updating_scanner_list = True
 
-		self.combobox_scanners.clear()
-		for item in self.scanner_objects:
-			item.close()
+		try:
+			self.combobox_scanners.clear()
+			for item in self.scanner_objects:
+				item.close()
 			
-		#scanner.scanner.exit()
-		#scanner_store = Gtk.ListStore(str)
-		self.scanner_objects = []
+			#scanner.scanner.exit()
+			#scanner_store = Gtk.ListStore(str)
+			self.scanner_objects = []
 		
-		#self.make_preferences_widgets_inactive(lock=True)
-		#self.make_scanner_widgets_inactive(lock=True)
+			#self.make_preferences_widgets_inactive(lock=True)
+			#self.make_scanner_widgets_inactive(lock=True)
 		
-		self.notify_information(_("Getting devices"))
-		#Tuple - List Convertion is used to get all items in devices list
-		
-		
-		parent_conn, child_conn = multiprocessing.Pipe()
-		p = multiprocessing.Process(target=(lambda parent_conn, child_conn :
-		child_conn.send(tuple(self.available_scanner_driver_list[self.preferences.scan_driver].get_available_devices()))),
-		args=(parent_conn, child_conn))
-		
-		p.start()
-		while(p.is_alive()):
-			pass
+			loop.acquire_lock()
+			self.notify_information(_("Getting devices"))
+			loop.release_lock()
+			#Tuple - List Convertion is used to get all items in devices list
 		
 		
-		driver = self.available_scanner_driver_list[self.preferences.scan_driver]
-		list_ = list(parent_conn.recv())
-		for device in list_:
-			self.notify_information(_("Setting Scanner {}").format(device))
-			scanner = driver(device,self.preferences.scanner_mode_switching,
-				self.preferences.scan_resolution,self.preferences.scan_brightness,
-				self.preferences.scan_area)
+			parent_conn, child_conn = multiprocessing.Pipe()
+			p = multiprocessing.Process(target=(lambda parent_conn, child_conn :
+			child_conn.send(tuple(self.available_scanner_driver_list[self.preferences.scan_driver].get_available_devices()))),
+			args=(parent_conn, child_conn))
+		
+			p.start()
+			while(p.is_alive()):
+				pass
+		
+		
+			driver = self.available_scanner_driver_list[self.preferences.scan_driver]
+			list_ = list(parent_conn.recv())
+			for device in list_:
+				self.notify_information(_("Setting Scanner {}").format(device))
+				scanner = driver(device,self.preferences.scanner_mode_switching,
+					self.preferences.scan_resolution,self.preferences.scan_brightness,
+					self.preferences.scan_area)
 
-			self.scanner_objects.append(scanner)
-			self.combobox_scanners.add_item(scanner.device_name)
-		print(self.scanner_objects)
+				self.scanner_objects.append(scanner)
+				self.combobox_scanners.add_item(scanner.device_name)
+			print(self.scanner_objects)
 
-		self.is_updating_scanner_list = False
-
-		loop.acquire_lock()	
-		#self.combobox_scanner.set_model(scanner_store)		
+			loop.acquire_lock()
+			#self.combobox_scanner.set_model(scanner_store)
 		
-		if (len(self.scanner_objects) != 0):
-			self.combobox_scanners.set_active(0)
-			#self.make_scanner_widgets_active(lock=True)
-			self.notify_information(_("Completed!"),0)
-		else:
-			#self.button_refresh.set_sensitive(True)
-			#self.spinner.set_state(False)
-			#self.spinner.hide()
-			self.notify_information(_("No Scanner Detected!"),0)
-			pass
-		#self.make_preferences_widgets_active(lock=True)
-		loop.release_lock()
+			if (len(self.scanner_objects) != 0):
+				self.combobox_scanners.set_active(0)
+				#self.make_scanner_widgets_active(lock=True)
+				self.notify_information(_("Completed!"),0)
+			else:
+				#self.button_refresh.set_sensitive(True)
+				#self.spinner.set_state(False)
+				#self.spinner.hide()
+				self.notify_information(_("No Scanner Detected!"),0)
+				pass
+			#self.make_preferences_widgets_active(lock=True)
+			loop.release_lock()
+		except Exception as ex:
+			loop.acquire_lock()
+			self.notify_information(ex,0)
+			loop.release_lock()
+		finally:
+			self.is_updating_scanner_list = False
 
 	@on_thread
 	def scan_single_image(self,widget):
