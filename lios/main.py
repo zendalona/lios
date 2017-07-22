@@ -169,7 +169,8 @@ class linux_intelligent_ocr_solution():
 		#Scanner Drivers
 		self.available_scanner_driver_list = scanner.get_available_drivers()
 		self.scanner_objects = []
-		
+		self.is_updating_scanner_list = False
+
 		#Load Preferences
 		self.preferences = preferences.lios_preferences()
 		self.preferences.set_from_file(macros.preferences_file_path)
@@ -572,6 +573,10 @@ class linux_intelligent_ocr_solution():
 
 	@on_thread
 	def update_scanner_list(self,*data):
+
+		# Variable to check before quit process
+		self.is_updating_scanner_list = True
+
 		self.combobox_scanners.clear()
 		for item in self.scanner_objects:
 			item.close()
@@ -608,6 +613,8 @@ class linux_intelligent_ocr_solution():
 			self.scanner_objects.append(scanner)
 			self.combobox_scanners.add_item(scanner.device_name)
 		print(self.scanner_objects)
+
+		self.is_updating_scanner_list = False
 
 		loop.acquire_lock()	
 		#self.combobox_scanner.set_model(scanner_store)		
@@ -1452,7 +1459,9 @@ pacman -S aspell-fr""").format(languages[self.preferences.language]))
 	def artha(self,*data):
 		os.system("artha &")
 
-	def quit(self,data=None):
+	def quit(self,data=None,da2=None):
+		if (self.is_updating_scanner_list):
+			return True
 		try:
 			shutil.rmtree(macros.tmp_dir)
 		except FileNotFoundError:
