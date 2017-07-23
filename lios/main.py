@@ -682,6 +682,7 @@ class linux_intelligent_ocr_solution():
 		
 		#No scanner added to list
 		if(selected_scanner == -1):
+			self.notify_information(_("No Scanner Detected!. Please update scanner list and try again"),0)
 			return;
 
 		self.notify_information(_("Scanning {} with resolution={} brightness={}").
@@ -861,6 +862,11 @@ class linux_intelligent_ocr_solution():
 		#self.make_preferences_widgets_inactive(lock=True)
 
 		selected_scanner = self.combobox_scanners.get_active()
+
+		if (selected_scanner == -1):
+			self.notify_information(_("No Scanner Detected!. Please update scanner list and try again"),0)
+			return
+
 		self.process_breaker = False
 		mode = self.preferences.mode_of_rotation
 		if (mode == 0 or mode == 1):
