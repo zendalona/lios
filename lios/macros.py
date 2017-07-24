@@ -18,6 +18,10 @@
 ###########################################################################
 
 import os
+import itertools
+
+def get_list_of_mixed_case_combinations(list_items):
+	return list(itertools.chain.from_iterable([[''.join(a) for a in itertools.product(*zip(s.upper(), s.lower()))] for s in list_items]))
 
 home_dir = os.environ['HOME']
 
@@ -33,11 +37,11 @@ preferences_file_path = home_dir+"/lios/lios_preferences"
 
 recent_file_path = home_dir+"/lios/lios_recent"
 
-supported_image_formats = ["png","pnm","jpg","jpeg","tif","tiff","bmp","pbm","ppm"]
+supported_image_formats = get_list_of_mixed_case_combinations(["png","pnm","jpg","jpeg","tif","tiff","bmp","pbm","ppm"])
 
-supported_text_formats = ["txt","text"]
+supported_text_formats = get_list_of_mixed_case_combinations(["txt","text"])
 
-supported_pdf_formats = ["pdf"]
+supported_pdf_formats = get_list_of_mixed_case_combinations(["pdf"])
 
 version = "2.0"
 
