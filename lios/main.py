@@ -145,7 +145,7 @@ class linux_intelligent_ocr_solution():
 			(_("Find"),self.textview.open_find_dialog),
 			(_("Find-Replace"),self.textview.open_find_and_replace_dialog),
 			containers.Toolbar.SEPARATOR,
-			(_("Start-Reader"),self.start_reader),(_("Stop-Reader"),self.stop_reader),
+			(_("Start/Stop-Reader"),self.start_or_stop_reader),
 			containers.Toolbar.SEPARATOR,
 			(_("Go-To-Line"),self.textview.go_to_line),
 			(_("Go-To-Page"),self.go_to_page),
@@ -248,10 +248,9 @@ class linux_intelligent_ocr_solution():
 			(_("Bookmark-Table"),self.textview.open_bookmark_table,"<Alt>B"),
 			(_("Import-Bookmarks"),self.textview.import_bookmarks_from_file,"None"),
 			(_("Bookmark-Table-Complete"),self.textview.open_all_bookmark_table,"<Super>B"),
-			(_("Start-Reader"),self.start_reader,"F5"),
+			(_("Start/Stop-Reader"),self.start_or_stop_reader,"F5"),
 			(_("Increase-Reader-Speed"),self.increase_reader_speed,"<Ctrl>Prior"),
 			(_("Decrease-Reader-Speed"),self.decrease_reader_speed,"<Ctrl>Next"),
-			(_("Stop-Reader"),self.stop_reader,"<Control>F5"),
 			(_("Stop-All-Process"),self.stop_all_process,"<Control>F4")],
 		[_("_Preferences"),(_("Preferences-General"),self.open_preferences_general_page,"None"),
 			(_("Preferences-Recognition"),self.open_preferences_recognition_page,"None"),
@@ -324,6 +323,9 @@ class linux_intelligent_ocr_solution():
 		#so scanner combobox should be inetialised
 		self.make_preferences_effective()
 		
+		# Text TTS reading switch
+		self.reading_breaker = True
+
 		self.notify_information(_("Welcome to {} Version {}").format(macros.app_name,macros.version),0)
 
 		#For connecting menubar accell group Gtk
@@ -1404,27 +1406,27 @@ pacman -S aspell-fr""").format(languages[self.preferences.language]))
 					self.textview.insert_text(text,editor.BasicTextView.AT_END)
 
 	@on_thread
-	def start_reader(self,*data):
-		self.reading_breaker = False
-		speaker = speech.Speech()
-		speaker.set_output_module(speaker.list_output_modules()[self.preferences.speech_module])
-		if(self.preferences.speech_module != -1 and len(speaker.list_voices()) > 1):
-			speaker.set_synthesis_voice(speaker.list_voices()[self.preferences.speech_language])
-		speaker.set_volume(self.preferences.speech_volume)
-		speaker.set_pitch(self.preferences.speech_pitch)
-		while(not self.textview.is_cursor_at_end()):
-			loop.acquire_lock()
-			speaker.set_rate(self.preferences.speech_rate)
-			sentence = self.textview.get_next_sentence()
-			speaker.say(sentence)
-			loop.release_lock()
-			speaker.wait()
-			if(self.reading_breaker):
-				break
-				speaker.close()
-	
-	def stop_reader(self,*data):
-		self.reading_breaker = True
+	def start_or_stop_reader(self,*data):
+		if (self.reading_breaker == False):
+			self.reading_breaker = True
+		else:
+			self.reading_breaker = False
+			speaker = speech.Speech()
+			speaker.set_output_module(speaker.list_output_modules()[self.preferences.speech_module])
+			if(self.preferences.speech_module != -1 and len(speaker.list_voices()) > 1):
+				speaker.set_synthesis_voice(speaker.list_voices()[self.preferences.speech_language])
+			speaker.set_volume(self.preferences.speech_volume)
+			speaker.set_pitch(self.preferences.speech_pitch)
+			while(not self.textview.is_cursor_at_end()):
+				loop.acquire_lock()
+				speaker.set_rate(self.preferences.speech_rate)
+				sentence = self.textview.get_next_sentence()
+				speaker.say(sentence)
+				loop.release_lock()
+				speaker.wait()
+				if(self.reading_breaker):
+					break
+					speaker.close()
 	
 	def increase_reader_speed(self,*data):
 		if (self.preferences.speech_rate < 100):
