@@ -82,7 +82,7 @@ class OcrEngineTesseract(OcrEngineBase):
 			if (os.path.isfile(dirpath+"/configs/box.train")):
 				for item in OcrEngineTesseract.get_available_languages_in_dirpath(dirpath):
 					langs.append(item)
-				return langs
+				return sorted(langs)
 		return langs
 
 	def get_all_available_dirs():
