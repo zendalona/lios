@@ -135,6 +135,7 @@ class linux_intelligent_ocr_solution():
 		self.textview = editor.BasicTextView()
 		self.textview.set_vexpand(True)
 		self.textview.set_hexpand(True)		
+		self.textview.set_accepts_tab(False)
 		box_editor = containers.Box(containers.Box.HORIZONTAL)
 		toolbar_editor = containers.Toolbar(containers.Toolbar.VERTICAL,
 			[(_("New"),self.new),('Open',self.open_files),
