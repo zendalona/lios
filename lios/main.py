@@ -305,6 +305,12 @@ class linux_intelligent_ocr_solution():
 			(self.statusbar,4,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND),
 			(self.progressbar,1,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND),])
 
+		# Set focus chain to increase accessibility via skipping toolbars
+		grid_main.set_focus_chain([self.combobox_scanners,button_update_scanner_list,button_scan, self.paned_main ])
+		self.paned_main.set_focus_chain([box_iconview, self.paned_image_text])
+		self.paned_image_text.set_focus_chain([self.textview])
+		box_iconview.set_focus_chain([self.iconview])
+
 		if(len(file_list) > 1 ):
 			self.open_list_of_files(file_list[1:])
 			try:
