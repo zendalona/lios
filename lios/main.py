@@ -17,6 +17,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###########################################################################
 import os
+import subprocess
 import sys
 import time
 import shutil
@@ -489,10 +490,20 @@ class linux_intelligent_ocr_solution():
 		shutil.copyfile(pdf_filename_full,destination)
 		os.makedirs(destination.split(".")[0],exist_ok=True)
 
+		out = subprocess.getoutput("pdffonts {}".format(destination))
+		pdf_type = "Text"
+		if (len(out) < 300):
+			pdf_type = "Image"
+
 		dlg_set_tool = dialog.Dialog(_("Select PDF Type"),
-		(_("Containing text or images"), dialog.Dialog.BUTTON_ID_1,
-		_("Containing images only"), dialog.Dialog.BUTTON_ID_2))
-		label = widget.Label(_("What {} contains ? ".format(pdf_filename)))
+		(_("Containing images only"), dialog.Dialog.BUTTON_ID_2,
+		_("Containing text or images"), dialog.Dialog.BUTTON_ID_1))
+
+
+		label = widget.Label(_(
+		"Please select PDF Type. Seems to me that {} is a {} PDF."
+		.format(pdf_filename, pdf_type)))
+
 		dlg_set_tool.add_widget(label)
 		label.show()
 		loop.acquire_lock()
