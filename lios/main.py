@@ -488,11 +488,26 @@ class linux_intelligent_ocr_solution():
 		destination = "{0}{1}".format(macros.tmp_dir,pdf_filename)		
 		shutil.copyfile(pdf_filename_full,destination)
 		os.makedirs(destination.split(".")[0],exist_ok=True)
-		
+
+		dlg_set_tool = dialog.Dialog(_("Select PDF Type"),
+		(_("Containing text or images"), dialog.Dialog.BUTTON_ID_1,
+		_("Containing images only"), dialog.Dialog.BUTTON_ID_2))
+		label = widget.Label(_("What {} contains ? ".format(pdf_filename)))
+		dlg_set_tool.add_widget(label)
+		label.show()
+		loop.acquire_lock()
+		response = dlg_set_tool.run()
+		if(response == dialog.Dialog.BUTTON_ID_1):
+			conversion_tool = "pdftoppm"
+		else:
+			conversion_tool = "pdfimages"
+		dlg_set_tool.destroy()
+		loop.release_lock()
+
 		self.notify_information(_("Extracting images from Pdf"))
-		
-		p = multiprocessing.Process(target=lambda : os.system("pdfimages {} {}/{}"
-		.format(destination,destination.split(".")[0],pdf_filename.split(".")[0])) , args=())
+
+		p = multiprocessing.Process(target=lambda : os.system("{} {} {}/{} -png"
+		.format(conversion_tool, destination,destination.split(".")[0],pdf_filename.split(".")[0])) , args=())
 		
 		p.start()
 		while(p.is_alive()):
