@@ -5,20 +5,38 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lios\n"
-"POT-Creation-Date: 2017-09-19 15:05+WAT\n"
-"PO-Revision-Date: 2017-09-21 10:21+0100\n"
+"POT-Creation-Date: 2017-09-23 21:25+0100\n"
+"PO-Revision-Date: 2017-10-04 20:11+0100\n"
+"Last-Translator: L'Africain\n"
+"Language-Team: \n"
+"Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: pygettext.py 1.5\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"Last-Translator: \n"
-"Language-Team: \n"
-"Language: fr\n"
 "X-Generator: Poedit 1.8.7.1\n"
 "X-Poedit-SourceCharset: UTF-8\n"
-"X-Poedit-Basepath: ..\n"
+"X-Poedit-Basepath: lios\n"
 "X-Poedit-SearchPath-0: .\n"
+
+#: cam.py:36
+msgid "Press take/close button at the right side"
+msgstr ""
+
+#: cam.py:45
+msgid "Take"
+msgstr ""
+
+#: cam.py:48 editor.py:319 editor.py:390 editor.py:460 editor.py:716
+#: preferences.py:418 train_tesseract.py:240 train_tesseract.py:363
+#: train_tesseract.py:733 train_tesseract.py:832
+msgid "Close"
+msgstr "Fermer"
+
+#: editor.py:50
+msgid "{} Decode error Select Other Character Encoding"
+msgstr "{} Erreur de décodage sélectionnez un autre encodage"
 
 #: editor.py:50
 msgid "Select"
@@ -30,7 +48,7 @@ msgstr "Encodage : "
 
 #: editor.py:110 editor.py:112
 msgid "Start new without saving ?"
-msgstr ""
+msgstr "Démarrer un nouveau sans enregistrer ?"
 
 #: editor.py:111
 msgid "Start-New!"
@@ -46,19 +64,19 @@ msgstr ""
 
 #: editor.py:187
 msgid "Select the file to append"
-msgstr ""
+msgstr "Sélectionner le fichier à ajouter"
 
 #: editor.py:196
 msgid "Select the file to insert at cursor"
-msgstr ""
+msgstr "Sélectionnez le fichier à insérer au curseur"
 
-#: editor.py:224 main.py:1209
+#: editor.py:224 main.py:1208
 msgid "Filename please"
-msgstr ""
+msgstr "Veuillez entrer un nom de fichier"
 
 #: editor.py:234
 msgid "Select the file to import"
-msgstr ""
+msgstr "Sélectionner le fichier à importer"
 
 #: editor.py:244
 msgid "Text Cleaner"
@@ -66,20 +84,20 @@ msgstr ""
 
 #: editor.py:253
 msgid "Give match and replace"
-msgstr ""
+msgstr "Donner une correspondance et remplacer"
 
-#: editor.py:253 editor.py:504 editor.py:515 editor.py:742 editor.py:763
-#: main.py:425 train_tesseract.py:518
-msgid "Close!"
-msgstr "Fermer !"
-
-#: editor.py:253 main.py:1301 train_tesseract.py:796
+#: editor.py:253 main.py:1300 train_tesseract.py:796
 msgid "Ok"
 msgstr "Ok"
 
+#: editor.py:253 editor.py:504 editor.py:515 editor.py:742 editor.py:763
+#: main.py:424 train_tesseract.py:518
+msgid "Close!"
+msgstr "Fermer !"
+
 #: editor.py:254
 msgid "Match : "
-msgstr ""
+msgstr "Correspondance : "
 
 #: editor.py:255
 msgid "Replace : "
@@ -93,43 +111,39 @@ msgstr "Ajouter"
 msgid "Remove"
 msgstr "Supprimer"
 
-#: editor.py:303 main.py:243 train_tesseract.py:172 train_tesseract.py:230
+#: editor.py:303 main.py:242 train_tesseract.py:172 train_tesseract.py:230
+#: ui/gtk/icon.py:33
 msgid "Import"
 msgstr "Importer"
 
-#: editor.py:305 main.py:244 train_tesseract.py:175 train_tesseract.py:232
+#: editor.py:305 main.py:243 train_tesseract.py:175 train_tesseract.py:232
+#: ui/gtk/icon.py:34
 msgid "Export"
 msgstr "Exporter"
 
-#: editor.py:308 imageview.py:80 main.py:79
+#: editor.py:308 imageview.py:80 main.py:78 ui/gtk/icon.py:69
 msgid "Clear"
 msgstr ""
 
-#: editor.py:310 main.py:262
+#: editor.py:310 main.py:261 ui/gtk/icon.py:98
 msgid "Restore"
 msgstr "Restaurer"
 
 #: editor.py:313
 msgid "Apply from cursor"
-msgstr ""
+msgstr "Appliquer depuis le curseur"
 
 #: editor.py:316
 msgid "Apply on entire text"
-msgstr ""
-
-#: editor.py:319 editor.py:390 editor.py:460 editor.py:716 preferences.py:418
-#: train_tesseract.py:240 train_tesseract.py:363 train_tesseract.py:733
-#: train_tesseract.py:832
-msgid "Close"
-msgstr "Fermer"
+msgstr "Appliquer à tout le texte"
 
 #: editor.py:349 editor.py:422
 msgid "Bookmark Table"
-msgstr ""
+msgstr "Liste des signets"
 
 #: editor.py:350 editor.py:423
 msgid "Select the bookmark"
-msgstr ""
+msgstr "Sélectionner le signet"
 
 #: editor.py:381 editor.py:458
 msgid "Jump"
@@ -139,29 +153,30 @@ msgstr ""
 msgid "Scroll Text to position"
 msgstr ""
 
-#: editor.py:387 editor.py:709 main.py:92 main.py:216 train_tesseract.py:166
+#: editor.py:387 editor.py:709 main.py:91 main.py:215 train_tesseract.py:166
+#: ui/gtk/icon.py:47
 msgid "Delete"
 msgstr "Supprimer"
 
 #: editor.py:487
 msgid "Select the bookmark file to import"
-msgstr ""
+msgstr "Sélectionner le fichier de signets à importer"
 
-#: editor.py:504 main.py:1050
+#: editor.py:504 main.py:1049
 msgid "Warning!"
 msgstr "Attention !"
 
 #: editor.py:505
 msgid "File must be saved inorder to bookmark the text!"
-msgstr ""
+msgstr "Le fichier doit être sauvegardé pour en faire un signet !"
 
 #: editor.py:515
 msgid "Create new Bookmark"
-msgstr ""
+msgstr "Créer un nouveau signet"
 
-#: editor.py:515 main.py:249
+#: editor.py:515 main.py:248 ui/gtk/icon.py:79
 msgid "Bookmark"
-msgstr ""
+msgstr "Signet"
 
 #: editor.py:516
 msgid "Name : "
@@ -169,11 +184,11 @@ msgstr "Nom : "
 
 #: editor.py:542 editor.py:580 editor.py:644
 msgid "Context label"
-msgstr ""
+msgstr "Étiquette contextuelle"
 
 #: editor.py:556
 msgid "<b> Find word  : </b>"
-msgstr ""
+msgstr "<b>Rechercher un mot : </b>"
 
 #: editor.py:562 editor.py:620
 msgid "Next"
@@ -185,19 +200,19 @@ msgstr "Précédent"
 
 #: editor.py:572 editor.py:636
 msgid "Find Dialog"
-msgstr ""
+msgstr "Fenêtre de recherche"
 
 #: editor.py:594
 msgid "No match found"
-msgstr ""
+msgstr "Aucune correspondance trouvée"
 
 #: editor.py:609
 msgid "<b> word  : </b>"
-msgstr ""
+msgstr "<b> mot : </b>"
 
 #: editor.py:612
 msgid "<b> Replace word : </b>"
-msgstr ""
+msgstr "<b>Mot de remplacement : </b>"
 
 #: editor.py:624
 msgid "Replace"
@@ -209,11 +224,11 @@ msgstr ""
 
 #: editor.py:642
 msgid "Suggestions"
-msgstr ""
+msgstr "Suggestions"
 
 #: editor.py:699
 msgid "<b> Misspelled word  : </b>"
-msgstr ""
+msgstr "<b> Mot à corriger  : </b>"
 
 #: editor.py:705
 msgid "Change"
@@ -233,9 +248,9 @@ msgstr "Tout ignorer"
 
 #: editor.py:715
 msgid "Add to user dict"
-msgstr ""
+msgstr "Ajouter au dico perso"
 
-#: editor.py:731 main.py:144 main.py:197 main.py:239
+#: editor.py:731 main.py:143 main.py:196 main.py:238 ui/gtk/icon.py:38
 msgid "Spell-Check"
 msgstr ""
 
@@ -243,7 +258,7 @@ msgstr ""
 msgid "Go to line"
 msgstr "Aller à la ligne"
 
-#: editor.py:742 main.py:425
+#: editor.py:742 main.py:424
 msgid "Go"
 msgstr "Aller"
 
@@ -269,7 +284,7 @@ msgstr "Volume : "
 
 #: editor.py:775
 msgid "Pitch : "
-msgstr ""
+msgstr "Niveau : "
 
 #: editor.py:779
 msgid "Split Time : "
@@ -277,11 +292,11 @@ msgstr ""
 
 #: editor.py:785
 msgid "Voice : "
-msgstr ""
+msgstr "Voix : "
 
 #: editor.py:828
 msgid "Enter the file name"
-msgstr ""
+msgstr "Entrer le nom du fichier"
 
 #: imageview.py:75
 msgid "_Delete"
@@ -291,575 +306,596 @@ msgstr "_Supprimer"
 msgid "Shortcut Alt+D"
 msgstr "Raccourci Alt+D"
 
-#: main.py:77 main.py:225
+#: main.py:76 main.py:224 ui/gtk/icon.py:91
 msgid "Take-Screenshot"
 msgstr ""
 
-#: main.py:78 main.py:224
+#: main.py:77 main.py:223 ui/gtk/icon.py:90
 msgid "Scan-Using-Webcam"
 msgstr ""
 
-#: main.py:78 main.py:231
+#: main.py:77 main.py:230 ui/gtk/icon.py:61
 msgid "_Recognize"
 msgstr ""
 
-#: main.py:82
+#: main.py:81
 msgid "Recognize"
-msgstr "Reconnaître"
+msgstr ""
 
-#: main.py:83
+#: main.py:82
 msgid "Recognize-With-Rotation"
 msgstr ""
 
-#: main.py:85 main.py:110 main.py:124 main.py:201
+#: main.py:84 main.py:109 main.py:123 main.py:200 ui/gtk/icon.py:53
 msgid "Rotate-Left"
 msgstr ""
 
-#: main.py:86 main.py:109 main.py:123 main.py:204
+#: main.py:85 main.py:108 main.py:122 main.py:203 ui/gtk/icon.py:55
 msgid "Rotate-Twice"
 msgstr ""
 
-#: main.py:87 main.py:108 main.py:122 main.py:207
+#: main.py:86 main.py:107 main.py:121 main.py:206 ui/gtk/icon.py:54
 msgid "Rotate-Right"
 msgstr ""
 
-#: main.py:88 main.py:210
+#: main.py:87 main.py:209 ui/gtk/icon.py:60
 msgid "Invert-List"
 msgstr ""
 
-#: main.py:89 main.py:143 main.py:187 main.py:212 main.py:260
+#: main.py:88 main.py:142 main.py:186 main.py:211 main.py:259 ui/gtk/icon.py:28
 msgid "Save"
 msgstr ""
 
-#: main.py:90 main.py:214
+#: main.py:89 main.py:213 ui/gtk/icon.py:72
 msgid "Export-As-Pdf"
 msgstr "Exporter en pdf"
 
-#: main.py:111 main.py:125 train_tesseract.py:1017
+#: main.py:110 main.py:124 train_tesseract.py:1017 ui/gtk/icon.py:50
 msgid "Zoom-In"
 msgstr ""
 
-#: main.py:111 main.py:125 train_tesseract.py:1019
+#: main.py:110 main.py:124 train_tesseract.py:1019 ui/gtk/icon.py:51
 msgid "Zoom-Fit"
 msgstr ""
 
-#: main.py:112 main.py:126 train_tesseract.py:1021
+#: main.py:111 main.py:125 train_tesseract.py:1021 ui/gtk/icon.py:52
 msgid "Zoom-Out"
 msgstr ""
 
-#: main.py:113 main.py:129 main.py:234
+#: main.py:112 main.py:128 main.py:233 ui/gtk/icon.py:66
 msgid "Recognize-Selected-Areas"
 msgstr ""
 
-#: main.py:114 main.py:130 main.py:232
+#: main.py:113 main.py:129 main.py:231 ui/gtk/icon.py:67
 msgid "Recognize-Current-Image"
 msgstr ""
 
-#: main.py:115 main.py:131 main.py:233
+#: main.py:114 main.py:130 main.py:232 ui/gtk/icon.py:68
 msgid "Recognize-Current-Image-With-Rotation"
 msgstr ""
 
-#: main.py:127
+#: main.py:126
 msgid "Train-Selected-Areas"
 msgstr ""
 
-#: main.py:128
+#: main.py:127
 msgid "Save-Selected-Areas"
 msgstr ""
 
-#: main.py:142 main.py:185
+#: main.py:141 main.py:184 ui/gtk/icon.py:26
 msgid "New"
 msgstr ""
 
-#: main.py:145 main.py:191
-msgid "Redo"
-msgstr ""
-
-#: main.py:145 main.py:191
+#: main.py:144 main.py:190 ui/gtk/icon.py:45
 msgid "Undo"
 msgstr ""
 
-#: main.py:147 main.py:194
+#: main.py:144 main.py:190 ui/gtk/icon.py:46
+msgid "Redo"
+msgstr ""
+
+#: main.py:146 main.py:193 ui/gtk/icon.py:30
 msgid "Find"
 msgstr ""
 
-#: main.py:148 main.py:195
+#: main.py:147 main.py:194 ui/gtk/icon.py:31
 msgid "Find-Replace"
 msgstr ""
 
-#: main.py:150 main.py:253
+#: main.py:149 main.py:252 ui/gtk/icon.py:39
 msgid "Start/Stop-Reader"
 msgstr ""
 
-#: main.py:152 main.py:199
+#: main.py:151 main.py:198 ui/gtk/icon.py:44
 msgid "Go-To-Line"
 msgstr ""
 
-#: main.py:153 main.py:199
+#: main.py:152 main.py:198 ui/gtk/icon.py:43
 msgid "Go-To-Page"
 msgstr ""
 
-#: main.py:185
+#: main.py:184 ui/gtk/icon.py:25
 msgid "_File"
 msgstr "_Fichier"
 
-#: main.py:186
+#: main.py:185 ui/gtk/icon.py:27
 msgid "Open"
 msgstr ""
 
-#: main.py:187
+#: main.py:186 ui/gtk/icon.py:29
 msgid "Save-As"
 msgstr "Enregistrer sous"
 
-#: main.py:188
+#: main.py:187 ui/gtk/icon.py:71
 msgid "Export-Text-As-Pdf"
 msgstr "Exporter le texte en pdf"
 
-#: main.py:188
+#: main.py:187 ui/gtk/icon.py:70
 msgid "Print"
 msgstr "Imprimer"
 
-#: main.py:189
+#: main.py:188 ui/gtk/icon.py:73
 msgid "Print-Preview"
 msgstr "Aperçu"
 
-#: main.py:190 main.py:279
+#: main.py:189 main.py:278 ui/gtk/icon.py:74
 msgid "Quit"
 msgstr ""
 
-#: main.py:191
+#: main.py:190 ui/gtk/icon.py:75
 msgid "_Edit"
 msgstr "_Édition"
 
-#: main.py:193
-msgid "Append-Text"
-msgstr ""
-
-#: main.py:193
+#: main.py:192 ui/gtk/icon.py:48
 msgid "Punch-Text"
 msgstr ""
 
-#: main.py:200
-msgid "Preferences"
-msgstr "Préférences"
+#: main.py:192 ui/gtk/icon.py:49
+msgid "Append-Text"
+msgstr ""
 
-#: main.py:201
+#: main.py:199 main.py:275 ui/gtk/icon.py:94
+msgid "Preferences"
+msgstr ""
+
+#: main.py:200 ui/gtk/icon.py:56
 msgid "_Image"
 msgstr "_Image"
 
-#: main.py:201 main.py:204 main.py:207
+#: main.py:200 main.py:203 main.py:206
 msgid "Current"
-msgstr ""
+msgstr "Courant"
 
-#: main.py:202 main.py:205 main.py:208
+#: main.py:201 main.py:204 main.py:207
 msgid "Selected"
 msgstr "Sélectionné"
 
-#: main.py:203 main.py:206 main.py:209
+#: main.py:202 main.py:205 main.py:208
 msgid "All"
 msgstr "Tout"
 
-#: main.py:212 main.py:214 main.py:216
+#: main.py:211 main.py:213 main.py:215
 msgid "Selected-Images"
 msgstr "Images sélectionnées"
 
-#: main.py:213 main.py:215 main.py:217
+#: main.py:212 main.py:214 main.py:216
 msgid "All-Images"
 msgstr "Toutes les images"
 
-#: main.py:218
+#: main.py:217 ui/gtk/icon.py:84
 msgid "_Scan"
 msgstr "_Numériser"
 
-#: main.py:218 main.py:271
+#: main.py:217 main.py:270 ui/gtk/icon.py:83
 msgid "Update-Scanner-List"
 msgstr "Mettre à jour la liste des scanners"
 
-#: main.py:219
+#: main.py:218 ui/gtk/icon.py:85
 msgid "Scan-Image"
 msgstr "Numériser une image"
 
-#: main.py:220
+#: main.py:219 ui/gtk/icon.py:86
 msgid "Scan-Image-Repeatedly"
 msgstr ""
 
-#: main.py:221
+#: main.py:220 ui/gtk/icon.py:87
 msgid "Scan-and-Ocr"
 msgstr "Numériser et ROC"
 
-#: main.py:222
+#: main.py:221 ui/gtk/icon.py:88
 msgid "Scan-and-Ocr-Repeatedly"
 msgstr ""
 
-#: main.py:223
+#: main.py:222 ui/gtk/icon.py:89
 msgid "Optimise-Scanner-Brightness"
-msgstr ""
+msgstr "Optimiser la luminosité du scanneur"
 
-#: main.py:226 main.py:229
+#: main.py:225 main.py:228
 msgid "Selection"
 msgstr "Sélection"
 
-#: main.py:227 main.py:230
+#: main.py:226 main.py:229
 msgid "Full"
-msgstr ""
+msgstr "Tout"
 
-#: main.py:228
+#: main.py:227 ui/gtk/icon.py:92
 msgid "Take-and-Recognize-Screenshot"
 msgstr ""
 
-#: main.py:235
+#: main.py:234 ui/gtk/icon.py:62
 msgid "Recognize-Selected-Images"
 msgstr ""
 
-#: main.py:236
+#: main.py:235 ui/gtk/icon.py:63
 msgid "Recognize-All-Images"
 msgstr ""
 
-#: main.py:237
+#: main.py:236 ui/gtk/icon.py:64
 msgid "Recognize-Selected-with-rotation"
 msgstr ""
 
-#: main.py:238
+#: main.py:237 ui/gtk/icon.py:65
 msgid "Recognize-All-with-rotation"
 msgstr ""
 
-#: main.py:239
+#: main.py:238 ui/gtk/icon.py:100
 msgid "_Tools"
 msgstr "_Outils"
 
-#: main.py:240
+#: main.py:239 ui/gtk/icon.py:37
 msgid "Train-Tesseract"
 msgstr ""
 
-#: main.py:241 main.py:242
+#: main.py:240 main.py:241 ui/gtk/icon.py:32
 msgid "Text-Cleaner"
 msgstr ""
 
-#: main.py:245
+#: main.py:244 ui/gtk/icon.py:35
 msgid "Apply-From-Cursor"
 msgstr ""
 
-#: main.py:246
+#: main.py:245 ui/gtk/icon.py:36
 msgid "Apply-Entire"
 msgstr ""
 
-#: main.py:247
+#: main.py:246 ui/gtk/icon.py:102
 msgid "Audio-Converter"
-msgstr ""
+msgstr "Convertisseur audio"
 
-#: main.py:248
+#: main.py:247 ui/gtk/icon.py:101
 msgid "Dictionary"
 msgstr "Dictionnaire"
 
-#: main.py:250
+#: main.py:249 ui/gtk/icon.py:80
 msgid "Bookmark-Table"
-msgstr ""
+msgstr "Liste des signets"
 
-#: main.py:251
+#: main.py:250 ui/gtk/icon.py:81
 msgid "Import-Bookmarks"
-msgstr ""
+msgstr "Importer des signets"
 
-#: main.py:252
+#: main.py:251 ui/gtk/icon.py:82
 msgid "Bookmark-Table-Complete"
 msgstr ""
 
-#: main.py:254
+#: main.py:253 ui/gtk/icon.py:40
 msgid "Increase-Reader-Speed"
-msgstr ""
+msgstr "Augmenter la vitesse du lecteur"
 
-#: main.py:255
+#: main.py:254 ui/gtk/icon.py:41
 msgid "Decrease-Reader-Speed"
-msgstr ""
+msgstr "Ralentir la vitesse du lecteur"
 
-#: main.py:256
+#: main.py:255 ui/gtk/icon.py:42
 msgid "Stop-All-Process"
 msgstr "Arrêter tous les processus"
 
-#: main.py:257
+#: main.py:256 ui/gtk/icon.py:93
+msgid "_Preferences"
+msgstr "_Préférences"
+
+#: main.py:256 ui/gtk/icon.py:96
 msgid "Preferences-General"
 msgstr "Préférences générales"
 
-#: main.py:257 main.py:276
-msgid "_Preferences"
-msgstr ""
-
-#: main.py:258
+#: main.py:257 ui/gtk/icon.py:97
 msgid "Preferences-Recognition"
 msgstr "Préférences de reconnaissance"
 
-#: main.py:259
+#: main.py:258 ui/gtk/icon.py:95
 msgid "Preferences-Scanning"
 msgstr "Préférences de numérisation"
 
-#: main.py:261
+#: main.py:260 ui/gtk/icon.py:99
 msgid "Load"
 msgstr "Charger"
 
-#: main.py:263
+#: main.py:262 ui/gtk/icon.py:103
 msgid "Help"
 msgstr "Aide"
 
-#: main.py:263
+#: main.py:262 ui/gtk/icon.py:104
 msgid "Open-Readme"
 msgstr "Ouvrir le Readme"
 
-#: main.py:264 main.py:277
+#: main.py:263 main.py:276 ui/gtk/icon.py:105
 msgid "Video-Tutorials"
 msgstr ""
 
-#: main.py:265
+#: main.py:264 ui/gtk/icon.py:106
 msgid "Open-Home-Page"
 msgstr "Ouvrir la page d'accueil"
 
-#: main.py:266
+#: main.py:265 ui/gtk/icon.py:107
 msgid "Get-Source-Code"
 msgstr "Obtenir le code source"
 
-#: main.py:267 main.py:278
+#: main.py:266 main.py:277 ui/gtk/icon.py:108
 msgid "About"
 msgstr ""
 
-#: main.py:273
+#: main.py:272
 msgid "Scan"
 msgstr "Numériser"
 
-#: main.py:337
+#: main.py:336
 msgid "Welcome to {} Version {}"
-msgstr ""
+msgstr "Bienvenue dans {} Version {}"
 
-#: main.py:425
+#: main.py:424
 msgid "Go to page"
 msgstr "Aller à la page"
 
-#: main.py:426
+#: main.py:425
 msgid "Page Number : "
 msgstr "Numéro de page : "
 
-#: main.py:493
+#: main.py:492
 msgid "Extracting images from Pdf"
-msgstr ""
+msgstr "Extraction des images depuis le pdf"
 
-#: main.py:515 main.py:636
+#: main.py:514 main.py:635
 msgid "Completed!"
 msgstr "Terminé !"
 
-#: main.py:603
+#: main.py:602
 msgid "Getting devices"
 msgstr "Obtention des périphériques"
 
-#: main.py:621
+#: main.py:620
 msgid "Setting Scanner {}"
-msgstr ""
+msgstr "Paramètres du scanneur {}"
 
-#: main.py:641
+#: main.py:640
 msgid "No Scanner Detected!"
 msgstr "Aucun scanner détecté !"
 
-#: main.py:685 main.py:1036 main.py:1095 main.py:1120 main.py:1164 main.py:1284
+#: main.py:684 main.py:1035 main.py:1094 main.py:1119 main.py:1163 main.py:1283
 msgid "completed!"
-msgstr ""
+msgstr "Terminé !"
 
-#: main.py:695 main.py:877
+#: main.py:694 main.py:876
 msgid "No Scanner Detected!. Please update scanner list and try again"
 msgstr ""
+"Aucun scanneur détecté ! Veuillez mettre à jour la liste des scanneurs et "
+"essayer à nouveau"
 
-#: main.py:698
+#: main.py:697
 msgid "Scanning {} with resolution={} brightness={}"
-msgstr ""
+msgstr "Numérisation de {} avec une résolution={} et une luminosité={}"
 
-#: main.py:708
+#: main.py:707
 msgid "Scan Completed!"
-msgstr ""
+msgstr "Numérisation terminée !"
 
-#: main.py:712
+#: main.py:711
 msgid "Adding image to list"
-msgstr ""
+msgstr "Ajout d'une image à la liste"
 
-#: main.py:716
+#: main.py:715
 msgid "Image added"
-msgstr ""
+msgstr "Image ajoutée"
 
-#: main.py:794 main.py:832
+#: main.py:793 main.py:831
 msgid "Recognizing {}"
-msgstr ""
+msgstr "Reconnaissance {}"
 
-#: main.py:801 main.py:845
+#: main.py:800 main.py:844
 msgid "Page {}"
-msgstr ""
+msgstr "Page {}"
 
-#: main.py:820
+#: main.py:819
 msgid "#Scanning"
-msgstr ""
+msgstr "#Numérisation"
 
-#: main.py:825
+#: main.py:824
 msgid "#Scan Compleated"
-msgstr ""
+msgstr "#Numérisation terminée"
 
-#: main.py:831
+#: main.py:830
 msgid "#Running OCR"
-msgstr ""
+msgstr "#Exécution de la ROC"
 
-#: main.py:834
+#: main.py:833
 msgid "#Placing text and cursor"
 msgstr ""
 
-#: main.py:839
+#: main.py:838
 msgid "#Placing text and cursor Finished"
 msgstr ""
 
-#: main.py:840
+#: main.py:839
 msgid "#Redraw"
-msgstr ""
+msgstr "#Redéssiner"
 
-#: main.py:842
+#: main.py:841
 msgid "#Redraw Compleated"
-msgstr ""
+msgstr "#Dessin terminé"
 
-#: main.py:847
+#: main.py:846
 msgid "#Preview Updated"
-msgstr ""
+msgstr "#Aperçu mis à jour"
+
+#: main.py:855
+msgid "#Compleated "
+msgstr "#Terminé "
 
 #: main.py:856
-msgid "#Compleated "
-msgstr ""
-
-#: main.py:857
 msgid "Compleated"
-msgstr ""
+msgstr "Terminé"
 
-#: main.py:883
-msgid "Scanning with resolution={} brightness={} for detecting angle of rotation"
+#: main.py:882
+msgid ""
+"Scanning with resolution={} brightness={} for detecting angle of rotation"
 msgstr ""
+"Numérisation avec la résolution={} et la luminosité={} pour détecter  "
+"l'angle de rotation"
+
+#: main.py:902
+msgid "Optimize Scanner-Brightness"
+msgstr "Optimiser la luminosité du scanneur"
 
 #: main.py:903
-msgid "Optimize Scanner-Brightness"
-msgstr ""
-
-#: main.py:904
 msgid "Optimize"
 msgstr "Optimiser"
 
-#: main.py:905 preferences.py:418
+#: main.py:904 preferences.py:418
 msgid "Apply"
 msgstr "Appliquer"
 
-#: main.py:906 main.py:1137
+#: main.py:905 main.py:1136
 msgid "Cancel"
 msgstr "Annuler"
 
-#: main.py:908
+#: main.py:907
 msgid "Angle to be rotated : "
-msgstr ""
+msgstr "Angle à pivoter : "
 
-#: main.py:916
+#: main.py:915
 msgid "Current-Value"
-msgstr ""
+msgstr "Valeur actuelle"
 
-#: main.py:920 preferences.py:284
+#: main.py:919 preferences.py:284
 msgid "Start"
 msgstr "Début"
 
-#: main.py:924
+#: main.py:923
 msgid "Distance"
-msgstr ""
+msgstr "Distance"
 
-#: main.py:928 preferences.py:286
+#: main.py:927 preferences.py:286
 msgid "End"
 msgstr "Fin"
 
-#: main.py:932
+#: main.py:931
 msgid "Result"
 msgstr "Résultat"
 
-#: main.py:954
+#: main.py:953
 msgid "Set Mode of rotation"
-msgstr ""
+msgstr "Définir le motde de rotation"
+
+#: main.py:954
+msgid "Yes set this rotation"
+msgstr "Oui définir cette rotation"
 
 #: main.py:955
-msgid "Yes set this rotation"
-msgstr ""
+msgid "No continue with existing mode"
+msgstr "Non continuer avec le mode existant"
 
 #: main.py:956
-msgid "No continue with existing mode"
+msgid ""
+"Do you want to fix the angle at {}\t\t\t\t\n"
+"degree manual rotation ?"
 msgstr ""
+"Voulez-vous fixer l'angle à {}\t\t\t\t\n"
+"degré manuel de rotation ?"
 
-#: main.py:965
+#: main.py:964
 msgid "Rotation mode changed to manual at angle {} degree"
+msgstr "Le mode de rotation a changé en manuel à l'angle de {} degré"
+
+#: main.py:1013
+msgid ""
+"Got {} words at brightness {}. Scanning with resolution={} brightness={}"
 msgstr ""
 
-#: main.py:1014
-msgid "Got {} words at brightness {}. Scanning with resolution={} brightness={}"
-msgstr ""
-
-#: main.py:1017
+#: main.py:1016
 msgid "Scanning with resolution={} brightness={}"
-msgstr ""
+msgstr "Numérisation avec la résolution={} et la luminosité={}"
 
-#: main.py:1030
+#: main.py:1029
+#, python-brace-format
 msgid "Recognizing {0}test.pnm"
-msgstr ""
+msgstr "Reconnaissance de {0}test.pnm"
 
-#: main.py:1051 train_tesseract.py:261 train_tesseract.py:367
+#: main.py:1050 train_tesseract.py:261 train_tesseract.py:367
 #: train_tesseract.py:700 train_tesseract.py:712 train_tesseract.py:733
 #: train_tesseract.py:889 train_tesseract.py:1155
 msgid "No"
 msgstr "Non"
 
-#: main.py:1051 train_tesseract.py:261 train_tesseract.py:368
+#: main.py:1050 train_tesseract.py:261 train_tesseract.py:368
 #: train_tesseract.py:700 train_tesseract.py:712 train_tesseract.py:733
 #: train_tesseract.py:889 train_tesseract.py:1154
 msgid "Yes"
 msgstr "Oui"
 
-#: main.py:1052
+#: main.py:1051
 msgid "Current text not saved! do you want to load readme without saving ? "
 msgstr ""
+"Le texte courant n'a pas été enregistré ! Voulez-vous charger le readme sans "
+"sauvegarder ? "
 
-#: main.py:1075
+#: main.py:1074
 msgid "Running OCR on selected image {}"
-msgstr ""
+msgstr "Exécution de la ROC sur l' image sélectionnée {}"
 
-#: main.py:1110
+#: main.py:1109
 msgid "Running OCR on selected image {} (without rotating)"
-msgstr ""
+msgstr "Exécution de la ROC sur l' image sélectionnée {} (sans rotation)"
 
-#: main.py:1137
+#: main.py:1136
 msgid "Deleting !"
-msgstr ""
+msgstr "Suppression !"
 
-#: main.py:1137
+#: main.py:1136
 msgid "Yes Delete"
 msgstr "Oui supprimer"
 
-#: main.py:1138
+#: main.py:1137
 msgid "Are you sure you want to delete selected images ?"
-msgstr ""
+msgstr "Êtes-vous certain de vouloir supprimer les images selectionnées ?"
 
-#: main.py:1151
+#: main.py:1150
 msgid "Nothing selected"
-msgstr ""
+msgstr "Rien de sélectionné"
 
-#: main.py:1160
+#: main.py:1159
 msgid "Rotating selected image {} to {}"
-msgstr ""
+msgstr "Rotation de l'image sélectionnée {}  à {}"
 
-#: main.py:1217
+#: main.py:1216
 msgid "Select Folder to save images"
-msgstr ""
+msgstr "Sélectionner le dossier où enregistrer les images"
 
-#: main.py:1233
+#: main.py:1232
 msgid "Give pdf filename(with extention) to save images"
 msgstr ""
+"Donnez un nom de fichier au pdf (avec extension) pour enregistrer les images"
 
-#: main.py:1271
+#: main.py:1270
 msgid "Running OCR on selected Area [ X={} Y={} Width={} Height={} ]"
-msgstr "Running OCR on selected Area [ X={} Y={} Largeur={} Hauteur={} ]"
+msgstr ""
+"Exécution de la ROC sur la zone sélectionnée  [ X={} Y={} Largeur={} "
+"Hauteur={} ]"
 
-#: main.py:1301
+#: main.py:1300
 msgid "Dictionary not found!"
 msgstr "Le dictionnaire n'a pas été trouvé !"
 
 #: main.py:1302
+#, python-brace-format
 msgid ""
 "Please install aspell, ispell, hunspell, myspell, or uspell \n"
 "dictionary for your language({0}) and restart Lios!\n"
@@ -879,32 +915,52 @@ msgid ""
 "On arch based system use \n"
 "pacman -S aspell-fr"
 msgstr ""
+"Veuillez installer le dictionnaire aspell, ispell, hunspell, myspell ou "
+"uspell\n"
+"pour votre langue ({0}) et redémarrez Lios!\n"
+"Sinon, le correcteur orthographique et l'auto-rotation fonctionneront avec "
+"l'anglais (fallback).\n"
+"\n"
+"Par exemple, sur les systèmes basés sur Debian, on peut installer le "
+"dictionnaire français aspell ou\n"
+"hunspell en utilisant les commandes suivantes\n"
+"apt-get install aspell-fr\n"
+"apt-get install hunspell-fr\n"
+"\t\t\n"
+"ou le dictionnaire ispell avec\n"
+"apt-get install ifrench\n"
+" \n"
+"Ou pour les systèmes basées sur le rpm\n"
+"yum install aspell-fr\n"
+"\t\t\t\n"
+"Sur les systèmes basés sur arch\n"
+"pacman -S aspell-fr"
 
-#: main.py:1340
+#: main.py:1339
 msgid "save_preferences as "
-msgstr ""
+msgstr "enregistrement_les_préférences comme "
 
-#: main.py:1345
+#: main.py:1344
 msgid "Preferences saved to "
-msgstr ""
+msgstr "Les préférences ont été enregistrées dans "
 
-#: main.py:1351
+#: main.py:1350
 msgid "Select the image"
 msgstr "Sélectionner l'image"
 
-#: main.py:1357
+#: main.py:1356
 msgid "Preferences loaded from "
-msgstr ""
+msgstr "Les préférences ont été chargées depuis "
 
-#: main.py:1364
+#: main.py:1363
 msgid "Preferences Restored"
-msgstr ""
+msgstr "Les préférences ont été restaurées"
 
-#: main.py:1382
+#: main.py:1381
 msgid "Select files to open"
-msgstr ""
+msgstr "Sélectionner les fichiers à ouvrir"
 
-#: main.py:1462
+#: main.py:1461
 msgid ""
 "Lios is a free and open source software\n"
 " \t\t\tfor converting print into text using a scanner or camara.\n"
@@ -915,14 +971,17 @@ msgid ""
 "\t\t\tfor this program. Feedback is the key to it."
 msgstr ""
 "Lios est un logiciel libre et gratuit\n"
-"\t\t\tpour convertir une impression en texte en utilisant un scanneur ou une webcam.\n"
-"\t\t\tIl peut aussi génerer du texte à partir d'autres sources. Par exemple une image,\n"
-"\t\t\tun pdf, ou une capture d'écran.Le logiciel est fourni avec les options d'accessibilité totale\n"
+"\t\t\tpour convertir une impression en texte en utilisant un scanneur ou une "
+"webcam.\n"
+"\t\t\tIl peut aussi génerer du texte à partir d'autres sources. Par exemple "
+"une image,\n"
+"\t\t\tun pdf, ou une capture d'écran.Le logiciel est fourni avec les options "
+"d'accessibilité totale\n"
 "\t\t\tpour les malvoyants. Lios est écrit en python3 et  livré\n"
 "\t\t\tsous licence GPL3. Il existe de nombreuses possibilités\n"
 "\t\t\tpour ce programme. Les retours en sont la clé."
 
-#: main.py:1472
+#: main.py:1471
 msgid "Visit Home Page"
 msgstr ""
 
@@ -948,7 +1007,7 @@ msgstr "Couleur de surlignage"
 
 #: preferences.py:213
 msgid "Highlight Background"
-msgstr "Arrière-plan de surlignage"
+msgstr "Arrière-plan deu surlignage"
 
 #: preferences.py:218
 msgid "Speech-Module"
@@ -960,15 +1019,15 @@ msgstr "Langue de la synthèse vocale"
 
 #: preferences.py:231
 msgid "Speech-Rate"
-msgstr ""
+msgstr "Débit de la synthèse vocale"
 
 #: preferences.py:234
 msgid "Speech-Volume"
-msgstr ""
+msgstr "Volume de la synthèse vocale"
 
 #: preferences.py:237
 msgid "Speech-Pitch"
-msgstr ""
+msgstr "Niveau de la synthèse vocale"
 
 #: preferences.py:255
 msgid "General"
@@ -976,7 +1035,7 @@ msgstr "Général"
 
 #: preferences.py:260
 msgid "Engine"
-msgstr "Moteur"
+msgstr "Moteur ROC"
 
 #: preferences.py:269
 msgid "Language"
@@ -984,11 +1043,11 @@ msgstr "Langue"
 
 #: preferences.py:278
 msgid "Run Text Cleaner"
-msgstr ""
+msgstr "Exécuter le nettoyage du texte"
 
 #: preferences.py:282
 msgid "Insert Position"
-msgstr ""
+msgstr "Position d'insertion"
 
 #: preferences.py:285
 msgid "Cursor"
@@ -996,43 +1055,43 @@ msgstr "Curseur"
 
 #: preferences.py:294
 msgid "Mode Of Rotation"
-msgstr ""
+msgstr "Mode de rotation"
 
 #: preferences.py:296
 msgid "Full Automatic"
-msgstr ""
+msgstr "Automatique"
 
 #: preferences.py:297
 msgid "Partial Automatic"
-msgstr ""
+msgstr "Partiellement automatique"
 
 #: preferences.py:298
 msgid "Manual"
-msgstr ""
+msgstr "Manuel"
 
 #: preferences.py:303
 msgid "Angle"
-msgstr ""
+msgstr "Angle"
 
 #: preferences.py:305
 msgid "00"
-msgstr ""
+msgstr "00"
 
 #: preferences.py:306
 msgid "90"
-msgstr ""
+msgstr "90"
 
 #: preferences.py:307
 msgid "180"
-msgstr ""
+msgstr "180"
 
 #: preferences.py:308
 msgid "270"
-msgstr ""
+msgstr "270"
 
 #: preferences.py:315
 msgid "Page Numbering Type"
-msgstr ""
+msgstr "Type de numérotation de page"
 
 #: preferences.py:317
 msgid "Single Page"
@@ -1044,7 +1103,7 @@ msgstr "Page double"
 
 #: preferences.py:323
 msgid "Starting Page Number"
-msgstr ""
+msgstr "Numéro de page commençant"
 
 #: preferences.py:341
 msgid "Recognition"
@@ -1060,7 +1119,7 @@ msgstr "Luminosité"
 
 #: preferences.py:361
 msgid "Scan Area"
-msgstr "Aire de numérisation"
+msgstr "zone de numérisation"
 
 #: preferences.py:364
 msgid "Full Scan Area"
@@ -1088,15 +1147,15 @@ msgstr "Nombres de pages à numériser"
 
 #: preferences.py:386
 msgid "Time Bitween Repeted Scanning"
-msgstr ""
+msgstr "Durée entre les numérisations"
 
 #: preferences.py:393
 msgid "Change to binary or lineart if possible"
-msgstr ""
+msgstr "Passer au code binaire ou linéaire si possible"
 
 #: preferences.py:396
 msgid "Cache Calibration"
-msgstr ""
+msgstr "Étalonnage du cache"
 
 #: preferences.py:412
 msgid "Scanning"
@@ -1108,63 +1167,75 @@ msgstr "Lios préférences"
 
 #: train_tesseract.py:52
 msgid "Tesseract Trainer"
-msgstr ""
+msgstr "ROC avec Tesseract"
 
 #: train_tesseract.py:57
 msgid "Tesseract is not installed"
-msgstr ""
+msgstr "Tesseract n'est pas installé"
 
 #: train_tesseract.py:64
 msgid ""
 "Tesseract training executable are not installed. \n"
 "Please make sure following exicutables are installed\n"
 "\n"
-"combine_tessdata, unicharset_extractor, shapeclustering, mftraining, cntraining and text2image.\n"
+"combine_tessdata, unicharset_extractor, shapeclustering, mftraining, "
+"cntraining and text2image.\n"
 "\n"
-"If you forget to build training tools then use 'make training' and 'sudo make training-install' to build it "
+"If you forget to build training tools then use 'make training' and 'sudo "
+"make training-install' to build it "
 msgstr ""
+"Les exécutables de reconnaissance de Tesseract ne sont pas installés.\n"
+"Veuillez vous assurer que les exécutables suivants sont bien installés :\n"
+"\n"
+"combine_tessdata, unicharset_extractor, shapeclustering, mftraining, "
+"cntraining and text2image.\n"
+"\n"
+"Si vous avez oublié de compiler les outils de reconnaissance utiliser 'make "
+"training' et  'sudo make training-install' pour le compiler "
 
-#: train_tesseract.py:82
+#: train_tesseract.py:82 ui/gtk/icon.py:77
 msgid "Copy"
 msgstr ""
 
-#: train_tesseract.py:83
+#: train_tesseract.py:83 ui/gtk/icon.py:78
 msgid "Paste"
-msgstr ""
+msgstr "Coller"
 
 #: train_tesseract.py:153
 msgid "Train images-box"
-msgstr ""
+msgstr "Reconnaître les cadres images"
 
 #: train_tesseract.py:160 train_tesseract.py:832
 msgid "Train"
-msgstr ""
+msgstr "Reconnaître"
 
 #: train_tesseract.py:169
 msgid "Delete-All"
-msgstr ""
+msgstr "Tout supprimer"
 
 #: train_tesseract.py:220
 msgid "Dictionary's"
-msgstr ""
+msgstr "Du dictionnaire"
 
 #: train_tesseract.py:222
 msgid "Language "
-msgstr ""
+msgstr "Langue"
 
 #: train_tesseract.py:226
 msgid "Tessdata directory "
-msgstr ""
+msgstr "Dossier Tessdata"
 
 #: train_tesseract.py:260
 msgid "Search entire filesystem for tessdata ?"
-msgstr ""
+msgstr "Rechercher un fichier système complet pour tessdata ?"
 
 #: train_tesseract.py:262
 msgid ""
 "Do you want to search entire filesystem for tessdata ?\n"
 "This may take awhile!"
 msgstr ""
+"Voulez-vous rechercher un fichier système complet pour tessdata ?\n"
+"Cela peut prendre du temps !"
 
 #: train_tesseract.py:362
 msgid "Add new ambiguous"
@@ -1172,7 +1243,7 @@ msgstr ""
 
 #: train_tesseract.py:370
 msgid "Match    "
-msgstr ""
+msgstr "Correspondance    "
 
 #: train_tesseract.py:371
 msgid "Replace  "
@@ -1184,7 +1255,7 @@ msgstr ""
 
 #: train_tesseract.py:387
 msgid "Select files to import"
-msgstr ""
+msgstr "Sélectionner les fichiers à importer"
 
 #: train_tesseract.py:398 train_tesseract.py:601
 msgid "Save filename"
@@ -1196,27 +1267,27 @@ msgstr ""
 
 #: train_tesseract.py:429
 msgid "Select font file"
-msgstr ""
+msgstr "Sélectionner le fichier de police"
 
 #: train_tesseract.py:443
 msgid "Select input file"
-msgstr ""
+msgstr "Sélectionner un fichier d'entrée"
 
 #: train_tesseract.py:458
 msgid "Font Size"
-msgstr ""
+msgstr "Taille de la police"
 
 #: train_tesseract.py:461
 msgid "Input Text File"
-msgstr ""
+msgstr "Fichier texte d'entrée"
 
 #: train_tesseract.py:464
 msgid "Choose"
-msgstr ""
+msgstr "Choisir"
 
 #: train_tesseract.py:467
 msgid "Writing Mode"
-msgstr ""
+msgstr "Mode d'écriture"
 
 #: train_tesseract.py:474
 msgid "Inter-character space"
@@ -1224,95 +1295,131 @@ msgstr ""
 
 #: train_tesseract.py:480
 msgid "Degrade-image"
-msgstr ""
+msgstr "Mettre l'image en dégrader"
 
 #: train_tesseract.py:482
 msgid "Exposure-Level"
-msgstr ""
+msgstr "Niveau d'exposition"
 
 #: train_tesseract.py:485
 msgid "Ligatur-Mode"
 msgstr ""
 
 #: train_tesseract.py:518
-msgid "Generate"
-msgstr ""
+msgid "Generate-Image"
+msgstr "Générer l'image"
 
 #: train_tesseract.py:518
-msgid "Generate-Image"
-msgstr ""
+msgid "Generate"
+msgstr "Générer"
 
 #: train_tesseract.py:588
 msgid "Select language file"
-msgstr ""
+msgstr "Sélectionner la langue du fichier"
 
 #: train_tesseract.py:680
 msgid "Select images to import"
-msgstr ""
+msgstr "Sélectionner les images à importer"
 
 #: train_tesseract.py:699
 msgid "No curresponding box files found!"
-msgstr ""
+msgstr "Aucun fichier de cadres correspondant n'a été trouvé !"
 
 #: train_tesseract.py:701
 msgid ""
 "Do you want to auto annotate box file with existing language ?\n"
 "This may take awhile!"
 msgstr ""
+"Voulez-vous annoter automatiquement le fichier du cadre avec la langue "
+"existante ?\n"
+"Cela peut prendre un certain temps!"
 
 #: train_tesseract.py:711
 msgid "No curresponding font_desc files found!"
-msgstr ""
+msgstr "Pas de fichiers font_desc correspondant trouvés !"
 
 #: train_tesseract.py:713
 msgid "Do you want to fill it with following font ?"
-msgstr ""
+msgstr "Voulez-vous le remplir avec la police suivante ?"
 
 #: train_tesseract.py:732
 msgid "Delete file too ?"
-msgstr ""
+msgstr "Supprimer également le fichier ?"
 
 #: train_tesseract.py:734
 msgid "Do you want to delete files(image,box,font_desc) too ?"
 msgstr ""
+"Voulez-vous également supprimer les fichiers (images, cadre, polices) ?"
 
 #: train_tesseract.py:761
 msgid " Alrady exist! Please edit name to avoid replacing"
-msgstr ""
+msgstr "Existe déjà ! Veuillez éditer le nom pour éviter de l'écraser"
 
 #: train_tesseract.py:762
 msgid "Place it"
-msgstr ""
+msgstr "Le placer"
 
 #: train_tesseract.py:765
 msgid "File Name : "
-msgstr ""
+msgstr "Nom du fichier : "
 
 #: train_tesseract.py:795
 msgid "Error : running command failed"
+msgstr "Erreur : l'éxécution de la commande à échouée"
+
+#: train_tesseract.py:797
+#, python-brace-format
+msgid ""
+"Can't run command : {0}\n"
+" Please make sure you have write access to {1}"
 msgstr ""
+"Ne peut exécuter la commande : {0}\n"
+"Assurez-vous que vous d'avoir les droits en écriture sur {1}"
 
 #: train_tesseract.py:831
 msgid "Training images..."
+msgstr "Images en cours de reconnaissance…"
+
+#: train_tesseract.py:833
+#, python-brace-format
+msgid ""
+"Images to be trained \n"
+"{0}\n"
+" \t\t\n"
+"Language used : {1}\n"
+"Output tessdata directory : {2}"
 msgstr ""
+"Images qui doivent être reconnues\n"
+"{0}\n"
+" \t\t\n"
+"Langue utilisée :{1}\n"
+"Dossier de sortie pour tessdata :{2}"
 
 #: train_tesseract.py:888
 msgid "Combine with dictionarys too ?"
-msgstr ""
+msgstr "Combiner également avec les dictionnaires ?"
 
 #: train_tesseract.py:890
 msgid ""
 "Do you want to add dictionarys ? \t\t\n"
 "Do it if only all characters used in dictionarys are going to be trained!"
 msgstr ""
+"Voulez-vous ajouter des dictionnaires ?\t\t\n"
+"Faites cela uniquement si tous les caractères employés dans les "
+"dictionnaires doivent être reconnus !"
+
+#: train_tesseract.py:921
+#, python-brace-format
+msgid "Recognised text from image {0} with {1}"
+msgstr "Reconnaissance du texte depuis l'image {0} avec {1}"
 
 #: train_tesseract.py:1023
 msgid "Export-Boxes"
-msgstr ""
+msgstr "Exporter les cadres"
 
 #: train_tesseract.py:1025
 msgid "Load-Boxes"
-msgstr ""
+msgstr "Charger les cadres"
 
 #: train_tesseract.py:1125
 msgid "Find :"
@@ -1320,4 +1427,25 @@ msgstr "Rechercher :"
 
 #: train_tesseract.py:1154
 msgid "Not found!"
-msgstr ""
+msgstr "Non trouvé !"
+
+#: train_tesseract.py:1156
+#, python-brace-format
+msgid "The word '{0}' not found! Search from start ?"
+msgstr "Le mot  '{0}' n'a pas été trouvé ! Rechercher depuis le début ?"
+
+#: ui/gtk/icon.py:57
+msgid "Import-Pdf"
+msgstr "Importer un pdf"
+
+#: ui/gtk/icon.py:58
+msgid "Import-Folder"
+msgstr "Importer un dossier"
+
+#: ui/gtk/icon.py:59
+msgid "Import-Image"
+msgstr "Importer une image"
+
+#: ui/gtk/icon.py:76
+msgid "Cut"
+msgstr "Couper"
