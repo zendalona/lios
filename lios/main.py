@@ -720,8 +720,8 @@ class linux_intelligent_ocr_solution():
 			self.notify_information(_("No Scanner Detected!. Please update scanner list and try again"),0)
 			return;
 
-		self.notify_information(_("Scanning {} with resolution={} brightness={}").
-		format(filename,self.preferences.scan_resolution,self.preferences.scan_brightness))
+		self.notify_information(_("Scanning {}, resolution {}, brightness {}").
+		format(filename.split("/")[-1],self.preferences.scan_resolution,self.preferences.scan_brightness))
 		
 		p = multiprocessing.Process(target=(self.scanner_objects[selected_scanner].scan),
 		args=(filename,self.preferences.scan_resolution,
@@ -905,7 +905,7 @@ class linux_intelligent_ocr_solution():
 		self.process_breaker = False
 		mode = self.preferences.mode_of_rotation
 		if (mode == 0 or mode == 1):
-			self.notify_information(_("Scanning with resolution={} brightness={} for detecting angle of rotation")
+			self.notify_information(_("Scanning with resolution {}, brightness {}, for detecting angle of rotation.")
 			.format(self.preferences.scan_resolution,self.preferences.scan_brightness))
 			
 			p = multiprocessing.Process(target=(self.scanner_objects[selected_scanner].scan),
@@ -1036,10 +1036,10 @@ class linux_intelligent_ocr_solution():
 				#self.announce(_("Got {} words at brightness {}.").format(previous_optimised_count,mid_value))
 			else:
 				if (count != -1):
-					self.notify_information(_("Got {} words at brightness {}. Scanning with resolution={} brightness={}")
+					self.notify_information(_("Got {} words at brightness {}. Scanning with resolution {}, brightness {}.")
 					.format(count,pos-distance,self.preferences.scan_resolution,pos))
 				else:
-					self.notify_information(_("Scanning with resolution={} brightness={}")
+					self.notify_information(_("Scanning with resolution {}, brightness {}.")
 					.format(self.preferences.scan_resolution,pos))
 				
 				p = multiprocessing.Process(target=(self.scanner_objects[selected_scanner].scan),
