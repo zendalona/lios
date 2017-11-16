@@ -22,8 +22,11 @@ from gi.repository import Gtk
 from gi.repository import Gdk		
 		
 def start_main_loop():
-	Gdk.threads_init()
 	Gtk.main()
+
+def threads_init():
+	Gdk.threads_init()
+
 def stop_main_loop(data=None):
 	Gtk.main_quit()
 

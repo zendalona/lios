@@ -1168,6 +1168,7 @@ class TesseractTrainerGUI(TesseractTrainer):
 		win = TesseractTrainer(image_list)
 		win.connect_close_function(self.close)
 		win.show()
+		loop.threads_init()
 		loop.start_main_loop()
 	def close(self,*data):
 		loop.stop_main_loop()

@@ -173,6 +173,9 @@ class linux_intelligent_ocr_solution():
 		self.scanner_objects = []
 		self.is_updating_scanner_list = False
 
+		# Initialize locking mechanism
+		loop.threads_init()
+
 		#Load Preferences
 		self.preferences = preferences.lios_preferences()
 		self.preferences.set_from_file(macros.preferences_file_path)
