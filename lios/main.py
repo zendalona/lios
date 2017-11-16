@@ -509,6 +509,10 @@ class linux_intelligent_ocr_solution():
 
 		dlg_set_tool.add_widget(label)
 		label.show()
+
+		# Sleep 1 second for avoiding freeze while opening with pdf file
+		time.sleep(1)
+
 		loop.acquire_lock()
 		response = dlg_set_tool.run()
 		if(response == dialog.Dialog.BUTTON_ID_1):
@@ -1431,6 +1435,9 @@ pacman -S aspell-fr""").format(languages[self.preferences.language]))
 
 			if item.split('.')[-1] in ["pdf","Pdf"]:
 				self.import_images_from_pdf(item)
+				# import_images_from_pdf is a threaded function
+				# so stoping with one file
+				break;
 
 			if item.split('.')[-1] in macros.supported_text_formats:
 				text = editor.read_text_from_file(item)
