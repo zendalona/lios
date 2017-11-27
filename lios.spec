@@ -1,6 +1,6 @@
 ###########################################################################
 #    Lios - Linux-Intelligent-Ocr-Solution
-#    Copyright (C) 2011-2015 Nalin.x.Linux GPL-3
+#    Copyright (C) 2011-2017 Nalin.x.Linux GPL-3
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -16,28 +16,29 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/
 
 Name:           lios
-Version:        2.0
+Version:        2.7
 Release:        0
 License:        GPL-3.0+
 Summary:        Linux-Intelligent-Ocr-Solution
 Url:            http://sourceforge.net/projects/lios/
 Group:          Graphics
-Source0:        lios-2.0.tar.gz
+Source0:        lios-2.7.tar.gz
 BuildArch:      noarch
 Requires:       espeak 
 Requires:       python3-gobject
 Requires:       python3-enchant
 Requires:       python3-speechd
-Requires:       python3-pillow-sane
+Requires:       python3-sane
+# Requires:       python3-pillow-sane for fedora 20
 Requires:	PackageKit-gtk3-module
 Requires:       aspell-en 
 Requires:       cuneiform 
 Requires:       tesseract
 Requires:       poppler-utils
-
+Requires:       ImageMagick
 
 %description
-Lios is a free and open source software for converting print in to text using either scanner or a camera, It can also produce text out of scanned images from other sources such as Pdf, Image, Folder containing Images or screenshot. Program is given total accessibility for visually impaired. Lios is written in python3, and we release it under GPL-3 license. There are great many possibilities for this program, Feedback is the key to it, Expecting your feedback.
+Lios is a free and open source software for converting print in to text using either scanner, camera, or screenshot, It can also produce text out of scanned images from other sources such as Pdf, Image or Folder containing Images. Program is given total accessibility for visually impaired.  Lios is written in python3, and we release it under GPL-3 license.
 
 %prep
 %setup -q
@@ -52,10 +53,11 @@ python3 setup.py install -O1 --skip-build --prefix=%{_prefix} --root=%{buildroot
 %defattr(-,root,root)
 %doc COPYING NEWS
 #%{python3_sitelib}/*
-/usr/lib/python3.3/site-packages/*
+/usr/lib/python3.6/site-packages/*
 
 %{_datadir}/lios/*
 %{_datadir}/applications/*
+%{_datadir}/doc/*
 %{_datadir}/man/man1/*
 %{_datadir}/pixmaps/*
 %{_bindir}/*
