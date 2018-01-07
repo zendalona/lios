@@ -246,10 +246,21 @@ class TextView(Gtk.TextView):
 		insert_mark = buffer.get_insert()
 		iter1 = buffer.get_iter_at_mark(insert_mark)
 		iter2 = iter1.copy()
-		start = buffer.get_start_iter()
 		end = buffer.get_end_iter()
 		self.remove_all_highlights()
-		iter2.forward_sentence_end()
+		lineString = ""
+		# Get text word by word till a full stop found.
+		# If no full stop found, stop at minimum of 1000 more chars
+		# Full Stop for English,  Devanagari, Sinhala, Chinese/Japanese, Urudu
+		while( '\u002e\u0020' not in lineString \
+		and '\u0964\u0020' not in lineString \
+		and '\u0df4\u0020' not in lineString \
+		and '\u3002\u0020' not in lineString \
+		and '\u06d4\u0020' not in lineString \
+		and len(lineString) < 1000 and not end.equal(iter2)):
+			iter2.forward_char()
+			lineString = buffer.get_text(iter1,iter2,0)
+
 		buffer.apply_tag(self.highlight_tag, iter1, iter2)
 		buffer.place_cursor(iter2)
 		return buffer.get_text(iter1,iter2,0)
