@@ -325,6 +325,12 @@ class linux_intelligent_ocr_solution():
 					self.textview.set_text(file.read())
 				except:
 					pass
+		else:
+			try:
+				file = open(macros.recent_file_path,encoding="utf-8")
+				self.textview.set_text(file.read())
+			except:
+				pass
 		
 		
 		self.old_language = -1
@@ -432,6 +438,8 @@ class linux_intelligent_ocr_solution():
 		response = dlg.run()
 		if response == dialog.Dialog.BUTTON_ID_1:
 			to_go = spinbutton_page.get_value()
+			# Start search from begining to match properly
+			self.textview.move_cursor_to_line(1)
 			if (self.preferences.page_numbering_type == 0):
 				word = "Page-{0}".format(to_go)
 			else:
