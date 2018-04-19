@@ -20,7 +20,7 @@
 
 from gi.repository import Gtk	
 from lios.ui.gtk import icon
-
+from lios import macros
 		
 
 class Grid(Gtk.Grid):
@@ -146,7 +146,9 @@ class Toolbar(Gtk.Toolbar):
 				toolbar_item = Gtk.ToolButton(item[0])
 				toolbar_item.connect("clicked",item[1])
 				if item[0] in icon.stock_icon_dict.keys():
-					toolbar_item.set_icon_name(icon.stock_icon_dict[item[0]])
+					image = Gtk.Image()
+					image.set_from_file(macros.icon_dir+icon.stock_icon_dict[item[0]]+".png")
+					toolbar_item.set_icon_widget(image)
 				else:
 					label = Gtk.Label(item[0])
 					if(orientation == Gtk.Orientation.VERTICAL):

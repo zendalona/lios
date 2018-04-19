@@ -20,6 +20,7 @@
 
 from gi.repository import Gtk
 from lios.ui.gtk import icon		
+from lios import macros
 
 SEPARATOR = 1;
 
@@ -55,7 +56,8 @@ def create_menu(item,agr):
 		menu = Gtk.Menu()
 		if (item[0] in icon.stock_icon_dict.keys()):
 			image = Gtk.Image()
-			image.set_from_icon_name(icon.stock_icon_dict[item[0]],10)
+			#image.set_from_icon_name(icon.stock_icon_dict[item[0]],10)
+			image.set_from_file(macros.icon_dir+icon.stock_icon_dict[item[0]]+".png")
 			menu_item.set_image(image)
 			menu_item.set_always_show_image(True)
 		
@@ -74,7 +76,8 @@ def create_menu(item,agr):
 			terminal_menu_item = ImageMenuItem(item[0])
 			if (item[0] in icon.stock_icon_dict.keys()):
 				image = Gtk.Image()
-				image.set_from_icon_name(icon.stock_icon_dict[item[0]],10)
+				#image.set_from_icon_name(icon.stock_icon_dict[item[0]],10)
+				image.set_from_file(macros.icon_dir+icon.stock_icon_dict[item[0]]+".png")
 				terminal_menu_item.set_image(image)
 				terminal_menu_item.set_always_show_image(True)
 			terminal_menu_item.connect("activate",item[1])

@@ -47,6 +47,7 @@ version = "2.0"
 
 logo_file = "/usr/share/lios/lios.png"
 
+icon_dir = "/usr/share/lios/icons/"
 
 readme_file = "/usr/share/lios/readme.text"
 
