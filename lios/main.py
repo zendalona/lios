@@ -119,16 +119,17 @@ class linux_intelligent_ocr_solution():
 		self.imageview.load_image(macros.logo_file,[],imageview.ImageViewer.ZOOM_FIT)
 		#Context menu
 		self.context_menu_imageview = menu.ContextMenu(
-			[(_("Rotate-Right"),self.rotate_current_images_to_right),
+			[(_("Recognize-Current-Image"),self.ocr_current_image),
+			(_("Recognize-Selected-Areas"),self.ocr_selected_areas),
+			(_("Recognize-Current-Image-With-Rotation"),self.ocr_current_image_with_rotation),menu.SEPARATOR,
+			(_("Rotate-Right"),self.rotate_current_images_to_right),
 			(_("Rotate-Twice"),self.rotate_current_images_to_twice),
 			(_("Rotate-Left"),self.rotate_current_images_to_left),menu.SEPARATOR,
 			(_("Zoom-In"),self.imageview.zoom_in),(_("Zoom-Fit"),self.imageview.zoom_fit),
-			(_("Zoom-Out"),self.imageview.zoom_out),menu.SEPARATOR,
+			(_("Zoom-Out"),self.imageview.zoom_out), menu.SEPARATOR,
 			(_("Train-Selected-Areas"),self.train_selected_areas),
 			(_("Save-Selected-Areas"),self.save_selected_areas),
-			(_("Recognize-Selected-Areas"),self.ocr_selected_areas),
-			(_("Recognize-Current-Image"),self.ocr_current_image),
-			(_("Recognize-Current-Image-With-Rotation"),self.ocr_current_image_with_rotation)]);
+			]);
 		self.imageview.connect_context_menu_button_callback(self.imageview_popup_context_menu)
 
 		
