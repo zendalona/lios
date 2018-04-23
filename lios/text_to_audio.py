@@ -96,6 +96,16 @@ class text_to_audio_converter:
 		to_convert.close()
 		os.system('espeak -a %s -v %s -f tmp.txt -w %s.wav --split=%s -p %s -s %s' % (self.volume,self.voice,output_file_name,self.split_time,self.pitch,self.speed))
 
+	def record_to_mp3(self,output_file_name):
+		to_convert = open("tmp.txt",'w')
+		to_convert.write(self.text)
+		to_convert.close()
+		os.system("rm -rf /tmp/lios_audio")
+		os.system("mkdir /tmp/lios_audio")
+		os.system('espeak -a %s -v %s -f tmp.txt -w /tmp/lios_audio/%s.wav --split=%s -p %s -s %s'%(self.volume,self.voice,output_file_name.split("/")[-1],self.split_time,self.pitch,self.speed))
+		cmd = 'for f in /tmp/lios_audio/*.wav; do filename=$(basename "$f");name="${filename%.*}"; echo $name; lame --vbr-new -V 3  "$f" '+"/".join(output_file_name.split("/")[:-1])+'/$name.mp3; done;'
+		os.system(cmd)
+
 
 if __name__ == "__main__":
 	ob = text_to_audio_converter("This is a sample of text in english")

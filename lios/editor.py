@@ -782,15 +782,24 @@ class BasicTextView(text_view.TextView):
 		combobox = widget.ComboBox()
 		for item in text_to_audio_converter.list_voices():
 			combobox.append_text(item)
+		combobox.set_active(12)
 		label_voice = widget.Label(_("Voice : "))
 		label_voice.set_mnemonic_widget(combobox)
+
+		combobox_format = widget.ComboBox()
+		combobox_format.append_text("MP3 (liblame required)")
+		combobox_format.append_text("WAV")
+		combobox_format.set_active(0)
+		label_format = widget.Label(_("Format : "))
+		label_format.set_mnemonic_widget(combobox_format)
 		
 		grid.add_widgets([
 			(label_speed,1,1),(spinbutton_speed,1,1),containers.Grid.NEW_ROW,
 			(label_volume,1,1),(spinbutton_volume,1,1),containers.Grid.NEW_ROW,
 			(label_pitch,1,1),(spinbutton_pitch,1,1),containers.Grid.NEW_ROW,
 			(label_split_time,1,1),(spinbutton_split,1,1),containers.Grid.NEW_ROW,
-			(label_voice,1,1),(combobox,1,1)])
+			(label_voice,1,1),(combobox,1,1),containers.Grid.NEW_ROW,
+			(label_format,1,1),(combobox_format,1,1)])
 		dialog_ac.add_widget(grid)
 		grid.show_all()
 		
@@ -800,11 +809,15 @@ class BasicTextView(text_view.TextView):
 			volume = spinbutton_volume.get_value()
 			split = spinbutton_split.get_value()
 			voice = combobox.get_active_text()
-			save_file = file_chooser.FileChooserDialog(_("Select the file to open"),file_chooser.FileChooserDialog.SAVE,["wav"],macros.home_dir)
+			output_format = combobox_format.get_active()
+			save_file = file_chooser.FileChooserDialog(_("Save"),file_chooser.FileChooserDialog.SAVE,["wav","mp3"],macros.home_dir)
 			response = save_file.run()
 			if response == file_chooser.FileChooserDialog.ACCEPT:
 				converter = text_to_audio_converter(text,volume,voice,split,pitch,speed)
-				converter.record_to_wave(save_file.get_filename())
+				if (output_format == 0 ):
+					converter.record_to_mp3(save_file.get_filename())
+				else:
+					converter.record_to_wave(save_file.get_filename())
 			save_file.destroy()
 		dialog_ac.destroy()
 		
