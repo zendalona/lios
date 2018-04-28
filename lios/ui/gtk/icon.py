@@ -17,10 +17,8 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###########################################################################
-import gettext
-gettext.bindtextdomain('myapplication', '/path/to/my/language/directory')
-gettext.textdomain('myapplication')
-_ = gettext.gettext
+from lios import localization
+_ = localization._
 
 stock_icon_dict = { _("_File") :"edit-copy",
 					_("New") :"document-new",
@@ -58,6 +56,7 @@ stock_icon_dict = { _("_File") :"edit-copy",
 					_("Import-Folder"):"folder-pictures",
 					_("Import-Image"):"image",
 					_("Invert-List"):"sort-descending",
+					_("Recognize"):"convert",
 					_("_Recognize"):"convert",
 					_("Recognize-Selected-Images"):"convert",
 					_("Recognize-All-Images"):"convert",
