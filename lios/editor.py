@@ -845,3 +845,4 @@ class BasicTextView(text_view.TextView):
 			print_dialog.print_with_action(text,print_dialog.print_with_action.EXPORT,
 				save_file.get_filename())
 			save_file.destroy()
+
