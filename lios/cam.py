@@ -33,7 +33,7 @@ class Cam(Gtk.Window):
         }
 
 	def __init__(self,device,x,y,directory="/tmp/"):
-		Gtk.Window.__init__(self,title="Press take/close button at the right side")
+		Gtk.Window.__init__(self,title=_("Press take/close button at the right side"))
 		Gst.init(None)
 		self.resize(x, y)
 		self.connect("destroy",self.cam_close)
@@ -42,10 +42,10 @@ class Cam(Gtk.Window):
 		box = Gtk.VBox()
 		self.drawingarea = Gtk.DrawingArea()
 				
-		button1 = Gtk.Button("Take")
+		button1 = Gtk.Button(_("Take"))
 		button1.connect("clicked",self.cam_take)
 
-		button2 = Gtk.Button("Close")
+		button2 = Gtk.Button(-("Close"))
 		button2.connect("clicked",self.cam_close)
 
 		box.pack_end(self.drawingarea,True,True,0)

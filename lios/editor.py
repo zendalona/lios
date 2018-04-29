@@ -603,10 +603,10 @@ class BasicTextView(text_view.TextView):
 				else:
 					break
 			
-		label_word = widget.Label(_("<b> word  : </b>"))
+		label_word = widget.Label(_("<b> Word: </b>"))
 		label_word.set_use_markup(True)
 		label_word.set_mnemonic_widget(entry_word)
-		label_replace_word = widget.Label(_("<b> Replace word : </b>"))
+		label_replace_word = widget.Label(_("<b> Replace word: </b>"))
 		label_replace_word.set_use_markup(True)
 		label_replace_word.set_mnemonic_widget(entry_replace_word)
 		
@@ -620,7 +620,7 @@ class BasicTextView(text_view.TextView):
 		button_previous.connect_function(find_previous)
 		button_replace = widget.Button(_("Replace"))
 		button_replace.connect_function(replace)	
-		button_replace_all = widget.Button(_("Replace-All"))
+		button_replace_all = widget.Button(_("Replace All"))
 		button_replace_all.connect_function(replace_all)
 		
 		
