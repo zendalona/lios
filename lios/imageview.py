@@ -55,10 +55,10 @@ class ImageViewer(containers.Paned):
 		self.add(self.scrolled)
 				
 		#Drawing List Tree View
-		self.treeview = tree_view.TreeView([("Selected",bool,False),
-		("X",float,True),("Y",float,True),
+		self.treeview = tree_view.TreeView([(_("Selected"),bool,False),
+		(_("X"),float,True),(_("Y"),float,True),
 		(_("Width"),float,True),(_("Height"),float,True),
-		("Letter",str,True)],self.edited_callback)
+		(_("Letter"),str,True)],self.edited_callback)
 		
 		self.treeview.connect_cursor_change_function(self.treeview_cursor_changed)
 		self.treeview.connect_rows_reordered_function(self.treeview_rows_reordered)

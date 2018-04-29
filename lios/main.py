@@ -74,7 +74,7 @@ class linux_intelligent_ocr_solution():
 		scroll_box_iconview.add(self.iconview)
 		box_iconview = containers.Box(containers.Box.VERTICAL)
 		toolbar_iconview = containers.Toolbar(containers.Toolbar.HORIZONTAL,
-			[('Open',self.open_files),(_("Take-Screenshot"),self.take_rectangle_screenshot),
+			[(_('Open'),self.open_files),(_("Take-Screenshot"),self.take_rectangle_screenshot),
 			(_("Scan-Using-Webcam"),self.scan_using_cam),(_("_Recognize"),self.ocr_selected_images),
 			(_("Clear"),self.iconview_remove_all_images),])
 		#Context menu
@@ -140,7 +140,7 @@ class linux_intelligent_ocr_solution():
 		self.textview.set_accepts_tab(False)
 		box_editor = containers.Box(containers.Box.HORIZONTAL)
 		toolbar_editor = containers.Toolbar(containers.Toolbar.VERTICAL,
-			[(_("New"),self.new),('Open',self.open_files),
+			[(_("New"),self.new),(_('Open'),self.open_files),
 			(_("Save"),self.textview.save),containers.Toolbar.SEPARATOR,
 			(_("Spell-Check"),self.textview.open_spell_check),containers.Toolbar.SEPARATOR,
 			(_("Undo"),self.textview.undo),(_("Redo"),self.textview.redo),
@@ -750,11 +750,9 @@ class linux_intelligent_ocr_solution():
 			
 		if(self.process_breaker):
 			return
-		print(_("Adding image to list"))
 		loop.acquire_lock()
 		self.iconview.add_item(filename)
 		loop.release_lock()
-		print(_("Image added"))
 		if(self.process_breaker):
 			return
 		
@@ -772,7 +770,6 @@ class linux_intelligent_ocr_solution():
 		
 		print(language)
 		rotation_list = [00,90,180,270]
-		print("Angle = ",angle)
 		if mode == 2:	#Manual
 			if(angle not in rotation_list):
 				os.system("convert -rotate {0} {1} {1}".format(rotation_list[angle],file_name))
@@ -858,34 +855,26 @@ class linux_intelligent_ocr_solution():
 		for i in range(0,self.preferences.number_of_pages_to_scan):
 			destination = "{0}{1}.jpg".format(macros.tmp_dir,self.preferences.get_page_number_as_string())
 			destination = self.get_feesible_filename_from_filename(destination)
-			print(_("#Scanning"))
 			t = threading.Thread(target=self.scan,args=(destination,))
 			t.start()
 			while(t.is_alive()):
 				pass
-			print(_("#Scan Compleated"))
 			if(self.process_breaker):
 				break
 			time.sleep(self.preferences.time_between_repeated_scanning)	
 			if(self.process_breaker):
 				break
-			print(_("#Running OCR"))	
 			self.notify_information(_("Recognizing {}").format(destination))
 			text,angle = self.ocr(destination,mode,angle)	
-			print(_("#Placing text and cursor"))
 			if (i == 0):
 				self.insert_text_to_textview(text,True,True)
 			else:
 				self.insert_text_to_textview(text,False,True)
-			print(_("#Placing text and cursor Finished"))				
-			print(_("#Redraw"))
 			self.imageview.redraw()
-			print(_("#Redraw Compleated"))
 			loop.acquire_lock()
 			self.iconview.reload_preview(destination)
 			self.notify_information(_("Page {}").format(self.preferences.get_page_number_as_string()),0)
 			loop.release_lock()
-			print(_("#Preview Updated"))
 			self.preferences.update_page_number()
 			
 			if mode == 1: #Change the mode partial automatic to Manual
@@ -894,7 +883,6 @@ class linux_intelligent_ocr_solution():
 							
 			if(self.process_breaker):
 				break
-			print(_("#Compleated "),i);
 		self.notify_information(_("Compleated"),0)
 		#self.announce(_("Job completed!")
 		#self.make_scanner_widgets_active(lock=True)
@@ -938,7 +926,7 @@ class linux_intelligent_ocr_solution():
 		value = self.preferences.scan_brightness;
 		distance = 10; start = 10; end = 90;
 		count = None
-		result_text = "<b>Click 'Optimize' to start optimisation </b>" 
+		result_text = _("<b>Click 'Optimize' to start optimisation </b>")
 		while(1):
 			loop.acquire_lock()
 			dlg = dialog.Dialog(_("Optimize Scanner-Brightness"),
@@ -996,7 +984,7 @@ class linux_intelligent_ocr_solution():
 				(_("Yes set this rotation"), dialog.Dialog.BUTTON_ID_1,
 				_("No continue with existing mode"), dialog.Dialog.BUTTON_ID_2))
 				label = widget.Label(_("Do you want to fix the angle at {}\
-				\ndegree manual rotation ?".format(angle)))
+				\ndegree manual rotation ?").format(angle))
 				dlg_set_mode.add_widget(label)
 				label.show()
 				response = dlg_set_mode.run()
@@ -1031,9 +1019,9 @@ class linux_intelligent_ocr_solution():
 				#self.make_preferences_widgets_active(lock=True)
 				return True
 			count, value = list[0][0],list[0][1];
-			result_text = "<b>Optimisation Result "
+			result_text = _("<b>Optimisation Result ")
 			for item in list:
-				result_text += "\nGot {} Words at brightness {}".format(item[0], item[1])
+				result_text += _("\nGot {} Words at brightness {}").format(item[0], item[1])
 			result_text += "</b>" 
 			start = value-distance;
 			end = value+distance;
@@ -1084,7 +1072,7 @@ class linux_intelligent_ocr_solution():
 		#self.scanner_objects[selected_scanner].cancel()
 		os.system("pkill convert")
 		self.available_ocr_engine_list[self.preferences.ocr_engine].cancel()
-		self.notify_information("Terminated",0)
+		self.notify_information(_("Terminated"),0)
 		
 	def open_readme(self,*data):
 		if(self.textview.get_modified()):
@@ -1280,7 +1268,6 @@ class linux_intelligent_ocr_solution():
 			for item in self.iconview.get_selected_item_names():
 				command += item + " "
 			command += '"'+file_name+'"'
-			print("File name : ",file_name)
 			os.system(command)
 		dlg.destroy()
 
@@ -1498,9 +1485,9 @@ pacman -S aspell-fr""").format(languages[self.preferences.language]))
 		self.add_image_to_list(filename,"/tmp/Lios/{}".format(filename.split("/")[2]),True,False)
 	
 	def about(self,*data):
-		dlg = about.AboutDialog("Lios",None)
-		dlg.set_name("Linux-Intelligent-Ocr-Solution")
-		dlg.set_program_name("Linux-Intelligent-Ocr-Solution")
+		dlg = about.AboutDialog(_("Lios"),None)
+		dlg.set_name(_("Linux-Intelligent-Ocr-Solution"))
+		dlg.set_program_name(_("Linux-Intelligent-Ocr-Solution"))
 		dlg.set_version(macros.version)
 		dlg.set_logo_from_file(macros.logo_file)
 		dlg.set_comments(_("Lios is a free and open source software\n \

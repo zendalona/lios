@@ -108,7 +108,7 @@ class BasicTextView(text_view.TextView):
 	def new(self,*data):
 		if (self.get_modified() == True):
 			dlg =  dialog.Dialog(_("Start new without saving ?"),
-			("Cancel", dialog.Dialog.BUTTON_ID_1,_("Start-New!"), dialog.Dialog.BUTTON_ID_2))                           						
+			(_("Cancel"), dialog.Dialog.BUTTON_ID_1,_("Start-New!"), dialog.Dialog.BUTTON_ID_2))
 			label = widget.Label(_("Start new without saving ?"))
 			dlg.add_widget(label)
 			label.show()
@@ -243,7 +243,7 @@ class BasicTextView(text_view.TextView):
 	def open_text_cleaner(self,*data):
 		window_text_cleaner = window.Window(_("Text Cleaner"))
 		scroll_box = containers.ScrollBox()
-		treeview = tree_view.TreeView([("Match",str,True),("Replace",str,True)],None)
+		treeview = tree_view.TreeView([(_("Match"),str,True),(_("Replace"),str,True)],None)
 		scroll_box.add(treeview)
 		treeview.set_list(self.text_cleaner_list)
 
@@ -434,10 +434,7 @@ class BasicTextView(text_view.TextView):
 			line_number = item.split("~")[1].split()[0]
 			text = open(filename).read()
 			self.set_text(text)
-			
-			#self.move_cursor_to_line(int(line_number))
-			print(int(line_number),filename)
-			
+
 			self.save_file_name = filename
 			self.import_bookmarks_using_filename()
 			
@@ -663,7 +660,7 @@ class BasicTextView(text_view.TextView):
 					break
 			if(self.is_cursor_at_end()):
 				entry.set_text("")
-				statusbar_context.set_text("Spell Check finished")
+				statusbar_context.set_text(_("Spell Check finished"))
 			
 
 		def ignore_all(*data):
@@ -680,7 +677,6 @@ class BasicTextView(text_view.TextView):
 			replace_word = entry.get_text()
 			change_all_dict[self.word] = replace_word
 			self.replace_last_word(replace_word)
-			print(change_all_dict)
 			find_next_mispeleed_word()
 		
 		def delete(*data):
@@ -787,8 +783,8 @@ class BasicTextView(text_view.TextView):
 		label_voice.set_mnemonic_widget(combobox)
 
 		combobox_format = widget.ComboBox()
-		combobox_format.append_text("MP3 (liblame required)")
-		combobox_format.append_text("WAV")
+		combobox_format.append_text(_("MP3 (liblame required)"))
+		combobox_format.append_text(_("WAV"))
 		combobox_format.set_active(0)
 		label_format = widget.Label(_("Format : "))
 		label_format.set_mnemonic_widget(combobox_format)

@@ -372,8 +372,6 @@ class lios_preferences:
 		label_scan_driver.set_mnemonic_widget(combobox_scan_driver)		
 		for item in self.available_scanner_drivers:
 			combobox_scan_driver.add_item(item)
-			print(item)
-		print(self.scan_driver)
 		combobox_scan_driver.set_active(self.scan_driver)
 
 		sparator_3 = widget.Separator()
