@@ -1365,7 +1365,7 @@ pacman -S aspell-fr""").format(languages[self.preferences.language]))
 		self.textview.set_highlight_background(self.preferences.background_highlight_color)
 				
 	def save_preferences(self,*data):
-		save_preferences_dlg = FileChooserDialog(_("save_preferences as "),
+		save_preferences_dlg = FileChooserDialog(_("Save preferences as "),
 		FileChooserDialog.SAVE,["cfg"],macros.home_dir)
 		response = save_preferences_dlg.run()		
 		if response == FileChooserDialog.ACCEPT:
