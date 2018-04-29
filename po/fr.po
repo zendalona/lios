@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lios\n"
 "POT-Creation-Date: 2018-04-29 15:12+0100\n"
-"PO-Revision-Date: 2018-04-29 15:13+0100\n"
+"PO-Revision-Date: 2018-04-29 15:36+0100\n"
 "Last-Translator: L'Africain\n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -971,7 +971,7 @@ msgstr ""
 
 #: main.py:1368
 msgid "Save preferences as "
-msgstr ""
+msgstr "Enregistrer les préférences sous "
 
 #: main.py:1373
 msgid "Preferences saved to "

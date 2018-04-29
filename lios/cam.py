@@ -45,7 +45,7 @@ class Cam(Gtk.Window):
 		button1 = Gtk.Button(_("Take"))
 		button1.connect("clicked",self.cam_take)
 
-		button2 = Gtk.Button(-("Close"))
+		button2 = Gtk.Button(_("Close"))
 		button2.connect("clicked",self.cam_close)
 
 		box.pack_end(self.drawingarea,True,True,0)
