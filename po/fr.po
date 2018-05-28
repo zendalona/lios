@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: lios\n"
-"POT-Creation-Date: 2018-04-29 15:12+0100\n"
-"PO-Revision-Date: 2018-04-29 15:36+0100\n"
+"POT-Creation-Date: 2018-05-28 19:27+0100\n"
+"PO-Revision-Date: 2018-05-28 19:48+0100\n"
 "Last-Translator: L'Africain\n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -27,6 +27,12 @@ msgstr "Appuyer sur le bouton Prendre/Fermer sur le côté droit"
 #: cam.py:45
 msgid "Take"
 msgstr "Prendre"
+
+#: cam.py:48 editor.py:319 editor.py:390 editor.py:457 editor.py:712
+#: preferences.py:416 train_tesseract.py:240 train_tesseract.py:363
+#: train_tesseract.py:733 train_tesseract.py:832
+msgid "Close"
+msgstr "Fermer"
 
 #: editor.py:50
 msgid "{} Decode error Select Other Character Encoding"
@@ -127,8 +133,7 @@ msgstr "Importer"
 msgid "Export"
 msgstr "Exporter"
 
-#: editor.py:308 imageview (copie).py:80 imageview.py:80 main.py:79
-#: ui/gtk/icon.py:68
+#: editor.py:308 imageview.py:80 main.py:79 ui/gtk/icon.py:68
 msgid "Clear"
 msgstr "Vider"
 
@@ -143,12 +148,6 @@ msgstr "Appliquer depuis le curseur"
 #: editor.py:316
 msgid "Apply on entire text"
 msgstr "Appliquer à tout le texte"
-
-#: editor.py:319 editor.py:390 editor.py:457 editor.py:712 preferences.py:416
-#: train_tesseract.py:240 train_tesseract.py:363 train_tesseract.py:733
-#: train_tesseract.py:832
-msgid "Close"
-msgstr "Fermer"
 
 #: editor.py:349 editor.py:422
 msgid "Bookmark Table"
@@ -328,14 +327,6 @@ msgstr "Enregistrer"
 msgid "Enter the file name"
 msgstr "Entrer le nom du fichier"
 
-#: imageview (copie).py:75 imageview.py:75
-msgid "_Delete"
-msgstr "_Supprimer"
-
-#: imageview (copie).py:77 imageview.py:77
-msgid "Shortcut Alt+D"
-msgstr "Raccourci Alt+D"
-
 #: imageview.py:58 main.py:206 main.py:209 main.py:212
 msgid "Selected"
 msgstr "Sélectionné"
@@ -359,6 +350,14 @@ msgstr "Hauteur"
 #: imageview.py:61
 msgid "Letter"
 msgstr "Lettre"
+
+#: imageview.py:75
+msgid "_Delete"
+msgstr "_Supprimer"
+
+#: imageview.py:77
+msgid "Shortcut Alt+D"
+msgstr "Raccourci Alt+D"
 
 #: main.py:77 main.py:143 main.py:190 ui/gtk/icon.py:25
 msgid "Open"
