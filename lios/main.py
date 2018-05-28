@@ -75,7 +75,7 @@ class linux_intelligent_ocr_solution():
 		box_iconview = containers.Box(containers.Box.VERTICAL)
 		toolbar_iconview = containers.Toolbar(containers.Toolbar.HORIZONTAL,
 			[(_('Open'),self.open_files),(_("Take-Screenshot"),self.take_rectangle_screenshot),
-			(_("Scan-Using-Webcam"),self.scan_using_cam),(_("_Recognize"),self.ocr_selected_images),
+			(_("Scan-Using-Webcam"),self.scan_using_cam),(_("Recognize"),self.ocr_selected_images),
 			(_("Clear"),self.iconview_remove_all_images),])
 		#Context menu
 		self.context_menu_iconview = menu.ContextMenu([
@@ -277,7 +277,7 @@ class linux_intelligent_ocr_solution():
 		button_scan = widget.Button(_("Scan"))
 		button_scan.connect_function(self.scan_single_image)		
 		toolbar_main = containers.Toolbar(containers.Toolbar.HORIZONTAL,
-			[(_("_Preferences"),self.open_preferences_general_page),
+			[(_("Preferences"),self.open_preferences_general_page),
 			(_("Video-Tutorials"),self.open_video_tutorials),
 			(_("About"),self.about),
 			(_("Quit"),self.quit)])				
