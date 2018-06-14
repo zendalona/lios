@@ -750,7 +750,7 @@ class BasicTextView(text_view.TextView):
 		else:
 			dlg.destroy()
 	
-	def audio_converter(self,data=None):
+	def audio_converter(self,data=None,voice=None):
 		if (self.has_selection()):
 			text = self.get_selected_text()
 		else:
@@ -778,7 +778,8 @@ class BasicTextView(text_view.TextView):
 		combobox = widget.ComboBox()
 		for item in text_to_audio_converter.list_voices():
 			combobox.append_text(item)
-		combobox.set_active(12)
+		if voice is not None:
+			combobox.set_active(voice)
 		label_voice = widget.Label(_("Voice : "))
 		label_voice.set_mnemonic_widget(combobox)
 

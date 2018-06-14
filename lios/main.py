@@ -248,7 +248,7 @@ class linux_intelligent_ocr_solution():
 				(_("Export"),self.textview.export_text_cleaner_list,"None"),
 				(_("Apply-From-Cursor"),self.textview.apply_text_cleaner_from_cursor,"None"),
 				(_("Apply-Entire"),self.textview.apply_text_cleaner_entire_text,"None")],
-			(_("Audio-Converter"),self.textview.audio_converter,"None"),
+			(_("Audio-Converter"),self.audio_converter,"None"),
 			(_("Dictionary"),self.artha,"<Control><Alt>W"),
 			(_("Bookmark"),self.textview.create_bookmark,"<Control>B"),
 			(_("Bookmark-Table"),self.textview.open_bookmark_table,"<Alt>B"),
@@ -429,6 +429,9 @@ class linux_intelligent_ocr_solution():
 			self.preferences.starting_page_number = 1
 			with open(macros.recent_file_path,"w") as file:
 				file.write("")
+
+	def audio_converter(self,*data):
+		self.textview.audio_converter(voice=self.preferences.speech_language)
 
 	def go_to_page(self,*data):
 		spinbutton_page = widget.SpinButton(0,0,self.preferences.starting_page_number,1,5,0)
