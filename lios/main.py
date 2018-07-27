@@ -1332,7 +1332,7 @@ class linux_intelligent_ocr_solution():
 				dlg = dialog.Dialog(_("Dictionary not found!"), (_("Ok"),dialog.Dialog.BUTTON_ID_1))
 				label = widget.Label(_(
  """Please install aspell, ispell, hunspell, myspell, or uspell 
-dictionary for your language({0}) and restart Lios!
+dictionary for your language and restart Lios!
 Otherwise spellchecker and auto-rotation will work with english(fallback). 
 
 For example on debian based system one can install aspell or 
@@ -1347,7 +1347,7 @@ On rpm based system use
 yum install aspell-fr
 			
 On arch based system use 
-pacman -S aspell-fr""").format(languages[self.preferences.language]))
+pacman -S aspell-fr"""))
 				dlg.add_widget(label)
 				label.show()
 				dlg.run()
