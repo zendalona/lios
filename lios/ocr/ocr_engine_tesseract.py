@@ -27,7 +27,8 @@ TESSDATA_POSSIBLE_PATHS = [
 	"/usr/share/tessdata",
 	"/usr/local/share/tesseract-ocr/tessdata",
 	"/usr/local/share/tesseract/tessdata",
-	"/usr/local/share/tessdata" ]
+	"/usr/local/share/tessdata",
+	"/usr/share/tesseract-ocr/4.00/tessdata" ]
 
 TESSDATA_EXTENSION = ".traineddata"
 
