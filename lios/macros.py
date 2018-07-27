@@ -43,7 +43,7 @@ supported_text_formats = get_list_of_mixed_case_combinations(["txt","text"])
 
 supported_pdf_formats = get_list_of_mixed_case_combinations(["pdf"])
 
-version = "2.0"
+version = "2.7.1"
 
 logo_file = "/usr/share/lios/lios.png"
 

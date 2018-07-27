@@ -1,6 +1,6 @@
 ###########################################################################
 #    Lios - Linux-Intelligent-Ocr-Solution
-#    Copyright (C) 2011-2017 Nalin.x.Linux GPL-3
+#    Copyright (C) 2011-2018 Nalin.x.Linux GPL-3
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -16,13 +16,13 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/
 
 Name:           lios
-Version:        2.7
+Version:        2.7.1
 Release:        0
 License:        GPL-3.0+
 Summary:        Linux-Intelligent-Ocr-Solution
 Url:            http://sourceforge.net/projects/lios/
 Group:          Graphics
-Source0:        lios-2.7.tar.gz
+Source0:        lios-2.7.1.tar.gz
 BuildArch:      noarch
 Requires:       espeak 
 Requires:       python3-gobject
@@ -56,6 +56,7 @@ python3 setup.py install -O1 --skip-build --prefix=%{_prefix} --root=%{buildroot
 /usr/lib/python3.6/site-packages/*
 
 %{_datadir}/lios/*
+%{_datadir}/lios/icons/*
 %{_datadir}/applications/*
 %{_datadir}/doc/*
 %{_datadir}/man/man1/*
