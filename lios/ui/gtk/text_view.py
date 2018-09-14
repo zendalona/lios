@@ -249,14 +249,29 @@ class TextView(Gtk.TextView):
 		end = buffer.get_end_iter()
 		self.remove_all_highlights()
 		lineString = ""
-		# Get text word by word till a full stop found.
+		# Get text word by word till a full stop followed by a space, CR or LF found.
 		# If no full stop found, stop at minimum of 1000 more chars
-		# Full Stop for English,  Devanagari, Sinhala, Chinese/Japanese, Urudu
+
+		# Full Stop for English(u002e),  Devanagari(u0964), Sinhala(u0df4),
+		# Chinese/Japanese(u3002), Arabic(u06d4)
+
+		# Space - 0020, Carriage return(CR) - 000d , line feed (LF) - 000a
+
 		while( '\u002e\u0020' not in lineString \
+		and '\u002e\u000d' not in lineString \
+		and '\u002e\u000a' not in lineString \
 		and '\u0964\u0020' not in lineString \
+		and '\u0964\u000d' not in lineString \
+		and '\u0964\u000a' not in lineString \
 		and '\u0df4\u0020' not in lineString \
+		and '\u0df4\u000d' not in lineString \
+		and '\u0df4\u000a' not in lineString \
 		and '\u3002\u0020' not in lineString \
+		and '\u3002\u000a' not in lineString \
+		and '\u3002\u000d' not in lineString \
 		and '\u06d4\u0020' not in lineString \
+		and '\u06d4\u000a' not in lineString \
+		and '\u06d4\u000d' not in lineString \
 		and len(lineString) < 1000 and not end.equal(iter2)):
 			iter2.forward_char()
 			lineString = buffer.get_text(iter1,iter2,0)
