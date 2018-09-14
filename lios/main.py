@@ -148,7 +148,8 @@ class linux_intelligent_ocr_solution():
 			(_("Find"),self.textview.open_find_dialog),
 			(_("Find-Replace"),self.textview.open_find_and_replace_dialog),
 			containers.Toolbar.SEPARATOR,
-			(_("Start/Stop-Reader"),self.start_or_stop_reader),
+			(_("Start-Reader"),self.start_reader),
+			(_("Stop-Reader"),self.stop_reader),
 			containers.Toolbar.SEPARATOR,
 			(_("Go-To-Line"),self.textview.go_to_line),
 			(_("Go-To-Page"),self.go_to_page),
@@ -254,7 +255,8 @@ class linux_intelligent_ocr_solution():
 			(_("Bookmark-Table"),self.textview.open_bookmark_table,"<Alt>B"),
 			(_("Import-Bookmarks"),self.textview.import_bookmarks_from_file,"None"),
 			(_("Bookmark-Table-Complete"),self.textview.open_all_bookmark_table,"<Super>B"),
-			(_("Start/Stop-Reader"),self.start_or_stop_reader,"F5"),
+			(_("Start-Reader"),self.start_reader,"F5"),
+			(_("Stop-Reader"),self.stop_reader,"<Control>F5"),
 			(_("Increase-Reader-Speed"),self.increase_reader_speed,"<Ctrl>Prior"),
 			(_("Decrease-Reader-Speed"),self.decrease_reader_speed,"<Ctrl>Next"),
 			(_("Stop-All-Process"),self.stop_all_process,"<Control>F4")],
@@ -342,7 +344,8 @@ class linux_intelligent_ocr_solution():
 		self.make_preferences_effective()
 		
 		# Text TTS reading switch
-		self.reading_breaker = True
+		self.is_reading = False
+		self.reader_stop_pressed = False
 
 		self.notify_information(_("Welcome to {} Version {}").format(macros.app_name,macros.version),0)
 
@@ -1448,11 +1451,9 @@ pacman -S aspell-fr"""))
 					self.textview.insert_text(text,editor.BasicTextView.AT_END)
 
 	@on_thread
-	def start_or_stop_reader(self,*data):
-		if (self.reading_breaker == False):
-			self.reading_breaker = True
-		else:
-			self.reading_breaker = False
+	def start_reader(self,*data):
+		if(self.is_reading == False and self.reader_stop_pressed == False):
+			self.is_reading = True
 			speaker = speech.Speech()
 			speaker.set_output_module(speaker.list_output_modules()[self.preferences.speech_module])
 			if(self.preferences.speech_module != -1 and len(speaker.list_voices()) > 1):
@@ -1466,9 +1467,19 @@ pacman -S aspell-fr"""))
 				speaker.say(sentence)
 				loop.release_lock()
 				speaker.wait()
-				if(self.reading_breaker):
-					break
+				if(self.reader_stop_pressed == True):
 					speaker.close()
+					self.is_reading = False;
+					self.reader_stop_pressed = False
+					break
+
+			self.is_reading = False;
+			self.reader_stop_pressed = False
+
+
+	def stop_reader(self, *data):
+		if(self.is_reading):
+			self.reader_stop_pressed = True
 	
 	def increase_reader_speed(self,*data):
 		if (self.preferences.speech_rate < 100):
