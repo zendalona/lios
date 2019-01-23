@@ -691,7 +691,7 @@ class linux_intelligent_ocr_solution():
 			loop.release_lock()
 		except Exception as ex:
 			loop.acquire_lock()
-			self.notify_information(ex,0)
+			self.notify_information("Scanner list update error : "+str(ex),0)
 			loop.release_lock()
 		finally:
 			self.is_updating_scanner_list = False
