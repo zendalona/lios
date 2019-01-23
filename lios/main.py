@@ -411,11 +411,14 @@ class linux_intelligent_ocr_solution():
 
 	def list_updated_event_handler(self,*data):
 		filename = self.imageview.get_filename()
-		file = open(filename+".box","w")
-		for item in self.imageview.get_list():
-			file.write("{0} {1} {2} {3} {4} 0\n".format(str(item[0]),
-			str(int(item[1])),str(int(item[2])),
-			str(int(item[3])),str(int(item[4]))))
+		if(filename == macros.logo_file):
+			self.imageview.clear_selection(None)
+		else:
+			file = open(filename+".box","w")
+			for item in self.imageview.get_list():
+				file.write("{0} {1} {2} {3} {4} 0\n".format(str(item[0]),
+				str(int(item[1])),str(int(item[2])),
+				str(int(item[3])),str(int(item[4]))))
 
 	@on_thread
 	def save_selected_areas(self,*data):

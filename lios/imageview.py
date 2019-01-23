@@ -78,7 +78,7 @@ class ImageViewer(containers.Paned):
 		button1.connect_function(self.__delete_selection)
 
 		button2 = widget.Button(_("Clear"))
-		button2.connect_function(self.__clear_selection)
+		button2.connect_function(self.clear_selection)
 
 		grid = containers.Grid()
 		grid.add_widgets([(scrolled_treeview,2,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND),
@@ -460,7 +460,7 @@ class ImageViewer(containers.Paned):
 		self.drawingarea.redraw()
 		self.emit('list_updated')
 
-	def __clear_selection(self,widget):
+	def clear_selection(self,widget):
 		self.rs = []
 		self.treeview.clear()
 		# reset selection index
