@@ -1102,32 +1102,38 @@ class linux_intelligent_ocr_solution():
 		#self.make_ocr_widgets_inactive(lock=True)
 		#self.make_preferences_widgets_inactive(lock=True)
 		#self.make_image_widgets_inactive(lock=True)
-		progress_step = 1/len(self.iconview.get_selected_item_names())
-		progress = 0;
-		mode = self.preferences.mode_of_rotation
-		angle = self.preferences.rotation_angle
-		for item in self.iconview.get_selected_item_names():
-			self.notify_information(_("Running OCR on selected image {}")
-			.format(item))
+		items = self.iconview.get_selected_item_names();
+		length = len(items)
+		if (length > 0):
+			progress_step = 1/len(self.iconview.get_selected_item_names())
+			progress = 0;
+			mode = self.preferences.mode_of_rotation
+			angle = self.preferences.rotation_angle
+			for item in self.iconview.get_selected_item_names():
+				self.notify_information(_("Running OCR on selected image {}")
+				.format(item))
 			
-			#self.announce(_("Recognising {}").format(self.liststore_images[item[0]][1]))
-			progress = progress + progress_step;			
-			text,angle = self.ocr(item,mode,angle)
-			self.insert_text_to_textview(text,self.preferences.insert_position,True)
-			self.preferences.update_page_number()
-			loop.acquire_lock()
-			self.iconview.reload_preview(item)
-			loop.release_lock()
-			if mode == 1:#Changing partial automatic to Manual
-				mode = 2
-				#self.announce(_("Angle to be rotated = {}").format(angle))
-			if(self.process_breaker):
-				break
-		self.imageview.redraw()
-		#self.make_ocr_widgets_active(lock=True)
-		#self.make_preferences_widgets_active(lock=True)
-		#self.make_image_widgets_active(lock=True)
-		self.notify_information(_("completed!"),0)
+				#self.announce(_("Recognising {}").format(self.liststore_images[item[0]][1]))
+				progress = progress + progress_step;
+				text,angle = self.ocr(item,mode,angle)
+				self.insert_text_to_textview(text,self.preferences.insert_position,True)
+				self.preferences.update_page_number()
+				loop.acquire_lock()
+				self.iconview.reload_preview(item)
+				loop.release_lock()
+				if mode == 1:#Changing partial automatic to Manual
+					mode = 2
+					#self.announce(_("Angle to be rotated = {}").format(angle))
+				if(self.process_breaker):
+					break
+			self.imageview.redraw()
+			#self.make_ocr_widgets_active(lock=True)
+			#self.make_preferences_widgets_active(lock=True)
+			#self.make_image_widgets_active(lock=True)
+			self.notify_information(_("completed!"),0)
+		else:
+			self.notify_information(_("No item selected!"),0)
+
 				
 	def ocr_all_images_with_rotation(self,widget):
 		self.iconview.select_all()
@@ -1139,20 +1145,25 @@ class linux_intelligent_ocr_solution():
 		#self.make_ocr_widgets_inactive(lock=True)
 		#self.make_preferences_widgets_inactive(lock=True)
 		#self.make_image_widgets_inactive(lock=True)
-		progress_step = 1/len(self.iconview.get_selected_item_names())
-		progress = 0;
-		for item in self.iconview.get_selected_item_names():
-			self.notify_information(_("Running OCR on selected image {} (without rotating)")
-			.format(item))
-			
-			#self.announce(_("Recognising {} without rotating").format(self.liststore_images[item[0]][1]))
-			progress = progress + progress_step;
-			text,angle = self.ocr(item,2,00)
-			self.insert_text_to_textview(text,self.preferences.insert_position,True)
-			self.preferences.update_page_number()
-			if(self.process_breaker):
-				break
-		self.notify_information(_("completed!"),0)
+		items = self.iconview.get_selected_item_names();
+		length = len(items)
+		if (length > 0):
+			progress_step = 1/length
+			progress = 0;
+			for item in items:
+				self.notify_information(_("Running OCR on selected image {} (without rotating)")
+				.format(item))
+
+				#self.announce(_("Recognising {} without rotating").format(self.liststore_images[item[0]][1]))
+				progress = progress + progress_step;
+				text,angle = self.ocr(item,2,00)
+				self.insert_text_to_textview(text,self.preferences.insert_position,True)
+				self.preferences.update_page_number()
+				if(self.process_breaker):
+					break
+			self.notify_information(_("completed!"),0)
+		else:
+			self.notify_information(_("No item selected!"),0)
 		#self.announce(_("Completed!"))
 		#self.make_ocr_widgets_active(lock=True)
 		#self.make_preferences_widgets_active(lock=True)
