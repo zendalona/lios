@@ -45,8 +45,9 @@ class lios_preferences:
 		self.scan_driver=1;self.scanner_cache_calibration=0;
 		self.scan_brightness=50;self.scan_area=0;self.insert_position=2;
 		self.ocr_engine=0;self.language=0;self.mode_of_rotation=0;
-		self.number_of_pages_to_scan=100;self.page_numbering_type=0;
-		self.starting_page_number=1;self.scanner_mode_switching=0;
+		self.number_of_pages_to_scan=100;self.give_page_number = 1;
+		self.page_numbering_type=0;self.starting_page_number=1;
+		self.scanner_mode_switching=0;
 		self.run_text_cleaner=0;self.rotation_angle=00;
 
 
@@ -76,7 +77,8 @@ class lios_preferences:
 				self.speech_pitch=int(config.get('cfg',"speech_pitch"))
 				self.number_of_pages_to_scan=int(config.get('cfg',"number_of_pages_to_scan"))#pages
 				self.mode_of_rotation = int(config.get('cfg',"mode_of_rotation"))
-				self.rotation_angle = int(config.get('cfg',"rotation_angle"))		
+				self.rotation_angle = int(config.get('cfg',"rotation_angle"))
+				self.give_page_number=int(config.get('cfg',"give_page_number"))
 				self.page_numbering_type=int(config.get('cfg',"numbering_type"))
 				self.scanner_mode_switching=int(config.get('cfg',"scanner_mode_switching"))
 				self.run_text_cleaner=int(config.get('cfg',"run_text_cleaner"))
@@ -118,6 +120,7 @@ class lios_preferences:
 		config.set('cfg',"number_of_pages_to_scan",str(self.number_of_pages_to_scan))
 		config.set('cfg',"mode_of_rotation",str(self.mode_of_rotation))
 		config.set('cfg',"rotation_angle",str(self.rotation_angle))
+		config.set('cfg',"give_page_number",str(self.give_page_number))
 		config.set('cfg',"numbering_type",str(self.page_numbering_type))
 		config.set('cfg',"scanner_mode_switching",str(self.scanner_mode_switching))
 		config.set('cfg',"run_text_cleaner",str(self.run_text_cleaner))
@@ -311,6 +314,10 @@ class lios_preferences:
 		#Seperator 2
 		seperator_2 = widget.Separator()
 		
+		#Give page number
+		checkbutton_give_page_number = widget.CheckButton(_("Give Page Number"))
+		checkbutton_give_page_number.set_active(self.give_page_number)
+
 		#Page-Numbering
 		label_numbering_type = widget.Label(_("Page Numbering Type"))				
 		combobox_numbering_type = widget.ComboBox()
@@ -335,6 +342,7 @@ class lios_preferences:
 			(label_mode_of_rotation,1,1),(combobox_mode_of_rotation,1,1),containers.Grid.NEW_ROW,
 			(self.label_angle,1,1),(combobox_angle,1,1),containers.Grid.NEW_ROW,
 			(seperator_2,2,1),containers.Grid.NEW_ROW,
+			(checkbutton_give_page_number,1,1),containers.Grid.NEW_ROW,
 			(label_numbering_type,1,1),	(combobox_numbering_type,1,1),containers.Grid.NEW_ROW,
 			(label_starting_page_number,1,1),
 			(spin_starting_page_number,1,1)])
@@ -434,6 +442,7 @@ class lios_preferences:
 			self.insert_position=combobox_insert_position.get_active();
 			self.mode_of_rotation=combobox_mode_of_rotation.get_active()
 			self.rotation_angle = combobox_angle.get_active()
+			self.give_page_number=int(checkbutton_give_page_number.get_active())
 			self.page_numbering_type=combobox_numbering_type.get_active();
 			self.starting_page_number=spin_starting_page_number.get_value_as_int();
 			

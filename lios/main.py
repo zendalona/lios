@@ -876,9 +876,9 @@ class linux_intelligent_ocr_solution():
 			self.notify_information(_("Recognizing {}").format(destination))
 			text,angle = self.ocr(destination,mode,angle)	
 			if (i == 0):
-				self.insert_text_to_textview(text,True,True)
+				self.insert_text_to_textview(text,True,self.preferences.give_page_number)
 			else:
-				self.insert_text_to_textview(text,False,True)
+				self.insert_text_to_textview(text,False,self.preferences.give_page_number)
 			self.imageview.redraw()
 			loop.acquire_lock()
 			self.iconview.reload_preview(destination)
@@ -1119,7 +1119,7 @@ class linux_intelligent_ocr_solution():
 				#self.announce(_("Recognising {}").format(self.liststore_images[item[0]][1]))
 				progress = progress + progress_step;
 				text,angle = self.ocr(item,mode,angle)
-				self.insert_text_to_textview(text,self.preferences.insert_position,True)
+				self.insert_text_to_textview(text,self.preferences.insert_position,self.preferences.give_page_number)
 				self.preferences.update_page_number()
 				loop.acquire_lock()
 				self.iconview.reload_preview(item)
@@ -1160,7 +1160,7 @@ class linux_intelligent_ocr_solution():
 				#self.announce(_("Recognising {} without rotating").format(self.liststore_images[item[0]][1]))
 				progress = progress + progress_step;
 				text,angle = self.ocr(item,2,00)
-				self.insert_text_to_textview(text,self.preferences.insert_position,True)
+				self.insert_text_to_textview(text,self.preferences.insert_position,self.preferences.give_page_number)
 				self.preferences.update_page_number()
 				if(self.process_breaker):
 					break
