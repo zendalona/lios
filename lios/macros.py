@@ -23,19 +23,21 @@ import itertools
 def get_list_of_mixed_case_combinations(list_items):
 	return list(itertools.chain.from_iterable([[''.join(a) for a in itertools.product(*zip(s.upper(), s.lower()))] for s in list_items]))
 
-home_dir = os.environ['HOME']
+user_home_path = os.environ['HOME']
+
+config_dir = user_home_path+"/.lios"
 
 tmp_dir = "/tmp/Lios/"
 
-bookmarks_dir = home_dir+"/lios/bookmarks/"
+bookmarks_dir = config_dir+"/bookmarks/"
 
-local_text_cleaner_list_file = home_dir+"/lios/text_cleaner_list.text"
+local_text_cleaner_list_file_path = config_dir+"/text_cleaner_list.text"
 
-default_text_cleaner_list_file = "/usr/share/lios/text_cleaner_list.text"
+default_text_cleaner_list_file_path = "/usr/share/lios/text_cleaner_list.text"
 
-preferences_file_path = home_dir+"/lios/lios_preferences"
+preferences_file_path = config_dir+"/preferences.cfg"
 
-recent_file_path = home_dir+"/lios/lios_recent"
+recent_file_path = config_dir+"/recent.text"
 
 supported_image_formats = get_list_of_mixed_case_combinations(["png","pnm","jpg","jpeg","tif","tiff","bmp","pbm","ppm"])
 
@@ -51,7 +53,7 @@ icon_dir = "/usr/share/lios/icons/"
 
 readme_file = "/usr/share/lios/readme.text"
 
-default_text_cleaner_list_file = "/usr/share/lios/text_cleaner_list.text"
+default_text_cleaner_list_file_path = "/usr/share/lios/text_cleaner_list.text"
 
 app_name = "Linux-intelligent-ocr-solution"
 

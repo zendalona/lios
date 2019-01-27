@@ -205,7 +205,7 @@ Please make sure following exicutables are installed
 		#Dictionary Editor
 		notebook_dicts = containers.NoteBook()
 		self.dictionary_objects = []
-		for item in DICT_LIST+[macros.home_dir+"/lios/user-words"]:
+		for item in DICT_LIST+[macros.user_home_path+"/lios/user-words"]:
 			dict_object = Dictionary(item)
 			notebook_dicts.add_page(item.split("/")[-1],dict_object)
 			self.dictionary_objects.append(dict_object)
@@ -386,8 +386,8 @@ Please make sure following exicutables are installed
 	def button_ambiguous_import_clicked(self,*data):
 		file_chooser_open_files = FileChooserDialog(_("Select files to import"),
 				FileChooserDialog.OPEN,"*",
-				  macros.home_dir)
-		file_chooser_open_files.set_current_folder(macros.home_dir)
+				  macros.user_home_path)
+		file_chooser_open_files.set_current_folder(macros.user_home_path)
 		response = file_chooser_open_files.run()
 		if response == FileChooserDialog.ACCEPT:
 			filename = file_chooser_open_files.get_filename()
@@ -441,7 +441,7 @@ Please make sure following exicutables are installed
 
 		def button_select_input_text_clicked(*data):
 			file_chooser = FileChooserDialog(_("Select input file"),
-					FileChooserDialog.OPEN,macros.supported_text_formats,macros.home_dir)
+					FileChooserDialog.OPEN,macros.supported_text_formats,macros.user_home_path)
 			response = file_chooser.run()
 			if response == FileChooserDialog.ACCEPT:
 				input_file = file_chooser.get_filename()
@@ -601,7 +601,7 @@ Please make sure following exicutables are installed
 		save_file = file_chooser.FileChooserDialog(_("Save filename"),file_chooser.FileChooserDialog.SAVE,["traineddata"]);
 		save_file.set_do_overwrite_confirmation(True);
 		save_file.set_current_name(self.language+".traineddata")
-		save_file.set_current_folder(macros.home_dir)
+		save_file.set_current_folder(macros.user_home_path)
 		response = save_file.run()
 		if response == file_chooser.FileChooserDialog.ACCEPT:
 			command = "cp {0}/{1}.traineddata {2}".format(self.tessdata_dir,self.language, save_file.get_filename())
@@ -660,8 +660,8 @@ Please make sure following exicutables are installed
 					f.close()
 
 			# Create user dictionary if not exist
-			if not os.path.isfile(macros.home_dir+"/lios/user-words.txt"):
-				f = open(macros.home_dir+"/lios/user-words.txt","w")
+			if not os.path.isfile(macros.user_home_path+"/lios/user-words.txt"):
+				f = open(macros.user_home_path+"/lios/user-words.txt","w")
 				f.close()
 
 			# Loading each dictionarys
@@ -679,8 +679,8 @@ Please make sure following exicutables are installed
 	def button_add_image_box_pair_clicked(self,*data):
 		file_chooser = FileChooserDialog(_("Select images to import"),
 				FileChooserDialog.OPEN,["tif"],
-				  macros.home_dir)
-		file_chooser.set_current_folder(macros.home_dir)
+				  macros.user_home_path)
+		file_chooser.set_current_folder(macros.user_home_path)
 		file_chooser.set_select_multiple(True)
 		response = file_chooser.run()
 		if response == FileChooserDialog.ACCEPT:
@@ -1081,7 +1081,7 @@ class BoxEditor(containers.Box):
 	def load_boxes_dialog(self,*data):
 		open_file = file_chooser.FileChooserDialog(_("Select the file to open"),
 			file_chooser.FileChooserDialog.OPEN,
-			"*",macros.home_dir)
+			"*",macros.user_home_path)
 
 		response = open_file.run()
 		if response == file_chooser.FileChooserDialog.ACCEPT:

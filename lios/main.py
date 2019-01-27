@@ -58,7 +58,7 @@ class linux_intelligent_ocr_solution():
 			pass
 
 		try:
-			os.mkdir(macros.home_dir+"/lios")
+			os.mkdir(macros.config_dir)
 		except:
 			pass
 
@@ -161,9 +161,9 @@ class linux_intelligent_ocr_solution():
 		box_editor.add(scroll_box_editor)
 
 		#Load TextCleaner List
-		if(not self.textview.set_text_cleaner_list_from_file(macros.local_text_cleaner_list_file)):
-			self.textview.set_text_cleaner_list_from_file(macros.default_text_cleaner_list_file)
-			self.textview.save_text_cleaner_list_to_file(macros.local_text_cleaner_list_file)
+		if(not self.textview.set_text_cleaner_list_from_file(macros.local_text_cleaner_list_file_path)):
+			self.textview.set_text_cleaner_list_from_file(macros.default_text_cleaner_list_file_path)
+			self.textview.save_text_cleaner_list_to_file(macros.local_text_cleaner_list_file_path)
 
 
 
@@ -1257,7 +1257,7 @@ class linux_intelligent_ocr_solution():
 		elif (len(item_list) == 1):
 			dlg = FileChooserDialog(_("Filename please"),
 				FileChooserDialog.SAVE,macros.supported_image_formats,
-				macros.home_dir);
+				macros.user_home_path);
 			response = dlg.run()
 			if response == FileChooserDialog.ACCEPT:
 				shutil.copy(item_list[0],dlg.get_filename())
@@ -1265,7 +1265,7 @@ class linux_intelligent_ocr_solution():
 		else:
 			dlg = FileChooserDialog(_("Select Folder to save images"),
 				FileChooserDialog.OPEN_FOLDER,macros.supported_image_formats,
-				macros.home_dir);
+				macros.user_home_path);
 			response = dlg.run()
 			if response == FileChooserDialog.ACCEPT:
 				directory = dlg.get_current_folder()
@@ -1280,7 +1280,7 @@ class linux_intelligent_ocr_solution():
 		
 	def save_selected_images_as_pdf(self,widget):
 		dlg = FileChooserDialog(_("Give pdf filename(with extention) to save images"),
-			FileChooserDialog.SAVE,macros.supported_pdf_formats,macros.home_dir)
+			FileChooserDialog.SAVE,macros.supported_pdf_formats,macros.user_home_path)
 		response = dlg.run()
 		if response == FileChooserDialog.ACCEPT:
 			file_name = dlg.get_filename()
@@ -1386,7 +1386,7 @@ pacman -S aspell-fr"""))
 				
 	def save_preferences(self,*data):
 		save_preferences_dlg = FileChooserDialog(_("Save preferences as "),
-		FileChooserDialog.SAVE,["cfg"],macros.home_dir)
+		FileChooserDialog.SAVE,["cfg"],macros.user_home_path)
 		response = save_preferences_dlg.run()		
 		if response == FileChooserDialog.ACCEPT:
 			self.preferences.save_to_file(save_preferences_dlg.get_filename()+".cfg")
@@ -1397,7 +1397,7 @@ pacman -S aspell-fr"""))
 
 	def load_preferences(self,*data):
 		load_preferences_dlg = FileChooserDialog(_("Select the image"),
-			FileChooserDialog.OPEN,["cfg"],macros.home_dir)
+			FileChooserDialog.OPEN,["cfg"],macros.user_home_path)
 		response = load_preferences_dlg.run()
 		if response == FileChooserDialog.ACCEPT:
 			self.preferences.set_from_file(load_preferences_dlg.get_filename())
@@ -1430,8 +1430,8 @@ pacman -S aspell-fr"""))
 		file_chooser_open_files = FileChooserDialog(_("Select files to open"),
 				FileChooserDialog.OPEN,macros.supported_image_formats+
 				  macros.supported_text_formats+macros.supported_pdf_formats,
-				  macros.home_dir)
-		file_chooser_open_files.set_current_folder(macros.home_dir)
+				  macros.user_home_path)
+		file_chooser_open_files.set_current_folder(macros.user_home_path)
 		file_chooser_open_files.set_select_multiple(True)
 		response = file_chooser_open_files.run()
 		if response == FileChooserDialog.ACCEPT:

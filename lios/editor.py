@@ -132,7 +132,7 @@ class BasicTextView(text_view.TextView):
 	def open(self):
 		open_file = file_chooser.FileChooserDialog(_("Select the file to open"),
 			file_chooser.FileChooserDialog.OPEN,
-			macros.supported_text_formats,macros.home_dir)
+			macros.supported_text_formats,macros.user_home_path)
 		response = open_file.run()
 		if response == file_chooser.FileChooserDialog.ACCEPT:
 			to_open = read_text_from_file(open_file.get_filename())
@@ -223,7 +223,7 @@ class BasicTextView(text_view.TextView):
 	def export_text_cleaner_list(self,*data):
 		open_file = file_chooser.FileChooserDialog(_("Filename please"),
 		file_chooser.FileChooserDialog.SAVE,
-		macros.supported_text_formats,macros.home_dir)
+		macros.supported_text_formats,macros.user_home_path)
 		open_file.set_current_name(".txt")
 		response = open_file.run()
 		if response == file_chooser.FileChooserDialog.ACCEPT:
@@ -233,11 +233,11 @@ class BasicTextView(text_view.TextView):
 	def import_text_cleaner_list(self,*data):
 		open_file = file_chooser.FileChooserDialog(_("Select the file to import"),
 		file_chooser.FileChooserDialog.OPEN,
-		"*",macros.home_dir)
+		"*",macros.user_home_path)
 		response = open_file.run()
 		if response == file_chooser.FileChooserDialog.ACCEPT:
 			self.set_text_cleaner_list_from_file(open_file.get_filename())
-			self.save_text_cleaner_list_to_file(macros.local_text_cleaner_list_file);
+			self.save_text_cleaner_list_to_file(macros.local_text_cleaner_list_file_path);
 		open_file.destroy()
 
 	def open_text_cleaner(self,*data):
@@ -259,14 +259,14 @@ class BasicTextView(text_view.TextView):
 			if (response == dialog.Dialog.BUTTON_ID_1):
 				treeview.append((entry_match.get_text(),entry_replace.get_text()))
 				self.text_cleaner_list = treeview.get_list()
-				self.save_text_cleaner_list_to_file(macros.local_text_cleaner_list_file);
+				self.save_text_cleaner_list_to_file(macros.local_text_cleaner_list_file_path);
 			dlg.destroy()
 
 		def remove_clicked(*data):
 			index = treeview.get_selected_row_index()
 			treeview.remove(index)
 			self.text_cleaner_list = treeview.get_list()
-			self.save_text_cleaner_list_to_file(macros.local_text_cleaner_list_file);
+			self.save_text_cleaner_list_to_file(macros.local_text_cleaner_list_file_path);
 
 		def export_list(*data):
 			self.export_text_cleaner_list()
@@ -274,21 +274,21 @@ class BasicTextView(text_view.TextView):
 		def import_list(*data):
 			self.import_text_cleaner_list()
 			treeview.set_list(self.text_cleaner_list)
-			self.save_text_cleaner_list_to_file(macros.local_text_cleaner_list_file);
+			self.save_text_cleaner_list_to_file(macros.local_text_cleaner_list_file_path);
 
 		def restore(*data):
-			self.set_text_cleaner_list_from_file(macros.default_text_cleaner_list_file)
+			self.set_text_cleaner_list_from_file(macros.default_text_cleaner_list_file_path)
 			treeview.set_list(self.text_cleaner_list)
-			self.save_text_cleaner_list_to_file(macros.local_text_cleaner_list_file);
+			self.save_text_cleaner_list_to_file(macros.local_text_cleaner_list_file_path);
 
 		def clear(*data):
 			self.text_cleaner_list = []
 			treeview.set_list(self.text_cleaner_list)
-			self.save_text_cleaner_list_to_file(macros.local_text_cleaner_list_file);
+			self.save_text_cleaner_list_to_file(macros.local_text_cleaner_list_file_path);
 
 		def list_updated(*data):
 			self.text_cleaner_list = treeview.get_list()
-			self.save_text_cleaner_list_to_file(macros.local_text_cleaner_list_file);
+			self.save_text_cleaner_list_to_file(macros.local_text_cleaner_list_file_path);
 
 		def close(*data):
 			window_text_cleaner.close()
@@ -483,7 +483,7 @@ class BasicTextView(text_view.TextView):
 	def import_bookmarks_from_file(self,*data):
 		open_file = file_chooser.FileChooserDialog(_("Select the bookmark file to import"),
 			file_chooser.FileChooserDialog.OPEN,
-			macros.supported_text_formats,macros.home_dir)
+			macros.supported_text_formats,macros.user_home_path)
 		response = open_file.run()
 		if response == file_chooser.FileChooserDialog.ACCEPT:
 			with open(open_file.get_filename()) as file:
@@ -807,7 +807,7 @@ class BasicTextView(text_view.TextView):
 			split = spinbutton_split.get_value()
 			voice = combobox.get_active_text()
 			output_format = combobox_format.get_active()
-			save_file = file_chooser.FileChooserDialog(_("Save"),file_chooser.FileChooserDialog.SAVE,["wav","mp3"],macros.home_dir)
+			save_file = file_chooser.FileChooserDialog(_("Save"),file_chooser.FileChooserDialog.SAVE,["wav","mp3"],macros.user_home_path)
 			response = save_file.run()
 			if response == file_chooser.FileChooserDialog.ACCEPT:
 				converter = text_to_audio_converter(text,volume,voice,split,pitch,speed)
@@ -836,7 +836,7 @@ class BasicTextView(text_view.TextView):
 		
 	def print_to_pdf(self,*data):
 		save_file = file_chooser.FileChooserDialog(_("Enter the file name"),
-			file_chooser.FileChooserDialog.SAVE,macros.supported_pdf_formats,macros.home_dir)
+			file_chooser.FileChooserDialog.SAVE,macros.supported_pdf_formats,macros.user_home_path)
 		response = save_file.run()
 		if response == file_chooser.FileChooserDialog.ACCEPT:
 			if (self.has_selection()):
