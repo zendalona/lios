@@ -1342,29 +1342,34 @@ class linux_intelligent_ocr_solution():
 			if (self.preferences.language >= len(languages)):
 				self.old_language = 0;
 				self.preferences.language = 0;
+			lang = languages[self.preferences.language]
 			try:
-				self.dict = dictionary.Dict(dictionary.dictionary_language_dict[languages[self.preferences.language]])
+				langdict = dictionary.dictionary_language_dict[lang]
+			except:
+				langdict = lang
+			try:
+				self.dict = dictionary.Dict(langdict)
 			except:
 				self.dict = dictionary.Dict("en")
 				dlg = dialog.Dialog(_("Dictionary not found!"), (_("Ok"),dialog.Dialog.BUTTON_ID_1))
 				label = widget.Label(_(
  """Please install aspell, ispell, hunspell, myspell, or uspell 
-dictionary for your language and restart Lios!
+dictionary for your language({0}) and restart Lios!
 Otherwise spellchecker and auto-rotation will work with english(fallback). 
 
 For example on debian based system one can install aspell or 
 hunspell french dictionary using following commands
-apt-get install aspell-fr
-apt-get install hunspell-fr
+apt-get install aspell-{1}
+apt-get install hunspell-{1}
 		
 or ispell dict using 
 apt-get install ifrench 
  
 On rpm based system use 
-yum install aspell-fr
+yum install aspell-{1}
 			
 On arch based system use 
-pacman -S aspell-fr"""))
+pacman -S aspell-{1}""").format(lang, langdict, langdict, langdict, langdict))
 				dlg.add_widget(label)
 				label.show()
 				dlg.run()
