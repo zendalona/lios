@@ -33,6 +33,7 @@ TESSDATA_POSSIBLE_PATHS = [
 
 TESSDATA_EXTENSION = ".traineddata"
 
+
 class OcrEngineTesseract(OcrEngineBase):
 	name = "Tesseract"
 	
@@ -44,12 +45,6 @@ class OcrEngineTesseract(OcrEngineBase):
 			return True
 		else:
 			return False
-
-	def is_training_executables_available():
-		for executable_name in ["combine_tessdata","unicharset_extractor","shapeclustering","mftraining","cntraining","text2image"]:
-			if not ("/bin/"+executable_name in subprocess.getoutput("whereis {0}".format(executable_name))):
-				return False
-		return True
 
 	def ocr_image_to_text(self,file_name):
 		os.system("convert {} -background white -flatten +matte /tmp/{}_for_ocr.png".format(file_name,file_name.split("/")[-1]))

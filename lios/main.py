@@ -24,7 +24,7 @@ import shutil
 import re
 from functools import wraps
 
-from lios import scanner, editor, imageview, cam, ocr, preferences, speech, train_tesseract
+from lios import scanner, editor, imageview, cam, ocr, preferences, speech
 from lios.ui.gtk import widget, containers, loop, menu, \
 	window, icon_view, dialog, about
 
@@ -127,7 +127,6 @@ class linux_intelligent_ocr_solution():
 			(_("Rotate-Left"),self.rotate_current_images_to_left),menu.SEPARATOR,
 			(_("Zoom-In"),self.imageview.zoom_in),(_("Zoom-Fit"),self.imageview.zoom_fit),
 			(_("Zoom-Out"),self.imageview.zoom_out), menu.SEPARATOR,
-			(_("Train-Selected-Areas"),self.train_selected_areas),
 			(_("Save-Selected-Areas"),self.save_selected_areas),
 			]);
 		self.imageview.connect_context_menu_button_callback(self.imageview_popup_context_menu)
@@ -242,7 +241,6 @@ class linux_intelligent_ocr_solution():
 			(_("Recognize-Selected-with-rotation"),self.ocr_selected_images_with_rotation,"None"),
 			(_("Recognize-All-with-rotation"),self.ocr_all_images_with_rotation,"None")],
 		[_("_Tools"),(_("Spell-Check"),self.textview.open_spell_check,"<Control>F7"),
-			(_("Train-Tesseract"),self.start_train_tesseract,"None"),
 			[_("Text-Cleaner"),
 				(_("Text-Cleaner"),self.textview.open_text_cleaner,"None"),
 				(_("Import"),self.textview.import_text_cleaner_list,"None"),
@@ -370,44 +368,6 @@ class linux_intelligent_ocr_solution():
 		else:
 			self.progressbar.set_pulse_mode(False)
 			self.progressbar.set_fraction(percentage)
-
-	def start_train_tesseract(self,*data):
-		list_ = []
-		if (len(self.imageview.get_selection_list()) > 0):
-			# User alrady selected some areas
-			i = 0;
-			for item in self.imageview.get_selection_list():
-				self.imageview.save_sub_image("{0}train_area{1}.png".format(macros.tmp_dir,i),item[0],item[1],item[2],item[3])
-				list_.append("{0}train_area{1}.png".format(macros.tmp_dir,i))
-				i = i + 1;
-		else:
-			# No area selected so seeking for selected images
-			list_ = self.iconview.get_selected_item_names()
-			if(list_ == []):
-				# No images selected so selecting all
-				self.iconview.select_all()
-				list_ = self.iconview.get_selected_item_names()
-
-		train_window = train_tesseract.TesseractTrainer(list_)
-		train_window.show()
-		train_window.connect_close_function(self.reload_language_list)
-
-	def reload_language_list(self,*data):
-		languages_available = self.available_ocr_engine_list[self.preferences.ocr_engine].get_available_languages()
-		self.preferences.set_avalable_ocr_engines([ (item.name,item.get_available_languages())
-												for item in self.available_ocr_engine_list ])
-
-	def train_selected_areas(self,*data):
-		if (len(self.imageview.get_selection_list()) > 0):
-			area_list = []
-			i = 0;
-			for item in self.imageview.get_selection_list():
-				self.imageview.save_sub_image("{0}train_area{1}.png".format(macros.tmp_dir,i),item[0],item[1],item[2],item[3])
-				area_list.append("{0}train_area{1}.png".format(macros.tmp_dir,i))
-				i = i + 1;
-			train_window = train_tesseract.TesseractTrainer(area_list)
-			train_window.show()
-			train_window.connect_close_function(self.reload_language_list)
 
 	def list_updated_event_handler(self,*data):
 		filename = self.imageview.get_filename()

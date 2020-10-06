@@ -1,9 +1,0 @@
-#! /usr/bin/python3
-
-import sys
-from lios import train_tesseract
-if __name__ == '__main__':
-	if (len(sys.argv) >= 2):
-		train_tesseract.TesseractTrainerGUI(sys.argv[1:])
-	else:
-		train_tesseract.TesseractTrainerGUI([])
