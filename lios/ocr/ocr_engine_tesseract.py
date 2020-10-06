@@ -23,6 +23,7 @@ from lios.ocr.ocr_engine_base import OcrEngineBase
 
 TESSDATA_POSSIBLE_PATHS = [
 	"/usr/share/tesseract-ocr/tessdata",
+	"/usr/share/tesseract-ocr/4.00/tessdata",
 	"/usr/share/tesseract/tessdata",
 	"/usr/share/tessdata",
 	"/usr/local/share/tesseract-ocr/tessdata",
@@ -52,8 +53,15 @@ class OcrEngineTesseract(OcrEngineBase):
 
 	def ocr_image_to_text(self,file_name):
 		os.system("convert {} -background white -flatten +matte /tmp/{}_for_ocr.png".format(file_name,file_name.split("/")[-1]))
+		
+		languages = self.language
+		if(self.language_2 != False):
+			languages = languages+"+"+self.language_2
+		if(self.language_3 != False):
+			languages = languages+"+"+self.language_3
 
-		os.system("tesseract /tmp/{0}_for_ocr.png /tmp/{0}_output -l {1}".format(file_name.split("/")[-1],self.language))
+		os.system("tesseract /tmp/{0}_for_ocr.png /tmp/{0}_output -l {1}".format(file_name.split("/")[-1],languages))
+
 		os.remove("/tmp/{0}_for_ocr.png".format(file_name.split("/")[-1]))
 		
 		try:
@@ -108,3 +116,7 @@ class OcrEngineTesseract(OcrEngineBase):
 				if (os.path.isfile(path+"/configs/box.train")):
 					dir_list.append(path);
 		return dir_list;
+
+
+	def support_multiple_languages():
+		return True

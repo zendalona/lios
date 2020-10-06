@@ -44,10 +44,10 @@ class lios_preferences:
 		self.time_between_repeated_scanning=0;self.scan_resolution=300;
 		self.scan_driver=1;self.scanner_cache_calibration=0;
 		self.scan_brightness=50;self.scan_area=0;self.insert_position=2;
-		self.ocr_engine=0;self.language=0;self.mode_of_rotation=0;
-		self.number_of_pages_to_scan=100;self.give_page_number = 1;
-		self.page_numbering_type=0;self.starting_page_number=1;
-		self.scanner_mode_switching=0;
+		self.ocr_engine=0;self.language=0;self.language_2=0;self.language_3=0;
+		self.mode_of_rotation=0;self.number_of_pages_to_scan=100;
+		self.give_page_number = 1;self.page_numbering_type=0;
+		self.starting_page_number=1;self.scanner_mode_switching=0;
 		self.run_text_cleaner=0;self.rotation_angle=00;
 
 
@@ -70,6 +70,8 @@ class lios_preferences:
 				self.scan_driver=int(config.get('cfg',"scan_driver"))
 				self.insert_position=int(config.get('cfg',"insert_position"))
 				self.language=int(config.get('cfg',"language"))
+				self.language_2=int(config.get('cfg',"language_2"))
+				self.language_3=int(config.get('cfg',"language_3"))
 				self.speech_module=int(config.get('cfg',"speech_module"))
 				self.speech_language=int(config.get('cfg',"speech_language"))
 				self.speech_rate=int(config.get('cfg',"speech_rate"))
@@ -112,6 +114,8 @@ class lios_preferences:
 		config.set('cfg',"scan_area",str(self.scan_area))
 		config.set('cfg',"scan_driver",str(self.scan_driver))
 		config.set('cfg',"language",str(self.language))
+		config.set('cfg',"language_2",str(self.language_2))
+		config.set('cfg',"language_3",str(self.language_3))
 		config.set('cfg',"speech_module",str(self.speech_module))
 		config.set('cfg',"speech_language",str(self.speech_language))
 		config.set('cfg',"speech_pitch",str(self.speech_pitch))
@@ -156,9 +160,31 @@ class lios_preferences:
 		def change_engine(*data):
 			index_engine = combobox_engine.get_active()
 			combobox_language.clear()
+			combobox_language_2.clear()
+			combobox_language_3.clear()
+			combobox_language_2.add_item("---")
+			combobox_language_3.add_item("---")
+			
 			for item in self.available_ocr_engine_list[index_engine][1]:
 				combobox_language.add_item(item)
+				combobox_language_2.add_item(item)
+				combobox_language_3.add_item(item)
 			combobox_language.set_active(self.language)
+			combobox_language_2.set_active(self.language_2)
+			combobox_language_3.set_active(self.language_3)
+			
+			if (self.available_ocr_engine_list[index_engine][2] == True):
+				label_language_2.set_sensitive(True)
+				label_language_3.set_sensitive(True)
+				combobox_language_2.set_sensitive(True)
+				combobox_language_3.set_sensitive(True)
+			else:
+				label_language_2.set_sensitive(False)
+				label_language_3.set_sensitive(False)
+				combobox_language_2.set_sensitive(False)
+				combobox_language_3.set_sensitive(False)
+				
+			
 
 		def change_speech_module(*data):
 			index_engine = combobox_speech_module.get_active()
@@ -272,10 +298,22 @@ class lios_preferences:
 		label_language = widget.Label(_("Language"))		
 		combobox_language = widget.ComboBox()
 		label_language.set_mnemonic_widget(combobox_language)
+
+		#Language 2
+		label_language_2 = widget.Label(_("Language - 2"))
+		combobox_language_2 = widget.ComboBox()
+		label_language_2.set_mnemonic_widget(combobox_language_2)
+
+		#Language 3
+		label_language_3 = widget.Label(_("Language - 3"))
+		combobox_language_3 = widget.ComboBox()
+		label_language_3.set_mnemonic_widget(combobox_language_3)
 		
 		#setting current engine - This can't be done before creating language combobox
 		combobox_engine.set_active(self.ocr_engine)
 		combobox_language.set_active(self.language)
+		combobox_language_2.set_active(self.language_2)
+		combobox_language_3.set_active(self.language_3)
 
 		#Run text cleaner
 		checkbutton_run_text_cleaner = widget.CheckButton(_("Run Text Cleaner"))
@@ -336,6 +374,8 @@ class lios_preferences:
 		grid_recognition.add_widgets([
 			(label_engine,1,1),(combobox_engine,1,1),containers.Grid.NEW_ROW,
 			(label_language,1,1),(combobox_language,1,1),containers.Grid.NEW_ROW,
+			(label_language_2,1,1),(combobox_language_2,1,1),containers.Grid.NEW_ROW,
+			(label_language_3,1,1),(combobox_language_3,1,1),containers.Grid.NEW_ROW,
 			(checkbutton_run_text_cleaner,1,1),containers.Grid.NEW_ROW,
 			(label_insert_position,1,1),(combobox_insert_position,1,1),containers.Grid.NEW_ROW,
 			(seperator_1,2,1),containers.Grid.NEW_ROW,
@@ -434,6 +474,8 @@ class lios_preferences:
 			
 			self.ocr_engine=combobox_engine.get_active()
 			self.language=combobox_language.get_active()
+			self.language_2=combobox_language_2.get_active()
+			self.language_3=combobox_language_3.get_active()
 			self.speech_module=combobox_speech_module.get_active()
 			self.speech_language=combobox_speech_language.get_active()
 			self.speech_rate=spin_speech_rate.get_value()

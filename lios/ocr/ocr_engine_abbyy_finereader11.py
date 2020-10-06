@@ -80,3 +80,6 @@ class OcrEngineAbbyyFineReader11(OcrEngineBase):
 		"Udmurt","Uighur (Cyrillic, Latin)","Ukrainian","Uzbek (Cyrillic, Latin)",
 		"Vietnamese","Welsh","Wolof","Xhosa","Yakut","Yiddish","Zapotec","Zulu"]
 		return langs
+
+	def support_multiple_languages():
+		return False

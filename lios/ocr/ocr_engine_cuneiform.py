@@ -64,3 +64,6 @@ class OcrEngineCuneiform(OcrEngineBase):
 					if language != "":
 						langs.append(language)
 		return langs
+
+	def support_multiple_languages():
+		return False

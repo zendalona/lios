@@ -182,7 +182,7 @@ class linux_intelligent_ocr_solution():
 		self.preferences = preferences.lios_preferences()
 		self.preferences.set_from_file(macros.preferences_file_path)
 		self.preferences.set_avalable_scanner_drivers([ item.name for item in self.available_scanner_driver_list])
-		self.preferences.set_avalable_ocr_engines([ (item.name,item.get_available_languages())
+		self.preferences.set_avalable_ocr_engines([ (item.name, item.get_available_languages(),item.support_multiple_languages())
 												for item in self.available_ocr_engine_list ])
 		
 		
@@ -747,6 +747,15 @@ class linux_intelligent_ocr_solution():
 		
 		language = languages_available[self.preferences.language]
 		ocr_engine_object.set_language(language)
+		
+		# for keeping index with preferences dialog
+		languages_available.insert(0,"---");
+
+		language_2 = languages_available[self.preferences.language_2]
+		ocr_engine_object.set_language_2(language_2)
+
+		language_3 = languages_available[self.preferences.language_3]
+		ocr_engine_object.set_language_3(language_3)
 		
 		print(language)
 		rotation_list = [00,90,180,270]

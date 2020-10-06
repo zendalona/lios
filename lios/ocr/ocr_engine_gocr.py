@@ -53,3 +53,6 @@ class OcrEngineGocr(OcrEngineBase):
 	def get_available_languages():
 		langs = ["eng"]
 		return langs
+
+	def support_multiple_languages():
+		return False
