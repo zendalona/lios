@@ -335,8 +335,8 @@ class linux_intelligent_ocr_solution():
 		
 		
 		self.old_language = -1
-		self.old_scan_driver = -1
-		self.old_scanner_mode_switching = -1
+		self.old_scan_driver = self.preferences.scan_driver;
+		self.old_scanner_mode_switching = self.preferences.scanner_mode_switching
 		#This will clear scanner combobox
 		#so scanner combobox should be inetialised
 		self.make_preferences_effective()
@@ -634,6 +634,14 @@ class linux_intelligent_ocr_solution():
 	def scan_single_image(self,widget):
 		#self.make_scanner_widgets_inactive(lock=True)
 		#self.make_preferences_widgets_inactive(lock=True)
+
+		if(not self.is_updating_scanner_list or len(self.scanner_objects) == 0):
+			self.update_scanner_list();
+		while(self.is_updating_scanner_list):
+			pass
+		if(len(self.scanner_objects) == 0):
+			return;
+
 		destination = "{0}{1}.jpg".format(macros.tmp_dir,self.preferences.get_page_number_as_string())
 		destination = self.get_feesible_filename_from_filename(destination)
 		t = threading.Thread(target=self.scan,args=(destination,))
@@ -649,6 +657,14 @@ class linux_intelligent_ocr_solution():
 	def scan_image_repeatedly(self,widget):
 		#self.make_scanner_widgets_inactive(lock=True)
 		#self.make_preferences_widgets_inactive(lock=True)
+
+		if(not self.is_updating_scanner_list or len(self.scanner_objects) == 0):
+			self.update_scanner_list();
+		while(self.is_updating_scanner_list):
+			pass
+		if(len(self.scanner_objects) == 0):
+			return;
+
 		self.process_breaker = False
 		for i in range(0,self.preferences.number_of_pages_to_scan):
 			destination = "{0}{1}.jpg".format(macros.tmp_dir,self.preferences.get_page_number_as_string())
@@ -670,11 +686,6 @@ class linux_intelligent_ocr_solution():
 	def scan(self,filename):
 		self.process_breaker = False
 		selected_scanner = self.combobox_scanners.get_active()
-		
-		#No scanner added to list
-		if(selected_scanner == -1):
-			self.notify_information(_("No Scanner Detected!. Please update scanner list and try again"),0)
-			return;
 
 		self.notify_information(_("Scanning {}, resolution {}, brightness {}").
 		format(filename.split("/")[-1],self.preferences.scan_resolution,self.preferences.scan_brightness))
@@ -763,6 +774,14 @@ class linux_intelligent_ocr_solution():
 	
 	@on_thread	
 	def scan_and_ocr(self,widget):
+
+		if(not self.is_updating_scanner_list or len(self.scanner_objects) == 0):
+			self.update_scanner_list();
+		while(self.is_updating_scanner_list):
+			pass
+		if(len(self.scanner_objects) == 0):
+			return;
+
 		#self.make_scanner_widgets_inactive(lock=True)
 		#self.make_preferences_widgets_inactive(lock=True)
 		#self.make_ocr_widgets_inactive(lock=True)
@@ -795,6 +814,13 @@ class linux_intelligent_ocr_solution():
 			
 	@on_thread			
 	def scan_and_ocr_repeatedly(self,widget):
+		if(not self.is_updating_scanner_list or len(self.scanner_objects) == 0):
+			self.update_scanner_list();
+		while(self.is_updating_scanner_list):
+			pass
+		if(len(self.scanner_objects) == 0):
+			return;
+
 		#self.make_scanner_widgets_inactive(lock=True)
 		#self.make_preferences_widgets_inactive(lock=True)
 		#self.make_ocr_widgets_inactive(lock=True)
@@ -849,11 +875,14 @@ class linux_intelligent_ocr_solution():
 		#self.make_ocr_widgets_inactive(lock=True)
 		#self.make_preferences_widgets_inactive(lock=True)
 
-		selected_scanner = self.combobox_scanners.get_active()
+		if(not self.is_updating_scanner_list or len(self.scanner_objects) == 0):
+			self.update_scanner_list();
+		while(self.is_updating_scanner_list):
+			pass
+		if(len(self.scanner_objects) == 0):
+			return;
 
-		if (selected_scanner == -1):
-			self.notify_information(_("No Scanner Detected!. Please update scanner list and try again"),0)
-			return
+		selected_scanner = self.combobox_scanners.get_active()
 
 		self.process_breaker = False
 		mode = self.preferences.mode_of_rotation
