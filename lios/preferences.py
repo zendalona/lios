@@ -36,9 +36,8 @@ class lios_preferences:
 		
 		#Setting Default Values
 		self.font="Georgia 14";self.highlight_font="Georgia 14";
-		self.background_color="#000";self.font_color="#fff";
-		self.highlight_color="#1572ffff0000";
-		self.background_highlight_color="#00000bacffff";
+		self.highlight_color="#000000000000";
+		self.background_highlight_color="#34346565a4a4";
 		self.speech_module=0;self.speech_language=10;
 		self.speech_rate=0;self.speech_pitch=0;self.speech_volume=100;
 		self.time_between_repeated_scanning=0;self.scan_resolution=300;
@@ -86,8 +85,6 @@ class lios_preferences:
 				self.run_text_cleaner=int(config.get('cfg',"run_text_cleaner"))
 				self.scanner_cache_calibration=int(config.get('cfg',"scanner_cache_calibration"))						
 				self.starting_page_number=int(config.get('cfg',"starting_page_number"))
-				self.background_color=config.get('cfg',"background_color")
-				self.font_color=config.get('cfg',"font_color")
 				self.highlight_color=config.get('cfg',"highlight_color")
 				self.background_highlight_color=config.get('cfg',"highlight_background_color")
 				self.font=config.get('cfg',"font")
@@ -130,8 +127,6 @@ class lios_preferences:
 		config.set('cfg',"run_text_cleaner",str(self.run_text_cleaner))
 		config.set('cfg',"scanner_cache_calibration",str(self.scanner_cache_calibration))				
 		config.set('cfg',"starting_page_number",str(self.starting_page_number))
-		config.set('cfg',"background_color",str(self.background_color))
-		config.set('cfg',"font_color",str(self.font_color))
 		config.set('cfg',"highlight_color",str(self.highlight_color))
 		config.set('cfg',"highlight_background_color",str(self.background_highlight_color))
 		config.set('cfg',"font",str(self.font))
@@ -217,18 +212,6 @@ class lios_preferences:
 		fontbutton_font.set_font_name(self.font)
 		label_font.set_mnemonic_widget(fontbutton_font)
 
-		label_font_color = widget.Label(_("Font Color"))
-		colorbutton_font = widget.ColorButton()
-		colorbutton_font.set_color_from_string(self.font_color)
-		label_font_color.set_mnemonic_widget(colorbutton_font)
-		
-
-		label_background_color = widget.Label(_("Background Color"))
-		colorbutton_background = widget.ColorButton()
-		colorbutton_background.set_color_from_string(self.background_color)
-		label_background_color.set_mnemonic_widget(colorbutton_background)
-		
-
 		label_highlight_font = widget.Label(_("Highlight Font"))
 		fontbutton_highlight_font = widget.FontButton()
 		fontbutton_highlight_font.set_font_name(self.highlight_font)
@@ -271,8 +254,6 @@ class lios_preferences:
 		grid_general = containers.Grid()
 		grid_general.add_widgets(
 			[(label_font,1,1),(fontbutton_font,1,1),containers.Grid.NEW_ROW,								  
-			(label_font_color,1,1),(colorbutton_font,1,1),containers.Grid.NEW_ROW,								  
-			(label_background_color,1,1),(colorbutton_background,1,1),containers.Grid.NEW_ROW,								  
 			(label_highlight_font,1,1),(fontbutton_highlight_font,1,1),containers.Grid.NEW_ROW,								  
 			(label_highlight_color,1,1),(colorbutton_highlight,1,1),containers.Grid.NEW_ROW,							  
 			(label_highlight_background,1,1),(colorbutton_highlight_background,1,1),containers.Grid.NEW_ROW,
@@ -465,9 +446,7 @@ class lios_preferences:
 		dlg.add_widget(notebook)
 		if (dlg.run()==True):
 			self.font=fontbutton_font.get_font_name();
-			self.font_color=colorbutton_font.get_color_as_string()			
-			self.background_color=colorbutton_background.get_color_as_string()
-			
+
 			self.highlight_font=fontbutton_highlight_font.get_font_name();
 			self.highlight_color=colorbutton_highlight.get_color_as_string()
 			self.background_highlight_color=colorbutton_highlight_background.get_color_as_string()

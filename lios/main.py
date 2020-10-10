@@ -1353,8 +1353,6 @@ pacman -S aspell-fr"""))
 			self.update_scanner_list()
 		
 		self.textview.set_dictionary(self.dict)
-		self.textview.set_font_color(self.preferences.font_color)
-		self.textview.set_background_color(self.preferences.background_color)
 		self.textview.set_font(self.preferences.font)
 		self.textview.set_highlight_font(self.preferences.highlight_font)
 		self.textview.set_highlight_color(self.preferences.highlight_color)
