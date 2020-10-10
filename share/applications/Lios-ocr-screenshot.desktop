@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Terminal=false
+Exec=lios --ocr-screenshot
+Name=Lios OCR Screenshot
+Comment=Take screenshot and ocr
+Icon=/usr/share/lios/lios.png
+Categories=Graphics;

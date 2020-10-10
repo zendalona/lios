@@ -316,8 +316,8 @@ class linux_intelligent_ocr_solution():
 		self.paned_image_text.set_focus_chain([self.textview])
 		box_iconview.set_focus_chain([self.iconview])
 
-		if(len(file_list) > 1 ):
-			self.open_list_of_files(file_list[1:])
+		if(len(file_list) > 0 ):
+			self.open_list_of_files(file_list)
 			try:
 				self.textview.save_file_name
 			except:
@@ -460,6 +460,7 @@ class linux_intelligent_ocr_solution():
 		else:
 			shutil.copyfile(file_name_with_directory,destination)		
 		self.iconview.add_item(destination)
+		self.iconview.select_item(destination)
 	
 	@on_thread
 	def import_images_from_pdf(self,pdf_filename_full):
@@ -483,6 +484,8 @@ class linux_intelligent_ocr_solution():
 		
 		file_list = os.listdir(destination.split(".")[0])
 		file_list = sorted(file_list)
+
+		recently_added_list = []
 						
 		for image in file_list:
 			if(len(image.split("."))>1):
@@ -492,8 +495,12 @@ class linux_intelligent_ocr_solution():
 					loop.acquire_lock()
 					self.add_image_to_list("{}/{}".format(destination.split(".")[0],image),filename,True)
 					loop.release_lock()
+					recently_added_list.append(filename)
 		os.rmdir(destination.split(".")[0])
 		self.notify_information(_("Completed!"),0)
+
+		self.recognize_recently_added_images(recently_added_list)
+
 #		self.make_image_widgets_active(lock=True)
 
 	@on_thread	#should continue the loop to get window minimize 
@@ -1411,18 +1418,20 @@ pacman -S aspell-fr"""))
 			file_chooser_open_files.destroy()
 
 	def open_list_of_files(self,file_list):
+		recently_added_list = []
 		for item in file_list:
 			if item.split('.')[-1] in macros.supported_image_formats:
 				filename = item.split("/")[-1:][0]
 				destination = "{0}{1}".format(macros.tmp_dir,filename.replace(' ','-'))
 				destination = self.get_feesible_filename_from_filename(destination)
 				self.add_image_to_list(item,destination,False)
+				recently_added_list.append(destination)
 
 			if item.split('.')[-1] in ["pdf","Pdf"]:
 				self.import_images_from_pdf(item)
 				# import_images_from_pdf is a threaded function
 				# so stoping with one file
-				break;
+				return;
 
 			if item.split('.')[-1] in macros.supported_text_formats:
 				text = editor.read_text_from_file(item)
@@ -1432,6 +1441,54 @@ pacman -S aspell-fr"""))
 					self.textview.import_bookmarks_using_filename()
 				else:
 					self.textview.insert_text(text,editor.BasicTextView.AT_END)
+		self.recognize_recently_added_images_on_thread(recently_added_list)
+
+	@on_thread
+	def recognize_recently_added_images_on_thread(self,recently_added_list):
+		time.sleep(1)
+		self.recognize_recently_added_images(recently_added_list);
+
+	def recognize_recently_added_images(self,recently_added_list):
+		loop.acquire_lock()
+
+		if(self.textview.get_text() != ""):
+			dlg = dialog.Dialog(_("Recognize imported images ?!"),
+			 (_("Yes (also clear previous text)"),dialog.Dialog.BUTTON_ID_1,_("Yes"),
+			 dialog.Dialog.BUTTON_ID_2,("No"),dialog.Dialog.BUTTON_ID_3))
+		else:
+			dlg = dialog.Dialog(_("Recognize imported images ?!"),
+			 (_("Yes"),dialog.Dialog.BUTTON_ID_2,_("No"),
+			 dialog.Dialog.BUTTON_ID_3))
+
+		label = widget.Label(_("Do you want to recognize imported images ?"))
+		label.show()
+		dlg.add_widget(label)
+		response = dlg.run()
+		if response == dialog.Dialog.BUTTON_ID_1 or response == dialog.Dialog.BUTTON_ID_2:
+			dlg.destroy();
+			if (response == dialog.Dialog.BUTTON_ID_1):
+				self.textview.set_text("");
+			loop.release_lock()
+
+			length = len(recently_added_list)
+			if (length > 0):
+				progress_step = 1/length
+				progress = 0;
+				for item in recently_added_list:
+					self.notify_information(_("Running OCR on selected image {} (without rotating)")
+					.format(item))
+
+					#self.announce(_("Recognising {} without rotating").format(self.liststore_images[item[0]][1]))
+					progress = progress + progress_step;
+					text,angle = self.ocr(item,2,00)
+					self.insert_text_to_textview(text,self.preferences.insert_position,self.preferences.give_page_number)
+					self.preferences.update_page_number()
+					if(self.process_breaker):
+						break
+				self.notify_information(_("completed!"),0)
+		dlg.destroy();
+		loop.release_lock()
+
 
 	@on_thread
 	def start_reader(self,*data):

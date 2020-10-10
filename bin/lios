@@ -1,11 +1,30 @@
-#!/usr/bin/env python3
+#! /usr/bin/python3
+
+import argparse
+parser = argparse.ArgumentParser(prog='lios',
+description='Linux-Intelligent-OCR-Solution',
+epilog='Visit forum : https://groups.google.com/g/lios')
+
+parser.add_argument("-s", "--ocr-screenshot", help="Take screenshot and ocr", action='store_true')
+parser.add_argument("-v", "--version", help="Show version", action='store_true')
+
+parser.add_argument('files',
+                       action='store',
+                       nargs='*',
+                       default='')
+
+args = parser.parse_args()
+
 
 from lios.main import *
 if __name__ == '__main__':
-	if (len(sys.argv) >= 2):
-		linux_intelligent_ocr_solution(sys.argv)
+	if(args.version):
+		print("\n\nVersion : "+macros.version+"\n\n")
+	elif(args.ocr_screenshot):
+		import time
+		filename = time.strftime("%T-%a-%d-%b-%Y")
+		capture_screen.capture_entire_screen("/tmp/{}.png".format(filename))
+		linux_intelligent_ocr_solution(["/tmp/{}.png".format(filename)])
 	else:
-		linux_intelligent_ocr_solution()
-	
-	
+		linux_intelligent_ocr_solution(args.files)
 
