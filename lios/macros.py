@@ -39,6 +39,8 @@ preferences_file_path = config_dir+"/preferences.cfg"
 
 recent_file_path = config_dir+"/recent.text"
 
+recent_cursor_position_file_path = config_dir+"/recent_cursor_position.text"
+
 supported_image_formats = get_list_of_mixed_case_combinations(["png","pnm","jpg","jpeg","tif","tiff","bmp","pbm","ppm"])
 
 supported_text_formats = get_list_of_mixed_case_combinations(["txt","text"])

@@ -324,12 +324,16 @@ class linux_intelligent_ocr_solution():
 				try:
 					file = open(macros.recent_file_path,encoding="utf-8")
 					self.textview.set_text(file.read())
+					file2 = open(macros.recent_cursor_position_file_path,encoding="utf-8")
+					self.textview.move_cursor_to_line(int(file2.read()))
 				except:
 					pass
 		else:
 			try:
 				file = open(macros.recent_file_path,encoding="utf-8")
 				self.textview.set_text(file.read())
+				file2 = open(macros.recent_cursor_position_file_path,encoding="utf-8")
+				self.textview.move_cursor_to_line(int(file2.read()))
 			except:
 				pass
 		
@@ -395,6 +399,8 @@ class linux_intelligent_ocr_solution():
 			self.preferences.starting_page_number = 1
 			with open(macros.recent_file_path,"w") as file:
 				file.write("")
+			with open(macros.recent_cursor_position_file_path,"w") as file:
+				file.write("0")
 
 	def audio_converter(self,*data):
 		self.textview.audio_converter(voice=self.preferences.speech_language)
@@ -775,9 +781,12 @@ class linux_intelligent_ocr_solution():
 			text = "\nPage-{}\n{}".format(self.preferences.get_page_number_as_string(),text)
 		self.textview.insert_text(text,self.preferences.insert_position)
 		text = self.textview.get_text()
+		cursor_position = self.textview.get_cursor_line_number()
 		loop.release_lock()
 		with open(macros.recent_file_path,"w",encoding="utf-8") as file:
 			file.write(text)
+		with open(macros.recent_cursor_position_file_path,"w",encoding="utf-8") as file:
+			file.write(str(cursor_position))
 	
 	@on_thread	
 	def scan_and_ocr(self,widget):
@@ -1575,8 +1584,13 @@ pacman -S aspell-fr"""))
 		#Closing scanners
 		for item in self.scanner_objects:
 			item.close()
+
+		cursor_position = self.textview.get_cursor_line_number()
 		loop.stop_main_loop()
 		self.preferences.save_to_file(macros.preferences_file_path)
+
+		with open(macros.recent_cursor_position_file_path,"w",encoding="utf-8") as file:
+			file.write(str(cursor_position))
 
 if __name__ == "__main__":
 	linux_intelligent_ocr_solution()
