@@ -2,7 +2,7 @@ from distutils.core import setup
 from glob import glob
 setup(name='lios',
       version='2.5',
-      description='Easy-OCR solution and Tesseract trainer for GNU/Linux',
+      description='Easy-OCR solution for GNU/Linux',
       author='Nalin.x.Linux',
       author_email='nalin.x.Linux@gmail.com',
       url='https://gitlab.com/Nalin-x-Linux/lios-3',
@@ -56,9 +56,9 @@ setup(name='lios',
       ('share/lios/icons/',['share/lios/icons/zoom-fit.png']),
       ('share/lios/icons/',['share/lios/icons/zoom-in.png']),
       ('share/lios/icons/',['share/lios/icons/zoom-out.png']),
-      ('share/applications/',['share/applications/Lios.desktop','share/applications/Tesseract-Trainer.desktop']),
-      ('share/man/man1/',['share/man/man1/lios.1.gz','share/man/man1/train-tesseract.1.gz']),
+      ('share/applications/',['share/applications/Lios.desktop','share/applications/Lios-ocr-screenshot.desktop']),
+      ('share/man/man1/',['share/man/man1/lios.1.gz']),
       ('share/doc/lios/',['share/doc/lios/copyright']),('share/pixmaps/',['share/pixmaps/lios.xpm']),
-      ('bin',['bin/lios','bin/train-tesseract'])]
+      ('bin',['bin/lios'])]
       )
 # sudo python3 setup.py install --install-data=/usr
