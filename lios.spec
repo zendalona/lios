@@ -16,13 +16,13 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/
 
 Name:           lios
-Version:        2.7.1
+Version:        2.8
 Release:        0
 License:        GPL-3.0+
 Summary:        Linux-Intelligent-Ocr-Solution
 Url:            http://sourceforge.net/projects/lios/
 Group:          Graphics
-Source0:        lios-2.7.1.tar.gz
+Source0:        lios-2.8.tar.gz
 BuildArch:      noarch
 Requires:       espeak 
 Requires:       python3-gobject
