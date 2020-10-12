@@ -813,7 +813,7 @@ class linux_intelligent_ocr_solution():
 			#self.make_ocr_widgets_active(lock=True)
 			#self.make_preferences_widgets_active(lock=True)
 			return
-		self.notify_information(_("Recognizing {}").format(destination))
+		self.notify_information(_("Recognizing {}").format(destination.split("/")[-1]))
 		text,angle = self.ocr(destination,self.preferences.mode_of_rotation,self.preferences.rotation_angle)
 		self.insert_text_to_textview(text,self.preferences.insert_position)
 		self.imageview.redraw()
@@ -855,7 +855,7 @@ class linux_intelligent_ocr_solution():
 			time.sleep(self.preferences.time_between_repeated_scanning)	
 			if(self.process_breaker):
 				break
-			self.notify_information(_("Recognizing {}").format(destination))
+			self.notify_information(_("Recognizing {}").format(destination.split("/")[-1]))
 			text,angle = self.ocr(destination,mode,angle)	
 			if (i == 0):
 				self.insert_text_to_textview(text,True,self.preferences.give_page_number)
@@ -1098,10 +1098,7 @@ class linux_intelligent_ocr_solution():
 			mode = self.preferences.mode_of_rotation
 			angle = self.preferences.rotation_angle
 			for item in self.iconview.get_selected_item_names():
-				self.notify_information(_("Running OCR on selected image {}")
-				.format(item))
-			
-				#self.announce(_("Recognising {}").format(self.liststore_images[item[0]][1]))
+				self.notify_information(_("Recognizing {}").format(item.split("/")[-1]))
 				progress = progress + progress_step;
 				text,angle = self.ocr(item,mode,angle)
 				self.insert_text_to_textview(text,self.preferences.insert_position,self.preferences.give_page_number)
@@ -1139,10 +1136,7 @@ class linux_intelligent_ocr_solution():
 			progress_step = 1/length
 			progress = 0;
 			for item in items:
-				self.notify_information(_("Running OCR on selected image {} (without rotating)")
-				.format(item))
-
-				#self.announce(_("Recognising {} without rotating").format(self.liststore_images[item[0]][1]))
+				self.notify_information(_("Recognizing {}").format(item.split("/")[-1]))
 				progress = progress + progress_step;
 				text,angle = self.ocr(item,2,00)
 				self.insert_text_to_textview(text,self.preferences.insert_position,self.preferences.give_page_number)
@@ -1482,10 +1476,7 @@ pacman -S aspell-fr"""))
 				progress_step = 1/length
 				progress = 0;
 				for item in recently_added_list:
-					self.notify_information(_("Running OCR on selected image {} (without rotating)")
-					.format(item))
-
-					#self.announce(_("Recognising {} without rotating").format(self.liststore_images[item[0]][1]))
+					self.notify_information(_("Recognizing {}").format(item.split("/")[-1]))
 					progress = progress + progress_step;
 					text,angle = self.ocr(item,2,00)
 					self.insert_text_to_textview(text,self.preferences.insert_position,self.preferences.give_page_number)
