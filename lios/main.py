@@ -1442,7 +1442,8 @@ pacman -S aspell-fr"""))
 					self.textview.import_bookmarks_using_filename()
 				else:
 					self.textview.insert_text(text,editor.BasicTextView.AT_END)
-		self.recognize_recently_added_images_on_thread(recently_added_list)
+		if(len(recently_added_list) > 0):
+			self.recognize_recently_added_images_on_thread(recently_added_list)
 
 	@on_thread
 	def recognize_recently_added_images_on_thread(self,recently_added_list):
