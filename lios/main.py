@@ -1178,16 +1178,18 @@ class linux_intelligent_ocr_solution():
 		if(len(self.iconview.get_selected_item_names()) == 0):
 			self.notify_information(_("Nothing selected"),0)
 			return
-		progress_step = 1/len(self.iconview.get_selected_item_names())
-		progress = 0;
-		for item in reversed(self.iconview.get_selected_item_names()):
-			os.system("convert -rotate {0} {1} {1}".format(angle,item))
-			loop.acquire_lock()
-			self.iconview.reload_preview(item)
-			loop.release_lock()
-			self.notify_information(_("Rotating selected image {} to {}")
-			.format(item,angle),progress)
-			progress = progress + progress_step;
+		length = len(self.iconview.get_selected_item_names())
+		if length > 0:
+			progress_step = 1/length
+			progress = 0;
+			for item in reversed(self.iconview.get_selected_item_names()):
+				os.system("convert -rotate {0} {1} {1}".format(angle,item))
+				loop.acquire_lock()
+				self.iconview.reload_preview(item)
+				loop.release_lock()
+				self.notify_information(_("Rotating selected image {} to {}")
+				.format(item,angle),progress)
+				progress = progress + progress_step;
 		self.imageview.redraw()
 		self.notify_information(_("completed!"),0)
 
@@ -1292,21 +1294,23 @@ class linux_intelligent_ocr_solution():
 		#self.make_preferences_widgets_inactive(lock=True)
 		#self.make_ocr_widgets_inactive(lock=True)
 		#self.make_image_widgets_inactive(lock=True)
-		progress_step = 1/len(self.imageview.get_selection_list());
-		progress = 0;
-		for item in self.imageview.get_selection_list():
-			self.notify_information(_("Running OCR on selected Area [ X={} Y={} Width={} Height={} ]")
-			.format(item[0],item[1],item[2],item[3]))
-			
-			progress = progress + progress_step;
-			self.imageview.save_sub_image("{0}tmp".format(macros.tmp_dir),
-				item[0],item[1],item[2],item[3])
-			
-			#Will always be Manual with no rotation
-			text,angle = self.ocr("{0}tmp".format(macros.tmp_dir),2,00)
-			self.insert_text_to_textview(text,False,False)
-			if(self.process_breaker):
-				break;
+		length = len(self.imageview.get_selection_list())
+		if length > 0:
+			progress_step = 1/length
+			progress = 0;
+			for item in self.imageview.get_selection_list():
+				self.notify_information(_("Running OCR on selected Area [ X={} Y={} Width={} Height={} ]")
+				.format(item[0],item[1],item[2],item[3]))
+				
+				progress = progress + progress_step;
+				self.imageview.save_sub_image("{0}tmp".format(macros.tmp_dir),
+					item[0],item[1],item[2],item[3])
+				
+				#Will always be Manual with no rotation
+				text,angle = self.ocr("{0}tmp".format(macros.tmp_dir),2,00)
+				self.insert_text_to_textview(text,False,False)
+				if(self.process_breaker):
+					break;
 
 		self.notify_information(_("completed!"),0)
 		#self.make_preferences_widgets_active(lock=True)
