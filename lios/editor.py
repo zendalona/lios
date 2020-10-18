@@ -48,7 +48,7 @@ def read_text_from_file(filename,enc='utf8'):
 		combobox.set_active(0)
 
 		dlg = dialog.Dialog(_("{} Decode error Select Other Character Encoding".format(enc)),(_("Select"), dialog.Dialog.BUTTON_ID_1))
-		dlg.add_widget_with_label(combobox,_("Character Encoding : "))
+		dlg.add_widget_with_label(combobox,_("Character Encoding: "))
 		combobox.grab_focus()
 		dlg.show_all()
 		response = dlg.run()
@@ -107,9 +107,9 @@ class BasicTextView(text_view.TextView):
 
 	def new(self,*data):
 		if (self.get_modified() == True):
-			dlg =  dialog.Dialog(_("Start new without saving ?"),
+			dlg =  dialog.Dialog(_("Start new without saving?"),
 			(_("Cancel"), dialog.Dialog.BUTTON_ID_1,_("Start-New!"), dialog.Dialog.BUTTON_ID_2))
-			label = widget.Label(_("Start new without saving ?"))
+			label = widget.Label(_("Start new without saving?"))
 			dlg.add_widget(label)
 			label.show()
 			response = dlg.run()
@@ -151,7 +151,7 @@ class BasicTextView(text_view.TextView):
 		try:
 			self.save_file_name
 		except AttributeError:
-			save_file = file_chooser.FileChooserDialog(_("Save "),
+			save_file = file_chooser.FileChooserDialog(_("Save"),
 				file_chooser.FileChooserDialog.SAVE,
 				macros.supported_text_formats,None)
 			save_file.set_current_name(text[0:10]+".text");
@@ -310,7 +310,7 @@ class BasicTextView(text_view.TextView):
 		button_restore = widget.Button(_("Restore"))
 		button_restore.connect_function(restore)
 
-		button_apply_from_cursor = widget.Button(_("Apply from cursor"))
+		button_apply_from_cursor = widget.Button(_("Apply From Cursor"))
 		button_apply_from_cursor.connect_function(self.apply_text_cleaner_from_cursor)
 
 		button_apply = widget.Button(_("Apply on entire text"))
@@ -550,7 +550,7 @@ class BasicTextView(text_view.TextView):
 				if(self.move_backward_to_word(word)):
 					statusbar_context.set_text(self.get_context_text())
 			
-		label = widget.Label(_("<b> Find word  : </b>"))
+		label = widget.Label(_("<b>Find word: </b>"))
 		label.set_use_markup(True)
 		label.set_mnemonic_widget(entry)
 		
@@ -603,10 +603,10 @@ class BasicTextView(text_view.TextView):
 				else:
 					break
 			
-		label_word = widget.Label(_("<b> Word: </b>"))
+		label_word = widget.Label(_("<b>Word: </b>"))
 		label_word.set_use_markup(True)
 		label_word.set_mnemonic_widget(entry_word)
-		label_replace_word = widget.Label(_("<b> Replace word: </b>"))
+		label_replace_word = widget.Label(_("<b>Replace word: </b>"))
 		label_replace_word.set_use_markup(True)
 		label_replace_word.set_mnemonic_widget(entry_replace_word)
 		
@@ -692,7 +692,7 @@ class BasicTextView(text_view.TextView):
 		
 		grid = containers.Grid()
 		
-		label = widget.Label(_("<b> Misspelled word  : </b>"))
+		label = widget.Label(_("<b>Misspelled word: </b>"))
 		label.set_use_markup(True)
 		label.set_mnemonic_widget(entry)
 		
@@ -735,9 +735,9 @@ class BasicTextView(text_view.TextView):
 		maximum_line = self.get_line_count()		
 		spinbutton_line = widget.SpinButton(current_line,0,maximum_line,1,5,0)
 		
-		dlg = dialog.Dialog(_("Go to line"),(_("Go"), dialog.Dialog.BUTTON_ID_1,_("Close!"), dialog.Dialog.BUTTON_ID_2))
+		dlg = dialog.Dialog(_("Go To Line"),(_("Go"), dialog.Dialog.BUTTON_ID_1,_("Close!"), dialog.Dialog.BUTTON_ID_2))
 		#spinbutton_line.connect("activate",lambda x : dialog.response(Gtk.ResponseType.ACCEPT))
-		dlg.add_widget_with_label(spinbutton_line,_("Line Number : "))
+		dlg.add_widget_with_label(spinbutton_line,_("Line Number: "))
 		spinbutton_line.grab_focus()
 		dlg.show_all()
 		response = dlg.run()
@@ -756,23 +756,23 @@ class BasicTextView(text_view.TextView):
 		else:
 			text = self.get_text()
 		
-		dialog_ac = dialog.Dialog(_("Audio converter "),(_("Convert"), dialog.Dialog.BUTTON_ID_1,_("Close!"), dialog.Dialog.BUTTON_ID_2))
+		dialog_ac = dialog.Dialog(_("Audio Converter"),(_("Convert"), dialog.Dialog.BUTTON_ID_1,_("Close!"), dialog.Dialog.BUTTON_ID_2))
 		grid = containers.Grid()
 
 		spinbutton_speed = widget.SpinButton(50,0,100,1,5,0)
-		label_speed = widget.Label(_("Speed : "))
+		label_speed = widget.Label(_("Speed: "))
 		label_speed.set_mnemonic_widget(spinbutton_speed)
 
 		spinbutton_volume = widget.SpinButton(100,0,100,1,5,0)
-		label_volume = widget.Label(_("Volume : "))
+		label_volume = widget.Label(_("Volume: "))
 		label_volume.set_mnemonic_widget(spinbutton_volume)
 
 		spinbutton_pitch = widget.SpinButton(50,0,100,1,5,0)
-		label_pitch = widget.Label(_("Pitch : "))
+		label_pitch = widget.Label(_("Pitch: "))
 		label_pitch.set_mnemonic_widget(spinbutton_pitch)
 
 		spinbutton_split = widget.SpinButton(5,0,100,1,5,0)
-		label_split_time = widget.Label(_("Split Time : "))
+		label_split_time = widget.Label(_("Split Time: "))
 		label_split_time.set_mnemonic_widget(spinbutton_split)
 		
 		combobox = widget.ComboBox()
@@ -780,14 +780,14 @@ class BasicTextView(text_view.TextView):
 			combobox.append_text(item)
 		if voice is not None:
 			combobox.set_active(voice)
-		label_voice = widget.Label(_("Voice : "))
+		label_voice = widget.Label(_("Voice: "))
 		label_voice.set_mnemonic_widget(combobox)
 
 		combobox_format = widget.ComboBox()
 		combobox_format.append_text(_("MP3 (liblame required)"))
 		combobox_format.append_text(_("WAV"))
 		combobox_format.set_active(0)
-		label_format = widget.Label(_("Format : "))
+		label_format = widget.Label(_("Format: "))
 		label_format.set_mnemonic_widget(combobox_format)
 		
 		grid.add_widgets([

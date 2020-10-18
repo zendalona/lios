@@ -227,26 +227,26 @@ class lios_preferences:
 		colorbutton_highlight_background.set_color_from_string(self.background_highlight_color)
 		label_highlight_background.set_mnemonic_widget(colorbutton_highlight_background)
 		
-		label_speech_module = widget.Label(_("Speech-Module"))
+		label_speech_module = widget.Label(_("Speech Module"))
 		combobox_speech_module = widget.ComboBox()
 		for item in speech.Speech().list_output_modules():
 			combobox_speech_module.add_item(item)
 		combobox_speech_module.connect_change_callback_function(change_speech_module)
 		label_speech_module.set_mnemonic_widget(combobox_speech_module)		
 
-		label_speech_language = widget.Label(_("Speech-Language"))
+		label_speech_language = widget.Label(_("Speech Language"))
 		combobox_speech_language = widget.ComboBox()
 		combobox_speech_module.set_active(self.speech_module)
 		combobox_speech_language.set_active(self.speech_language)
 		label_speech_language.set_mnemonic_widget(combobox_speech_language)
 
-		label_speech_rate = widget.Label(_("Speech-Rate"))
+		label_speech_rate = widget.Label(_("Speech Rate"))
 		spin_speech_rate = widget.SpinButton(self.speech_rate,-100,100,1,10,0)
 		label_speech_rate.set_mnemonic_widget(spin_speech_rate)
-		label_speech_volume = widget.Label(_("Speech-Volume"))
+		label_speech_volume = widget.Label(_("Speech Volume"))
 		spin_speech_volume = widget.SpinButton(self.speech_volume,-100,100,1,10,0)
 		label_speech_volume.set_mnemonic_widget(spin_speech_volume)
-		label_speech_pitch = widget.Label(_("Speech-Pitch"))
+		label_speech_pitch = widget.Label(_("Speech Pitch"))
 		spin_speech_pitch = widget.SpinButton(self.speech_pitch,-100,100,1,10,0)
 		label_speech_pitch.set_mnemonic_widget(spin_speech_pitch)
 
@@ -393,7 +393,7 @@ class lios_preferences:
 		combobox_scan_area.add_item(_("Full Scan Area"))
 		combobox_scan_area.add_item(_("Three Quarters"))
 		combobox_scan_area.add_item(_("Two Quarters"))
-		combobox_scan_area.add_item(_("One Quarters"))
+		combobox_scan_area.add_item(_("One Quarter"))
 		combobox_scan_area.set_active(self.scan_area)
 
 		label_scan_driver = widget.Label(_("Driver"))
@@ -417,7 +417,7 @@ class lios_preferences:
 
 		sparator_4 = widget.Separator()
 
-		checkbutton_scan_mode_switching = widget.CheckButton(_("Change to binary or lineart if possible"))
+		checkbutton_scan_mode_switching = widget.CheckButton(_("Change to binary or linear if possible"))
 		checkbutton_scan_mode_switching.set_active(self.scanner_mode_switching)
 
 		checkbutton_scanner_cache_calibration = widget.CheckButton(_("Cache Calibration"))
