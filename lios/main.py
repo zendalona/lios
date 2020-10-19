@@ -188,97 +188,97 @@ class linux_intelligent_ocr_solution():
 		menubar = menu.MenuBar(
 		[[_("_File"),(_("New"),self.textview.new,"<Control>N"),menu.SEPARATOR,
 			(_("Open"),self.open_files,"<Control>O"),
-			(_("Save"),self.textview.save,"<Control>S"),(_("Save-As"),self.textview.save_as,"<Shift><Control>N"),
-			(_("Export-Text-As-Pdf"),self.textview.print_to_pdf,"<Control>E"),(_("Print"),self.textview.open_print_dialog,"None"),
-			(_("Print-Preview"),self.textview.print_preview,"None"),menu.SEPARATOR,
+			(_("Save"),self.textview.save,"<Control>S"),(_("Save As"),self.textview.save_as,"<Shift><Control>N"),
+			(_("Export Text As Pdf"),self.textview.print_to_pdf,"<Control>E"),(_("Print"),self.textview.open_print_dialog,"None"),
+			(_("Print Preview"),self.textview.print_preview,"None"),menu.SEPARATOR,
 			(_("Quit"),self.quit,"<Control>Q")],
 		[_("_Edit"),(_("Undo"),self.textview.undo,"<Control>Z"),(_("Redo"),self.textview.redo,"<Control>Y"),
 			menu.SEPARATOR,
-			(_("Punch-Text"),self.textview.punch,"None"),(_("Append-Text"),self.textview.append,"None"),
+			(_("Punch Text"),self.textview.punch,"None"),(_("Append Text"),self.textview.append,"None"),
 			menu.SEPARATOR,(_("Find"),self.textview.open_find_dialog,"<Control>F"),
-			(_("Find-Replace"),self.textview.open_find_and_replace_dialog,"<Control>R")
+			(_("Find Replace"),self.textview.open_find_and_replace_dialog,"<Control>R")
 			,menu.SEPARATOR,
-			(_("Spell-Check"),self.textview.open_spell_check,"<Control>F7"),
+			(_("Spell Check"),self.textview.open_spell_check,"<Control>F7"),
 			menu.SEPARATOR,
-			(_("Go-To-Line"),self.textview.go_to_line,"<Control>L"),(_("Go-To-Page"),self.go_to_page,"<Control>G"),
+			(_("Go To Line"),self.textview.go_to_line,"<Control>L"),(_("Go To Page"),self.go_to_page,"<Control>G"),
 			menu.SEPARATOR,(_("Preferences"),self.open_preferences_general_page,"<Control>P")],
-		[_("_Image"),[_("Rotate-Left"),(_("Current"),self.rotate_current_images_to_left,"None"),
+		[_("_Image"),[_("Rotate Left"),(_("Current"),self.rotate_current_images_to_left,"None"),
 				(_("Selected"),self.rotate_selected_images_to_left,"None"),
 				(_("All"),self.rotate_all_images_to_left,"None")],
-			[_("Rotate-Twice"),(_("Current"),self.rotate_current_images_to_twice,"None"),
+			[_("Rotate Twice"),(_("Current"),self.rotate_current_images_to_twice,"None"),
 				(_("Selected"),self.rotate_selected_images_to_twice,"None"),
 				(_("All"),self.rotate_all_images_to_twice,"None")],
-			[_("Rotate-Right"),(_("Current"),self.rotate_current_images_to_right,"None"),
+			[_("Rotate Right"),(_("Current"),self.rotate_current_images_to_right,"None"),
 				(_("Selected"),self.rotate_selected_images_to_right,"None"),
 				(_("All"),self.rotate_all_images_to_right,"None")],											
-			menu.SEPARATOR, (_("Invert-List"),self.iconview.invert_list,"None"),
+			menu.SEPARATOR, (_("Invert List"),self.iconview.invert_list,"None"),
 			menu.SEPARATOR,
-			[_("Save"),(_("Selected-Images"),self.save_selected_images,"None"),
-				(_("All-Images"),self.save_all_images,"None")],
-			[_("Export-As-Pdf"),(_("Selected-Images"),self.save_selected_images_as_pdf,"None"),
-				(_("All-Images"),self.save_all_images_as_pdf,"None")], menu.SEPARATOR,
-			[_("Delete"),(_("Selected-Images"),self.iconview_remove_selected_images,"None"),
-				(_("All-Images"),self.iconview_remove_all_images,"None")],],
-		[_("_Scan"),(_("Update-Scanner-List"),self.update_scanner_list,"None"),
-			(_("Scan-Image"),self.scan_single_image,"F8"),
-			(_("Scan-Image-Repeatedly"),self.scan_image_repeatedly,"<Control>F8"),
-			(_("Scan-and-Ocr"),self.scan_and_ocr,"F9"),
-			(_("Scan-and-Ocr-Repeatedly"),self.scan_and_ocr_repeatedly,"<Control>F9"),
-			(_("Optimise-Scanner-Brightness"),self.optimize_brightness,"None"),menu.SEPARATOR,
-			(_("Scan-Using-Webcam"),self.scan_using_cam,"F6"),menu.SEPARATOR,
-			[_("Take-Screenshot"),
+			[_("Save"),(_("Selected Images"),self.save_selected_images,"None"),
+				(_("All Images"),self.save_all_images,"None")],
+			[_("Export As Pdf"),(_("Selected Images"),self.save_selected_images_as_pdf,"None"),
+				(_("All Images"),self.save_all_images_as_pdf,"None")], menu.SEPARATOR,
+			[_("Delete"),(_("Selected Images"),self.iconview_remove_selected_images,"None"),
+				(_("All Images"),self.iconview_remove_all_images,"None")],],
+		[_("_Scan"),(_("Update Scanner List"),self.update_scanner_list,"None"),
+			(_("Scan Image"),self.scan_single_image,"F8"),
+			(_("Scan Image Repeatedly"),self.scan_image_repeatedly,"<Control>F8"),
+			(_("Scan and Ocr"),self.scan_and_ocr,"F9"),
+			(_("Scan and Ocr Repeatedly"),self.scan_and_ocr_repeatedly,"<Control>F9"),
+			(_("Optimize Scanner Brightness"),self.optimize_brightness,"None"),menu.SEPARATOR,
+			(_("Scan Using Webcam"),self.scan_using_cam,"F6"),menu.SEPARATOR,
+			[_("Take Screenshot"),
 				(_("Selection"),self.take_rectangle_screenshot,"<Control>F2"),
 				(_("Full"),self.take_full_screenshot,"F2")],
-			[_("Take-and-Recognize-Screenshot"),
+			[_("Take and Recognize Screenshot"),
 				(_("Selection"),self.take_and_recognize_rectangle_screenshot,"<Control>F3"),
 				(_("Full"),self.take_and_recognize_full_screenshot,"F3")]],
 		[_("_Recognize"),
-			(_("Recognize-Current-Image"),self.ocr_current_image,"None"),
-			(_("Recognize-Current-Image-With-Rotation"),self.ocr_current_image_with_rotation,"None"),
-			(_("Recognize-Selected-Areas"),self.ocr_selected_areas,"None"),
-			(_("Recognize-Selected-Images"),self.ocr_selected_images,"None"),
-			(_("Recognize-All-Images"),self.ocr_all_images,"None"),
-			(_("Recognize-Selected-with-rotation"),self.ocr_selected_images_with_rotation,"None"),
-			(_("Recognize-All-with-rotation"),self.ocr_all_images_with_rotation,"None")],
-		[_("_Tools"),(_("Spell-Check"),self.textview.open_spell_check,"<Control>F7"),
-			[_("Text-Cleaner"),
-				(_("Text-Cleaner"),self.textview.open_text_cleaner,"None"),
+			(_("Recognize Current Image"),self.ocr_current_image,"None"),
+			(_("Recognize Current Image With Rotation"),self.ocr_current_image_with_rotation,"None"),
+			(_("Recognize Selected Areas"),self.ocr_selected_areas,"None"),
+			(_("Recognize Selected Images"),self.ocr_selected_images,"None"),
+			(_("Recognize All Images"),self.ocr_all_images,"None"),
+			(_("Recognize Selected with rotation"),self.ocr_selected_images_with_rotation,"None"),
+			(_("Recognize All with rotation"),self.ocr_all_images_with_rotation,"None")],
+		[_("_Tools"),(_("Spell Check"),self.textview.open_spell_check,"<Control>F7"),
+			[_("Text Cleaner"),
+				(_("Text Cleaner"),self.textview.open_text_cleaner,"None"),
 				(_("Import"),self.textview.import_text_cleaner_list,"None"),
 				(_("Export"),self.textview.export_text_cleaner_list,"None"),
-				(_("Apply-From-Cursor"),self.textview.apply_text_cleaner_from_cursor,"None"),
-				(_("Apply-Entire"),self.textview.apply_text_cleaner_entire_text,"None")],
-			(_("Audio-Converter"),self.audio_converter,"None"),
+				(_("Apply From Cursor"),self.textview.apply_text_cleaner_from_cursor,"None"),
+				(_("Apply Entire"),self.textview.apply_text_cleaner_entire_text,"None")],
+			(_("Audio Converter"),self.audio_converter,"None"),
 			(_("Dictionary"),self.artha,"<Control><Alt>W"),
 			(_("Bookmark"),self.textview.create_bookmark,"<Control>B"),
-			(_("Bookmark-Table"),self.textview.open_bookmark_table,"<Alt>B"),
-			(_("Import-Bookmarks"),self.textview.import_bookmarks_from_file,"None"),
-			(_("Bookmark-Table-Complete"),self.textview.open_all_bookmark_table,"<Super>B"),
-			(_("Start-Reader"),self.start_reader,"F5"),
-			(_("Stop-Reader"),self.stop_reader,"<Control>F5"),
-			(_("Increase-Reader-Speed"),self.increase_reader_speed,"<Ctrl>Prior"),
-			(_("Decrease-Reader-Speed"),self.decrease_reader_speed,"<Ctrl>Next"),
-			(_("Stop-All-Process"),self.stop_all_process,"<Control>F4")],
-		[_("_Preferences"),(_("Preferences-General"),self.open_preferences_general_page,"None"),
-			(_("Preferences-Recognition"),self.open_preferences_recognition_page,"None"),
-			(_("Preferences-Scanning"),self.open_preferences_scanning_page,"None"),
+			(_("Bookmark Table"),self.textview.open_bookmark_table,"<Alt>B"),
+			(_("Import Bookmarks"),self.textview.import_bookmarks_from_file,"None"),
+			(_("Bookmark Table Complete"),self.textview.open_all_bookmark_table,"<Super>B"),
+			(_("Start Reader"),self.start_reader,"F5"),
+			(_("Stop Reader"),self.stop_reader,"<Control>F5"),
+			(_("Increase Reader Speed"),self.increase_reader_speed,"<Ctrl>Prior"),
+			(_("Decrease Reader Speed"),self.decrease_reader_speed,"<Ctrl>Next"),
+			(_("Stop All Process"),self.stop_all_process,"<Control>F4")],
+		[_("_Preferences"),(_("Preferences General"),self.open_preferences_general_page,"None"),
+			(_("Preferences Recognition"),self.open_preferences_recognition_page,"None"),
+			(_("Preferences Scanning"),self.open_preferences_scanning_page,"None"),
 			menu.SEPARATOR,	(_("Save"),self.save_preferences,"None"),
 			(_("Load"),self.load_preferences,"None"),
 			(_("Restore"),self.restore_preferences,"None")],
-		[_("Help"),(_("Open-Readme"),self.open_readme,"None"),
-			(_("Video-Tutorials"),self.open_video_tutorials,"None"),
-			(_("Open-Home-Page"),self.open_home_page,"None"),
-			(_("Get-Source-Code"),self.get_source_code,"None"),
+		[_("Help"),(_("Open Readme"),self.open_readme,"None"),
+			(_("Video Tutorials"),self.open_video_tutorials,"None"),
+			(_("Open Home Page"),self.open_home_page,"None"),
+			(_("Get Source Code"),self.get_source_code,"None"),
 			menu.SEPARATOR,(_("About"),self.about,"None")]])
 		menubar.show()
 
 		self.combobox_scanners = widget.ComboBox()
-		button_update_scanner_list = widget.Button(_("Update-Scanner-List"))
+		button_update_scanner_list = widget.Button(_("Update Scanner List"))
 		button_update_scanner_list.connect_function(self.update_scanner_list)
 		button_scan = widget.Button(_("Scan"))
 		button_scan.connect_function(self.scan_single_image)		
 		toolbar_main = containers.Toolbar(containers.Toolbar.HORIZONTAL,
 			[(_("Preferences"),self.open_preferences_general_page),
-			(_("Video-Tutorials"),self.open_video_tutorials),
+			(_("Video Tutorials"),self.open_video_tutorials),
 			(_("About"),self.about),
 			(_("Quit"),self.quit)])				
 		
@@ -408,7 +408,7 @@ class linux_intelligent_ocr_solution():
 	def go_to_page(self,*data):
 		spinbutton_page = widget.SpinButton(0,0,self.preferences.starting_page_number,1,5,0)
 		dlg = dialog.Dialog(_("Go to page"),(_("Go"), dialog.Dialog.BUTTON_ID_1,_("Close!"), dialog.Dialog.BUTTON_ID_2))
-		dlg.add_widget_with_label(spinbutton_page,_("Page Number : "))
+		dlg.add_widget_with_label(spinbutton_page,_("Page Number: "))
 		spinbutton_page.grab_focus()
 		dlg.show_all()
 		response = dlg.run()
@@ -692,7 +692,7 @@ class linux_intelligent_ocr_solution():
 			time.sleep(self.preferences.time_between_repeated_scanning)
 			if(self.process_breaker):
 				break
-		self.notify_information(_("completed!"),0)
+		self.notify_information(_("Completed!"),0)
 		#self.make_scanner_widgets_active(lock=True)
 		#self.make_preferences_widgets_active(lock=True)
 
@@ -874,7 +874,7 @@ class linux_intelligent_ocr_solution():
 							
 			if(self.process_breaker):
 				break
-		self.notify_information(_("Compleated"),0)
+		self.notify_information(_("Completed"),0)
 		#self.announce(_("Job completed!")
 		#self.make_scanner_widgets_active(lock=True)
 		#self.make_ocr_widgets_active(lock=True)
@@ -923,12 +923,12 @@ class linux_intelligent_ocr_solution():
 		result_text = _("<b>Click 'Optimize' to start optimisation </b>")
 		while(1):
 			loop.acquire_lock()
-			dlg = dialog.Dialog(_("Optimize Scanner-Brightness"),
+			dlg = dialog.Dialog(_("Optimize Scanner Brightness"),
 				(_("Optimize"), dialog.Dialog.BUTTON_ID_3,
 				_("Apply"), dialog.Dialog.BUTTON_ID_2,
 				_("Cancel"), dialog.Dialog.BUTTON_ID_1))		
 			
-			label_rotation = widget.Label(_("Angle to be rotated : "))
+			label_rotation = widget.Label(_("Angle to be rotated: "))
 			spinbutton_rotation = widget.SpinButton(angle,00,360,90,90,90)
 			label_rotation.set_mnemonic_widget(spinbutton_rotation)
 			try:
@@ -936,7 +936,7 @@ class linux_intelligent_ocr_solution():
 			except:
 				spinbutton_rotation.set_value(angle)			
 			
-			label_value = widget.Label(_("Current-Value"))
+			label_value = widget.Label(_("Current Value"))
 			spinbutton_value = widget.SpinButton(value,0,200,1,5,0)
 			label_value.set_mnemonic_widget(spinbutton_value)
 
@@ -1013,7 +1013,7 @@ class linux_intelligent_ocr_solution():
 				#self.make_preferences_widgets_active(lock=True)
 				return True
 			count, value = list[0][0],list[0][1];
-			result_text = _("<b>Optimisation Result ")
+			result_text = _("<b>Optimisation Result </b>")
 			for item in list:
 				result_text += _("\nGot {} Words at brightness {}").format(item[0], item[1])
 			result_text += "</b>" 
@@ -1056,7 +1056,7 @@ class linux_intelligent_ocr_solution():
 				list.append((count,pos))
 				#self.announce(_("Got {} words at brightness {}.".format(count,pos)))
 			pos = pos + distance
-		self.notify_information(_("completed!"),0)
+		self.notify_information(_("Completed!"),0)
 		list = sorted(list, key=lambda item: item[0],reverse=True)
 		return (list)
 
@@ -1072,7 +1072,7 @@ class linux_intelligent_ocr_solution():
 		if(self.textview.get_modified()):
 			dlg = dialog.Dialog(_("Warning!"),
 			 (_("No"),dialog.Dialog.BUTTON_ID_1,_("Yes"),dialog.Dialog.BUTTON_ID_2))
-			label = widget.Label(_("Current text not saved! do you want to load readme without saving ? "))
+			label = widget.Label(_("Current text not saved! do you want to load readme without saving?"))
 			label.show()
 			dlg.add_widget(label)
 			response = dlg.run()
@@ -1115,7 +1115,7 @@ class linux_intelligent_ocr_solution():
 			#self.make_ocr_widgets_active(lock=True)
 			#self.make_preferences_widgets_active(lock=True)
 			#self.make_image_widgets_active(lock=True)
-			self.notify_information(_("completed!"),0)
+			self.notify_information(_("Completed!"),0)
 		else:
 			self.notify_information(_("No item selected!"),0)
 
@@ -1143,7 +1143,7 @@ class linux_intelligent_ocr_solution():
 				self.preferences.update_page_number()
 				if(self.process_breaker):
 					break
-			self.notify_information(_("completed!"),0)
+			self.notify_information(_("Completed!"),0)
 		else:
 			self.notify_information(_("No item selected!"),0)
 		#self.announce(_("Completed!"))
@@ -1162,8 +1162,8 @@ class linux_intelligent_ocr_solution():
 
 	def iconview_remove_selected_images(self,*data):
 		if (len(self.iconview.get_selected_item_names()) >= 1):
-			dlg = dialog.Dialog(_("Deleting !"),(_("Cancel"),dialog.Dialog.BUTTON_ID_1,_("Yes Delete"), dialog.Dialog.BUTTON_ID_2))
-			label = widget.Label(_("Are you sure you want to delete selected images ?"))
+			dlg = dialog.Dialog(_("Deleting!"),(_("Cancel"),dialog.Dialog.BUTTON_ID_1,_("Yes Delete"), dialog.Dialog.BUTTON_ID_2))
+			label = widget.Label(_("Are you sure you want to delete selected images?"))
 			dlg.add_widget(label)
 			label.show()
 			response = dlg.run()
@@ -1191,7 +1191,7 @@ class linux_intelligent_ocr_solution():
 				.format(item,angle),progress)
 				progress = progress + progress_step;
 		self.imageview.redraw()
-		self.notify_information(_("completed!"),0)
+		self.notify_information(_("Completed!"),0)
 
 	def rotate_selected_images_to_right(self,widget):
 		self.rotate_selected_images_to_angle(90)
@@ -1312,7 +1312,7 @@ class linux_intelligent_ocr_solution():
 				if(self.process_breaker):
 					break;
 
-		self.notify_information(_("completed!"),0)
+		self.notify_information(_("Completed!"),0)
 		#self.make_preferences_widgets_active(lock=True)
 		#self.make_ocr_widgets_active(lock=True)
 		#self.make_image_widgets_active(lock=True)
@@ -1463,15 +1463,15 @@ pacman -S aspell-{1}""").format(lang, langdict, langdict, langdict, langdict))
 		loop.acquire_lock()
 
 		if(self.textview.get_text() != ""):
-			dlg = dialog.Dialog(_("Recognize imported images ?!"),
+			dlg = dialog.Dialog(_("Recognize imported images?"),
 			 (_("Yes (also clear previous text)"),dialog.Dialog.BUTTON_ID_1,_("Yes"),
 			 dialog.Dialog.BUTTON_ID_2,("No"),dialog.Dialog.BUTTON_ID_3))
 		else:
-			dlg = dialog.Dialog(_("Recognize imported images ?!"),
+			dlg = dialog.Dialog(_("Recognize imported images?"),
 			 (_("Yes"),dialog.Dialog.BUTTON_ID_2,_("No"),
 			 dialog.Dialog.BUTTON_ID_3))
 
-		label = widget.Label(_("Do you want to recognize imported images ?"))
+		label = widget.Label(_("Do you want to recognize imported images?"))
 		label.show()
 		dlg.add_widget(label)
 		response = dlg.run()
@@ -1493,7 +1493,7 @@ pacman -S aspell-{1}""").format(lang, langdict, langdict, langdict, langdict))
 					self.preferences.update_page_number()
 					if(self.process_breaker):
 						break
-				self.notify_information(_("completed!"),0)
+				self.notify_information(_("Completed!"),0)
 		dlg.destroy();
 		loop.release_lock()
 
