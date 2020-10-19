@@ -1,0 +1,23 @@
+### Adding new local ###
+
+# Step 1 : updating pot file if code changed
+cd lios-3/
+find lios/ -iname "*.py" | xargs xgettext -o po/lios.pot
+
+# Step 2 : creating new local file
+cp po/lios.pot po/<your_languge_code>.po
+
+# Step 3 : Translate using poedi or favorite text editer
+pluma po/<your_languge_code>.po 
+
+# Step 4 : compile message catalog to binary format
+mkdir share/locale/<your_languge_code>
+
+# Step 5 : compile message catalog to binary format
+msgfmt po/<your_languge_code>.po -o share/locale/<your_languge_code>/LC_MESSAGES/lios.mo
+
+# Step 6 : listing language file in setup script
+# Add following line in beteween similiar lines in setup.py
+('share/locale/fr/LC_MESSAGES',['share/locale/<your_languge_code>/LC_MESSAGES/lios.mo']),
+
+# To correct translations repeat step 3 and 4.
