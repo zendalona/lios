@@ -59,6 +59,8 @@ default_text_cleaner_list_file_path = "/usr/share/lios/text_cleaner_list.text"
 
 app_name = "Linux-intelligent-ocr-solution"
 
+app_name_abbreviated = "lios"
+
 source_link = "https://gitlab.com/Nalin-x-Linux/lios-3"
 
 home_page_link = "http://sourceforge.net/projects/lios/"

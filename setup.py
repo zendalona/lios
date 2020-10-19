@@ -59,6 +59,8 @@ setup(name='lios',
       ('share/applications/',['share/applications/Lios.desktop','share/applications/Lios-ocr-screenshot.desktop']),
       ('share/man/man1/',['share/man/man1/lios.1.gz']),
       ('share/doc/lios/',['share/doc/lios/copyright']),('share/pixmaps/',['share/pixmaps/lios.xpm']),
-      ('bin',['bin/lios'])]
+      ('bin',['bin/lios']),
+      ('share/locale/fr/LC_MESSAGES',['share/locale/fr/LC_MESSAGES/lios.mo']),
+      ('share/locale/it/LC_MESSAGES',['share/locale/it/LC_MESSAGES/lios.mo'])]
       )
 # sudo python3 setup.py install --install-data=/usr

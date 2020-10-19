@@ -1,0 +1,1339 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-10-19 12:00+0530\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: lios/main.py:77 lios/main.py:142 lios/main.py:190 lios/ui/gtk/icon.py:25
+msgid "Open"
+msgstr ""
+
+#: lios/main.py:77 lios/ui/gtk/icon.py:91
+msgid "Take-Screenshot"
+msgstr ""
+
+#: lios/main.py:78 lios/ui/gtk/icon.py:90
+msgid "Scan-Using-Webcam"
+msgstr ""
+
+#: lios/main.py:78 lios/main.py:82 lios/ui/gtk/icon.py:60
+msgid "Recognize"
+msgstr ""
+
+#: lios/main.py:79 lios/ui/gtk/icon.py:69 lios/editor.py:308
+#: lios/imageview.py:80
+msgid "Clear"
+msgstr ""
+
+#: lios/main.py:83
+msgid "Recognize-With-Rotation"
+msgstr ""
+
+#: lios/main.py:85 lios/main.py:110 lios/main.py:127 lios/ui/gtk/icon.py:52
+msgid "Rotate-Left"
+msgstr ""
+
+#: lios/main.py:86 lios/main.py:109 lios/main.py:126 lios/ui/gtk/icon.py:54
+msgid "Rotate-Twice"
+msgstr ""
+
+#: lios/main.py:87 lios/main.py:108 lios/main.py:125 lios/ui/gtk/icon.py:53
+msgid "Rotate-Right"
+msgstr ""
+
+#: lios/main.py:88 lios/ui/gtk/icon.py:59
+msgid "Invert-List"
+msgstr ""
+
+#: lios/main.py:89 lios/main.py:143 lios/main.py:191 lios/main.py:216
+#: lios/main.py:264 lios/ui/gtk/icon.py:26 lios/editor.py:154
+#: lios/editor.py:810
+msgid "Save"
+msgstr ""
+
+#: lios/main.py:90 lios/ui/gtk/icon.py:72
+msgid "Export-As-Pdf"
+msgstr ""
+
+#: lios/main.py:92 lios/main.py:220 lios/ui/gtk/icon.py:46 lios/editor.py:387
+#: lios/editor.py:705
+msgid "Delete"
+msgstr ""
+
+#: lios/main.py:111 lios/main.py:128 lios/ui/gtk/icon.py:49
+msgid "Zoom-In"
+msgstr ""
+
+#: lios/main.py:111 lios/main.py:128 lios/ui/gtk/icon.py:50
+msgid "Zoom-Fit"
+msgstr ""
+
+#: lios/main.py:112 lios/main.py:129 lios/ui/gtk/icon.py:51
+msgid "Zoom-Out"
+msgstr ""
+
+#: lios/main.py:113 lios/main.py:123 lios/ui/gtk/icon.py:66
+msgid "Recognize-Selected-Areas"
+msgstr ""
+
+#: lios/main.py:114 lios/main.py:122 lios/ui/gtk/icon.py:67
+msgid "Recognize-Current-Image"
+msgstr ""
+
+#: lios/main.py:115 lios/main.py:124 lios/ui/gtk/icon.py:68
+msgid "Recognize-Current-Image-With-Rotation"
+msgstr ""
+
+#: lios/main.py:130
+msgid "Save-Selected-Areas"
+msgstr ""
+
+#: lios/main.py:142 lios/main.py:189 lios/ui/gtk/icon.py:24
+msgid "New"
+msgstr ""
+
+#: lios/main.py:144 lios/ui/gtk/icon.py:36 lios/editor.py:727
+msgid "Spell-Check"
+msgstr ""
+
+#: lios/main.py:145 lios/main.py:195 lios/ui/gtk/icon.py:44
+msgid "Undo"
+msgstr ""
+
+#: lios/main.py:145 lios/main.py:195 lios/ui/gtk/icon.py:45
+msgid "Redo"
+msgstr ""
+
+#: lios/main.py:147 lios/main.py:198 lios/ui/gtk/icon.py:28
+msgid "Find"
+msgstr ""
+
+#: lios/main.py:148 lios/ui/gtk/icon.py:29
+msgid "Find-Replace"
+msgstr ""
+
+#: lios/main.py:150 lios/ui/gtk/icon.py:37
+msgid "Start-Reader"
+msgstr ""
+
+#: lios/main.py:151 lios/ui/gtk/icon.py:38
+msgid "Stop-Reader"
+msgstr ""
+
+#: lios/main.py:153 lios/ui/gtk/icon.py:43
+msgid "Go-To-Line"
+msgstr ""
+
+#: lios/main.py:154 lios/ui/gtk/icon.py:42
+msgid "Go-To-Page"
+msgstr ""
+
+#: lios/main.py:189 lios/ui/gtk/icon.py:23
+msgid "_File"
+msgstr ""
+
+#: lios/main.py:191
+msgid "Save As"
+msgstr ""
+
+#: lios/main.py:192
+msgid "Export Text As Pdf"
+msgstr ""
+
+#: lios/main.py:192 lios/ui/gtk/icon.py:70
+msgid "Print"
+msgstr ""
+
+#: lios/main.py:193
+msgid "Print Preview"
+msgstr ""
+
+#: lios/main.py:194 lios/main.py:283 lios/ui/gtk/icon.py:74
+msgid "Quit"
+msgstr ""
+
+#: lios/main.py:195 lios/ui/gtk/icon.py:75
+msgid "_Edit"
+msgstr ""
+
+#: lios/main.py:197
+msgid "Punch Text"
+msgstr ""
+
+#: lios/main.py:197
+msgid "Append Text"
+msgstr ""
+
+#: lios/main.py:199
+msgid "Find Replace"
+msgstr ""
+
+#: lios/main.py:201 lios/main.py:243
+msgid "Spell Check"
+msgstr ""
+
+#: lios/main.py:203 lios/editor.py:738
+msgid "Go To Line"
+msgstr ""
+
+#: lios/main.py:203
+msgid "Go To Page"
+msgstr ""
+
+#: lios/main.py:204 lios/main.py:280 lios/ui/gtk/icon.py:94
+msgid "Preferences"
+msgstr ""
+
+#: lios/main.py:205 lios/ui/gtk/icon.py:55
+msgid "_Image"
+msgstr ""
+
+#: lios/main.py:205
+msgid "Rotate Left"
+msgstr ""
+
+#: lios/main.py:205 lios/main.py:208 lios/main.py:211
+msgid "Current"
+msgstr ""
+
+#: lios/main.py:206 lios/main.py:209 lios/main.py:212 lios/imageview.py:58
+msgid "Selected"
+msgstr ""
+
+#: lios/main.py:207 lios/main.py:210 lios/main.py:213
+msgid "All"
+msgstr ""
+
+#: lios/main.py:208
+msgid "Rotate Twice"
+msgstr ""
+
+#: lios/main.py:211
+msgid "Rotate Right"
+msgstr ""
+
+#: lios/main.py:214
+msgid "Invert List"
+msgstr ""
+
+#: lios/main.py:216 lios/main.py:218 lios/main.py:220
+msgid "Selected Images"
+msgstr ""
+
+#: lios/main.py:217 lios/main.py:219 lios/main.py:221
+msgid "All Images"
+msgstr ""
+
+#: lios/main.py:218
+msgid "Export As Pdf"
+msgstr ""
+
+#: lios/main.py:222 lios/ui/gtk/icon.py:84
+msgid "_Scan"
+msgstr ""
+
+#: lios/main.py:222 lios/main.py:275
+msgid "Update Scanner List"
+msgstr ""
+
+#: lios/main.py:223
+msgid "Scan Image"
+msgstr ""
+
+#: lios/main.py:224
+msgid "Scan Image Repeatedly"
+msgstr ""
+
+#: lios/main.py:225
+msgid "Scan and Ocr"
+msgstr ""
+
+#: lios/main.py:226
+msgid "Scan and Ocr Repeatedly"
+msgstr ""
+
+#: lios/main.py:227 lios/main.py:926
+msgid "Optimize Scanner Brightness"
+msgstr ""
+
+#: lios/main.py:228
+msgid "Scan Using Webcam"
+msgstr ""
+
+#: lios/main.py:229
+msgid "Take Screenshot"
+msgstr ""
+
+#: lios/main.py:230 lios/main.py:233
+msgid "Selection"
+msgstr ""
+
+#: lios/main.py:231 lios/main.py:234
+msgid "Full"
+msgstr ""
+
+#: lios/main.py:232
+msgid "Take and Recognize Screenshot"
+msgstr ""
+
+#: lios/main.py:235 lios/ui/gtk/icon.py:61
+msgid "_Recognize"
+msgstr ""
+
+#: lios/main.py:236
+msgid "Recognize Current Image"
+msgstr ""
+
+#: lios/main.py:237
+msgid "Recognize Current Image With Rotation"
+msgstr ""
+
+#: lios/main.py:238
+msgid "Recognize Selected Areas"
+msgstr ""
+
+#: lios/main.py:239
+msgid "Recognize Selected Images"
+msgstr ""
+
+#: lios/main.py:240
+msgid "Recognize All Images"
+msgstr ""
+
+#: lios/main.py:241
+msgid "Recognize Selected with rotation"
+msgstr ""
+
+#: lios/main.py:242
+msgid "Recognize All with rotation"
+msgstr ""
+
+#: lios/main.py:243 lios/ui/gtk/icon.py:100
+msgid "_Tools"
+msgstr ""
+
+#: lios/main.py:244 lios/main.py:245 lios/editor.py:244
+msgid "Text Cleaner"
+msgstr ""
+
+#: lios/main.py:246 lios/ui/gtk/icon.py:31 lios/editor.py:303
+msgid "Import"
+msgstr ""
+
+#: lios/main.py:247 lios/ui/gtk/icon.py:32 lios/editor.py:305
+msgid "Export"
+msgstr ""
+
+#: lios/main.py:248 lios/editor.py:313
+msgid "Apply From Cursor"
+msgstr ""
+
+#: lios/main.py:249
+msgid "Apply Entire"
+msgstr ""
+
+#: lios/main.py:250 lios/editor.py:759
+msgid "Audio Converter"
+msgstr ""
+
+#: lios/main.py:251 lios/ui/gtk/icon.py:101
+msgid "Dictionary"
+msgstr ""
+
+#: lios/main.py:252 lios/ui/gtk/icon.py:79 lios/editor.py:512
+msgid "Bookmark"
+msgstr ""
+
+#: lios/main.py:253 lios/editor.py:349 lios/editor.py:422
+msgid "Bookmark Table"
+msgstr ""
+
+#: lios/main.py:254
+msgid "Import Bookmarks"
+msgstr ""
+
+#: lios/main.py:255
+msgid "Bookmark Table Complete"
+msgstr ""
+
+#: lios/main.py:256
+msgid "Start Reader"
+msgstr ""
+
+#: lios/main.py:257
+msgid "Stop Reader"
+msgstr ""
+
+#: lios/main.py:258
+msgid "Increase Reader Speed"
+msgstr ""
+
+#: lios/main.py:259
+msgid "Decrease Reader Speed"
+msgstr ""
+
+#: lios/main.py:260
+msgid "Stop All Process"
+msgstr ""
+
+#: lios/main.py:261 lios/ui/gtk/icon.py:93
+msgid "_Preferences"
+msgstr ""
+
+#: lios/main.py:261
+msgid "Preferences General"
+msgstr ""
+
+#: lios/main.py:262
+msgid "Preferences Recognition"
+msgstr ""
+
+#: lios/main.py:263
+msgid "Preferences Scanning"
+msgstr ""
+
+#: lios/main.py:265 lios/ui/gtk/icon.py:99
+msgid "Load"
+msgstr ""
+
+#: lios/main.py:266 lios/ui/gtk/icon.py:98 lios/editor.py:310
+msgid "Restore"
+msgstr ""
+
+#: lios/main.py:267 lios/ui/gtk/icon.py:103
+msgid "Help"
+msgstr ""
+
+#: lios/main.py:267
+msgid "Open Readme"
+msgstr ""
+
+#: lios/main.py:268 lios/main.py:281
+msgid "Video Tutorials"
+msgstr ""
+
+#: lios/main.py:269
+msgid "Open Home Page"
+msgstr ""
+
+#: lios/main.py:270
+msgid "Get Source Code"
+msgstr ""
+
+#: lios/main.py:271 lios/main.py:282 lios/ui/gtk/icon.py:108
+msgid "About"
+msgstr ""
+
+#: lios/main.py:277
+msgid "Scan"
+msgstr ""
+
+#: lios/main.py:352
+msgid "Welcome to {} Version {}"
+msgstr ""
+
+#: lios/main.py:410
+msgid "Go to page"
+msgstr ""
+
+#: lios/main.py:410 lios/editor.py:738
+msgid "Go"
+msgstr ""
+
+#: lios/main.py:410 lios/editor.py:253 lios/editor.py:501 lios/editor.py:512
+#: lios/editor.py:738 lios/editor.py:759
+msgid "Close!"
+msgstr ""
+
+#: lios/main.py:411
+msgid "Page Number: "
+msgstr ""
+
+#: lios/main.py:481
+msgid "Extracting images from Pdf"
+msgstr ""
+
+#: lios/main.py:506 lios/main.py:630 lios/main.py:695 lios/main.py:1059
+#: lios/main.py:1118 lios/main.py:1146 lios/main.py:1194 lios/main.py:1315
+#: lios/main.py:1496
+msgid "Completed!"
+msgstr ""
+
+#: lios/main.py:597
+msgid "Getting devices"
+msgstr ""
+
+#: lios/main.py:615
+msgid "Setting Scanner {}"
+msgstr ""
+
+#: lios/main.py:635
+msgid "No Scanner Detected!"
+msgstr ""
+
+#: lios/main.py:703
+msgid "Scanning {}, resolution {}, brightness {}"
+msgstr ""
+
+#: lios/main.py:713
+msgid "Scan Completed!"
+msgstr ""
+
+#: lios/main.py:816 lios/main.py:858 lios/main.py:1101 lios/main.py:1139
+#: lios/main.py:1489
+msgid "Recognizing {}"
+msgstr ""
+
+#: lios/main.py:823 lios/main.py:867
+msgid "Page {}"
+msgstr ""
+
+#: lios/main.py:877
+msgid "Completed"
+msgstr ""
+
+#: lios/main.py:906
+msgid ""
+"Scanning with resolution {}, brightness {}, for detecting angle of rotation."
+msgstr ""
+
+#: lios/main.py:923
+msgid "<b>Click 'Optimize' to start optimisation </b>"
+msgstr ""
+
+#: lios/main.py:927
+msgid "Optimize"
+msgstr ""
+
+#: lios/main.py:928 lios/preferences.py:445
+msgid "Apply"
+msgstr ""
+
+#: lios/main.py:929 lios/main.py:1165 lios/editor.py:111
+msgid "Cancel"
+msgstr ""
+
+#: lios/main.py:931
+msgid "Angle to be rotated: "
+msgstr ""
+
+#: lios/main.py:939
+msgid "Current Value"
+msgstr ""
+
+#: lios/main.py:943 lios/preferences.py:306
+msgid "Start"
+msgstr ""
+
+#: lios/main.py:947
+msgid "Distance"
+msgstr ""
+
+#: lios/main.py:951 lios/preferences.py:308
+msgid "End"
+msgstr ""
+
+#: lios/main.py:955
+msgid "Result"
+msgstr ""
+
+#: lios/main.py:977
+msgid "Set Mode of rotation"
+msgstr ""
+
+#: lios/main.py:978
+msgid "Yes set this rotation"
+msgstr ""
+
+#: lios/main.py:979
+msgid "No continue with existing mode"
+msgstr ""
+
+#: lios/main.py:980
+msgid ""
+"Do you want to fix the angle at {}\t\t\t\t\n"
+"degree manual rotation ?"
+msgstr ""
+
+#: lios/main.py:988
+msgid "Rotation mode changed to manual at angle {} degree"
+msgstr ""
+
+#: lios/main.py:1016
+msgid "<b>Optimisation Result </b>"
+msgstr ""
+
+#: lios/main.py:1018
+msgid ""
+"\n"
+"Got {} Words at brightness {}"
+msgstr ""
+
+#: lios/main.py:1037
+msgid ""
+"Got {} words at brightness {}. Scanning with resolution {}, brightness {}."
+msgstr ""
+
+#: lios/main.py:1040
+msgid "Scanning with resolution {}, brightness {}."
+msgstr ""
+
+#: lios/main.py:1053
+#, python-brace-format
+msgid "Recognizing {0}test.pnm"
+msgstr ""
+
+#: lios/main.py:1069
+msgid "Terminated"
+msgstr ""
+
+#: lios/main.py:1073 lios/editor.py:501
+msgid "Warning!"
+msgstr ""
+
+#: lios/main.py:1074 lios/main.py:1471
+msgid "No"
+msgstr ""
+
+#: lios/main.py:1074 lios/main.py:1467 lios/main.py:1471
+msgid "Yes"
+msgstr ""
+
+#: lios/main.py:1075
+msgid "Current text not saved! do you want to load readme without saving?"
+msgstr ""
+
+#: lios/main.py:1120 lios/main.py:1148
+msgid "No item selected!"
+msgstr ""
+
+#: lios/main.py:1165
+msgid "Deleting!"
+msgstr ""
+
+#: lios/main.py:1165
+msgid "Yes Delete"
+msgstr ""
+
+#: lios/main.py:1166
+msgid "Are you sure you want to delete selected images?"
+msgstr ""
+
+#: lios/main.py:1179
+msgid "Nothing selected"
+msgstr ""
+
+#: lios/main.py:1190
+msgid "Rotating selected image {} to {}"
+msgstr ""
+
+#: lios/main.py:1239 lios/editor.py:224
+msgid "Filename please"
+msgstr ""
+
+#: lios/main.py:1247
+msgid "Select Folder to save images"
+msgstr ""
+
+#: lios/main.py:1263
+msgid "Give pdf filename(with extention) to save images"
+msgstr ""
+
+#: lios/main.py:1302
+msgid "Running OCR on selected Area [ X={} Y={} Width={} Height={} ]"
+msgstr ""
+
+#: lios/main.py:1337
+msgid "Dictionary not found!"
+msgstr ""
+
+#: lios/main.py:1337 lios/editor.py:253
+msgid "Ok"
+msgstr ""
+
+#: lios/main.py:1339
+#, python-brace-format
+msgid ""
+"Please install aspell, ispell, hunspell, myspell, or uspell \n"
+"dictionary for your language({0}) and restart Lios!\n"
+"Otherwise spellchecker and auto-rotation will work with english(fallback). \n"
+"\n"
+"For example on debian based system one can install aspell or \n"
+"hunspell french dictionary using following commands\n"
+"apt-get install aspell-{1}\n"
+"apt-get install hunspell-{1}\n"
+"\t\t\n"
+"or ispell dict using \n"
+"apt-get install ifrench \n"
+" \n"
+"On rpm based system use \n"
+"yum install aspell-{1}\n"
+"\t\t\t\n"
+"On arch based system use \n"
+"pacman -S aspell-{1}"
+msgstr ""
+
+#: lios/main.py:1374
+msgid "Save preferences as "
+msgstr ""
+
+#: lios/main.py:1379
+msgid "Preferences saved to "
+msgstr ""
+
+#: lios/main.py:1385
+msgid "Select the image"
+msgstr ""
+
+#: lios/main.py:1391
+msgid "Preferences loaded from "
+msgstr ""
+
+#: lios/main.py:1398
+msgid "Preferences Restored"
+msgstr ""
+
+#: lios/main.py:1416
+msgid "Select files to open"
+msgstr ""
+
+#: lios/main.py:1466 lios/main.py:1470
+msgid "Recognize imported images?"
+msgstr ""
+
+#: lios/main.py:1467
+msgid "Yes (also clear previous text)"
+msgstr ""
+
+#: lios/main.py:1474
+msgid "Do you want to recognize imported images?"
+msgstr ""
+
+#: lios/main.py:1550
+msgid "Lios"
+msgstr ""
+
+#: lios/main.py:1551 lios/main.py:1552
+msgid "Linux-Intelligent-Ocr-Solution"
+msgstr ""
+
+#: lios/main.py:1555
+msgid ""
+"Lios is a free and open source software\n"
+" \t\t\tfor converting print into text using a scanner or camara.\n"
+"\t\t\tIt can also produce text from other sources. Such as images,\n"
+"\t\t\tPdf, or screenshot. Program is given total accessibility \n"
+"\t\t\tfor visually impaired. Lios is written in python3 and we release \n"
+"\t\t\tit under GPL3 licence. There are great many possibilities\n"
+"\t\t\tfor this program. Feedback is the key to it."
+msgstr ""
+
+#: lios/main.py:1565
+msgid "Visit Home Page"
+msgstr ""
+
+#: lios/preferences.py:210
+msgid "Font"
+msgstr ""
+
+#: lios/preferences.py:215
+msgid "Highlight Font"
+msgstr ""
+
+#: lios/preferences.py:220
+msgid "Highlight Color"
+msgstr ""
+
+#: lios/preferences.py:225
+msgid "Highlight Background"
+msgstr ""
+
+#: lios/preferences.py:230
+msgid "Speech Module"
+msgstr ""
+
+#: lios/preferences.py:237
+msgid "Speech Language"
+msgstr ""
+
+#: lios/preferences.py:243
+msgid "Speech Rate"
+msgstr ""
+
+#: lios/preferences.py:246
+msgid "Speech Volume"
+msgstr ""
+
+#: lios/preferences.py:249
+msgid "Speech Pitch"
+msgstr ""
+
+#: lios/preferences.py:265
+msgid "General"
+msgstr ""
+
+#: lios/preferences.py:270
+msgid "Engine"
+msgstr ""
+
+#: lios/preferences.py:279
+msgid "Language"
+msgstr ""
+
+#: lios/preferences.py:284
+msgid "Language - 2"
+msgstr ""
+
+#: lios/preferences.py:289
+msgid "Language - 3"
+msgstr ""
+
+#: lios/preferences.py:300
+msgid "Run Text Cleaner"
+msgstr ""
+
+#: lios/preferences.py:304
+msgid "Insert Position"
+msgstr ""
+
+#: lios/preferences.py:307
+msgid "Cursor"
+msgstr ""
+
+#: lios/preferences.py:316
+msgid "Mode Of Rotation"
+msgstr ""
+
+#: lios/preferences.py:318
+msgid "Full Automatic"
+msgstr ""
+
+#: lios/preferences.py:319
+msgid "Partial Automatic"
+msgstr ""
+
+#: lios/preferences.py:320
+msgid "Manual"
+msgstr ""
+
+#: lios/preferences.py:325
+msgid "Angle"
+msgstr ""
+
+#: lios/preferences.py:327
+msgid "00"
+msgstr ""
+
+#: lios/preferences.py:328
+msgid "90"
+msgstr ""
+
+#: lios/preferences.py:329
+msgid "180"
+msgstr ""
+
+#: lios/preferences.py:330
+msgid "270"
+msgstr ""
+
+#: lios/preferences.py:337
+msgid "Give Page Number"
+msgstr ""
+
+#: lios/preferences.py:341
+msgid "Page Numbering Type"
+msgstr ""
+
+#: lios/preferences.py:343
+msgid "Single Page"
+msgstr ""
+
+#: lios/preferences.py:344
+msgid "Double Page"
+msgstr ""
+
+#: lios/preferences.py:349
+msgid "Starting Page Number"
+msgstr ""
+
+#: lios/preferences.py:370
+msgid "Recognition"
+msgstr ""
+
+#: lios/preferences.py:380
+msgid "Resolution"
+msgstr ""
+
+#: lios/preferences.py:385
+msgid "Brightness"
+msgstr ""
+
+#: lios/preferences.py:390
+msgid "Scan Area"
+msgstr ""
+
+#: lios/preferences.py:393
+msgid "Full Scan Area"
+msgstr ""
+
+#: lios/preferences.py:394
+msgid "Three Quarters"
+msgstr ""
+
+#: lios/preferences.py:395
+msgid "Two Quarters"
+msgstr ""
+
+#: lios/preferences.py:396
+msgid "One Quarter"
+msgstr ""
+
+#: lios/preferences.py:399
+msgid "Driver"
+msgstr ""
+
+#: lios/preferences.py:408
+msgid "Number of Pages to Scan"
+msgstr ""
+
+#: lios/preferences.py:413
+msgid "Time Bitween Repeted Scanning"
+msgstr ""
+
+#: lios/preferences.py:420
+msgid "Change to binary or linear if possible"
+msgstr ""
+
+#: lios/preferences.py:423
+msgid "Cache Calibration"
+msgstr ""
+
+#: lios/preferences.py:439
+msgid "Scanning"
+msgstr ""
+
+#: lios/preferences.py:445
+msgid "Lios Preferences"
+msgstr ""
+
+#: lios/preferences.py:445 lios/editor.py:319 lios/editor.py:390
+#: lios/editor.py:457 lios/editor.py:712 lios/cam.py:48
+msgid "Close"
+msgstr ""
+
+#: lios/ui/gtk/icon.py:27
+msgid "Save-As"
+msgstr ""
+
+#: lios/ui/gtk/icon.py:30
+msgid "Text-Cleaner"
+msgstr ""
+
+#: lios/ui/gtk/icon.py:33
+msgid "Apply-From-Cursor"
+msgstr ""
+
+#: lios/ui/gtk/icon.py:34
+msgid "Apply-Entire"
+msgstr ""
+
+#: lios/ui/gtk/icon.py:35
+msgid "Train-Tesseract"
+msgstr ""
+
+#: lios/ui/gtk/icon.py:39
+msgid "Increase-Reader-Speed"
+msgstr ""
+
+#: lios/ui/gtk/icon.py:40
+msgid "Decrease-Reader-Speed"
+msgstr ""
+
+#: lios/ui/gtk/icon.py:41
+msgid "Stop-All-Process"
+msgstr ""
+
+#: lios/ui/gtk/icon.py:47
+msgid "Punch-Text"
+msgstr ""
+
+#: lios/ui/gtk/icon.py:48
+msgid "Append-Text"
+msgstr ""
+
+#: lios/ui/gtk/icon.py:56
+msgid "Import-Pdf"
+msgstr ""
+
+#: lios/ui/gtk/icon.py:57
+msgid "Import-Folder"
+msgstr ""
+
+#: lios/ui/gtk/icon.py:58
+msgid "Import-Image"
+msgstr ""
+
+#: lios/ui/gtk/icon.py:62
+msgid "Recognize-Selected-Images"
+msgstr ""
+
+#: lios/ui/gtk/icon.py:63
+msgid "Recognize-All-Images"
+msgstr ""
+
+#: lios/ui/gtk/icon.py:64
+msgid "Recognize-Selected-with-rotation"
+msgstr ""
+
+#: lios/ui/gtk/icon.py:65
+msgid "Recognize-All-with-rotation"
+msgstr ""
+
+#: lios/ui/gtk/icon.py:71
+msgid "Export-Text-As-Pdf"
+msgstr ""
+
+#: lios/ui/gtk/icon.py:73
+msgid "Print-Preview"
+msgstr ""
+
+#: lios/ui/gtk/icon.py:76
+msgid "Cut"
+msgstr ""
+
+#: lios/ui/gtk/icon.py:77
+msgid "Copy"
+msgstr ""
+
+#: lios/ui/gtk/icon.py:78
+msgid "Paste"
+msgstr ""
+
+#: lios/ui/gtk/icon.py:80
+msgid "Bookmark-Table"
+msgstr ""
+
+#: lios/ui/gtk/icon.py:81
+msgid "Import-Bookmarks"
+msgstr ""
+
+#: lios/ui/gtk/icon.py:82
+msgid "Bookmark-Table-Complete"
+msgstr ""
+
+#: lios/ui/gtk/icon.py:83
+msgid "Update-Scanner-List"
+msgstr ""
+
+#: lios/ui/gtk/icon.py:85
+msgid "Scan-Image"
+msgstr ""
+
+#: lios/ui/gtk/icon.py:86
+msgid "Scan-Image-Repeatedly"
+msgstr ""
+
+#: lios/ui/gtk/icon.py:87
+msgid "Scan-and-Ocr"
+msgstr ""
+
+#: lios/ui/gtk/icon.py:88
+msgid "Scan-and-Ocr-Repeatedly"
+msgstr ""
+
+#: lios/ui/gtk/icon.py:89
+msgid "Optimize-Scanner-Brightness"
+msgstr ""
+
+#: lios/ui/gtk/icon.py:92
+msgid "Take-and-Recognize-Screenshot"
+msgstr ""
+
+#: lios/ui/gtk/icon.py:95
+msgid "Preferences-Scanning"
+msgstr ""
+
+#: lios/ui/gtk/icon.py:96
+msgid "Preferences-General"
+msgstr ""
+
+#: lios/ui/gtk/icon.py:97
+msgid "Preferences-Recognition"
+msgstr ""
+
+#: lios/ui/gtk/icon.py:102
+msgid "Audio-Converter"
+msgstr ""
+
+#: lios/ui/gtk/icon.py:104
+msgid "Open-Readme"
+msgstr ""
+
+#: lios/ui/gtk/icon.py:105
+msgid "Video-Tutorials"
+msgstr ""
+
+#: lios/ui/gtk/icon.py:106
+msgid "Open-Home-Page"
+msgstr ""
+
+#: lios/ui/gtk/icon.py:107
+msgid "Get-Source-Code"
+msgstr ""
+
+#: lios/editor.py:50
+msgid "{} Decode error Select Other Character Encoding"
+msgstr ""
+
+#: lios/editor.py:50
+msgid "Select"
+msgstr ""
+
+#: lios/editor.py:51
+msgid "Character Encoding: "
+msgstr ""
+
+#: lios/editor.py:110 lios/editor.py:112
+msgid "Start new without saving?"
+msgstr ""
+
+#: lios/editor.py:111
+msgid "Start-New!"
+msgstr ""
+
+#: lios/editor.py:133
+msgid "Select the file to open"
+msgstr ""
+
+#: lios/editor.py:187
+msgid "Select the file to append"
+msgstr ""
+
+#: lios/editor.py:196
+msgid "Select the file to insert at cursor"
+msgstr ""
+
+#: lios/editor.py:234
+msgid "Select the file to import"
+msgstr ""
+
+#: lios/editor.py:246
+msgid "Match"
+msgstr ""
+
+#: lios/editor.py:246 lios/editor.py:621
+msgid "Replace"
+msgstr ""
+
+#: lios/editor.py:253
+msgid "Give match and replace"
+msgstr ""
+
+#: lios/editor.py:254
+msgid "Match : "
+msgstr ""
+
+#: lios/editor.py:255
+msgid "Replace : "
+msgstr ""
+
+#: lios/editor.py:298
+msgid "Add"
+msgstr ""
+
+#: lios/editor.py:300
+msgid "Remove"
+msgstr ""
+
+#: lios/editor.py:316
+msgid "Apply on entire text"
+msgstr ""
+
+#: lios/editor.py:350 lios/editor.py:423
+msgid "Select the bookmark"
+msgstr ""
+
+#: lios/editor.py:381 lios/editor.py:455
+msgid "Jump"
+msgstr ""
+
+#: lios/editor.py:384
+msgid "Scroll Text to position"
+msgstr ""
+
+#: lios/editor.py:484
+msgid "Select the bookmark file to import"
+msgstr ""
+
+#: lios/editor.py:502
+msgid "File must be saved inorder to bookmark the text!"
+msgstr ""
+
+#: lios/editor.py:512
+msgid "Create new Bookmark"
+msgstr ""
+
+#: lios/editor.py:513
+msgid "Name : "
+msgstr ""
+
+#: lios/editor.py:539 lios/editor.py:577 lios/editor.py:641
+msgid "Context label"
+msgstr ""
+
+#: lios/editor.py:553
+msgid "<b>Find word: </b>"
+msgstr ""
+
+#: lios/editor.py:559 lios/editor.py:617
+msgid "Next"
+msgstr ""
+
+#: lios/editor.py:561 lios/editor.py:619
+msgid "Previous"
+msgstr ""
+
+#: lios/editor.py:569 lios/editor.py:633
+msgid "Find Dialog"
+msgstr ""
+
+#: lios/editor.py:591
+msgid "No match found"
+msgstr ""
+
+#: lios/editor.py:606
+msgid "<b>Word: </b>"
+msgstr ""
+
+#: lios/editor.py:609
+msgid "<b>Replace word: </b>"
+msgstr ""
+
+#: lios/editor.py:623
+msgid "Replace All"
+msgstr ""
+
+#: lios/editor.py:639
+msgid "Suggestions"
+msgstr ""
+
+#: lios/editor.py:663
+msgid "Spell Check finished"
+msgstr ""
+
+#: lios/editor.py:695
+msgid "<b>Misspelled word: </b>"
+msgstr ""
+
+#: lios/editor.py:701
+msgid "Change"
+msgstr ""
+
+#: lios/editor.py:703
+msgid "Change All"
+msgstr ""
+
+#: lios/editor.py:707
+msgid "Ignore"
+msgstr ""
+
+#: lios/editor.py:709
+msgid "Ignore All"
+msgstr ""
+
+#: lios/editor.py:711
+msgid "Add to user dict"
+msgstr ""
+
+#: lios/editor.py:740
+msgid "Line Number: "
+msgstr ""
+
+#: lios/editor.py:759
+msgid "Convert"
+msgstr ""
+
+#: lios/editor.py:763
+msgid "Speed: "
+msgstr ""
+
+#: lios/editor.py:767
+msgid "Volume: "
+msgstr ""
+
+#: lios/editor.py:771
+msgid "Pitch: "
+msgstr ""
+
+#: lios/editor.py:775
+msgid "Split Time: "
+msgstr ""
+
+#: lios/editor.py:783
+msgid "Voice: "
+msgstr ""
+
+#: lios/editor.py:787
+msgid "MP3 (liblame required)"
+msgstr ""
+
+#: lios/editor.py:788
+msgid "WAV"
+msgstr ""
+
+#: lios/editor.py:790
+msgid "Format: "
+msgstr ""
+
+#: lios/editor.py:838
+msgid "Enter the file name"
+msgstr ""
+
+#: lios/imageview.py:59
+msgid "X"
+msgstr ""
+
+#: lios/imageview.py:59
+msgid "Y"
+msgstr ""
+
+#: lios/imageview.py:60
+msgid "Width"
+msgstr ""
+
+#: lios/imageview.py:60
+msgid "Height"
+msgstr ""
+
+#: lios/imageview.py:61
+msgid "Letter"
+msgstr ""
+
+#: lios/imageview.py:75
+msgid "_Delete"
+msgstr ""
+
+#: lios/imageview.py:77
+msgid "Shortcut Alt+D"
+msgstr ""
+
+#: lios/cam.py:36
+msgid "Press take/close button at the right side"
+msgstr ""
+
+#: lios/cam.py:45
+msgid "Take"
+msgstr ""

@@ -2,5 +2,5 @@
 import gettext
 from lios import macros
 gettext.bindtextdomain(macros.app_name, '/usr/share/locale')
-gettext.textdomain(macros.app_name)
+gettext.textdomain(macros.app_name_abbreviated)
 _ = gettext.gettext
