@@ -20,8 +20,20 @@
 import os
 
 def capture_entire_screen(filename):
+    """
+    Capture screen screen.
+
+    Args:
+        filename: (str): write your description
+    """
 	os.system("import -window root {} -delay 2".format(filename))
 	
 def capture_rectangle_selection(filename):
+    """
+    Capture a rectangle to a rectangle.
+
+    Args:
+        filename: (str): write your description
+    """
 	os.system("import {}".format(filename))
 	

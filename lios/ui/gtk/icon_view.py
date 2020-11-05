@@ -25,6 +25,12 @@ import os
 
 class IconView(Gtk.IconView):
 	def __init__(self):
+     """
+     Initialize the mode
+
+     Args:
+         self: (todo): write your description
+     """
 		super(IconView,self).__init__()
 		self.set_selection_mode(Gtk.SelectionMode.MULTIPLE)
 		self.liststore_images = Gtk.ListStore(GdkPixbuf.Pixbuf, str)
@@ -35,6 +41,13 @@ class IconView(Gtk.IconView):
 
 	#methord is not thread safe
 	def add_item(self,filename):
+     """
+     Add a new item to the image.
+
+     Args:
+         self: (todo): write your description
+         filename: (str): write your description
+     """
 		try:
 			pixbuff =  GdkPixbuf.Pixbuf.new_from_file(filename)
 		except:
@@ -50,6 +63,13 @@ class IconView(Gtk.IconView):
 			del buff
 
 	def remove_selected_items(self,remove_file_too=True):
+     """
+     Removes selected items.
+
+     Args:
+         self: (todo): write your description
+         remove_file_too: (str): write your description
+     """
 		for item in self.get_selected_items():
 			iter = self.liststore_images.get_iter_from_string(item.to_string())
 			if(remove_file_too):
@@ -57,9 +77,22 @@ class IconView(Gtk.IconView):
 			self.liststore_images.remove(iter)
 	
 	def select_all_items(self):
+     """
+     Select all items.
+
+     Args:
+         self: (todo): write your description
+     """
 		self.select_all()
 
 	def select_item(self,filename):
+     """
+     Selects selected item from the list
+
+     Args:
+         self: (todo): write your description
+         filename: (str): write your description
+     """
 		model = self.get_model()
 		#iter = model.get_iter_first()
 		for item in self.get_selected_items():
@@ -71,6 +104,13 @@ class IconView(Gtk.IconView):
 				
 	
 	def reload_preview(self,filename):
+     """
+     Reload preview of the image.
+
+     Args:
+         self: (todo): write your description
+         filename: (str): write your description
+     """
 		for item in self.liststore_images:
 			if (item[1] == filename):
 				pixbuff =  GdkPixbuf.Pixbuf.new_from_file(filename)
@@ -84,12 +124,25 @@ class IconView(Gtk.IconView):
 		
 	
 	def get_selected_item_names(self):
+     """
+     Return a list of all selected in the store.
+
+     Args:
+         self: (todo): write your description
+     """
 		items = []
 		for item in reversed(self.get_selected_items()):
 			items.append(self.liststore_images[item[0]][1])
 		return items;
 
 	def invert_list(self,*data):
+     """
+     Invert a gtk.
+
+     Args:
+         self: (todo): write your description
+         data: (list): write your description
+     """
 		liststore = Gtk.ListStore(GdkPixbuf.Pixbuf, str)
 		for item in reversed(self.liststore_images):
 			liststore.append((item[0],item[1]))
@@ -97,10 +150,31 @@ class IconView(Gtk.IconView):
 		self.set_model(self.liststore_images)
 	
 	def connect_on_selected_callback(self,function):
+     """
+     Connects a callback function.
+
+     Args:
+         self: (todo): write your description
+         function: (todo): write your description
+     """
 		self.connect("selection-changed",function)
 	
 	def connect_context_menu_button_callback(self,function):
+     """
+     Call the callback function when the mouse button is clicked.
+
+     Args:
+         self: (todo): write your description
+         function: (todo): write your description
+     """
 		def fun(widget,event):
+      """
+      Reimplemented events.
+
+      Args:
+          widget: (todo): write your description
+          event: (todo): write your description
+      """
 			if ((event.type == Gdk.EventType.BUTTON_RELEASE and event.button == 3) or
 				(event.type == Gdk.EventType.KEY_PRESS and event.hardware_keycode == 135)):
 				function()

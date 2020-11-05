@@ -26,13 +26,36 @@ class Dialog(Gtk.Dialog):
 	BUTTON_ID_2 = 2
 	BUTTON_ID_3 = 3
 	def __init__(self,title,buttons):
+     """
+     Initializes the dialog.
+
+     Args:
+         self: (todo): write your description
+         title: (str): write your description
+         buttons: (todo): write your description
+     """
 		super(Dialog,self).__init__(title,None,True,buttons)
 	
 	def add_widget(self,widget):
+     """
+     Add the specified widget.
+
+     Args:
+         self: (todo): write your description
+         widget: (todo): write your description
+     """
 		box = self.get_content_area();
 		box.add(widget)
 	
 	def add_widget_with_label(self,widget,label_text):
+     """
+     Add a widget with a widget.
+
+     Args:
+         self: (todo): write your description
+         widget: (todo): write your description
+         label_text: (str): write your description
+     """
 		new_box = Gtk.Box()
 		label = Gtk.Label(label_text)
 		label.set_mnemonic_widget(widget)
@@ -43,6 +66,13 @@ class Dialog(Gtk.Dialog):
 		box.show_all()		
 
 	def connect_configure_event_handler(self,function):
+     """
+     Connects a handler.
+
+     Args:
+         self: (todo): write your description
+         function: (todo): write your description
+     """
 		self.connect("configure-event",function)
 		
 	#show_all()

@@ -28,6 +28,16 @@ class FileChooserDialog(Gtk.FileChooserDialog):
 	ACCEPT = Gtk.ResponseType.OK
 	
 	def __init__(self,title,action,filters=None,dir=None):
+     """
+     Initialize gtk widget
+
+     Args:
+         self: (todo): write your description
+         title: (str): write your description
+         action: (todo): write your description
+         filters: (list): write your description
+         dir: (todo): write your description
+     """
 		if(action == Gtk.FileChooserAction.OPEN or
 			action == Gtk.FileChooserAction.SELECT_FOLDER):
 			super(FileChooserDialog,self).__init__(title,None,action,buttons=(Gtk.STOCK_OPEN,Gtk.ResponseType.OK))

@@ -33,6 +33,12 @@ _ = localization._
 
 class lios_preferences:
 	def __init__(self):
+     """
+     Initialize the board.
+
+     Args:
+         self: (todo): write your description
+     """
 		
 		#Setting Default Values
 		self.font="Georgia 14";self.highlight_font="Georgia 14";
@@ -51,13 +57,34 @@ class lios_preferences:
 
 
 	def set_avalable_scanner_drivers(self,list):
+     """
+     Sets a list of the scanner s scanner s list.
+
+     Args:
+         self: (todo): write your description
+         list: (todo): write your description
+     """
 		self.available_scanner_drivers = list
 
 	def set_avalable_ocr_engines(self,list):
+     """
+     Set the list of_ocrines.
+
+     Args:
+         self: (todo): write your description
+         list: (todo): write your description
+     """
 		self.available_ocr_engine_list = list
 		
 	# FUNCTION TO Read PREFERENCES #
 	def set_from_file(self,filename):
+     """
+     Parse a single bundle.
+
+     Args:
+         self: (todo): write your description
+         filename: (str): write your description
+     """
 		config = configparser.ConfigParser()
 		if config.read(filename) != []:
 			try:
@@ -96,6 +123,13 @@ class lios_preferences:
 			self.__init__()
 
 	def save_to_file(self,filename):
+     """
+     Saves audio file to disk.
+
+     Args:
+         self: (todo): write your description
+         filename: (str): write your description
+     """
 		#Removing old configuration file
 		try:
 			os.remove(filename)
@@ -136,6 +170,12 @@ class lios_preferences:
 
 
 	def update_page_number(self):
+     """
+     Update the current number.
+
+     Args:
+         self: (todo): write your description
+     """
 		loop.acquire_lock()
 		if (self.page_numbering_type == 0):
 			self.starting_page_number = self.starting_page_number + 1
@@ -144,6 +184,12 @@ class lios_preferences:
 		loop.release_lock()
 
 	def get_page_number_as_string(self):
+     """
+     Return string representation of the number.
+
+     Args:
+         self: (todo): write your description
+     """
 		if (self.page_numbering_type == 0):
 			return ("{0}".format(self.starting_page_number))
 		else:
@@ -152,7 +198,20 @@ class lios_preferences:
 	
 	#Function for manipulating preferences		
 	def open_configure_dialog(self,page=0):
+     """
+     Opens the language dialog.
+
+     Args:
+         self: (todo): write your description
+         page: (int): write your description
+     """
 		def change_engine(*data):
+      """
+      Change the engine
+
+      Args:
+          data: (todo): write your description
+      """
 			index_engine = combobox_engine.get_active()
 			combobox_language.clear()
 			combobox_language_2.clear()
@@ -182,6 +241,12 @@ class lios_preferences:
 			
 
 		def change_speech_module(*data):
+      """
+      Updates the modules.
+
+      Args:
+          data: (array): write your description
+      """
 			index_engine = combobox_speech_module.get_active()
 			combobox_speech_language.clear()
 			test = speech.Speech()
@@ -192,6 +257,12 @@ class lios_preferences:
 			combobox_speech_language.set_active(self.speech_language)
 
 		def change_mode_of_rotation(*data):
+      """
+      Changes the rotation angle
+
+      Args:
+          data: (array): write your description
+      """
 			if(combobox_mode_of_rotation.get_active() == 2):
 				combobox_angle.show()
 				self.label_angle.show()

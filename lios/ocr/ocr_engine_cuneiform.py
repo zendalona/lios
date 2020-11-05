@@ -31,15 +31,34 @@ class OcrEngineCuneiform(OcrEngineBase):
 	name = "Cuneiform"
 	
 	def __init__(self,language=None):
+     """
+     Sets the language.
+
+     Args:
+         self: (todo): write your description
+         language: (str): write your description
+     """
 		self.set_language(language)
 
 	def is_available():
+     """
+     Determine is_available is available.
+
+     Args:
+     """
 		if ("/bin/cuneiform" in subprocess.getoutput("whereis cuneiform")):
 			return True
 		else:
 			return False
 			
 	def ocr_image_to_text(self,file_name):
+     """
+     Convert an image to text.
+
+     Args:
+         self: (todo): write your description
+         file_name: (str): write your description
+     """
 		os.system("convert {} /tmp/{}_for_ocr.png".format(file_name,file_name.split("/")[-1]))
 		os.system("cuneiform -f text -l {0} -o /tmp/{1}_output.txt /tmp/{1}_for_ocr.png".format(self.language,file_name.split("/")[-1]))
 		os.remove("/tmp/{0}_for_ocr.png".format(file_name.split("/")[-1]))
@@ -51,11 +70,21 @@ class OcrEngineCuneiform(OcrEngineBase):
 		except:
 			return ""
 	def cancel():
+     """
+     Cancel the system.
+
+     Args:
+     """
 		os.system("pkill convert")
 		os.system("pkill cuneiform")
 		
 	
 	def get_available_languages():
+     """
+     Get a list of available language.
+
+     Args:
+     """
 		langs = []
 		for line in subprocess.getoutput("cuneiform -l").split("\n"):
 			if line.startswith(LANGUAGES_LINE_PREFIX):
@@ -66,4 +95,9 @@ class OcrEngineCuneiform(OcrEngineBase):
 		return langs
 
 	def support_multiple_languages():
+     """
+     Return true if all languages are available.
+
+     Args:
+     """
 		return False

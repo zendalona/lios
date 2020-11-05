@@ -35,6 +35,12 @@ class Grid(Gtk.Grid):
 	ALIGN_START = Gtk.Align.START
 	
 	def __init__(self):
+     """
+     Initializes all the grid.
+
+     Args:
+         self: (todo): write your description
+     """
 		super(Grid,self).__init__()
 		self.x = 0;
 		self.y = 0;
@@ -44,6 +50,13 @@ class Grid(Gtk.Grid):
 		self.y_pad_count = 0;		
 	
 	def add_widgets(self,list):
+     """
+     Add a new widget to the grid.
+
+     Args:
+         self: (todo): write your description
+         list: (todo): write your description
+     """
 		for item in list:
 			if (item == Grid.NEW_ROW):
 				self.__add_new_row()
@@ -53,6 +66,19 @@ class Grid(Gtk.Grid):
 	#attach(widget, left, top, width, height)
 	#attach_next_to(child, sibling, side, width, height)
 	def __add_widget(self,child, width, height,hexpand=True,vexpand=True,halign=None,valign=None):
+     """
+     Add a child to the scene.
+
+     Args:
+         self: (todo): write your description
+         child: (todo): write your description
+         width: (int): write your description
+         height: (int): write your description
+         hexpand: (int): write your description
+         vexpand: (int): write your description
+         halign: (int): write your description
+         valign: (int): write your description
+     """
 		child.set_hexpand(hexpand)
 		child.set_vexpand(vexpand)
 		if(halign):
@@ -72,6 +98,12 @@ class Grid(Gtk.Grid):
 		self.x = self.x + width
 
 	def __add_new_row(self):
+     """
+     Add a new row.
+
+     Args:
+         self: (todo): write your description
+     """
 		self.x = 0
 		self.y = self.y + 1
 		
@@ -79,20 +111,46 @@ class Grid(Gtk.Grid):
 	
 class ScrollBox(Gtk.ScrolledWindow):
 	def __init__(self):
+     """
+     Initialize the border.
+
+     Args:
+         self: (todo): write your description
+     """
 		super(ScrollBox,self).__init__()
 		self.set_border_width(2)
 
 	def scroll(self,h_value,v_value):
+     """
+     Scroll the scroll value.
+
+     Args:
+         self: (todo): write your description
+         h_value: (todo): write your description
+         v_value: (todo): write your description
+     """
 		adj = self.get_vadjustment()
 		adj.set_value(v_value)
 		adj = self.get_hadjustment()
 		adj.set_value(h_value)
 
 	def get_size_on_screen(self):
+     """
+     Returns the size of the screen.
+
+     Args:
+         self: (todo): write your description
+     """
 		alc = self.get_allocation()
 		return (alc.width,alc.height)
 
 	def get_current_start_points(self):
+     """
+     Get the start and end points
+
+     Args:
+         self: (todo): write your description
+     """
 		hadj = self.get_hadjustment()
 		start_x = hadj.get_value()
 		vadj = self.get_vadjustment()
@@ -101,15 +159,36 @@ class ScrollBox(Gtk.ScrolledWindow):
 
 class NoteBook(Gtk.Notebook):
 	def __init__(self):
+     """
+     Initialize the note.
+
+     Args:
+         self: (todo): write your description
+     """
 		super(NoteBook,self).__init__()
 	
 	def add_page(self,title,widget):
+     """
+     Add a gtk. page
+
+     Args:
+         self: (todo): write your description
+         title: (str): write your description
+         widget: (todo): write your description
+     """
 		label = Gtk.Label(title)
 		self.append_page(widget,label)
 
 
 class Frame(Gtk.Frame):
 	def __init__(self,label_text):
+     """
+     Stub
+
+     Args:
+         self: (todo): write your description
+         label_text: (str): write your description
+     """
 		super(Frame,self).__init__()
 		self.set_label(label_text)
 
@@ -118,6 +197,13 @@ class Paned(Gtk.Paned):
 	HORIZONTAL = Gtk.Orientation.HORIZONTAL;
 	VERTICAL = Gtk.Orientation.VERTICAL;
 	def __init__(self,orientation):
+     """
+     Initialize the orientation.
+
+     Args:
+         self: (todo): write your description
+         orientation: (todo): write your description
+     """
 		super(Paned,self).__init__()
 		self.set_orientation(orientation)
 		
@@ -125,10 +211,24 @@ class Box(Gtk.Box):
 	HORIZONTAL = Gtk.Orientation.HORIZONTAL;
 	VERTICAL = Gtk.Orientation.VERTICAL;	
 	def __init__(self,orientation):
+     """
+     Initializes the orientation.
+
+     Args:
+         self: (todo): write your description
+         orientation: (todo): write your description
+     """
 		super(Box,self).__init__()
 		self.set_orientation(orientation)
 
 	def connect_configure_event_handler(self,function):
+     """
+     Connects a handler.
+
+     Args:
+         self: (todo): write your description
+         function: (todo): write your description
+     """
 		self.connect("configure-event",function)
 
 class Toolbar(Gtk.Toolbar):
@@ -137,6 +237,14 @@ class Toolbar(Gtk.Toolbar):
 	SEPARATOR = 1;
 
 	def __init__(self,orientation,specification):
+     """
+     Initialize the widget
+
+     Args:
+         self: (todo): write your description
+         orientation: (todo): write your description
+         specification: (todo): write your description
+     """
 		super(Toolbar,self).__init__()
 		self.set_orientation(orientation)
 		for item in specification:
@@ -158,6 +266,14 @@ class Toolbar(Gtk.Toolbar):
 			self.add(toolbar_item)
 	
 	def set_show_nth_item(self,n,value):
+     """
+     Set the number.
+
+     Args:
+         self: (todo): write your description
+         n: (todo): write your description
+         value: (todo): write your description
+     """
 		item = self.get_nth_item(n)
 		item.set_sensitive(value)
 			

@@ -21,21 +21,54 @@ import speechd
 
 class Speech(speechd.SSIPClient):
 	def __init__(self,client_name="lios"):
+     """
+     Initialize the client.
+
+     Args:
+         self: (todo): write your description
+         client_name: (str): write your description
+     """
 		super(Speech,self).__init__(client_name)
 		self.status = False
 	
 	def list_voices(self):
+     """
+     Return a list of all vo vo voices.
+
+     Args:
+         self: (todo): write your description
+     """
 		return [ x[0] for x in self.list_synthesis_voices()]
 	
 	def say(self,text):
+     """
+     Takes a text and send text.
+
+     Args:
+         self: (todo): write your description
+         text: (str): write your description
+     """
 		self.status = True
 		self.speak(text,self.end,speechd.CallbackType.END)
 	
 	def wait(self):
+     """
+     Waits for the queue to complete.
+
+     Args:
+         self: (todo): write your description
+     """
 		while (self.status):
 			pass
 	
 	def end(self,*data):
+     """
+     Write the end of the response.
+
+     Args:
+         self: (todo): write your description
+         data: (todo): write your description
+     """
 		self.status = False
 	
 	#close()

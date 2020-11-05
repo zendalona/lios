@@ -27,6 +27,12 @@ from gi.repository import GdkPixbuf
 
 class DrawingArea(Gtk.DrawingArea):
 	def __init__(self):
+     """
+     Init the drawing events
+
+     Args:
+         self: (todo): write your description
+     """
 		super(DrawingArea,self).__init__()
 		self.set_events(Gdk.EventMask.ALL_EVENTS_MASK)
 		self.connect("draw",self.__drawingarea_draw)
@@ -34,21 +40,64 @@ class DrawingArea(Gtk.DrawingArea):
 		self.drawing_rectangle = None;
 	
 	def set_rectangle_list(self,list):
+     """
+     Set the rectangle list.
+
+     Args:
+         self: (todo): write your description
+         list: (todo): write your description
+     """
 		self.rectangles = list;
 	
 	def set_drawing_rectangle(self,rectangle):
+     """
+     Set the drawing rectangle.
+
+     Args:
+         self: (todo): write your description
+         rectangle: (todo): write your description
+     """
 		self.drawing_rectangle = rectangle
 	
 	def connect_button_press_event(self,function):
+     """
+     Connects the mouse press events.
+
+     Args:
+         self: (todo): write your description
+         function: (todo): write your description
+     """
 		self.connect("button_press_event",lambda x,y: function(y.get_coords(),y.button))
 
 	def connect_button_release_event(self,function):
+     """
+     Connects the mouse release.
+
+     Args:
+         self: (todo): write your description
+         function: (todo): write your description
+     """
 		self.connect("button_release_event",lambda x,y: function(y.get_coords(),y.button))
 
 	def connect_motion_notify_event(self,function):
+     """
+     Connects a connection to a connection.
+
+     Args:
+         self: (todo): write your description
+         function: (todo): write your description
+     """
 		self.connect("motion_notify_event",lambda x,y: function(y.get_coords()))
 
 	def __drawingarea_draw(self, widget, cr):
+     """
+     Draws the rectangle on the image.
+
+     Args:
+         self: (todo): write your description
+         widget: (todo): write your description
+         cr: (todo): write your description
+     """
 		   Gdk.cairo_set_source_pixbuf(cr, self.pixbuf, 0, 0)
 		   cr.paint()
 		   
@@ -74,20 +123,58 @@ class DrawingArea(Gtk.DrawingArea):
 			   cr.stroke()
 		   return True
 	def save_image_rectangle(self,filename,x,y,width,height):
+     """
+     Save the image to a new image.
+
+     Args:
+         self: (todo): write your description
+         filename: (str): write your description
+         x: (todo): write your description
+         y: (todo): write your description
+         width: (int): write your description
+         height: (todo): write your description
+     """
 		new_pixbuf = self.pixbuf_original.new_subpixbuf(x,y,width,height)
 		new_pixbuf.savev(filename, "png",[],[])		
 
 	
 	def get_width(self):
+     """
+     Return the width of the column.
+
+     Args:
+         self: (todo): write your description
+     """
 		return self.pixbuf.get_width()		
 
 	def get_height(self):
+     """
+     Return the height of the image
+
+     Args:
+         self: (todo): write your description
+     """
 		return self.pixbuf.get_height()
 	
 	def redraw(self):
+     """
+     Redraw the queue.
+
+     Args:
+         self: (todo): write your description
+     """
 		self.queue_draw();		
 
 	def load_image(self,filename,list,parameter):
+     """
+     Load image from file.
+
+     Args:
+         self: (todo): write your description
+         filename: (str): write your description
+         list: (todo): write your description
+         parameter: (todo): write your description
+     """
 		self.filename = filename
 		
 		self.pixbuf = GdkPixbuf.Pixbuf.new_from_file(filename)
@@ -110,9 +197,22 @@ class DrawingArea(Gtk.DrawingArea):
 		self.queue_draw()
 	
 	def get_original_height(self):
+     """
+     Returns the height of the row
+
+     Args:
+         self: (todo): write your description
+     """
 		return self.orig_height
 
 	def set_mouse_pointer_type(self,_type):
+     """
+     Sets the mouse pointer type.
+
+     Args:
+         self: (todo): write your description
+         _type: (str): write your description
+     """
 		list = [Gdk.CursorType.ARROW,
 		Gdk.CursorType.TOP_LEFT_CORNER,Gdk.CursorType.SB_V_DOUBLE_ARROW,Gdk.CursorType.TOP_RIGHT_CORNER,
 		Gdk.CursorType.SB_H_DOUBLE_ARROW,Gdk.CursorType.FLEUR,Gdk.CursorType.SB_H_DOUBLE_ARROW,
@@ -122,7 +222,21 @@ class DrawingArea(Gtk.DrawingArea):
 		gdk_window.set_cursor(arrow)
 
 	def connect_context_menu_button_callback(self,function):
+     """
+     Call the callback function when the mouse button is clicked.
+
+     Args:
+         self: (todo): write your description
+         function: (todo): write your description
+     """
 		def fun(widget,event):
+      """
+      Reimplemented events.
+
+      Args:
+          widget: (todo): write your description
+          event: (todo): write your description
+      """
 			if ((event.type == Gdk.EventType.BUTTON_RELEASE and event.button == 3) or
 				(event.type == Gdk.EventType.KEY_PRESS and event.hardware_keycode == 135)):
 				function()

@@ -38,15 +38,34 @@ class OcrEngineTesseract(OcrEngineBase):
 	name = "Tesseract"
 	
 	def __init__(self,language=None):
+     """
+     Sets the language.
+
+     Args:
+         self: (todo): write your description
+         language: (str): write your description
+     """
 		self.set_language(language)
 
 	def is_available():
+     """
+     Determine is_available is available.
+
+     Args:
+     """
 		if ("/bin/tesseract" in subprocess.getoutput("whereis tesseract")):
 			return True
 		else:
 			return False
 
 	def ocr_image_to_text(self,file_name):
+     """
+     Convert an image to text
+
+     Args:
+         self: (todo): write your description
+         file_name: (str): write your description
+     """
 		os.system("convert {} -background white -flatten +matte /tmp/{}_for_ocr.png".format(file_name,file_name.split("/")[-1]))
 		
 		languages = self.language
@@ -67,11 +86,22 @@ class OcrEngineTesseract(OcrEngineBase):
 		except:
 			return ""
 	def cancel():
+     """
+     Cancel the system.
+
+     Args:
+     """
 		os.system("pkill convert")
 		os.system("pkill tesseract")
 		
 	
 	def get_available_languages_in_dirpath(dirpath):
+     """
+     Return a list of a list.
+
+     Args:
+         dirpath: (str): write your description
+     """
 		langs = []
 		if os.access(dirpath, os.R_OK):
 			for filename in os.listdir(dirpath):
@@ -81,6 +111,11 @@ class OcrEngineTesseract(OcrEngineBase):
 		return langs
 
 	def get_available_languages():
+     """
+     Return a list of available languages.
+
+     Args:
+     """
 		langs = []
 		for dirpath in TESSDATA_POSSIBLE_PATHS[::-1]:
 			if (os.path.isfile(dirpath+"/configs/box.train")):
@@ -90,6 +125,11 @@ class OcrEngineTesseract(OcrEngineBase):
 		return langs
 
 	def get_all_available_dirs():
+     """
+     Return a list of all available directories.
+
+     Args:
+     """
 		result = []
 		for root, dirs, files in os.walk("/"):
 			if "tessdata" in dirs:
@@ -105,6 +145,11 @@ class OcrEngineTesseract(OcrEngineBase):
 		return result
 
 	def get_available_dirs():
+     """
+     Return a list of directories.
+
+     Args:
+     """
 		dir_list = [];
 		for path in TESSDATA_POSSIBLE_PATHS:
 			if (os.path.exists(path)):
@@ -114,4 +159,9 @@ class OcrEngineTesseract(OcrEngineBase):
 
 
 	def support_multiple_languages():
+     """
+     Returns a list of a list of languages.
+
+     Args:
+     """
 		return True

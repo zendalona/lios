@@ -29,24 +29,57 @@ class TextView(Gtk.TextView):
 	AT_END=2
 	
 	def __init__(self):
+     """
+     Initialize the buffers.
+
+     Args:
+         self: (todo): write your description
+     """
 		super(TextView, self).__init__()
 		self.set_wrap_mode(Gtk.WrapMode.WORD)
 		buffer = self.get_buffer()
 		self.highlight_tag = buffer.create_tag('Reading')		
 	
 	def connect_insert(self,function):
+     """
+     Connects to a function.
+
+     Args:
+         self: (todo): write your description
+         function: (todo): write your description
+     """
 		buffer = self.get_buffer()
 		buffer.connect("insert-text",lambda x, y,z,a  : function())
 
 	def connect_delete(self,function):
+     """
+     Connects to the given function.
+
+     Args:
+         self: (todo): write your description
+         function: (todo): write your description
+     """
 		buffer = self.get_buffer()
 		buffer.connect("delete-range",lambda x, y,z  : function())
 
 	def set_text(self,text):
+     """
+     Set text to text
+
+     Args:
+         self: (todo): write your description
+         text: (str): write your description
+     """
 		buffer = self.get_buffer()
 		buffer.set_text(text);
 	
 	def get_text(self):
+     """
+     Return text as a string.
+
+     Args:
+         self: (todo): write your description
+     """
 		buffer = self.get_buffer()
 		start,end = buffer.get_bounds()
 		text = buffer.get_text(start,end,False)
@@ -54,6 +87,12 @@ class TextView(Gtk.TextView):
 
 	# For Text Cleaner
 	def get_text_from_cursor_to_end(self):
+     """
+     Return text contained in cursor position.
+
+     Args:
+         self: (todo): write your description
+     """
 		buffer = self.get_buffer()
 		end = buffer.get_end_iter()
 		mark = buffer.get_insert()
@@ -62,6 +101,12 @@ class TextView(Gtk.TextView):
 		return text
 
 	def delete_text_from_cursor_to_end(self):
+     """
+     Delete text from the cursor.
+
+     Args:
+         self: (todo): write your description
+     """
 		buffer = self.get_buffer()
 		end = buffer.get_end_iter()
 		mark = buffer.get_insert()
@@ -69,6 +114,15 @@ class TextView(Gtk.TextView):
 		buffer.delete(start,end)
 	
 	def insert_text(self,text,position,place_cursor=False):
+     """
+     Insert text at cursor position.
+
+     Args:
+         self: (todo): write your description
+         text: (str): write your description
+         position: (int): write your description
+         place_cursor: (bool): write your description
+     """
 		buffer = self.get_buffer()
 		if (position == TextView.AT_START):
 			iter = buffer.get_start_iter()
@@ -81,73 +135,179 @@ class TextView(Gtk.TextView):
 			buffer.insert(iter,text)
 	
 	def set_highlight_font(self,highlight_font):
+     """
+     Set the font font_font.
+
+     Args:
+         self: (todo): write your description
+         highlight_font: (todo): write your description
+     """
 		self.highlight_tag.set_property('font',highlight_font)
 
 	def set_highlight_color(self,highlight_color):
+     """
+     Set the color of the foreground color.
+
+     Args:
+         self: (todo): write your description
+         highlight_color: (todo): write your description
+     """
 		self.highlight_tag.set_property('foreground',
 			Gdk.color_parse(highlight_color).to_string())
 
 	def set_highlight_background(self,background_highlight_color):
+     """
+     Sets the background background color.
+
+     Args:
+         self: (todo): write your description
+         background_highlight_color: (str): write your description
+     """
 		self.highlight_tag.set_property('background',
 			Gdk.color_parse(background_highlight_color).to_string())
 	
 		
 	def set_font(self,font_discription):
+     """
+     Set the font font.
+
+     Args:
+         self: (todo): write your description
+         font_discription: (todo): write your description
+     """
 		pangoFont = Pango.FontDescription(font_discription)
 		self.modify_font(pangoFont)
 	
 	def set_font_color(self,font_color):
+     """
+     Set the font color.
+
+     Args:
+         self: (todo): write your description
+         font_color: (str): write your description
+     """
 		self.modify_fg(Gtk.StateFlags.NORMAL, Gdk.color_parse(font_color))
 		
 	def set_background_color(self,background_color):
+     """
+     Set the background color.
+
+     Args:
+         self: (todo): write your description
+         background_color: (todo): write your description
+     """
 		self.modify_bg(Gtk.StateFlags.NORMAL, Gdk.color_parse(background_color))
 	
 	def get_cursor_line_number(self):
+     """
+     Return the cursor position.
+
+     Args:
+         self: (todo): write your description
+     """
 		buffer = self.get_buffer()
 		insert_mark = buffer.get_insert()
 		offset = buffer.get_iter_at_mark(insert_mark)
 		return offset.get_line()
 	
 	def get_line_count(self):
+     """
+     Return the number of lines in the line.
+
+     Args:
+         self: (todo): write your description
+     """
 		buffer = self.get_buffer()
 		return buffer.get_line_count()
 
 	def move_cursor_to_line(self,line_number):
+     """
+     Moves the cursor.
+
+     Args:
+         self: (todo): write your description
+         line_number: (int): write your description
+     """
 		buffer = self.get_buffer()
 		iter = buffer.get_iter_at_line(line_number)
 		buffer.place_cursor(iter)
 		self.scroll_to_iter(iter, 0.0,False,0.0,0.0)
 	
 	def get_modified(self):
+     """
+     Get the modified modified modified modified modification.
+
+     Args:
+         self: (todo): write your description
+     """
 		buffer = self.get_buffer()
 		return buffer.get_modified()
 	
 	def set_modified(self,value):
+     """
+     Set the modified modified duration.
+
+     Args:
+         self: (todo): write your description
+         value: (str): write your description
+     """
 		buffer = self.get_buffer()
 		buffer.set_modified(value)
 	
 	def has_selection(self):
+     """
+     Return whether or false otherwise
+
+     Args:
+         self: (todo): write your description
+     """
 		buffer = self.get_buffer()
 		return buffer.get_has_selection()
 
 	def get_selected_text(self):
+     """
+     Return the text of the text.
+
+     Args:
+         self: (todo): write your description
+     """
 		buffer = self.get_buffer()
 		start,end = buffer.get_selection_bounds()
 		return buffer.get_text(start,end,0)
 	
 	def delete_all_text(self):
+     """
+     Delete all text in the buffer.
+
+     Args:
+         self: (todo): write your description
+     """
 		buffer = self.get_buffer()
 		start, end = buffer.get_bounds()
 		buffer.delete(start, end)
 	
 	# Placing a bookmark
 	def get_mark_at_line(self,line):
+     """
+     Return the marker at the given line.
+
+     Args:
+         self: (todo): write your description
+         line: (list): write your description
+     """
 		buffer = self.get_buffer()
 		iter = buffer.get_iter_at_line(line)
 		return buffer.create_mark(None,iter,True)
 		
 	# Moving to existing bookmark
 	def move_cursor_to_mark(self,mark):
+     """
+     Move cursor to the cursor.
+
+     Args:
+         self: (todo): write your description
+         mark: (array): write your description
+     """
 		buffer = self.get_buffer()
 		iter = buffer.get_iter_at_mark(mark)
 		buffer.place_cursor(iter)
@@ -155,16 +315,35 @@ class TextView(Gtk.TextView):
 	
 	# For saving Bookmark with line number
 	def get_line_number_of_mark(self,mark):
+     """
+     Return the number of marker marker in the marker.
+
+     Args:
+         self: (todo): write your description
+         mark: (todo): write your description
+     """
 		buffer = self.get_buffer()
 		iter = buffer.get_iter_at_mark(mark)
 		return iter.get_line()
 		
 	def get_cursor_mark(self):
+     """
+     Return the cursor marker.
+
+     Args:
+         self: (todo): write your description
+     """
 		buffer = self.get_buffer()
 		return buffer.get_insert()
 	
 	# For autofilling new bookmark name
 	def get_current_line_text(self):
+     """
+     Return the start of the text.
+
+     Args:
+         self: (todo): write your description
+     """
 		buffer = self.get_buffer()
 		mark = buffer.get_insert()
 		start_iter = buffer.get_iter_at_mark(mark)
@@ -175,6 +354,12 @@ class TextView(Gtk.TextView):
 	
 	# For highlighting bookmark position and go-to-line
 	def highlights_cursor_line(self):
+     """
+     Highlights the cursor.
+
+     Args:
+         self: (todo): write your description
+     """
 		buffer = self.get_buffer()
 		self.remove_all_highlights()
 		mark = buffer.get_insert()
@@ -189,6 +374,12 @@ class TextView(Gtk.TextView):
 
 	
 	def remove_all_highlights(self):
+     """
+     Removes all highlights from the buffer.
+
+     Args:
+         self: (todo): write your description
+     """
 		buffer = self.get_buffer()
 		start = buffer.get_start_iter()
 		end = buffer.get_end_iter()
@@ -197,12 +388,25 @@ class TextView(Gtk.TextView):
 		
 			
 	def replace_last_word(self,replace_word):
+     """
+     Replace the previous word.
+
+     Args:
+         self: (todo): write your description
+         replace_word: (str): write your description
+     """
 		buffer = self.get_buffer()
 		buffer.delete(self.start_iter, self.end_iter)
 		buffer.insert(self.start_iter," "+replace_word)
 		self.start_iter = self.end_iter.copy()
 
 	def get_next_word(self):
+     """
+     Return the next word.
+
+     Args:
+         self: (todo): write your description
+     """
 		buffer = self.get_buffer()
 		insert_mark = buffer.get_insert()
 		self.start_iter = buffer.get_iter_at_mark(insert_mark)
@@ -216,6 +420,12 @@ class TextView(Gtk.TextView):
 		return buffer.get_text(self.start_iter,self.end_iter,0)			
 
 	def get_previous_word(self):
+     """
+     Return the previous word.
+
+     Args:
+         self: (todo): write your description
+     """
 		buffer = self.get_buffer()
 		insert_mark = buffer.get_insert()
 		self.end_iter = buffer.get_iter_at_mark(insert_mark)
@@ -229,6 +439,12 @@ class TextView(Gtk.TextView):
 		return buffer.get_text(self.start_iter,self.end_iter,0)
 
 	def get_context_text(self):
+     """
+     Return a tuple of the buffer.
+
+     Args:
+         self: (todo): write your description
+     """
 		buffer = self.get_buffer()
 		insert_mark = buffer.get_insert()
 		iter1 = buffer.get_iter_at_mark(insert_mark)
@@ -238,10 +454,22 @@ class TextView(Gtk.TextView):
 		return buffer.get_text(iter1,iter2,0)
 	
 	def delete_last_word(self):
+     """
+     Delete the previous word.
+
+     Args:
+         self: (todo): write your description
+     """
 		buffer = self.get_buffer()
 		buffer.delete(self.start_iter,self.end_iter)
 	
 	def get_next_sentence(self):
+     """
+     Return the next sentence.
+
+     Args:
+         self: (todo): write your description
+     """
 		buffer = self.get_buffer()
 		insert_mark = buffer.get_insert()
 		iter1 = buffer.get_iter_at_mark(insert_mark)
@@ -281,6 +509,12 @@ class TextView(Gtk.TextView):
 		return buffer.get_text(iter1,iter2,0)
 	
 	def is_cursor_at_end(self):
+     """
+     Return true if the cursor is at the end of the buffer.
+
+     Args:
+         self: (todo): write your description
+     """
 		buffer = self.get_buffer()
 		insert_mark = buffer.get_insert()
 		iter1 = buffer.get_iter_at_mark(insert_mark)
@@ -291,6 +525,12 @@ class TextView(Gtk.TextView):
 			return 0;
 
 	def is_cursor_at_start(self):
+     """
+     Return true if the cursor is at the end.
+
+     Args:
+         self: (todo): write your description
+     """
 		buffer = self.get_buffer()
 		insert_mark = buffer.get_insert()
 		iter1 = buffer.get_iter_at_mark(insert_mark)
@@ -303,6 +543,13 @@ class TextView(Gtk.TextView):
 	# For Find/Find and Replace
 	
 	def move_forward_to_word(self,word):
+     """
+     Moves the cursor to the next word.
+
+     Args:
+         self: (todo): write your description
+         word: (str): write your description
+     """
 		buffer = self.get_buffer()
 		insert_mark = buffer.get_insert()
 		self.start_iter = buffer.get_iter_at_mark(insert_mark)
@@ -317,6 +564,13 @@ class TextView(Gtk.TextView):
 		return False
 
 	def move_backward_to_word(self,word):
+     """
+     Move back backward backward.
+
+     Args:
+         self: (todo): write your description
+         word: (str): write your description
+     """
 		buffer = self.get_buffer()
 		insert_mark = buffer.get_insert()
 		self.start_iter = buffer.get_iter_at_mark(insert_mark)

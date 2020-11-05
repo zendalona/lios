@@ -25,6 +25,17 @@ class DriverScanimage(DriverBase):
 	name = "Scanimage"
 	
 	def __init__(self,device,scanner_mode_switching,resolution=300,brightness=40,scan_area=0):
+     """
+     Initialize the led.
+
+     Args:
+         self: (todo): write your description
+         device: (str): write your description
+         scanner_mode_switching: (bool): write your description
+         resolution: (todo): write your description
+         brightness: (todo): write your description
+         scan_area: (todo): write your description
+     """
 		self.device = device.split()[1][1:-1]
 		self.device_name = device;
 		
@@ -65,6 +76,16 @@ class DriverScanimage(DriverBase):
 
 	
 	def scan(self,filename,brightness=-1,resolution=-1,scan_area=-1):
+     """
+     Perform the led area.
+
+     Args:
+         self: (todo): write your description
+         filename: (str): write your description
+         brightness: (todo): write your description
+         resolution: (todo): write your description
+         scan_area: (int): write your description
+     """
 		super(DriverScanimage, self).scan(filename,brightness,resolution,scan_area)
 
 		command = "scanimage --device-name='{}' --resolution {} --mode {} -x {} -y {}"\
@@ -86,18 +107,51 @@ class DriverScanimage(DriverBase):
 
 
 	def get_resolution(self):
+     """
+     Return the resolution.
+
+     Args:
+         self: (todo): write your description
+     """
 		return self.resolution
 
 	def set_resolution(self,resolution):
+     """
+     Set the resolution of a resolution.
+
+     Args:
+         self: (todo): write your description
+         resolution: (todo): write your description
+     """
 		self.resolution = resolution
 
 	def get_brightness(self):
+     """
+     Get the brightness.
+
+     Args:
+         self: (todo): write your description
+     """
 		return self.brightness
 
 	def set_brightness(self,brightness):
+     """
+     Set the brightness.
+
+     Args:
+         self: (todo): write your description
+         brightness: (todo): write your description
+     """
 		self.brightness = brightness
 
 	def set_scan_area(self,scan_area):
+     """
+     Sets area area.
+
+     Args:
+         self: (todo): write your description
+         scan_area: (todo): write your description
+     """
 		if scan_area == self.SCAN_AREA_FULL:
 			self.y = int(self.max_y)
 		elif scan_area == self.SCAN_AREA_THREE_QUARTER:
@@ -108,22 +162,59 @@ class DriverScanimage(DriverBase):
 			self.y = int(self.max_y)/4
 				
 	def get_scan_area(self):
+     """
+     Returns the area area area.
+
+     Args:
+         self: (todo): write your description
+     """
 		return self.scan_area
 
 	def set_scan_mode(self,mode):
+     """
+     Set the scan mode.
+
+     Args:
+         self: (todo): write your description
+         mode: (str): write your description
+     """
 		self.scanner_mode = mode
 
 	def get_scan_mode(self,scan_mode):
+     """
+     Get the scan mode.
+
+     Args:
+         self: (todo): write your description
+         scan_mode: (str): write your description
+     """
 		return self.scanner_mode
 
 	def get_available_scan_modes(self):
+     """
+     Return a list of available nodes.
+
+     Args:
+         self: (todo): write your description
+     """
 		return self.available_modes
 
 	def check_brightness_support(self):
+     """
+     Checks if the light support support support check check.
+
+     Args:
+         self: (todo): write your description
+     """
 		return self.light_parameter_state
 
 	#static method
 	def get_available_devices():
+     """
+     Returns a list.
+
+     Args:
+     """
 		scanner_list = []
 		output = subprocess.getoutput("scanimage --list")
 		for line in output.split("\n"):
@@ -136,15 +227,32 @@ class DriverScanimage(DriverBase):
 
 	#static method
 	def is_available():
+     """
+     Determine is_available is available.
+
+     Args:
+     """
 		if ("/bin/scanimage" in subprocess.getoutput("whereis scanimage")):
 			return True
 		else:
 			return False
 	
 	def cancel(self):
+     """
+     Cancel the job.
+
+     Args:
+         self: (todo): write your description
+     """
 		os.system("pkill scanimage")
 
 	def close(self):
+     """
+     Closes the connection.
+
+     Args:
+         self: (todo): write your description
+     """
 		return
 		
 		

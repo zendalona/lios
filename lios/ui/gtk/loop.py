@@ -22,17 +22,43 @@ from gi.repository import Gtk
 from gi.repository import Gdk		
 		
 def start_main_loop():
+    """
+    Start main loop.
+
+    Args:
+    """
 	Gtk.main()
 
 def threads_init():
+    """
+    Initialize the thread.
+
+    Args:
+    """
 	Gdk.threads_init()
 
 def stop_main_loop(data=None):
+    """
+    Stop the main loop.
+
+    Args:
+        data: (array): write your description
+    """
 	Gtk.main_quit()
 
 def acquire_lock():
+    """
+    Acquire the lock.
+
+    Args:
+    """
 	Gdk.threads_enter()
 
 def release_lock():
+    """
+    Release the lock.
+
+    Args:
+    """
 	Gdk.threads_leave()
 	

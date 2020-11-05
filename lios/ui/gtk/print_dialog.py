@@ -28,6 +28,15 @@ class print_with_action():
 	PRINT_DIALOG = Gtk.PrintOperationAction.PRINT_DIALOG
 	EXPORT = Gtk.PrintOperationAction.EXPORT
 	def __init__(self, text, action=None,filename = None):
+     """
+     Initialize gtk notebook.
+
+     Args:
+         self: (todo): write your description
+         text: (str): write your description
+         action: (todo): write your description
+         filename: (str): write your description
+     """
 		self.text_to_print = text	
 		self.layout = None
 		self.page_breaks = None
@@ -59,15 +68,37 @@ class print_with_action():
 		res = print_.run(action,None)
 
 	def create_custom_widget(self,*data):
+     """
+     Create a custom widget widget.
+
+     Args:
+         self: (todo): write your description
+         data: (str): write your description
+     """
 		self.fontbutton = Gtk.FontButton()
 		return self.fontbutton
 
 	def custom_widget_apply(self,*data):
+     """
+     Applies custom font data to the font.
+
+     Args:
+         self: (todo): write your description
+         data: (todo): write your description
+     """
 		self.font = self.fontbutton.get_font_name()
 		desc = Pango.FontDescription.from_string(self.font)
 		self.font_size = desc.get_size()/Pango.SCALE
     
 	def begin_print(self, operation, context):
+     """
+     Starts print operation
+
+     Args:
+         self: (todo): write your description
+         operation: (todo): write your description
+         context: (todo): write your description
+     """
 		width = context.get_width()
 		height = context.get_height()
 		self.layout = context.create_pango_layout()
@@ -82,6 +113,15 @@ class print_with_action():
 		
     
 	def draw_page (self, operation, context, page_number):
+     """
+     Draws a : class.
+
+     Args:
+         self: (todo): write your description
+         operation: (str): write your description
+         context: (todo): write your description
+         page_number: (int): write your description
+     """
 		cr = context.get_cairo_context()
 		cr.set_source_rgb(0, 0, 0)
 		start_line = page_number * self.lines_per_page
