@@ -25,15 +25,34 @@ class OcrEngineAbbyyFineReader11(OcrEngineBase):
 	name = "ABBYY FineReader11"
 	
 	def __init__(self,language=None):
+     """
+     Sets the language.
+
+     Args:
+         self: (todo): write your description
+         language: (str): write your description
+     """
 		self.set_language(language)
 
 	def is_available():
+     """
+     Determine is_available is available.
+
+     Args:
+     """
 		if ("/bin/abbyyocr11" in subprocess.getoutput("whereis abbyyocr11")):
 			return True
 		else:
 			return False
 			
 	def ocr_image_to_text(self,file_name):
+     """
+     Convert an image file
+
+     Args:
+         self: (todo): write your description
+         file_name: (str): write your description
+     """
 		os.system("convert {} /tmp/{}_for_ocr.jpg".format(file_name,file_name.split("/")[-1]))
 		os.system("abbyyocr11 -if /tmp/{0}_for_ocr.jpg -rl {1} -f TextUnicodeDefaults -tet UTF8 -of /tmp/{1}_output.txt ".format(file_name.split("/")[-1],self.language))
 		print("abbyyocr11 -if /tmp/{0}_for_ocr.jpg -rl {1} -f TextUnicodeDefaults -tet UTF8 -of /tmp/{1}_output.txt ".format(file_name.split("/")[-1],self.language))
@@ -46,11 +65,21 @@ class OcrEngineAbbyyFineReader11(OcrEngineBase):
 		except:
 			return ""
 	def cancel():
+     """
+     Cancel the system.
+
+     Args:
+     """
 		os.system("pkill convert")
 		os.system("pkill abbyyocr11")
 		
 	
 	def get_available_languages():
+     """
+     Return a list of available languages.
+
+     Args:
+     """
 		langs = ["Abkhaz","Adyghe","Afrikaans","Agul","Albanian","Altaic",
 		"Arabic (Saudi Arabia)","Armenian (Eastern, Western, Grabar)","Avar",
 		"Aymara","Azerbaijani (Cyrillic, Latin)","Bashkir","Basque","Belarusian",
@@ -82,4 +111,9 @@ class OcrEngineAbbyyFineReader11(OcrEngineBase):
 		return langs
 
 	def support_multiple_languages():
+     """
+     Return true if all languages are available.
+
+     Args:
+     """
 		return False

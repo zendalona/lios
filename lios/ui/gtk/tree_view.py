@@ -21,21 +21,50 @@ from gi.repository import Gtk
 
 class CellRendererSpin(Gtk.CellRendererSpin):
 	def __init__(self,pos):
+     """
+     Initialize the position.
+
+     Args:
+         self: (todo): write your description
+         pos: (int): write your description
+     """
 		super(CellRendererSpin,self).__init__()
 		self.pos = pos
 
 class CellRendererText(Gtk.CellRendererText):
 	def __init__(self,pos):
+     """
+     Stub
+
+     Args:
+         self: (todo): write your description
+         pos: (int): write your description
+     """
 		super(CellRendererText,self).__init__()
 		self.pos = pos	
 
 class CellRendererToggle(Gtk.CellRendererToggle):
 	def __init__(self,pos):
+     """
+     Initialize the underlying position.
+
+     Args:
+         self: (todo): write your description
+         pos: (int): write your description
+     """
 		super(CellRendererToggle,self).__init__()
 		self.pos = pos	
 		
 class TreeView(Gtk.TreeView):
 	def __init__(self,name_type_tuple_list,function):
+     """
+     Initialize a gtk table
+
+     Args:
+         self: (todo): write your description
+         name_type_tuple_list: (str): write your description
+         function: (callable): write your description
+     """
 		super(TreeView,self).__init__()
 		self.function = function;
 		self.cursor_change_handler_id = None
@@ -77,13 +106,34 @@ class TreeView(Gtk.TreeView):
 		#self.connect("cursor-changed",self.__treeview_image_cursor_changed)
 	
 	def append(self,item):
+     """
+     Append item to the end of the list.
+
+     Args:
+         self: (todo): write your description
+         item: (array): write your description
+     """
 		self.rs.append(item);
 
 	def remove(self,index):
+     """
+     Removes * index * index * index
+
+     Args:
+         self: (todo): write your description
+         index: (int): write your description
+     """
 		iter = self.rs.get_iter(index)
 		self.rs.remove(iter);
 	
 	def set_list(self,list):
+     """
+     Add a list of items
+
+     Args:
+         self: (todo): write your description
+         list: (todo): write your description
+     """
 		if(self.cursor_change_handler_id):
 			self.handler_block(self.cursor_change_handler_id)
 		self.rs.clear()
@@ -93,10 +143,22 @@ class TreeView(Gtk.TreeView):
 			self.handler_unblock(self.cursor_change_handler_id)
 
 	def block_cursor_change_signal(self):
+     """
+     Handles a cursor.
+
+     Args:
+         self: (todo): write your description
+     """
 		if(self.cursor_change_handler_id):
 			self.handler_block(self.cursor_change_handler_id)
 
 	def unblock_cursor_change_signal(self):
+     """
+     Unblock_cursor signal.
+
+     Args:
+         self: (todo): write your description
+     """
 		if(self.cursor_change_handler_id):
 			self.handler_unblock(self.cursor_change_handler_id)
 
@@ -106,34 +168,99 @@ class TreeView(Gtk.TreeView):
 	#	self.handler_unblock(self.cursor_change_handler_id)
 	
 	def get_list(self):
+     """
+     Return a list of all items
+
+     Args:
+         self: (todo): write your description
+     """
 		# list comprehension used to unpack Gtk.ListStore
 		return [[ i for i in item ] for item in self.rs] 
 		
 	def clear(self):
+     """
+     Clears all entries
+
+     Args:
+         self: (todo): write your description
+     """
 		self.rs.clear()
 	
 	def on_float_edited(self, widget, path, value):
+     """
+     Set the value of a widget
+
+     Args:
+         self: (todo): write your description
+         widget: (todo): write your description
+         path: (str): write your description
+         value: (str): write your description
+     """
 		self.rs[path][widget.pos] = float(value)
 		self.function(int(path))
 
 	def on_bool_edited(self, widget, path):
+     """
+     Hook is clicked we have changed widget
+
+     Args:
+         self: (todo): write your description
+         widget: (todo): write your description
+         path: (str): write your description
+     """
 		self.rs[path][widget.pos] = True
 		self.function(int(path))
 
 	def on_edited(self, widget, path, value):
+     """
+     Function called when a widget is clicked
+
+     Args:
+         self: (todo): write your description
+         widget: (todo): write your description
+         path: (str): write your description
+         value: (todo): write your description
+     """
 		self.rs[path][widget.pos] = str(value)
 		self.function(int(path))
 	
 	def connect_update_callback(self,function):
+     """
+     Connects a callback function.
+
+     Args:
+         self: (todo): write your description
+         function: (todo): write your description
+     """
 		self.function = function
 	
 	def connect_cursor_change_function(self,function):
+     """
+     Connects a cursor.
+
+     Args:
+         self: (todo): write your description
+         function: (todo): write your description
+     """
 		self.cursor_change_handler_id = self.connect("cursor-changed", lambda x: function())
 
 	def connect_rows_reordered_function(self,function):
+     """
+     Connects the given function to the given function.
+
+     Args:
+         self: (todo): write your description
+         function: (todo): write your description
+     """
 		self.rows_reordered_handler_id = self.connect("drag-end", lambda x,y: function())
 		
 	def get_selected_row_index(self):
+     """
+     Return the index of selected item
+
+     Args:
+         self: (todo): write your description
+     """
 		item = self.get_selection()
 		model,iter = item.get_selected()
 		path = item.get_selected_rows()[0]
@@ -143,6 +270,14 @@ class TreeView(Gtk.TreeView):
 		return(path.get_indices()[0]);
 	
 	def set_column_visible(self,column_number, value):
+     """
+     Sets the value of the column.
+
+     Args:
+         self: (todo): write your description
+         column_number: (int): write your description
+         value: (todo): write your description
+     """
 		column = self.get_column(column_number);
 		column.set_visible(value);
 		
@@ -150,9 +285,22 @@ class TreeView(Gtk.TreeView):
 
 class TestWindow(Gtk.Window):
     def function(self,row):
+        """
+        Prints the function
+
+        Args:
+            self: (todo): write your description
+            row: (todo): write your description
+        """
 		   print(row)
 		   print(self.tv.get_list()) 
     def __init__(self):
+        """
+        Initialize the gtk button.
+
+        Args:
+            self: (todo): write your description
+        """
         Gtk.Window.__init__(self, title="Hello World")
         
         self.tv = TreeView([("X",float,True),("Y",float,True),("Width",float,True),("Height",float,True),("Letter",str,True)],self.function)
@@ -184,15 +332,43 @@ class TestWindow(Gtk.Window):
         self.set_default_size(400,400);
         
     def on_button1_clicked(self, widget):
+        """
+        Function called when the button clicked.
+
+        Args:
+            self: (todo): write your description
+            widget: (todo): write your description
+        """
 		   print(self.tv.get_list())
 
     def on_button2_clicked(self, widget):
+        """
+        Hook called when the user clicks the button.
+
+        Args:
+            self: (todo): write your description
+            widget: (todo): write your description
+        """
         self.tv.set_list([(25,10,45,60)])
     
     def on_button3_clicked(self, widget):
+        """
+        Trigbutton3 button.
+
+        Args:
+            self: (todo): write your description
+            widget: (todo): write your description
+        """
 		   self.tv.set_column_visible(4,True);
 		   
     def on_button4_clicked(self, widget):
+        """
+        The main window4 button.
+
+        Args:
+            self: (todo): write your description
+            widget: (todo): write your description
+        """
 		   self.tv.set_column_visible(4,False);
                
 

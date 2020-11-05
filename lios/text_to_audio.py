@@ -22,6 +22,18 @@ import subprocess
 
 class text_to_audio_converter:
 	def __init__(self,text="Blank",volume=100,voice="english",split_time=5,pitch=50,speed=170):
+     """
+     Init pitch
+
+     Args:
+         self: (todo): write your description
+         text: (str): write your description
+         volume: (todo): write your description
+         voice: (todo): write your description
+         split_time: (int): write your description
+         pitch: (todo): write your description
+         speed: (int): write your description
+     """
 		self.text = text
 		self.set_volume(volume)
 		self.set_voice(voice)
@@ -31,6 +43,11 @@ class text_to_audio_converter:
 		
 	
 	def list_voices():
+     """
+     Return a list of skillices
+
+     Args:
+     """
 		voice_list = []
 		output = subprocess.getoutput("espeak --voices")
 		for line in output.split("\n"):
@@ -40,22 +57,59 @@ class text_to_audio_converter:
 
 		
 	def get_volume(self):
+     """
+     Get the volume.
+
+     Args:
+         self: (todo): write your description
+     """
 		return self.volume
 
 	def get_voice(self):
+     """
+     Return the voice voice.
+
+     Args:
+         self: (todo): write your description
+     """
 		return self.voice
 
 	def get_split_time(self):
+     """
+     Returns the split time.
+
+     Args:
+         self: (todo): write your description
+     """
 		return self.split_time
 				
 	def get_pitch(self):
+     """
+     : returns : class :.
+
+     Args:
+         self: (todo): write your description
+     """
 		return self.pitch
 
 	def get_speed(self):
+     """
+     Return the speed
+
+     Args:
+         self: (str): write your description
+     """
 		return self.speed
 
 
 	def set_volume(self,value):
+     """
+     Set the volume.
+
+     Args:
+         self: (todo): write your description
+         value: (todo): write your description
+     """
 		if ( 0 <= value and value <= 200):
 			self.volume = value
 		else:
@@ -63,6 +117,13 @@ class text_to_audio_converter:
 			return False;
 
 	def set_voice(self,value):
+     """
+     Sets the audio value to the audio
+
+     Args:
+         self: (todo): write your description
+         value: (todo): write your description
+     """
 		if (value in text_to_audio_converter.list_voices()):
 			self.voice = value
 			return True;
@@ -72,9 +133,23 @@ class text_to_audio_converter:
 			
 
 	def set_split_time(self,value):
+     """
+     Set the split time.
+
+     Args:
+         self: (todo): write your description
+         value: (str): write your description
+     """
 		self.split_time  = value
 				
 	def set_pitch(self,value):
+     """
+     Sets the pitch value.
+
+     Args:
+         self: (todo): write your description
+         value: (todo): write your description
+     """
 		if ( 0 <= value and value <= 100):
 			self.pitch = value
 			return True
@@ -83,6 +158,13 @@ class text_to_audio_converter:
 			return False;
 
 	def set_speed(self,value):
+     """
+     Sets the speed.
+
+     Args:
+         self: (todo): write your description
+         value: (todo): write your description
+     """
 		if ( 100 <= value and value <= 450):
 			self.speed = value
 			return True
@@ -91,12 +173,26 @@ class text_to_audio_converter:
 			return False;
 		
 	def record_to_wave(self,output_file_name):
+     """
+     Write a record to disk.
+
+     Args:
+         self: (todo): write your description
+         output_file_name: (str): write your description
+     """
 		to_convert = open("tmp.txt",'w')
 		to_convert.write(self.text)
 		to_convert.close()
 		os.system('espeak -a %s -v %s -f tmp.txt -w %s.wav --split=%s -p %s -s %s' % (self.volume,self.voice,output_file_name,self.split_time,self.pitch,self.speed))
 
 	def record_to_mp3(self,output_file_name):
+     """
+     Convert mp3 output file
+
+     Args:
+         self: (todo): write your description
+         output_file_name: (str): write your description
+     """
 		to_convert = open("tmp.txt",'w')
 		to_convert.write(self.text)
 		to_convert.close()

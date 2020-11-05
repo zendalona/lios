@@ -33,6 +33,16 @@ class Cam(Gtk.Window):
         }
 
 	def __init__(self,device,x,y,directory="/tmp/"):
+     """
+     Initialize the gtk engine.
+
+     Args:
+         self: (todo): write your description
+         device: (todo): write your description
+         x: (int): write your description
+         y: (int): write your description
+         directory: (str): write your description
+     """
 		Gtk.Window.__init__(self,title=_("Press take/close button at the right side"))
 		Gst.init(None)
 		self.resize(x, y)
@@ -82,15 +92,35 @@ class Cam(Gtk.Window):
 		self.show_all()
 
 	def start(self):
+     """
+     Start gtk. gtk. gtk. gtk. gtk. gtk. gtk. gtk. gtk. gtk
+
+     Args:
+         self: (todo): write your description
+     """
 		Gtk.main()
 	
 	def cam_close(self, window):
+     """
+     Cam_close
+
+     Args:
+         self: (todo): write your description
+         window: (int): write your description
+     """
 		self.pipeline.set_state(Gst.State.NULL)
 		self.pipeline.remove(self.src)
 		self.pipeline.remove(self.sink)
 		self.destroy()
 	
 	def cam_take(self,widget):
+     """
+     Cam a window
+
+     Args:
+         self: (todo): write your description
+         widget: (todo): write your description
+     """
 	    window = self.drawingarea.get_window()
 	    x = window.get_width()
 	    y = window.get_height()
@@ -100,18 +130,46 @@ class Cam(Gtk.Window):
 	    self.emit("image_captured",filename)
 	
 	def connect_image_captured(self,function):
+     """
+     Çļ»åĭł¥è¯·åıĸåįķ
+
+     Args:
+         self: (todo): write your description
+         function: (todo): write your description
+     """
 		self.connect("image_captured",function)
 	    
 	    
 	def cam_on_error(self, bus, msg):
+     """
+     Called when a bus is received.
+
+     Args:
+         self: (todo): write your description
+         bus: (todo): write your description
+         msg: (todo): write your description
+     """
 		print('on_error():', msg.parse_error())
 
 	def cam_on_sync_message(self, bus, msg):
+     """
+     Called when a sync message has changed
+
+     Args:
+         self: (todo): write your description
+         bus: (todo): write your description
+         msg: (todo): write your description
+     """
 		if msg.get_structure().get_name() == 'prepare-window-handle':
 			msg.src.set_property('force-aspect-ratio', True)
 			msg.src.set_window_handle(self.xid)
 	
 	def get_available_devices():
+     """
+     Return a list of available devices.
+
+     Args:
+     """
 		list = []
 		for i in range(0,4):
 			device = "/dev/video{}".format(i)

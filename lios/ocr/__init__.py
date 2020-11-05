@@ -28,6 +28,11 @@ from lios.ocr.ocr_engine_abbyy_finereader11 import OcrEngineAbbyyFineReader11
 from lios.ocr.ocr_engine_abbyy_finereader9 import OcrEngineAbbyyFineReader9
 
 def get_available_engines():
+    """
+    Returns a list of available engines.
+
+    Args:
+    """
 	list = []
 	# Note : The engine classes should be sorted otherwise each time this function
 	# will return same engine list in a random order.  

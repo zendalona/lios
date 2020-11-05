@@ -20,6 +20,16 @@
 
 
 def detect_overlap(list,new_start_x,new_start_y,new_end_x,new_end_y):
+    """
+    Check if a list is_xor_x
+
+    Args:
+        list: (list): write your description
+        new_start_x: (todo): write your description
+        new_start_y: (todo): write your description
+        new_end_x: (todo): write your description
+        new_end_y: (todo): write your description
+    """
 	for item in list:
 		start_x = item[0]
 		start_y = item[1]
@@ -35,6 +45,15 @@ def detect_overlap(list,new_start_x,new_start_y,new_end_x,new_end_y):
 
 
 def detect_out_of_range(x,y,max_width,max_height):
+    """
+    Determine whether the image is inside a detection.
+
+    Args:
+        x: (todo): write your description
+        y: (todo): write your description
+        max_width: (int): write your description
+        max_height: (int): write your description
+    """
 	if (x >= max_width or y >= max_height or x <= 0 or y<=0 ):
 		return True
 	else:
@@ -42,6 +61,15 @@ def detect_out_of_range(x,y,max_width,max_height):
 
 
 def order_rectangle(start_x,start_y,finish_x,finish_y):
+    """
+    Calculate rectangle.
+
+    Args:
+        start_x: (todo): write your description
+        start_y: (todo): write your description
+        finish_x: (bool): write your description
+        finish_y: (bool): write your description
+    """
 	#Swap coordinate if selected in reverse direction
 	if(start_x >= finish_x):
 		start_x,finish_x = finish_x,start_x
@@ -51,6 +79,17 @@ def order_rectangle(start_x,start_y,finish_x,finish_y):
 		
 
 def is_overlapping(rs,index,a,b,c,d):
+    """
+    Return true if a is an index.
+
+    Args:
+        rs: (todo): write your description
+        index: (int): write your description
+        a: (todo): write your description
+        b: (todo): write your description
+        c: (todo): write your description
+        d: (todo): write your description
+    """
 	nrs = [];
 	for i in range(0,len(rs)):
 		if(index != i):
@@ -63,6 +102,18 @@ def is_overlapping(rs,index,a,b,c,d):
 	
 		
 def get_point_type(x,y,area_x_start, area_y_start,width,height,rs):
+    """
+    Return point area for a point_x_area.
+
+    Args:
+        x: (todo): write your description
+        y: (todo): write your description
+        area_x_start: (str): write your description
+        area_y_start: (str): write your description
+        width: (int): write your description
+        height: (int): write your description
+        rs: (todo): write your description
+    """
 
 	# If pointer is at the edge of drawing area then mouse pointer must become normal
 	if (x < area_x_start+10 or
@@ -148,6 +199,16 @@ def get_point_type(x,y,area_x_start, area_y_start,width,height,rs):
 # Used to find the index of new box inside the box list 
 # The box list is arranged in top-left to bottom-right order
 def find_index_for_new_box(new_s_x,new_s_y,new_e_x,new_e_y,rl):
+    """
+    Finds the index of the index that is the same as a string.
+
+    Args:
+        new_s_x: (todo): write your description
+        new_s_y: (todo): write your description
+        new_e_x: (todo): write your description
+        new_e_y: (todo): write your description
+        rl: (str): write your description
+    """
 
 	length = len(rl);
 	index = length-1;

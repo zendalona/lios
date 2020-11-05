@@ -22,20 +22,55 @@ from gi.repository import GdkPixbuf
 	
 class Window(Gtk.Window):
 	def __init__(self,title):
+     """
+     Init window.
+
+     Args:
+         self: (todo): write your description
+         title: (str): write your description
+     """
 		super(Window,self).__init__()
 		self.set_title(title)
 		
 	
 	def connect_close_function(self,function):
+     """
+     Connects a close function.
+
+     Args:
+         self: (todo): write your description
+         function: (todo): write your description
+     """
 		self.connect("delete-event",function)
 	
 	def connect_menubar(self,menubar):
+     """
+     Connects to the tunnel.
+
+     Args:
+         self: (todo): write your description
+         menubar: (todo): write your description
+     """
 		self.add_accel_group(menubar.get_accel_group())
 	
 	def connect_configure_event_handler(self,function):
+     """
+     Connects a handler.
+
+     Args:
+         self: (todo): write your description
+         function: (todo): write your description
+     """
 		self.connect("configure-event",function)
 
 	def set_taskbar_icon(self,file_path):
+     """
+     Set the icon icon.
+
+     Args:
+         self: (todo): write your description
+         file_path: (str): write your description
+     """
 		pixbuf = GdkPixbuf.Pixbuf.new_from_file(file_path)
 		self.set_icon(pixbuf)
 		

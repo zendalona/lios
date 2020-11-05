@@ -24,6 +24,17 @@ class DriverBase(metaclass=abc.ABCMeta):
 	
 	@abc.abstractmethod
 	def __init__(self,device,scanner_mode_switching,resolution=300,brightness=40,scan_area=0):
+     """
+     Initialize the device.
+
+     Args:
+         self: (todo): write your description
+         device: (todo): write your description
+         scanner_mode_switching: (bool): write your description
+         resolution: (todo): write your description
+         brightness: (todo): write your description
+         scan_area: (todo): write your description
+     """
 		self.set_resolution(resolution);
 		self.set_brightness(brightness);
 		self.set_scan_area(scan_area);
@@ -38,6 +49,16 @@ class DriverBase(metaclass=abc.ABCMeta):
 	
 	@abc.abstractmethod
 	def scan(self,filename,resolution=-1,brightness=-1,scan_area=-1):
+     """
+     Scan a given area.
+
+     Args:
+         self: (todo): write your description
+         filename: (str): write your description
+         resolution: (todo): write your description
+         brightness: (todo): write your description
+         scan_area: (int): write your description
+     """
 		if (brightness !=-1 ):
 			brightness = (brightness*self.brightness_multiplier)+self.brightness_offset
 			self.set_brightness(brightness)
@@ -49,59 +70,146 @@ class DriverBase(metaclass=abc.ABCMeta):
 
 	@abc.abstractmethod
 	def get_resolution(self):
+     """
+     Return the resolution of this node.
+
+     Args:
+         self: (todo): write your description
+     """
 		return
 
 	@abc.abstractmethod
 	def set_resolution(self,resolution):
+     """
+     Set the resolution of a given resolution.
+
+     Args:
+         self: (todo): write your description
+         resolution: (todo): write your description
+     """
 		return
 
 	@abc.abstractmethod
 	def get_brightness(self):
+     """
+     Get the brightness of the brightness.
+
+     Args:
+         self: (todo): write your description
+     """
 		return
 
 	@abc.abstractmethod
 	def set_brightness(self,brightness):
+     """
+     Set the brightness. brightness.
+
+     Args:
+         self: (todo): write your description
+         brightness: (todo): write your description
+     """
 		return
 
 	@abc.abstractmethod
 	def set_scan_area(self,scan_area):
+     """
+     Set the area of a scan area.
+
+     Args:
+         self: (todo): write your description
+         scan_area: (todo): write your description
+     """
 		return
 		
 	@abc.abstractmethod
 	def get_scan_area(self):
+     """
+     : return area area : return area.
+
+     Args:
+         self: (todo): write your description
+     """
 		return
 
 	@abc.abstractmethod
 	def set_scan_mode(self,scan_mode):
+     """
+     Set the scan mode.
+
+     Args:
+         self: (todo): write your description
+         scan_mode: (str): write your description
+     """
 		return
 
 	@abc.abstractmethod
 	def get_scan_mode(self,scan_mode):
+     """
+     Get the mode of a scan mode.
+
+     Args:
+         self: (todo): write your description
+         scan_mode: (str): write your description
+     """
 		return
 
 	@abc.abstractmethod
 	def get_available_scan_modes(self):
+     """
+     Returns a list of all available nodes.
+
+     Args:
+         self: (todo): write your description
+     """
 		return;
 
 	@abc.abstractmethod		
 	def check_brightness_support(self):
+     """
+     Checks if the brightness check.
+
+     Args:
+         self: (todo): write your description
+     """
 		return
 
 	@staticmethod
 	@abc.abstractmethod
 	def get_available_devices():
+     """
+     Return a list of available devices.
+
+     Args:
+     """
 		return
 
 	@staticmethod
 	@abc.abstractmethod
 	def is_available():
+     """
+     Return a list of available resources.
+
+     Args:
+     """
 		return
 
 
 	@abc.abstractmethod
 	def cancel(self):
+     """
+     Cance of the current thread.
+
+     Args:
+         self: (todo): write your description
+     """
 		return
 
 	@abc.abstractmethod
 	def close(self):
+     """
+     Closes the connection.
+
+     Args:
+         self: (todo): write your description
+     """
 		return

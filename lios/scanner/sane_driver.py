@@ -31,6 +31,17 @@ class DriverSane(DriverBase):
 	name = "Sane"
 	
 	def __init__(self,device,scanner_mode_switching,resolution=300,brightness=40,scan_area=0):
+     """
+     Initialize the light.
+
+     Args:
+         self: (todo): write your description
+         device: (todo): write your description
+         scanner_mode_switching: (bool): write your description
+         resolution: (todo): write your description
+         brightness: (todo): write your description
+         scan_area: (todo): write your description
+     """
 		sane_version = sane.init()
 		self.device_name = device[2];
 		try:
@@ -72,6 +83,13 @@ class DriverSane(DriverBase):
 			
 	
 	def get_scanner_option (self,name):
+     """
+     Returns a scanner option.
+
+     Args:
+         self: (todo): write your description
+         name: (str): write your description
+     """
 		options = self.scanner.get_options()
 		for option in options:
 			if option[1] == name:
@@ -80,6 +98,16 @@ class DriverSane(DriverBase):
 		
 
 	def scan(self,file_name,brightness=-1,resolution=-1,region=-1):
+     """
+     This method toil image.
+
+     Args:
+         self: (todo): write your description
+         file_name: (str): write your description
+         brightness: (todo): write your description
+         resolution: (todo): write your description
+         region: (str): write your description
+     """
 		super(DriverSane, self).scan(file_name,brightness,resolution,region)
 		pil_image = self.scanner.scan()
 		pil_image.save("/tmp/sane_temp.png")
@@ -87,17 +115,42 @@ class DriverSane(DriverBase):
 
 			
 	def check_brightness_support(self):
+     """
+     Checks if the light support support support check check.
+
+     Args:
+         self: (todo): write your description
+     """
 		return self.light_parameter_state
 	
 
 	def get_resolution(self):
+     """
+     Return the resolution of the resolution.
+
+     Args:
+         self: (todo): write your description
+     """
 		return self.scanner.resolution;
 		
 	def set_resolution(self,resolution):
+     """
+     Sets the resolution. resolution of a resolution.
+
+     Args:
+         self: (todo): write your description
+         resolution: (todo): write your description
+     """
 		self.scanner.resolution = resolution
 
 
 	def get_brightness(self):
+     """
+     Get the brightness.
+
+     Args:
+         self: (todo): write your description
+     """
 		if (self.check_brightness_support()):
 			if self.light_parameter == "brightness":
 				return self.scanner.brightness
@@ -107,6 +160,13 @@ class DriverSane(DriverBase):
 			return -1;
 
 	def set_brightness(self,brightness):
+     """
+     Set brightness.
+
+     Args:
+         self: (todo): write your description
+         brightness: (todo): write your description
+     """
 		if (self.check_brightness_support()):
 			print("Scanner Max = {0},  Scanner Min = {1}, Corected Value {2}".
 				format(self.max,self.min,brightness))	
@@ -123,6 +183,13 @@ class DriverSane(DriverBase):
 					print ("Ohhh")	
 
 	def set_scan_area(self,scan_area):
+     """
+     Sets area area.
+
+     Args:
+         self: (todo): write your description
+         scan_area: (todo): write your description
+     """
 		#X Axis for scan Area
 		option = self.get_scanner_option('br-x')
 		if option:
@@ -144,18 +211,44 @@ class DriverSane(DriverBase):
 			return False
 
 	def get_scan_area(self):
+     """
+     Returns the area of the scan
+
+     Args:
+         self: (todo): write your description
+     """
 		return self.scanner.br_y
 
 		
 	def set_scan_mode(self,scan_mode):
+     """
+     Set the scan mode.
+
+     Args:
+         self: (todo): write your description
+         scan_mode: (str): write your description
+     """
 		self.scanner.mode = scan_mode
 
 
 	def get_scan_mode(self,scan_mode):
+     """
+     Get the scan mode.
+
+     Args:
+         self: (todo): write your description
+         scan_mode: (str): write your description
+     """
 		return self.scanner.mode
 
 
 	def get_available_scan_modes(self):
+     """
+     Return a list of scan nodes.
+
+     Args:
+         self: (todo): write your description
+     """
 		option = self.get_scanner_option("mode")
 		if option:
 			return option[-1:][0]
@@ -165,6 +258,11 @@ class DriverSane(DriverBase):
 
 	#static method
 	def get_available_devices():
+     """
+     Return a list of available devices.
+
+     Args:
+     """
 		sane.init()
 		list = []
 		for device in sane.get_devices():
@@ -173,13 +271,30 @@ class DriverSane(DriverBase):
 		return list			
 	
 	def is_available():
+     """
+     Returns a list of available available entities.
+
+     Args:
+     """
 		return available
 	
 	def cancel(self):
+     """
+     Cancel the scan.
+
+     Args:
+         self: (todo): write your description
+     """
 		self.scanner.cancel()
 
 
 	def close(self):
+     """
+     Closes the scan.
+
+     Args:
+         self: (todo): write your description
+     """
 		self.scanner.close()
 
 if __name__ == "__main__":

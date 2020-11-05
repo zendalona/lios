@@ -21,6 +21,12 @@ import os
 import itertools
 
 def get_list_of_mixed_case_combinations(list_items):
+    """
+    Returns a list of lists of the combinations of items.
+
+    Args:
+        list_items: (str): write your description
+    """
 	return list(itertools.chain.from_iterable([[''.join(a) for a in itertools.product(*zip(s.upper(), s.lower()))] for s in list_items]))
 
 user_home_path = os.environ['HOME']

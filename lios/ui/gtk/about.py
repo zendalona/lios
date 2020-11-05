@@ -25,9 +25,24 @@ from gi.repository import GdkPixbuf
 class AboutDialog(Gtk.AboutDialog):
 
 	def __init__(self,title,buttons):
+     """
+     Initializes buttons.
+
+     Args:
+         self: (todo): write your description
+         title: (str): write your description
+         buttons: (todo): write your description
+     """
 		super(AboutDialog,self).__init__(title,None,True,buttons)
 	
 	def set_logo_from_file(self,filename):
+     """
+     Sets the image from the given file.
+
+     Args:
+         self: (todo): write your description
+         filename: (str): write your description
+     """
 		pixbuff =  GdkPixbuf.Pixbuf.new_from_file(filename)
 		self.set_logo(pixbuff)
 			

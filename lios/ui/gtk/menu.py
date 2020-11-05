@@ -26,20 +26,46 @@ SEPARATOR = 1;
 
 class Menu(Gtk.Menu):
 	def __init__(self):
+     """
+     Initialize menu.
+
+     Args:
+         self: (todo): write your description
+     """
 		super(Menu,self).__init__()
 
 
 class ImageMenuItem(Gtk.ImageMenuItem):
 	def __init__(self,label):
+     """
+     Initialize the menu
+
+     Args:
+         self: (todo): write your description
+         label: (str): write your description
+     """
 		super(ImageMenuItem,self).__init__(label)
 
 class SeparatorMenuItem(Gtk.SeparatorMenuItem):
 	def __init__(self):
+     """
+     Initialize the menu.
+
+     Args:
+         self: (todo): write your description
+     """
 		super(SeparatorMenuItem,self).__init__()
 
 
 class MenuBar(Gtk.MenuBar):
 	def __init__(self,item_list):
+     """
+     Initialize the menu
+
+     Args:
+         self: (todo): write your description
+         item_list: (str): write your description
+     """
 		super(MenuBar,self).__init__()
 		self.agr = Gtk.AccelGroup()
 		for item in item_list:
@@ -47,10 +73,23 @@ class MenuBar(Gtk.MenuBar):
 			self.append(menu)
 
 	def get_accel_group(self):
+     """
+     Return the : class : rdf group
+
+     Args:
+         self: (todo): write your description
+     """
 		return self.agr
 			
 		
 def create_menu(item,agr):
+    """
+    Create a menu item
+
+    Args:
+        item: (str): write your description
+        agr: (str): write your description
+    """
 	if (type(item) == list ):
 		menu_item = ImageMenuItem(item[0])
 		menu = Gtk.Menu()
@@ -94,20 +133,47 @@ def create_menu(item,agr):
 
 class MenuItem(Gtk.MenuItem):
 	def __init__(self,label):
+     """
+     Initialize the underlying menu.
+
+     Args:
+         self: (todo): write your description
+         label: (str): write your description
+     """
 		super(MenuItem,self).__init__(label)
 
 
 class ContextMenu(Gtk.Menu):
 	def __init__(self,item_list):
+     """
+     Initialize the context menu.
+
+     Args:
+         self: (todo): write your description
+         item_list: (str): write your description
+     """
 		super(ContextMenu,self).__init__()
 		for item in item_list:
 			menu = create_context_menu(item)
 			self.append(menu)
 	def pop_up(self,*data):
+     """
+     Remove and return an element from the last ).
+
+     Args:
+         self: (todo): write your description
+         data: (array): write your description
+     """
 		self.popup(None,None,None,None,0,0)
 		self.show_all()
 
 def create_context_menu(menu_list):
+    """
+    Create a context menu.
+
+    Args:
+        menu_list: (list): write your description
+    """
 	if (type(menu_list) == list ):
 		menu_item = MenuItem(menu_list[0])
 		menu = Gtk.Menu()

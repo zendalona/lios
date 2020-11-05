@@ -45,6 +45,13 @@ dictionary_language_dict = {"eng" : "en","afr" : "af","am" : "am",
 
 class Dict(enchant.Dict):
 	def __init__(self,language="en"):
+     """
+     Initialize the language.
+
+     Args:
+         self: (todo): write your description
+         language: (str): write your description
+     """
 		super(Dict,self).__init__(language)
 	
 	#list_languages()

@@ -24,6 +24,13 @@ from gi.repository import Gdk
 
 class Terminal(Vte.Terminal):
 	def __init__(self,path):
+     """
+     Initialize the service.
+
+     Args:
+         self: (todo): write your description
+         path: (str): write your description
+     """
 		super(Terminal,self).__init__()
 		if hasattr(self, 'spawn_sync'):
 			self.spawn_sync(Vte.PtyFlags.DEFAULT, #default is fine
@@ -43,15 +50,43 @@ class Terminal(Vte.Terminal):
 			None);
 
 	def run_command(self,command):
+     """
+     Run a command.
+
+     Args:
+         self: (todo): write your description
+         command: (str): write your description
+     """
 		command = command+"\n"
 		length = len(command)
 		self.feed_child(command, length)
 
 	def connect_child_exit(self,function):
+     """
+     Connects a child process.
+
+     Args:
+         self: (todo): write your description
+         function: (todo): write your description
+     """
 		self.connect ("child-exited", function)  
 
 	def connect_context_menu_button_callback(self,function):
+     """
+     Call the callback function when the mouse button is clicked.
+
+     Args:
+         self: (todo): write your description
+         function: (todo): write your description
+     """
 		def fun(widget,event):
+      """
+      Reimplemented events.
+
+      Args:
+          widget: (todo): write your description
+          event: (todo): write your description
+      """
 			if ((event.type == Gdk.EventType.BUTTON_RELEASE and event.button == 3) or
 				(event.type == Gdk.EventType.KEY_PRESS and event.hardware_keycode == 135)):
 				function()
@@ -61,6 +96,12 @@ class Terminal(Vte.Terminal):
 class TheWindow(Gtk.Window):
 
     def __init__(self):
+        """
+        Initialize gtk box.
+
+        Args:
+            self: (todo): write your description
+        """
         Gtk.Window.__init__(self, title="inherited cell renderer")
         self.set_default_size(600, 300)
         self.terminal     = Terminal("~/home")
@@ -83,6 +124,13 @@ class TheWindow(Gtk.Window):
         self.add(box)
 
     def InputToTerm(self, clicker):
+        """
+        Set the command to the command.
+
+        Args:
+            self: (todo): write your description
+            clicker: (todo): write your description
+        """
 	    command = "echo \"Sending this command to a virtual terminal.\""
 	    self.terminal.run_command(command);
 

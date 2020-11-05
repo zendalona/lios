@@ -24,6 +24,11 @@ from lios.scanner.sane_driver import DriverSane
 from lios.scanner.scanimage_driver import DriverScanimage
 
 def get_available_drivers():
+    """
+    Returns a list of all available classes.
+
+    Args:
+    """
 	list = []
 	for item in DriverBase.__subclasses__():
 		if item.is_available():

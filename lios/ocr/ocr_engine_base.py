@@ -23,27 +23,63 @@ import multiprocessing
 
 class OcrEngineBase(metaclass=abc.ABCMeta):
 	def __init__(self,language=None):
+     """
+     Initialize the language.
+
+     Args:
+         self: (todo): write your description
+         language: (str): write your description
+     """
 		self.language = language
 	
 	@staticmethod
 	@abc.abstractmethod
 	def get_available_languages():
+     """
+     Returns a list of available languages.
+
+     Args:
+     """
 		return
 
 	@staticmethod
 	@abc.abstractmethod
 	def support_multiple_languages():
+     """
+     Returns a list of all languages languages.
+
+     Args:
+     """
 		return
 	
 	@abc.abstractmethod
 	def ocr_image_to_text(self,image_file_name):
+     """
+     Convert image_image_file.
+
+     Args:
+         self: (todo): write your description
+         image_file_name: (str): write your description
+     """
 		pass
 	
 	def cancel():
+     """
+     Cancel a function that task.
+
+     Args:
+     """
 		pass
 		
 
 	def set_language(self,language):
+     """
+     Sets the language.
+
+     Args:
+         self: (todo): write your description
+         language: (str): write your description
+     """
 		if language in self.__class__.get_available_languages():
 			self.language = language
 			return True
@@ -51,6 +87,13 @@ class OcrEngineBase(metaclass=abc.ABCMeta):
 			return False
 
 	def set_language_2(self,language):
+     """
+     Sets the language language.
+
+     Args:
+         self: (todo): write your description
+         language: (str): write your description
+     """
 		if language in self.__class__.get_available_languages():
 			self.language_2 = language
 			return True
@@ -59,6 +102,13 @@ class OcrEngineBase(metaclass=abc.ABCMeta):
 			return False
 
 	def set_language_3(self,language):
+     """
+     Sets the language language.
+
+     Args:
+         self: (todo): write your description
+         language: (str): write your description
+     """
 		if language in self.__class__.get_available_languages():
 			self.language_3 = language
 			return True
@@ -67,6 +117,13 @@ class OcrEngineBase(metaclass=abc.ABCMeta):
 			return False
 	
 	def ocr_image_to_text_with_multiprocessing(self,image_file_name):
+     """
+     Return image image_image_image.
+
+     Args:
+         self: (todo): write your description
+         image_file_name: (str): write your description
+     """
 		parent_conn, child_conn = multiprocessing.Pipe()
 		
 		p = multiprocessing.Process(target=(lambda parent_conn, child_conn,
@@ -82,4 +139,9 @@ class OcrEngineBase(metaclass=abc.ABCMeta):
 	@staticmethod
 	@abc.abstractmethod
 	def is_available():
+     """
+     Return a list of available resources.
+
+     Args:
+     """
 		return		
