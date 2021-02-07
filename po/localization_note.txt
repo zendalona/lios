@@ -17,7 +17,7 @@ mkdir share/locale/<your_languge_code>
 msgfmt po/<your_languge_code>.po -o share/locale/<your_languge_code>/LC_MESSAGES/lios.mo
 
 # Step 6 : listing language file in setup script
-# Add following line in beteween similiar lines in setup.py
+# Add following line in between similar lines in setup.py
 ('share/locale/fr/LC_MESSAGES',['share/locale/<your_languge_code>/LC_MESSAGES/lios.mo']),
 
 # To correct translations repeat step 3 and 4.

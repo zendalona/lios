@@ -910,7 +910,7 @@ msgid "Select Folder to save images"
 msgstr "Sélectionner le dossier où enregistrer les images"
 
 #: main.py:1263
-msgid "Give pdf filename(with extention) to save images"
+msgid "Give pdf filename(with extension) to save images"
 msgstr ""
 "Donnez un nom de fichier au pdf (avec extension) pour enregistrer les images"
 
