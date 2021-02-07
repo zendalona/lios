@@ -29,7 +29,7 @@ Output Insert position, image rotation and zoom options, etc
 
 Installing
 ======
-Dependecy list : python3, python3-imaging-sane|python3-sane, python3-speechd, tesseract-ocr,
+Dependency list : python3, python3-imaging-sane|python3-sane, python3-speechd, tesseract-ocr,
 imagemagick, cuneiform, espeak,poppler-utils, python3-enchant,aspell-en, gir1.2-gst-plugins-base-1.0, gir1.2-gstreamer-1.0
 
 git clone https://gitlab.com/Nalin-x-Linux/lios-3.git

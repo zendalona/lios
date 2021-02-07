@@ -175,7 +175,7 @@ def find_index_for_new_box(new_s_x,new_s_y,new_e_x,new_e_y,rl):
 					min_x_dist = dist;
 					index = i+1;
 
-		#if nothing in parallel to the right then new box will be drawed in first from left
+		#if nothing in parallel to the right then new box will be drawn in first from left
 		if (min_x_dist == 99999):
 			if(cur_e_y <= new_s_y):
 				# Checking the vertical distance bitween new box and cur box

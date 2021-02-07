@@ -908,7 +908,7 @@ msgid "Select Folder to save images"
 msgstr "Seleziona cartella per salvare le immagini"
 
 #: main.py:1263
-msgid "Give pdf filename(with extention) to save images"
+msgid "Give pdf filename(with extension) to save images"
 msgstr "Fornisci il nome del file pdf (con estensione) per salvare le immagini"
 
 #: main.py:1302
@@ -1469,7 +1469,7 @@ msgstr "Ottieni il codice sorgente"
 #~ msgid "Deleting !"
 #~ msgstr "Eliminazione!"
 
-#~ msgid "Give pdf filename (with extention) to save images"
+#~ msgid "Give pdf filename (with extension) to save images"
 #~ msgstr ""
 #~ "Fornisci il nome del file pdf (con estensione) per salvare le immagini"
 

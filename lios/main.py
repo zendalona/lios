@@ -414,7 +414,7 @@ class linux_intelligent_ocr_solution():
 		response = dlg.run()
 		if response == dialog.Dialog.BUTTON_ID_1:
 			to_go = spinbutton_page.get_value()
-			# Start search from begining to match properly
+			# Start search from beginning to match properly
 			self.textview.move_cursor_to_line(1)
 			if (self.preferences.page_numbering_type == 0):
 				word = "Page-{0}".format(to_go)
@@ -1260,7 +1260,7 @@ class linux_intelligent_ocr_solution():
 		self.save_selected_images(None)
 		
 	def save_selected_images_as_pdf(self,widget):
-		dlg = FileChooserDialog(_("Give pdf filename(with extention) to save images"),
+		dlg = FileChooserDialog(_("Give pdf filename(with extension) to save images"),
 			FileChooserDialog.SAVE,macros.supported_pdf_formats,macros.user_home_path)
 		response = dlg.run()
 		if response == FileChooserDialog.ACCEPT:
@@ -1440,7 +1440,7 @@ pacman -S aspell-{1}""").format(lang, langdict, langdict, langdict, langdict))
 			if item.split('.')[-1] in ["pdf","Pdf"]:
 				self.import_images_from_pdf(item)
 				# import_images_from_pdf is a threaded function
-				# so stoping with one file
+				# so stopping with one file
 				return;
 
 			if item.split('.')[-1] in macros.supported_text_formats:

@@ -649,7 +649,7 @@ msgid "Select Folder to save images"
 msgstr ""
 
 #: lios/main.py:1263
-msgid "Give pdf filename(with extention) to save images"
+msgid "Give pdf filename(with extension) to save images"
 msgstr ""
 
 #: lios/main.py:1302
