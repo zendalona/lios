@@ -700,8 +700,7 @@ class linux_intelligent_ocr_solution():
 		self.process_breaker = False
 		selected_scanner = self.combobox_scanners.get_active()
 
-		self.notify_information(_("Scanning {}, resolution {}, brightness {}").
-		format(filename.split("/")[-1],self.preferences.scan_resolution,self.preferences.scan_brightness))
+		self.notify_information(_("Scanning")+" "+filename.split("/")[-1])
 		
 		p = multiprocessing.Process(target=(self.scanner_objects[selected_scanner].scan),
 		args=(filename,self.preferences.scan_resolution,
