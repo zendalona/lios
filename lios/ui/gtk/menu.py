@@ -18,8 +18,11 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###########################################################################
 
+import gi
+gi.require_version("Gtk", "3.0")
+
 from gi.repository import Gtk
-from lios.ui.gtk import icon		
+from lios.ui.gtk import icon
 from lios import macros
 
 SEPARATOR = 1;

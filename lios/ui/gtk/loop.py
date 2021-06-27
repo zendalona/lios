@@ -18,9 +18,12 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###########################################################################
 
-from gi.repository import Gtk		
-from gi.repository import Gdk		
-		
+import gi
+gi.require_version("Gtk", "3.0")
+
+from gi.repository import Gtk
+from gi.repository import Gdk
+
 def start_main_loop():
 	Gtk.main()
 
