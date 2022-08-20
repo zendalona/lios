@@ -648,7 +648,7 @@ class linux_intelligent_ocr_solution():
 		#self.make_scanner_widgets_inactive(lock=True)
 		#self.make_preferences_widgets_inactive(lock=True)
 
-		if(not self.is_updating_scanner_list or len(self.scanner_objects) == 0):
+		if(not self.is_updating_scanner_list and len(self.scanner_objects) == 0):
 			self.update_scanner_list();
 		while(self.is_updating_scanner_list):
 			pass
@@ -671,7 +671,7 @@ class linux_intelligent_ocr_solution():
 		#self.make_scanner_widgets_inactive(lock=True)
 		#self.make_preferences_widgets_inactive(lock=True)
 
-		if(not self.is_updating_scanner_list or len(self.scanner_objects) == 0):
+		if(not self.is_updating_scanner_list and len(self.scanner_objects) == 0):
 			self.update_scanner_list();
 		while(self.is_updating_scanner_list):
 			pass
@@ -790,7 +790,7 @@ class linux_intelligent_ocr_solution():
 	@on_thread	
 	def scan_and_ocr(self,widget):
 
-		if(not self.is_updating_scanner_list or len(self.scanner_objects) == 0):
+		if(not self.is_updating_scanner_list and len(self.scanner_objects) == 0):
 			self.update_scanner_list();
 		while(self.is_updating_scanner_list):
 			pass
@@ -829,7 +829,7 @@ class linux_intelligent_ocr_solution():
 			
 	@on_thread			
 	def scan_and_ocr_repeatedly(self,widget):
-		if(not self.is_updating_scanner_list or len(self.scanner_objects) == 0):
+		if(not self.is_updating_scanner_list and len(self.scanner_objects) == 0):
 			self.update_scanner_list();
 		while(self.is_updating_scanner_list):
 			pass
@@ -890,7 +890,7 @@ class linux_intelligent_ocr_solution():
 		#self.make_ocr_widgets_inactive(lock=True)
 		#self.make_preferences_widgets_inactive(lock=True)
 
-		if(not self.is_updating_scanner_list or len(self.scanner_objects) == 0):
+		if(not self.is_updating_scanner_list and len(self.scanner_objects) == 0):
 			self.update_scanner_list();
 		while(self.is_updating_scanner_list):
 			pass
