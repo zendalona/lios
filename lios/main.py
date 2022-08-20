@@ -1156,7 +1156,7 @@ class linux_intelligent_ocr_solution():
 
 
 	def iconview_remove_all_images(self,widget):
-		self.iconview.select_all_items()
+		self.iconview.select_all()
 		self.iconview_remove_selected_images()
 
 	def iconview_remove_selected_images(self,*data):
