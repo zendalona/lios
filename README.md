@@ -32,9 +32,9 @@ Installing
 Dependency list : python3, python3-imaging-sane|python3-sane, python3-speechd, tesseract-ocr,
 imagemagick, cuneiform, espeak,poppler-utils, python3-enchant,aspell-en, gir1.2-gst-plugins-base-1.0, gir1.2-gstreamer-1.0
 
-git clone https://gitlab.com/Nalin-x-Linux/lios-3.git
+git clone https://github.com/zendalona/lios.git
 
-cd lios-3
+cd lios
 
 python3 setup.py install --install-data=/usr
 
@@ -42,9 +42,7 @@ Links
 ======
 Forum : https://groups.google.com/forum/#!forum/lios
 
-Home Page : http://sourceforge.net/projects/lios/?source=navbar
-
-Video Tutorials : https://www.youtube.com/playlist?list=PLn29o8rxtRe1zS1r2-yGm1DNMOZCgdU0i
+Home Page : http://zendalona.com/lios/
 
 
 Disclaimer
