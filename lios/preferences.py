@@ -38,7 +38,7 @@ class lios_preferences:
 		self.font="Georgia 14";self.highlight_font="Georgia 14";
 		self.highlight_color="#000000000000";
 		self.background_highlight_color="#34346565a4a4";
-		self.speech_module=0;self.speech_language=10;
+		self.speech_module=-1;self.speech_language=-1;self.speech_person=-1;
 		self.speech_rate=0;self.speech_pitch=0;self.speech_volume=100;
 		self.time_between_repeated_scanning=0;self.scan_resolution=300;
 		self.scan_driver=1;self.scanner_cache_calibration=0;
@@ -73,6 +73,7 @@ class lios_preferences:
 				self.language_3=int(config.get('cfg',"language_3"))
 				self.speech_module=int(config.get('cfg',"speech_module"))
 				self.speech_language=int(config.get('cfg',"speech_language"))
+				self.speech_person=int(config.get('cfg',"speech_person"))
 				self.speech_rate=int(config.get('cfg',"speech_rate"))
 				self.speech_volume=int(config.get('cfg',"speech_volume"))
 				self.speech_pitch=int(config.get('cfg',"speech_pitch"))
@@ -95,6 +96,34 @@ class lios_preferences:
 		else:
 			self.__init__()
 
+	# Set speech module, language and person if speech_module is not set
+	def set_default_speech_module_and_language(self):
+		if(self.speech_module == -1):
+			test = speech.Speech()
+			output_modules_list = test.list_output_modules()
+			if("espeak-ng" in output_modules_list):
+				self.speech_module = output_modules_list.index('espeak-ng')
+				test.set_output_module('espeak-ng')
+			elif("espeak" in output_modules_list):
+				self.speech_module = output_modules_list.index('espeak')
+				test.set_output_module('espeak')
+
+			# if espeak or espeak-ng set language
+			if(self.speech_module != -1):
+				import locale
+				language_code, encoding = locale.getdefaultlocale()
+				localeValues = language_code.split('_')
+				language = localeValues[0]
+				language_person_dict = test.get_language_person_dict()
+				if(language in language_person_dict.keys()):
+					self.speech_language = list(language_person_dict.keys()).index(language)
+					self.speech_person=0;
+			else:
+				self.speech_module=0;self.speech_language=0;self.speech_person=0;
+
+			#Closing
+			test.close()
+
 	def save_to_file(self,filename):
 		#Removing old configuration file
 		try:
@@ -115,6 +144,7 @@ class lios_preferences:
 		config.set('cfg',"language_3",str(self.language_3))
 		config.set('cfg',"speech_module",str(self.speech_module))
 		config.set('cfg',"speech_language",str(self.speech_language))
+		config.set('cfg',"speech_person",str(self.speech_person))
 		config.set('cfg',"speech_pitch",str(self.speech_pitch))
 		config.set('cfg',"speech_volume",str(self.speech_volume))
 		config.set('cfg',"speech_rate",str(self.speech_rate))
@@ -182,14 +212,62 @@ class lios_preferences:
 			
 
 		def change_speech_module(*data):
-			index_engine = combobox_speech_module.get_active()
-			combobox_speech_language.clear()
+			module_index = combobox_speech_module.get_active()
+
 			test = speech.Speech()
-			list = test.list_output_modules()
-			test.set_output_module(list[index_engine])
-			for item in test.list_voices():
-				combobox_speech_language.add_item(item)
-			combobox_speech_language.set_active(self.speech_language)
+			output_modules_list = test.list_output_modules()
+			test.set_output_module(output_modules_list[module_index])
+
+			self.speech_language_person_dict = test.get_language_person_dict()
+			test.close()
+
+			# Disconnecting for preventng function calls while clearing
+			# combobox_speech_language or adding each language to the same
+			try:
+				combobox_speech_language.disconnect_by_func(change_speech_language)
+			except(TypeError):
+				pass
+
+			combobox_speech_language.clear()
+
+			if(len(self.speech_language_person_dict.keys()) == 0):
+				combobox_speech_language.add_item(_("Default"))
+				self.speech_language = 0
+			else:
+				for item in self.speech_language_person_dict.keys():
+					combobox_speech_language.add_item(item)
+
+			combobox_speech_language.connect_change_callback_function(change_speech_language)
+
+
+			if(self.speech_language < len(self.speech_language_person_dict.keys())):
+				combobox_speech_language.set_active(self.speech_language)
+			else:
+				combobox_speech_language.set_active(0)
+				self.speech_language = 0
+
+		def change_speech_language(*data):
+			combobox_speech_person.clear()
+
+			# For users having preferences from old version
+			if(self.speech_person == -1):
+				self.speech_person = 0
+
+			if(len(list(self.speech_language_person_dict.keys())) == 0):
+				combobox_speech_person.add_item(_("Default"))
+				combobox_speech_person.set_active(0)
+				self.speech_person = 0
+				return
+
+			index_language = combobox_speech_language.get_active()
+			language = list(self.speech_language_person_dict.keys())[index_language]
+
+			for item in self.speech_language_person_dict[language]:
+				combobox_speech_person.add_item(item)
+
+			if(self.speech_person >= len(self.speech_language_person_dict[language])):
+				self.speech_person = 0
+			combobox_speech_person.set_active(self.speech_person)
 
 		def change_mode_of_rotation(*data):
 			if(combobox_mode_of_rotation.get_active() == 2):
@@ -236,9 +314,13 @@ class lios_preferences:
 
 		label_speech_language = widget.Label(_("Speech Language"))
 		combobox_speech_language = widget.ComboBox()
-		combobox_speech_module.set_active(self.speech_module)
-		combobox_speech_language.set_active(self.speech_language)
 		label_speech_language.set_mnemonic_widget(combobox_speech_language)
+
+		label_speech_person = widget.Label(_("Speech Person"))
+		combobox_speech_person = widget.ComboBox()
+		label_speech_person.set_mnemonic_widget(combobox_speech_person)
+
+		combobox_speech_module.set_active(self.speech_module)
 
 		label_speech_rate = widget.Label(_("Speech Rate"))
 		spin_speech_rate = widget.SpinButton(self.speech_rate,-100,100,1,10,0)
@@ -259,6 +341,7 @@ class lios_preferences:
 			(label_highlight_background,1,1),(colorbutton_highlight_background,1,1),containers.Grid.NEW_ROW,
 			(label_speech_module,1,1),(combobox_speech_module,1,1),containers.Grid.NEW_ROW,
 			(label_speech_language,1,1),(combobox_speech_language,1,1),containers.Grid.NEW_ROW,
+			(label_speech_person,1,1),(combobox_speech_person,1,1),containers.Grid.NEW_ROW,
 			(label_speech_rate,1,1),(spin_speech_rate,1,1),containers.Grid.NEW_ROW,
 			(label_speech_pitch,1,1),(spin_speech_pitch,1,1),containers.Grid.NEW_ROW,
 			(label_speech_volume,1,1),(spin_speech_volume,1,1)])
@@ -457,6 +540,7 @@ class lios_preferences:
 			self.language_3=combobox_language_3.get_active()
 			self.speech_module=combobox_speech_module.get_active()
 			self.speech_language=combobox_speech_language.get_active()
+			self.speech_person=combobox_speech_person.get_active()
 			self.speech_rate=spin_speech_rate.get_value()
 			self.speech_pitch=spin_speech_pitch.get_value()
 			self.speech_volume=spin_speech_volume.get_value()

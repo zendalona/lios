@@ -23,9 +23,16 @@ class Speech(speechd.SSIPClient):
 	def __init__(self,client_name="lios"):
 		super(Speech,self).__init__(client_name)
 		self.status = False
-	
-	def list_voices(self):
-		return [ x[0] for x in self.list_synthesis_voices()]
+
+	def get_language_person_dict(self):
+		dictionary = {}
+		voices = self.list_synthesis_voices()
+		for item in voices:
+			if(item[1] not in dictionary):
+				dictionary[item[1]] = [item[0]]
+			else:
+				dictionary[item[1]].append(item[0])
+		return dictionary
 	
 	def say(self,text):
 		self.status = True

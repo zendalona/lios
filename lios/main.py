@@ -180,6 +180,7 @@ class linux_intelligent_ocr_solution():
 		#Load Preferences
 		self.preferences = preferences.lios_preferences()
 		self.preferences.set_from_file(macros.preferences_file_path)
+		self.preferences.set_default_speech_module_and_language()
 		self.preferences.set_avalable_scanner_drivers([ item.name for item in self.available_scanner_driver_list])
 		self.preferences.set_avalable_ocr_engines([ (item.name, item.get_available_languages(),item.support_multiple_languages())
 												for item in self.available_ocr_engine_list ])
@@ -1393,6 +1394,7 @@ pacman -S aspell-{1}""").format(lang, langdict, langdict, langdict, langdict))
 
 	def restore_preferences(self,*data):
 		self.preferences.__init__()
+		self.preferences.set_default_speech_module_and_language()
 		self.make_preferences_effective()
 		self.notify_information(_("Preferences Restored"),0)
 	
@@ -1503,8 +1505,12 @@ pacman -S aspell-{1}""").format(lang, langdict, langdict, langdict, langdict))
 			self.is_reading = True
 			speaker = speech.Speech()
 			speaker.set_output_module(speaker.list_output_modules()[self.preferences.speech_module])
-			if(self.preferences.speech_module != -1 and len(speaker.list_voices()) > 1):
-				speaker.set_synthesis_voice(speaker.list_voices()[self.preferences.speech_language])
+			language_person_dict = speaker.get_language_person_dict()
+
+			if(self.preferences.speech_module != -1 and len(language_person_dict.keys()) > 1):
+				voice = language_person_dict[list(language_person_dict)[self.preferences.speech_language]][self.preferences.speech_person]
+				speaker.set_synthesis_voice(voice)
+
 			speaker.set_volume(self.preferences.speech_volume)
 			speaker.set_pitch(self.preferences.speech_pitch)
 			while(not self.textview.is_cursor_at_end()):
