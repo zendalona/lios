@@ -5,6 +5,10 @@ parser = argparse.ArgumentParser(prog='lios',
 description='Linux-Intelligent-OCR-Solution',
 epilog='Visit forum : https://groups.google.com/g/lios')
 
+parser.add_argument('--datadir',
+                       action='store',
+                       default='/usr/share/lios')
+
 parser.add_argument("-s", "--ocr-screenshot", help="Take screenshot and ocr", action='store_true')
 parser.add_argument("-v", "--version", help="Show version", action='store_true')
 
@@ -18,6 +22,8 @@ args = parser.parse_args()
 
 from lios.main import *
 if __name__ == '__main__':
+	macros.set_datadir(args.datadir)
+
 	if(args.version):
 		print("\n\nVersion : "+macros.version+"\n\n")
 	elif(args.ocr_screenshot):

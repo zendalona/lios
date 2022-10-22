@@ -20,6 +20,8 @@
 import os
 import itertools
 
+datadir = ''
+
 def get_list_of_mixed_case_combinations(list_items):
 	return list(itertools.chain.from_iterable([[''.join(a) for a in itertools.product(*zip(s.upper(), s.lower()))] for s in list_items]))
 
@@ -32,8 +34,6 @@ tmp_dir = "/tmp/Lios/"
 bookmarks_dir = config_dir+"/bookmarks/"
 
 local_text_cleaner_list_file_path = config_dir+"/text_cleaner_list.text"
-
-default_text_cleaner_list_file_path = "/usr/share/lios/text_cleaner_list.text"
 
 preferences_file_path = config_dir+"/preferences.cfg"
 
@@ -49,13 +49,11 @@ supported_pdf_formats = get_list_of_mixed_case_combinations(["pdf"])
 
 version = "2.8"
 
-logo_file = "/usr/share/lios/lios.png"
+logo_file = "lios.png"
+icon_dir = "icons/"
+readme_file = "readme.text"
 
-icon_dir = "/usr/share/lios/icons/"
-
-readme_file = "/usr/share/lios/readme.text"
-
-default_text_cleaner_list_file_path = "/usr/share/lios/text_cleaner_list.text"
+default_text_cleaner_list_file_path = "text_cleaner_list.text"
 
 app_name = "Linux-intelligent-ocr-solution"
 
@@ -72,3 +70,14 @@ major_character_encodings_list = [ 'us_ascii', 'utf-8', 'iso_8859_1','latin1',
  'gb2312_80', 'gb2312_1980', 'windows_1251', 'windows_1252', 'windows_1253',
  'windows_1254', 'windows_1255', 'windows_1256', 'windows_1257', 'windows_1258',
  'shiftjis', 'windows_1256', 'big5_hkscs', 'big5_tw', 'tis620']
+
+def set_datadir(datadir):
+	global logo_file, icon_dir, readme_file
+	global default_text_cleaner_list_file_path
+	global default_text_cleaner_list_file_path
+
+	logo_file = datadir + '/' + logo_file
+	icon_dir = datadir + '/' + icon_dir
+	readme_file = datadir + '/' + readme_file
+	default_text_cleaner_list_file_path = datadir + '/' + default_text_cleaner_list_file_path
+	default_text_cleaner_list_file_path = datadir + '/' + default_text_cleaner_list_file_path
