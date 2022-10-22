@@ -32,11 +32,20 @@ Installing
 Dependency list : python3, python3-imaging-sane|python3-sane, python3-speechd, tesseract-ocr,
 imagemagick, cuneiform, espeak,poppler-utils, python3-enchant,aspell-en, gir1.2-gst-plugins-base-1.0, gir1.2-gstreamer-1.0
 
+```
 git clone https://github.com/zendalona/lios.git
-
 cd lios
-
 python3 setup.py install --install-data=/usr
+```
+
+Following the third step for a system-wide installation is not necessary. You
+can use the following commands instead, as long as you have all the dependecies
+installed. This will be useful if you are a Lios developer.
+
+```
+export PYTHONPATH=.
+bin/lios --datadir 'share/lios'
+```
 
 Links
 ======
