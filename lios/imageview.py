@@ -481,7 +481,7 @@ class TestWindow(window.Window):
         
         self.iv = ImageViewer()
         li = [(0,10,10,10,10,"a"),(0,30,30,10,10,"b"),(0,50,50,10,10,"c")]
-        self.iv.load_image("/usr/share/lios/lios.png",li,ImageViewer.ZOOM_FIT)
+        self.iv.load_image(macros.logo_file,li,ImageViewer.ZOOM_FIT)
 
         button1 = widget.Button("Get List")
         button1.connect_function(self.on_button1_clicked)        

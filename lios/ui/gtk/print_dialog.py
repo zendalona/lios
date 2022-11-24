@@ -109,7 +109,7 @@ class print_with_action():
 
 if __name__ == "__main__":
 	data=""
-	file = open("/usr/share/lios/readme.text","r")
+	file = open(macros.readme_file,"r")
 	for x in file.readlines():
 		data = data + x
 	action = Gtk.PrintOperationAction.PREVIEW
