@@ -1,13 +1,13 @@
-# SOME DESCRIPTIVE TITLE.
+# ITALIAN TRANSLATION.
 # Copyright (C) YEAR ORGANIZATION
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# ALBANO BATTISTELLA <ALBANOBATTISTELLA@GMAIL.COM>, 2023.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 2020-10-18 19:32+0200\n"
-"PO-Revision-Date: 2020-10-18 19:47+0200\n"
-"Last-Translator: Cyrille <lafricain79@gmail.com>\n"
+"PO-Revision-Date: 2023-04-30 18:47+0200\n"
+"Last-Translator: Albano Battistella <albanobattistella@gmail.com>\n"
 "Language-Team: Cyrille Mattiuzzo\n"
 "Language: it\n"
 "MIME-Version: 1.0\n"
@@ -74,7 +74,7 @@ msgstr "Seleziona il file da inserire al cursore"
 
 #: editor.py:224 main.py:1239
 msgid "Filename please"
-msgstr "Nome di file per favore"
+msgstr "Nome del file per favore"
 
 #: editor.py:234
 msgid "Select the file to import"
@@ -228,15 +228,15 @@ msgstr "Sostituisci tutto"
 
 #: editor.py:639
 msgid "Suggestions"
-msgstr "Soggezioni"
+msgstr "Suggerimenti"
 
 #: editor.py:663
 msgid "Spell Check finished"
-msgstr "Verificazion del'ortografia finita"
+msgstr "Controllo ortografico terminato"
 
 #: editor.py:695
 msgid "<b>Misspelled word: </b>"
-msgstr "<b>Parola errata: </b>"
+msgstr "<b>Parola con errori di ortografia: </b>"
 
 #: editor.py:701
 msgid "Change"
@@ -264,7 +264,7 @@ msgstr "Verifica l'ortografia"
 
 #: editor.py:738 main.py:203
 msgid "Go To Line"
-msgstr "Vai a la linea"
+msgstr "Vai alla linea"
 
 #: editor.py:738 main.py:410
 msgid "Go"
@@ -348,7 +348,7 @@ msgstr "_Cancella"
 
 #: imageview.py:77
 msgid "Shortcut Alt+D"
-msgstr "Scorciatoia Alt + D"
+msgstr "Scorciatoia Alt+D"
 
 #: main.py:77 main.py:142 main.py:190 ui/gtk/icon.py:25
 msgid "Open"
@@ -356,7 +356,7 @@ msgstr "Apri"
 
 #: main.py:77 ui/gtk/icon.py:91
 msgid "Take-Screenshot"
-msgstr "Fai una schermata"
+msgstr "Fai uno Screenshot"
 
 #: main.py:78 ui/gtk/icon.py:90
 msgid "Scan-Using-Webcam"
@@ -364,7 +364,7 @@ msgstr "Scansiona con la webcam"
 
 #: main.py:78 main.py:82 ui/gtk/icon.py:60
 msgid "Recognize"
-msgstr "Recognize"
+msgstr "Riconosci"
 
 #: main.py:83
 msgid "Recognize-With-Rotation"
@@ -392,11 +392,11 @@ msgstr "Esporta come Pdf"
 
 #: main.py:111 main.py:128 ui/gtk/icon.py:49
 msgid "Zoom-In"
-msgstr "Agrandisci"
+msgstr "Igrandisci"
 
 #: main.py:111 main.py:128 ui/gtk/icon.py:50
 msgid "Zoom-Fit"
-msgstr "Ridusci"
+msgstr "Adatta allo zoom"
 
 #: main.py:112 main.py:129 ui/gtk/icon.py:51
 msgid "Zoom-Out"
@@ -440,7 +440,7 @@ msgstr "Trova e sostituisci"
 
 #: main.py:150 ui/gtk/icon.py:37
 msgid "Start-Reader"
-msgstr "Inizia il lettore"
+msgstr "Avvia il lettore"
 
 #: main.py:151 ui/gtk/icon.py:38
 msgid "Stop-Reader"
@@ -448,11 +448,11 @@ msgstr "Ferma il lettore"
 
 #: main.py:153 ui/gtk/icon.py:43
 msgid "Go-To-Line"
-msgstr "Vai a la linea"
+msgstr "Vai alla linea"
 
 #: main.py:154 ui/gtk/icon.py:42
 msgid "Go-To-Page"
-msgstr "Vai a la pagina"
+msgstr "Vai alla pagina"
 
 #: main.py:189 ui/gtk/icon.py:23
 msgid "_File"
@@ -496,7 +496,7 @@ msgstr "Trova e sostituisci"
 
 #: main.py:201 main.py:243
 msgid "Spell Check"
-msgstr "Verifica l'ortografia"
+msgstr "Controllo ortografico"
 
 #: main.py:203
 msgid "Go To Page"
@@ -552,7 +552,7 @@ msgstr "_Scansiona"
 
 #: main.py:222 main.py:275
 msgid "Update Scanner List"
-msgstr "Aggiorna l'elenco dei scanner"
+msgstr "Aggiorna l'elenco degli scanner"
 
 #: main.py:223
 msgid "Scan Image"
@@ -564,11 +564,11 @@ msgstr "Scansione di un'immagine più volte"
 
 #: main.py:225
 msgid "Scan and Ocr"
-msgstr "Scansiona e ROC"
+msgstr "Scansiona e Ocr"
 
 #: main.py:226
 msgid "Scan and Ocr Repeatedly"
-msgstr "Scansione e ROC di un'immagine più volte"
+msgstr "Scansione e Ocr di un'immagine più volte"
 
 #: main.py:227 main.py:926
 msgid "Optimize Scanner Brightness"
@@ -580,7 +580,7 @@ msgstr "Scansiona con la webcam"
 
 #: main.py:229
 msgid "Take Screenshot"
-msgstr "Fai una schermata"
+msgstr "Fai uno Screenshot"
 
 #: main.py:230 main.py:233
 msgid "Selection"
@@ -592,7 +592,7 @@ msgstr "Tutto"
 
 #: main.py:232
 msgid "Take and Recognize Screenshot"
-msgstr "Fai e riconosci una schermata"
+msgstr "Fai e riconosci uno Screenshot"
 
 #: main.py:235 ui/gtk/icon.py:61
 msgid "_Recognize"
@@ -628,7 +628,7 @@ msgstr "Riconosci tutti con rotazione"
 
 #: main.py:243 ui/gtk/icon.py:100
 msgid "_Tools"
-msgstr "S_trumenti"
+msgstr "_Strumenti"
 
 #: main.py:249
 msgid "Apply Entire"
@@ -648,7 +648,7 @@ msgstr "Tabella di segnalibri completa"
 
 #: main.py:256
 msgid "Start Reader"
-msgstr "Inizia il lettore"
+msgstr "Avvia il lettore"
 
 #: main.py:257
 msgid "Stop Reader"
@@ -720,7 +720,7 @@ msgstr "Benvenuto in {} Versione {}"
 
 #: main.py:410
 msgid "Go to page"
-msgstr "Vai a la pagina"
+msgstr "Vai alla pagina"
 
 #: main.py:411
 msgid "Page Number: "
@@ -733,7 +733,7 @@ msgstr "Estrazione delle immagini dal Pdf"
 #: main.py:506 main.py:630 main.py:695 main.py:1059 main.py:1118 main.py:1146
 #: main.py:1194 main.py:1315 main.py:1496
 msgid "Completed!"
-msgstr "Fatto!"
+msgstr "Completato!"
 
 #: main.py:597
 msgid "Getting devices"
@@ -765,7 +765,7 @@ msgstr "Pagina {}"
 
 #: main.py:877
 msgid "Completed"
-msgstr "Fatto"
+msgstr "Completato"
 
 #: main.py:906
 msgid ""
@@ -796,7 +796,7 @@ msgstr "Valore attuale"
 
 #: main.py:943 preferences.py:306
 msgid "Start"
-msgstr "Inizio"
+msgstr "Avvia"
 
 #: main.py:947
 msgid "Distance"
@@ -889,7 +889,7 @@ msgstr "Eliminazione!"
 
 #: main.py:1165
 msgid "Yes Delete"
-msgstr "Si cancela"
+msgstr "Si cancella"
 
 #: main.py:1166
 msgid "Are you sure you want to delete selected images?"
@@ -901,7 +901,7 @@ msgstr "Nulla di selezionato"
 
 #: main.py:1190
 msgid "Rotating selected image {} to {}"
-msgstr "Ratazione del'immagine selezionata {} a {}"
+msgstr "Rotazione dell'immagine selezionata {} a {}"
 
 #: main.py:1247
 msgid "Select Folder to save images"
@@ -914,7 +914,7 @@ msgstr "Fornisci il nome del file pdf (con estensione) per salvare le immagini"
 #: main.py:1302
 msgid "Running OCR on selected Area [ X={} Y={} Width={} Height={} ]"
 msgstr ""
-"Esecuzione della ROC sull'area selezionata [ X={} Y={} Larghezza={} "
+"Esecuzione dell' OCR sull'area selezionata [ X={} Y={} Larghezza={} "
 "Altezza={} ]"
 
 #: main.py:1337
@@ -1039,7 +1039,7 @@ msgstr "Evidenzia i caratteri"
 
 #: preferences.py:220
 msgid "Highlight Color"
-msgstr "Colore de evidenzia"
+msgstr "Evidenzia colore"
 
 #: preferences.py:225
 msgid "Highlight Background"
@@ -1087,7 +1087,7 @@ msgstr "Lingua - 3"
 
 #: preferences.py:300
 msgid "Run Text Cleaner"
-msgstr "Esegui pulisce il testo"
+msgstr "Esegui pulitore di testo"
 
 #: preferences.py:304
 msgid "Insert Position"
@@ -1155,7 +1155,7 @@ msgstr "Numero di pagina iniziale"
 
 #: preferences.py:370
 msgid "Recognition"
-msgstr "Riconoscere"
+msgstr "Riconoscimento"
 
 #: preferences.py:380
 msgid "Resolution"
@@ -1167,11 +1167,11 @@ msgstr "Luminosità"
 
 #: preferences.py:390
 msgid "Scan Area"
-msgstr "Scansiona zona"
+msgstr "Scansiona area"
 
 #: preferences.py:393
 msgid "Full Scan Area"
-msgstr "Scansiona zona completa"
+msgstr "Scansiona area completa"
 
 #: preferences.py:394
 msgid "Three Quarters"
@@ -1203,7 +1203,7 @@ msgstr "Passare al codice binario o lineare, se possibile"
 
 #: preferences.py:423
 msgid "Cache Calibration"
-msgstr "Calibrazione la cache"
+msgstr "Calibrazione cache"
 
 #: preferences.py:439
 msgid "Scanning"
@@ -1219,7 +1219,7 @@ msgstr "Salva come"
 
 #: ui/gtk/icon.py:30
 msgid "Text-Cleaner"
-msgstr "Pulisci il testo"
+msgstr "Pulitore di testo"
 
 #: ui/gtk/icon.py:33
 msgid "Apply-From-Cursor"
@@ -1299,7 +1299,7 @@ msgstr "Copia"
 
 #: ui/gtk/icon.py:78
 msgid "Paste"
-msgstr "Colla"
+msgstr "Incolla"
 
 #: ui/gtk/icon.py:80
 msgid "Bookmark-Table"
@@ -1331,7 +1331,7 @@ msgstr "Scansiona e OCR"
 
 #: ui/gtk/icon.py:88
 msgid "Scan-and-Ocr-Repeatedly"
-msgstr "Scansione e ROC di un'immagine più volte"
+msgstr "Scansione e Ocr di un'immagine più volte"
 
 #: ui/gtk/icon.py:89
 msgid "Optimize-Scanner-Brightness"
@@ -1395,10 +1395,10 @@ msgstr "Ottieni il codice sorgente"
 #~ msgstr "<b> Parola: </b>"
 
 #~ msgid "<b> Replace word: </b>"
-#~ msgstr "<b> Parola sostituita: </b>"
+#~ msgstr "<b> Sostituisci parola: </b>"
 
 #~ msgid "<b> Misspelled word: </b>"
-#~ msgstr "<b> Parola errata: </b>"
+#~ msgstr "<b> parola con errori di ortografia: </b>"
 
 #~ msgid "Go to line"
 #~ msgstr "Vai a la linea"
@@ -1435,7 +1435,7 @@ msgstr "Ottieni il codice sorgente"
 #~ "Si prega di selezionare il tipo di PDF. Sembra che {} sia un {} PDF."
 
 #~ msgid "completed!"
-#~ msgstr "fatto!"
+#~ msgstr "Completato!"
 
 #~ msgid "No Scanner Detected! Please update scanner list and try again."
 #~ msgstr ""
@@ -1467,7 +1467,7 @@ msgstr "Ottieni il codice sorgente"
 #~ msgstr "Esecuzione della ROC sull'immagine selezionata {} (senza rotazione)"
 
 #~ msgid "Deleting !"
-#~ msgstr "Eliminazione!"
+#~ msgstr "Eliminazione !"
 
 #~ msgid "Give pdf filename (with extension) to save images"
 #~ msgstr ""
@@ -1754,7 +1754,7 @@ msgstr "Ottieni il codice sorgente"
 #~ "Cartella di output tessdata: {2}"
 
 #~ msgid "Combine with dictionaries too?"
-#~ msgstr "Combina anche con i dizionari?"
+#~ msgstr "Abbinarlo anche ai dizionari?"
 
 #~ msgid ""
 #~ "Do you want to add dictionaries? \t\t\n"
