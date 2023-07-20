@@ -99,30 +99,34 @@ class lios_preferences:
 	# Set speech module, language and person if speech_module is not set
 	def set_default_speech_module_and_language(self):
 		if(self.speech_module == -1):
-			test = speech.Speech()
-			output_modules_list = test.list_output_modules()
-			if("espeak-ng" in output_modules_list):
-				self.speech_module = output_modules_list.index('espeak-ng')
-				test.set_output_module('espeak-ng')
-			elif("espeak" in output_modules_list):
-				self.speech_module = output_modules_list.index('espeak')
-				test.set_output_module('espeak')
+			try:
+				test = speech.Speech()
+				output_modules_list = test.list_output_modules()
+				if("espeak-ng" in output_modules_list):
+					self.speech_module = output_modules_list.index('espeak-ng')
+					test.set_output_module('espeak-ng')
+				elif("espeak" in output_modules_list):
+					self.speech_module = output_modules_list.index('espeak')
+					test.set_output_module('espeak')
 
-			# if espeak or espeak-ng set language
-			if(self.speech_module != -1):
-				import locale
-				language_code, encoding = locale.getdefaultlocale()
-				localeValues = language_code.split('_')
-				language = localeValues[0]
-				language_person_dict = test.get_language_person_dict()
-				if(language in language_person_dict.keys()):
-					self.speech_language = list(language_person_dict.keys()).index(language)
-					self.speech_person=0;
-			else:
+				# if espeak or espeak-ng set language
+				if(self.speech_module != -1):
+					import locale
+					language_code, encoding = locale.getdefaultlocale()
+					localeValues = language_code.split('_')
+					language = localeValues[0]
+					language_person_dict = test.get_language_person_dict()
+					if(language in language_person_dict.keys()):
+						self.speech_language = list(language_person_dict.keys()).index(language)
+						self.speech_person=0;
+				else:
+					self.speech_module=0;self.speech_language=0;self.speech_person=0;
+
+				#Closing
+				test.close()
+			except:
 				self.speech_module=0;self.speech_language=0;self.speech_person=0;
-
-			#Closing
-			test.close()
+				pass
 
 	def save_to_file(self,filename):
 		#Removing old configuration file
