@@ -1063,21 +1063,24 @@ class linux_intelligent_ocr_solution():
 		self.available_ocr_engine_list[self.preferences.ocr_engine].cancel()
 		self.notify_information(_("Terminated"),0)
 		
+	# def open_readme(self,*data):
+	# 	if(self.textview.get_modified()):
+	# 		dlg = dialog.Dialog(_("Warning!"),
+	# 		 (_("No"),dialog.Dialog.BUTTON_ID_1,_("Yes"),dialog.Dialog.BUTTON_ID_2))
+	# 		label = widget.Label(_("Current text not saved! do you want to load readme without saving?"))
+	# 		label.show()
+	# 		dlg.add_widget(label)
+	# 		response = dlg.run()
+	# 		if response == dialog.Dialog.BUTTON_ID_2:
+	# 			with open(macros.readme_file) as file:
+	# 				self.textview.set_text(file.read())
+	# 		dlg.destroy()
+	# 	else:
+	# 		with open(macros.readme_file) as file:
+	# 			self.textview.set_text(file.read())
 	def open_readme(self,*data):
-		if(self.textview.get_modified()):
-			dlg = dialog.Dialog(_("Warning!"),
-			 (_("No"),dialog.Dialog.BUTTON_ID_1,_("Yes"),dialog.Dialog.BUTTON_ID_2))
-			label = widget.Label(_("Current text not saved! do you want to load readme without saving?"))
-			label.show()
-			dlg.add_widget(label)
-			response = dlg.run()
-			if response == dialog.Dialog.BUTTON_ID_2:
-				with open(macros.readme_file) as file:
-					self.textview.set_text(file.read())
-			dlg.destroy()
-		else:
-			with open(macros.readme_file) as file:
-				self.textview.set_text(file.read())
+		webbrowser.open(macros.readme_page_link)
+     
 
 
 	@on_thread			
