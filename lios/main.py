@@ -277,11 +277,7 @@ class linux_intelligent_ocr_solution():
 		button_update_scanner_list.connect_function(self.update_scanner_list)
 		button_scan = widget.Button(_("Scan"))
 		button_scan.connect_function(self.scan_single_image)		
-		toolbar_main = containers.Toolbar(containers.Toolbar.HORIZONTAL,
-			[(_("Preferences"),self.open_preferences_general_page),
-			(_("Video Tutorials"),self.open_video_tutorials),
-			(_("About"),self.about),
-			(_("Quit"),self.quit)])				
+						
 		
 		#Slide Panes
 		self.paned_image_text = containers.Paned(containers.Paned.VERTICAL)
@@ -304,7 +300,6 @@ class linux_intelligent_ocr_solution():
 			(self.combobox_scanners,1,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND),
 			(button_update_scanner_list,1,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND),
 			(button_scan,1,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND),
-			(toolbar_main,2,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND,containers.Grid.ALIGN_END),
 			containers.Grid.NEW_ROW,
 			(self.paned_main,5,1),
 			containers.Grid.NEW_ROW,
