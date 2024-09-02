@@ -273,7 +273,7 @@ class linux_intelligent_ocr_solution():
 		menubar.show()
 
 		self.combobox_scanners = widget.ComboBox()
-		button_update_scanner_list = widget.Button(_("Update Scanner List"))
+		button_update_scanner_list = widget.Button(_("Detect Scanners"))
 		button_update_scanner_list.connect_function(self.update_scanner_list)
 		button_scan = widget.Button(_("Scan"))
 		button_scan.connect_function(self.scan_single_image)		
