@@ -23,7 +23,9 @@ import time
 import shutil
 import re
 from functools import wraps
-
+import gi
+gi.require_version("Gtk", "3.0")
+from gi.repository import Gtk, Pango, PangoCairo
 from lios import scanner, editor, imageview, cam, ocr, preferences, speech
 from lios.ui.gtk import widget, containers, loop, menu, \
 	window, icon_view, dialog, about
@@ -49,7 +51,49 @@ def on_thread(function):
 		threading.Thread(target=function,args=args).start()
 	return inner
 
+class TextViewWithLineNumbers(Gtk.Box):
+    def __init__(self):
+        super().__init__(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
 
+        self.textview = editor.BasicTextView()
+        self.line_numbers = Gtk.TextView()
+        self.line_numbers.set_editable(False)
+        self.line_numbers.set_cursor_visible(False)
+        self.line_numbers.set_justification(Gtk.Justification.RIGHT)
+
+        # Set a fixed width for the line numbers
+        self.line_numbers.set_size_request(50, -1)  # 50 pixels wide
+
+        # Set monospace font for line numbers
+        font_desc = Pango.FontDescription('Georgia 14')
+        self.line_numbers.override_font(font_desc)
+
+        # Add a separator for visual separation
+        separator = Gtk.Separator(orientation=Gtk.Orientation.VERTICAL)
+
+        # Pack the widgets into the Box
+        self.pack_start(self.line_numbers, False, False, 0)
+        self.pack_start(separator, False, False, 5)  # 5 pixels space for separation
+        self.pack_start(self.textview, True, True, 0)
+
+        self.textview.get_buffer().connect("changed", self.update_line_numbers)
+        self.textview.connect("size-allocate", self.update_line_numbers)
+
+    def update_line_numbers(self, *args):
+        buffer = self.textview.get_buffer()
+        text = buffer.get_text(buffer.get_start_iter(), buffer.get_end_iter(), True)
+        lines = text.split('\n')
+
+        line_numbers = []
+        number = 1
+        for line in lines:
+            if line.strip():  # Only number non-empty lines
+                line_numbers.append(f"{number:4d}")  # Right-aligned, 4 digits wide
+                number += 1
+            else:
+                line_numbers.append('')  # Empty string for empty lines
+
+        self.line_numbers.get_buffer().set_text('\n'.join(line_numbers))
 class linux_intelligent_ocr_solution():
 	def __init__ (self,file_list=[]):
 		try:
@@ -133,8 +177,8 @@ class linux_intelligent_ocr_solution():
 
 		
 		#Editor
-		self.textview = editor.BasicTextView()
-		self.textview.set_vexpand(True)
+		self.textview_with_lines = TextViewWithLineNumbers()
+		self.textview = self.textview_with_lines.textview
 		self.textview.set_hexpand(True)		
 		self.textview.set_accepts_tab(False)
 		box_editor = containers.Box(containers.Box.VERTICAL)
@@ -156,7 +200,7 @@ class linux_intelligent_ocr_solution():
 			])
 		box_editor.add(toolbar_editor)
 		scroll_box_editor = containers.ScrollBox()
-		scroll_box_editor.add(self.textview)
+		scroll_box_editor.add(self.textview_with_lines)
 		box_editor.add(scroll_box_editor)
 
 		#Load TextCleaner List
@@ -273,15 +317,11 @@ class linux_intelligent_ocr_solution():
 		menubar.show()
 
 		self.combobox_scanners = widget.ComboBox()
-		button_update_scanner_list = widget.Button(_("Update Scanner List"))
+		button_update_scanner_list = widget.Button(_("Detect Scanners"))
 		button_update_scanner_list.connect_function(self.update_scanner_list)
 		button_scan = widget.Button(_("Scan"))
 		button_scan.connect_function(self.scan_single_image)		
-		toolbar_main = containers.Toolbar(containers.Toolbar.HORIZONTAL,
-			[(_("Preferences"),self.open_preferences_general_page),
-			(_("Video Tutorials"),self.open_video_tutorials),
-			(_("About"),self.about),
-			(_("Quit"),self.quit)])				
+						
 		
 		#Slide Panes
 		self.paned_image_text = containers.Paned(containers.Paned.VERTICAL)
@@ -304,7 +344,6 @@ class linux_intelligent_ocr_solution():
 			(self.combobox_scanners,1,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND),
 			(button_update_scanner_list,1,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND),
 			(button_scan,1,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND),
-			(toolbar_main,2,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND,containers.Grid.ALIGN_END),
 			containers.Grid.NEW_ROW,
 			(self.paned_main,5,1),
 			containers.Grid.NEW_ROW,
@@ -1068,21 +1107,24 @@ class linux_intelligent_ocr_solution():
 		self.available_ocr_engine_list[self.preferences.ocr_engine].cancel()
 		self.notify_information(_("Terminated"),0)
 		
+	# def open_readme(self,*data):
+	# 	if(self.textview.get_modified()):
+	# 		dlg = dialog.Dialog(_("Warning!"),
+	# 		 (_("No"),dialog.Dialog.BUTTON_ID_1,_("Yes"),dialog.Dialog.BUTTON_ID_2))
+	# 		label = widget.Label(_("Current text not saved! do you want to load readme without saving?"))
+	# 		label.show()
+	# 		dlg.add_widget(label)
+	# 		response = dlg.run()
+	# 		if response == dialog.Dialog.BUTTON_ID_2:
+	# 			with open(macros.readme_file) as file:
+	# 				self.textview.set_text(file.read())
+	# 		dlg.destroy()
+	# 	else:
+	# 		with open(macros.readme_file) as file:
+	# 			self.textview.set_text(file.read())
 	def open_readme(self,*data):
-		if(self.textview.get_modified()):
-			dlg = dialog.Dialog(_("Warning!"),
-			 (_("No"),dialog.Dialog.BUTTON_ID_1,_("Yes"),dialog.Dialog.BUTTON_ID_2))
-			label = widget.Label(_("Current text not saved! do you want to load readme without saving?"))
-			label.show()
-			dlg.add_widget(label)
-			response = dlg.run()
-			if response == dialog.Dialog.BUTTON_ID_2:
-				with open(macros.readme_file) as file:
-					self.textview.set_text(file.read())
-			dlg.destroy()
-		else:
-			with open(macros.readme_file) as file:
-				self.textview.set_text(file.read())
+		webbrowser.open(macros.readme_page_link)
+     
 
 
 	@on_thread			

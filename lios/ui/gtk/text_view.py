@@ -175,17 +175,42 @@ class TextView(Gtk.TextView):
 		start_iter.backward_sentence_start()
 		end_iter.forward_to_line_end()
 		return buffer.get_text(start_iter,end_iter,True)		
-	
+	def count_non_empty_lines(self, up_to_line=None):
+		buffer = self.get_buffer()
+		count = 0
+		for line in range(buffer.get_line_count()):
+			if up_to_line is not None and line > up_to_line:
+				break
+			iter = buffer.get_iter_at_line(line)
+			if not iter.ends_line() or iter.get_char() != '\n':
+				count += 1
+		return count
+	def move_cursor_to_non_empty_line(self, target_line):
+		buffer = self.get_buffer()
+		current_non_empty = 0
+		for line in range(buffer.get_line_count()):
+			iter = buffer.get_iter_at_line(line)
+			if not iter.ends_line() or iter.get_char() != '\n':
+				current_non_empty += 1
+				if current_non_empty == target_line:
+					buffer.place_cursor(iter)
+					self.scroll_to_iter(iter, 0.0, False, 0.0, 0.0)
+					return True
+		return False
 	# For highlighting bookmark position and go-to-line
 	def highlights_cursor_line(self):
 		buffer = self.get_buffer()
 		self.remove_all_highlights()
 		mark = buffer.get_insert()
-		start_iter = buffer.get_iter_at_mark(mark)
-		end_iter = start_iter.copy()
-		end_iter.forward_to_line_end()
-		self.scroll_to_iter(start_iter, 0.0,False,0.0,0.0)
-		buffer.apply_tag(self.highlight_tag, start_iter, end_iter)
+		iter = buffer.get_iter_at_mark(mark)
+		line = iter.get_line()
+		
+		start = buffer.get_iter_at_line(line)
+		end = start.copy()
+		end.forward_to_line_end()
+		
+		self.scroll_to_iter(start, 0.0, False, 0.0, 0.0)
+		buffer.apply_tag(self.highlight_tag, start, end)
 	
 	#Find , Find and Replace , Spell check , TextReader
 	

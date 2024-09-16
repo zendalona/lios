@@ -79,7 +79,18 @@ class BasicTextView(text_view.TextView):
 		#while pressing undo or redo that again trigger
 		# insert or delete signals - Nalin.x.GNU
 		self.push_change_to_undobuffer = True;
-	
+	def insert_text_with_line_numbers(self, text):
+		lines = text.split('\n')
+		numbered_lines = []
+		line_number = 1
+		for line in lines:
+			if line.strip():  # Only number non-empty lines
+				numbered_lines.append(f"{line_number}: {line}")
+				line_number += 1
+			else:
+				numbered_lines.append(line)  # Keep empty lines as is
+		self.set_text('\n'.join(numbered_lines))
+		self.set_modified(True)
 	def set_dictionary(self,dict):
 		self.dict = dict
 	
@@ -730,22 +741,20 @@ class BasicTextView(text_view.TextView):
 		window1.show_all()
 
 	
-	def go_to_line(self,*data):
-		current_line = self.get_cursor_line_number()
-		maximum_line = self.get_line_count()		
-		spinbutton_line = widget.SpinButton(current_line,0,maximum_line,1,5,0)
+	def go_to_line(self, *data):
+		current_line = self.count_non_empty_lines()
+		spinbutton_line = widget.SpinButton(1, 1, current_line, 1, 5, 0)
 		
-		dlg = dialog.Dialog(_("Go To Line"),(_("Go"), dialog.Dialog.BUTTON_ID_1,_("Close!"), dialog.Dialog.BUTTON_ID_2))
-		#spinbutton_line.connect("activate",lambda x : dialog.response(Gtk.ResponseType.ACCEPT))
-		dlg.add_widget_with_label(spinbutton_line,_("Line Number: "))
+		dlg = dialog.Dialog(_("Go To Line"), (_("Go"), dialog.Dialog.BUTTON_ID_1, _("Close!"), dialog.Dialog.BUTTON_ID_2))
+		dlg.add_widget_with_label(spinbutton_line, _("Line Number: "))
 		spinbutton_line.grab_focus()
 		dlg.show_all()
 		response = dlg.run()
 		
 		if response == dialog.Dialog.BUTTON_ID_1:
-			to = spinbutton_line.get_value()
-			self.move_cursor_to_line(to)
-			self.highlights_cursor_line()
+			to = int(spinbutton_line.get_value())
+			if self.move_cursor_to_non_empty_line(to):
+				self.highlights_cursor_line()
 			dlg.destroy()
 		else:
 			dlg.destroy()
