@@ -103,8 +103,8 @@ class linux_intelligent_ocr_solution():
 		self.imageview.connect("list_updated",self.list_updated_event_handler);
 		self.imageview.set_vexpand(True)
 		self.imageview.set_hexpand(True)
-		box_imageview = containers.Box(containers.Box.HORIZONTAL)
-		toolbar_imageview = containers.Toolbar(containers.Toolbar.VERTICAL,
+		box_imageview = containers.Box(containers.Box.VERTICAL)
+		toolbar_imageview = containers.Toolbar(containers.Toolbar.HORIZONTAL,
 			[(_("Rotate-Right"),self.rotate_current_images_to_right),
 			(_("Rotate-Twice"),self.rotate_current_images_to_twice),
 			(_("Rotate-Left"),self.rotate_current_images_to_left),containers.Toolbar.SEPARATOR,
@@ -137,8 +137,8 @@ class linux_intelligent_ocr_solution():
 		self.textview.set_vexpand(True)
 		self.textview.set_hexpand(True)		
 		self.textview.set_accepts_tab(False)
-		box_editor = containers.Box(containers.Box.HORIZONTAL)
-		toolbar_editor = containers.Toolbar(containers.Toolbar.VERTICAL,
+		box_editor = containers.Box(containers.Box.VERTICAL)
+		toolbar_editor = containers.Toolbar(containers.Toolbar.HORIZONTAL,
 			[(_("New"),self.new),(_('Open'),self.open_files),
 			(_("Save"),self.textview.save),containers.Toolbar.SEPARATOR,
 			(_("Spell-Check"),self.textview.open_spell_check),containers.Toolbar.SEPARATOR,
