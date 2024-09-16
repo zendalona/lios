@@ -514,7 +514,7 @@ class lios_preferences:
 		grid_scanning.add_widgets([
 			(label_resolution,1,1),(spin_resolution,1,1),containers.Grid.NEW_ROW,
 			(label_brightness,1,1),(spin_brightness,1,1),containers.Grid.NEW_ROW,
-			(label_scan_area,1,1),(combobox_scan_area,1,1),containers.Grid.NEW_ROW,
+			# (label_scan_area,1,1),(combobox_scan_area,1,1),containers.Grid.NEW_ROW,
 			(label_scan_driver,1,1),(combobox_scan_driver,1,1),containers.Grid.NEW_ROW,
 			(sparator_3,2,1),containers.Grid.NEW_ROW,
 			(label_number_of_pages_to_scan,1,1),(spin_number_of_pages_to_scan,1,1),containers.Grid.NEW_ROW,
