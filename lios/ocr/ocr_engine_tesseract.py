@@ -23,13 +23,14 @@ from lios.ocr.ocr_engine_base import OcrEngineBase
 
 TESSDATA_POSSIBLE_PATHS = [
 	"/usr/share/tesseract-ocr/tessdata",
-	"/usr/share/tesseract-ocr/4.00/tessdata",
+	"/usr/share/tesseract-ocr/5.00/tessdata",
 	"/usr/share/tesseract/tessdata",
 	"/usr/share/tessdata",
 	"/usr/local/share/tesseract-ocr/tessdata",
 	"/usr/local/share/tesseract/tessdata",
 	"/usr/local/share/tessdata",
-	"/usr/share/tesseract-ocr/4.00/tessdata" ]
+	"/usr/share/tesseract-ocr/5.00/tessdata",
+	"/usr/share/tesseract-ocr/5/tessdata"]
 
 TESSDATA_EXTENSION = ".traineddata"
 
