@@ -25,7 +25,7 @@ TESSDATA_POSSIBLE_PATHS = [
 	"/usr/share/tesseract-ocr/tessdata",
 	"/usr/share/tesseract-ocr/4.00/tessdata",
 	"/usr/share/tesseract-ocr/5.00/tessdata",
-	"/usr/share/tesseract-ocr/5/tessdata,
+	"/usr/share/tesseract-ocr/5/tessdata",
 	"/usr/share/tesseract/tessdata",
 	"/usr/share/tessdata",
 	"/usr/local/share/tesseract-ocr/tessdata",
