@@ -1260,6 +1260,8 @@ class linux_intelligent_ocr_solution():
 		response = dlg.run()
 		if response == FileChooserDialog.ACCEPT:
 			file_name = dlg.get_filename()
+			if not file_name.lower().endswith(".pdf"):
+				file_name += ".pdf"
 			command = "convert " 
 			for item in self.iconview.get_selected_item_names():
 				command += item + " "
