@@ -834,16 +834,20 @@ class BasicTextView(text_view.TextView):
 			text = self.get_text()
 		print_dialog.print_with_action(text,print_dialog.print_with_action.PRINT_DIALOG)		
 		
-	def print_to_pdf(self,*data):
-		save_file = file_chooser.FileChooserDialog(_("Enter the file name"),
-			file_chooser.FileChooserDialog.SAVE,macros.supported_pdf_formats,macros.user_home_path)
+	def print_to_pdf(self, *data):
+		save_file = file_chooser.FileChooserDialog(
+			_("Enter the file name"), file_chooser.FileChooserDialog.SAVE,
+			macros.supported_pdf_formats, macros.user_home_path)
 		response = save_file.run()
 		if response == file_chooser.FileChooserDialog.ACCEPT:
+			file_name = save_file.get_filename()
+			if not file_name.lower().endswith(".pdf"):
+				file_name += ".pdf"
 			if (self.has_selection()):
 				text = self.get_selected_text()
 			else:
 				text = self.get_text()
-			print_dialog.print_with_action(text,print_dialog.print_with_action.EXPORT,
-				save_file.get_filename())
+			print_dialog.print_with_action(
+				text, print_dialog.print_with_action.EXPORT, file_name)
 			save_file.destroy()
 
