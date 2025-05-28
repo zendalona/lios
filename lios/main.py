@@ -1303,7 +1303,7 @@ class linux_intelligent_ocr_solution():
 				
 				#Will always be Manual with no rotation
 				text,angle = self.ocr("{0}tmp".format(macros.tmp_dir),2,00)
-				self.insert_text_to_textview(text,False,False)
+				self.insert_text_to_textview(text + "\n",False,False)
 				if(self.process_breaker):
 					break;
 
