@@ -27,6 +27,10 @@ def get_list_of_mixed_case_combinations(list_items):
 
 user_home_path = os.environ['HOME']
 
+current_dir = os.path.dirname(os.path.abspath(__file__))
+
+parent_dir = os.path.dirname(current_dir)
+
 config_dir = user_home_path+"/.lios"
 
 tmp_dir = "/tmp/Lios/"
@@ -53,6 +57,17 @@ logo_file = "lios.png"
 icon_dir = "icons/"
 readme_file = "readme.text"
 
+if os.path.exists(datadir + '/' + logo_file):
+	logo_file = datadir + '/' + logo_file
+	icon_dir = datadir + '/' + icon_dir
+	readme_file = datadir + '/' + readme_file
+
+else:
+	logo_file = os.path.join(parent_dir, "share", "lios", logo_file)
+	icon_dir = os.path.join(parent_dir, "share", "lios", icon_dir)
+	readme_file = os.path.join(parent_dir, "share", "lios", readme_file)
+
+
 default_text_cleaner_list_file_path = "text_cleaner_list.text"
 
 app_name = "Linux-intelligent-ocr-solution"
@@ -75,7 +90,6 @@ def set_datadir(datadir):
 	global logo_file, icon_dir, readme_file
 	global default_text_cleaner_list_file_path
 	global default_text_cleaner_list_file_path
-
 	logo_file = datadir + '/' + logo_file
 	icon_dir = datadir + '/' + icon_dir
 	readme_file = datadir + '/' + readme_file
