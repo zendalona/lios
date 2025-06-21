@@ -134,6 +134,7 @@ class linux_intelligent_ocr_solution():
 		
 		#Editor
 		self.textview = editor.BasicTextView()
+		
 		self.textview.set_vexpand(True)
 		self.textview.set_hexpand(True)		
 		self.textview.set_accepts_tab(False)
@@ -180,6 +181,8 @@ class linux_intelligent_ocr_solution():
 		#Load Preferences
 		self.preferences = preferences.lios_preferences()
 		self.preferences.set_from_file(macros.preferences_file_path)
+		self.textview.set_theme(self.preferences.theme, self.preferences.theme_list)
+
 		self.preferences.set_default_speech_module_and_language()
 		self.preferences.set_avalable_scanner_drivers([ item.name for item in self.available_scanner_driver_list])
 		self.preferences.set_avalable_ocr_engines([ (item.name, item.get_available_languages(),item.support_multiple_languages())
@@ -1391,11 +1394,13 @@ pacman -S aspell-{1}""").format(lang, langdict, langdict, langdict, langdict))
 		self.preferences.__init__()
 		self.preferences.set_default_speech_module_and_language()
 		self.make_preferences_effective()
+		self.textview.set_theme(self.preferences.theme, self.preferences.theme_list)
 		self.notify_information(_("Preferences Restored"),0)
 	
 	def open_preferences_general_page(self,*data):
 		if(self.preferences.open_configure_dialog(0)):
 			self.make_preferences_effective()
+			self.textview.set_theme(self.preferences.theme, self.preferences.theme_list)
 			self.preferences.save_to_file(macros.preferences_file_path)		
 
 	def open_preferences_recognition_page(self,*data):
