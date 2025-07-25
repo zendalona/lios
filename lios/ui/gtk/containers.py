@@ -157,6 +157,9 @@ class Toolbar(Gtk.Toolbar):
 					if(orientation == Gtk.Orientation.VERTICAL):
 						label.set_angle(90)
 					toolbar_item.set_icon_widget(label)
+				display_text = ' '.join(item[0].split("-"))
+				label = Gtk.Label(display_text)
+				toolbar_item.set_label_widget(label)
 				toolbar_item.set_tooltip_text(item[0])
 			self.add(toolbar_item)
 	
