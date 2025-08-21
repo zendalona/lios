@@ -79,7 +79,18 @@ class BasicTextView(text_view.TextView):
 		#while pressing undo or redo that again trigger
 		# insert or delete signals - Nalin.x.GNU
 		self.push_change_to_undobuffer = True;
-	
+	def insert_text_with_line_numbers(self, text):
+		lines = text.split('\n')
+		numbered_lines = []
+		line_number = 1
+		for line in lines:
+			if line.strip():  # Only number non-empty lines
+				numbered_lines.append(f"{line_number}: {line}")
+				line_number += 1
+			else:
+				numbered_lines.append(line)  # Keep empty lines as is
+		self.set_text('\n'.join(numbered_lines))
+		self.set_modified(True)
 	def set_dictionary(self,dict):
 		self.dict = dict
 	
