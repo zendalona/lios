@@ -29,74 +29,102 @@ _ = localization._
 class ImageViewer(containers.Paned):
 	ZOOM_FIT = 4
 	__gsignals__ = {
-        'list_updated' : (GObject.SIGNAL_RUN_LAST,
-                     GObject.TYPE_NONE,
-                     ())
-        }
-
+		'list_updated': (GObject.SIGNAL_RUN_LAST, GObject.TYPE_NONE, ())
+	}
 
 	def __init__(self):
-		super(ImageViewer,self).__init__(containers.Paned.HORIZONTAL)
+		super(ImageViewer, self).__init__(containers.Paned.HORIZONTAL)
 		self.set_border_width(5)
 
-		#Drawing Area		
+		# Drawing Area        
 		self.drawingarea = drawing_area.DrawingArea()
-		
 		self.scrolled = containers.ScrollBox()
-		self.scrolled.add_with_viewport(self.drawingarea);
-		
-		
+		self.scrolled.add_with_viewport(self.drawingarea)
 		
 		self.drawingarea.connect_button_press_event(self.__drawingarea_button_press_event)
 		self.drawingarea.connect_button_release_event(self.__drawingarea_button_release_event)
 		self.drawingarea.connect_motion_notify_event(self.__drawingarea_motion_notify_event)
-		
 
+		# Add scrolled area (main image view) to the left panel
 		self.add(self.scrolled)
-				
-		#Drawing List Tree View
-		self.treeview = tree_view.TreeView([(_("Selected"),bool,False),
-		(_("X"),float,True),(_("Y"),float,True),
-		(_("Width"),float,True),(_("Height"),float,True),
-		(_("Letter"),str,True)],self.edited_callback)
+
+		# Right side container
+		self.panel_box = containers.Box(containers.Box.HORIZONTAL)
+
+		# Panel toggle button
+		self.panel_visible = True  # Start with panel visible
+		self.toggle_button = widget.Button("◀")  # Left arrow when panel is visible
+		self.toggle_button.connect_function(self.toggle_panel)
+
+		# Panel content
+		self.content_box = containers.Box(containers.Box.VERTICAL)
+
+		# Drawing List Tree View
+		self.treeview = tree_view.TreeView([(_("Selected"), bool, False),
+			(_("X"), float, True), (_("Y"), float, True),
+			(_("Width"), float, True), (_("Height"), float, True),
+			(_("Letter"), str, True)], self.edited_callback)
 		
 		self.treeview.connect_cursor_change_function(self.treeview_cursor_changed)
 		self.treeview.connect_rows_reordered_function(self.treeview_rows_reordered)
-		self.treeview.set_column_visible(0,False);
+		self.treeview.set_column_visible(0, False)
 		self.treeview.set_reorderable(True)
+		
+		# Make columns expand
+		for i in range(1, 6):  # Columns 1 to 5 (X, Y, Width, Height, Letter)
+			column = self.treeview.get_column(i)
+			column.set_expand(True)
+
 		scrolled_treeview = containers.ScrollBox()
 		scrolled_treeview.add(self.treeview)
+		scrolled_treeview.set_vexpand(True)  # Allow vertical expansion
+		scrolled_treeview.set_hexpand(True)  # Allow horizontal expansion
 
+		# Button container
+		button_box = containers.Box(containers.Box.HORIZONTAL)
+		button1 = widget.Button(_("Delete"))
+		button1.set_tooltip_text(_("Shortcut Alt+D"))
+		button1.connect_function(self.__delete_selection)
+		button2 = widget.Button(_("Clear"))
+		button2.connect_function(self.clear_selection)
+		button_box.add(button1)
+		button_box.add(button2)
+
+		# Add widgets to content_box
+		self.content_box.add(scrolled_treeview)
+		self.content_box.add(button_box)
+
+		# Add toggle button and content box to panel_box
+		self.panel_box.add(self.toggle_button)
+		self.panel_box.add(self.content_box)
+
+		# Add panel_box to the right pane
+		self.add(self.panel_box)
+
+		# Other initializations
 		self.rs = []
 		self.start_row_index = -1
 		self.previus_row_index = -1
-
-
-		button1 = widget.Button(_("_Delete"))
-		button1.set_use_underline(True)
-		button1.set_tooltip_text(_("Shortcut Alt+D"))
-		button1.connect_function(self.__delete_selection)
-
-		button2 = widget.Button(_("Clear"))
-		button2.connect_function(self.clear_selection)
-
-		grid = containers.Grid()
-		grid.add_widgets([(scrolled_treeview,2,1,containers.Grid.HEXPAND,containers.Grid.VEXPAND),
-		containers.Grid.NEW_ROW,(button1,1,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND),
-		(button2,1,1,containers.Grid.HEXPAND,containers.Grid.NO_VEXPAND)])
-		self.add(grid)
 		
-
-		
-		#Inetial Values
 		self.on_select = False
 		self.on_resize = False
-		self.zoom_list = [0.20,0.40,0.60,0.80,1,1.20,1.40,1.60,1.80,2]
+		self.zoom_list = [0.20, 0.40, 0.60, 0.80, 1, 1.20, 1.40, 1.60, 1.80, 2]
 		self.zoom_level = self.ZOOM_FIT
 		self.drawingarea.show()
 		
-		self.set_position(400)
-		self.show()
+		self.set_position(self.get_allocated_width() - 300)  # Show panel with fixed width
+		self.show_all()
+
+	def toggle_panel(self, *args):
+		self.panel_visible = not self.panel_visible
+		if self.panel_visible:
+			self.content_box.show()
+			self.toggle_button.set_label("◀")  # Left arrow when panel is visible
+			self.set_position(self.get_allocated_width() - 300)  # Show panel with fixed width
+		else:
+			self.content_box.hide()
+			self.toggle_button.set_label("▶")  # Right arrow when panel is hidden
+			self.set_position(self.get_allocated_width() - 30)
 		
 	
 	#set_position()
