@@ -78,6 +78,8 @@ source_link = "https://gitlab.com/Nalin-x-Linux/lios-3"
 
 home_page_link = "https://www.zendalona.com/lios"
 
+readme_page_link="readme.html"
+
 video_tutorials_link = "https://www.youtube.com/playlist?list=PLn29o8rxtRe1zS1r2-yGm1DNMOZCgdU0i"
 
 major_character_encodings_list = [ 'us_ascii', 'utf-8', 'iso_8859_1','latin1',
