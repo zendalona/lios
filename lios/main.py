@@ -1315,7 +1315,7 @@ class linux_intelligent_ocr_solution():
 
 	def make_preferences_effective(self,*data):
 		if (self.old_language != self.preferences.language):
-			languages = self.available_ocr_engine_list[self.preferences.ocr_engine].get_available_languages()
+			languages = self.available_ocr_engine_list[self.preferences.ocr_engine].get_available_languages() or ['en']
 			self.old_language = self.preferences.language
 			if (self.preferences.language >= len(languages)):
 				self.old_language = 0;
