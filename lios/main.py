@@ -602,7 +602,7 @@ class linux_intelligent_ocr_solution():
 		
 			p.start()
 			while(p.is_alive()):
-				pass
+				time.sleep(0.1)
 		
 		
 			driver = self.available_scanner_driver_list[self.preferences.scan_driver]
@@ -656,7 +656,7 @@ class linux_intelligent_ocr_solution():
 		t = threading.Thread(target=self.scan,args=(destination,))
 		t.start()
 		while(t.is_alive()):
-			pass
+			time.sleep(0.1)
 		self.preferences.update_page_number()
 		#self.make_scanner_widgets_active(lock=True)
 		#self.make_preferences_widgets_active(lock=True)
@@ -681,7 +681,7 @@ class linux_intelligent_ocr_solution():
 			t = threading.Thread(target=self.scan,args=(destination,))
 			t.start()
 			while(t.is_alive()):
-				pass
+				time.sleep(0.1)
 			self.preferences.update_page_number()
 			if(self.process_breaker):
 				break
@@ -704,7 +704,7 @@ class linux_intelligent_ocr_solution():
 
 		p.start()
 		while(p.is_alive()):
-			pass
+			time.sleep(0.1)
 		self.notify_information(_("Scan Completed!"),0)
 			
 		if(self.process_breaker):
