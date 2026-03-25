@@ -18,10 +18,11 @@
 ###########################################################################
 
 import os
-
+import time
 def capture_entire_screen(filename):
 	os.system("import -window root {} -delay 2".format(filename))
 	
 def capture_rectangle_selection(filename):
+	time.sleep(1)# Wait for window minimization to complete before capturing
 	os.system("import {}".format(filename))
 	

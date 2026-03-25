@@ -23,7 +23,9 @@ import time
 import shutil
 import re
 from functools import wraps
-
+import gi
+gi.require_version("Gtk", "3.0")
+from gi.repository import Gtk, Pango, PangoCairo
 from lios import scanner, editor, imageview, cam, ocr, preferences, speech
 from lios.ui.gtk import widget, containers, loop, menu, \
 	window, icon_view, dialog, about
@@ -36,6 +38,7 @@ from lios import dictionary
 from lios import localization
 _ = localization._
 
+from lios import mp_compat  # Fix Python 3.14+ multiprocessing lambda compatibility
 import multiprocessing
 import threading
 
@@ -49,7 +52,49 @@ def on_thread(function):
 		threading.Thread(target=function,args=args).start()
 	return inner
 
+class TextViewWithLineNumbers(Gtk.Box):
+    def __init__(self):
+        super().__init__(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
 
+        self.textview = editor.BasicTextView()
+        self.line_numbers = Gtk.TextView()
+        self.line_numbers.set_editable(False)
+        self.line_numbers.set_cursor_visible(False)
+        self.line_numbers.set_justification(Gtk.Justification.RIGHT)
+
+        # Set a fixed width for the line numbers
+        self.line_numbers.set_size_request(50, -1)  # 50 pixels wide
+
+        # Set monospace font for line numbers
+        font_desc = Pango.FontDescription('Georgia 14')
+        self.line_numbers.override_font(font_desc)
+
+        # Add a separator for visual separation
+        separator = Gtk.Separator(orientation=Gtk.Orientation.VERTICAL)
+
+        # Pack the widgets into the Box
+        self.pack_start(self.line_numbers, False, False, 0)
+        self.pack_start(separator, False, False, 5)  # 5 pixels space for separation
+        self.pack_start(self.textview, True, True, 0)
+
+        self.textview.get_buffer().connect("changed", self.update_line_numbers)
+        self.textview.connect("size-allocate", self.update_line_numbers)
+
+    def update_line_numbers(self, *args):
+        buffer = self.textview.get_buffer()
+        text = buffer.get_text(buffer.get_start_iter(), buffer.get_end_iter(), True)
+        lines = text.split('\n')
+
+        line_numbers = []
+        number = 1
+        for line in lines:
+            if line.strip():  # Only number non-empty lines
+                line_numbers.append(f"{number:4d}")  # Right-aligned, 4 digits wide
+                number += 1
+            else:
+                line_numbers.append('')  # Empty string for empty lines
+
+        self.line_numbers.get_buffer().set_text('\n'.join(line_numbers))
 class linux_intelligent_ocr_solution():
 	def __init__ (self,file_list=[]):
 		try:
@@ -71,6 +116,7 @@ class linux_intelligent_ocr_solution():
 		scroll_box_iconview = containers.ScrollBox()
 		self.iconview = icon_view.IconView()
 		self.iconview.set_vexpand(True)
+		self.iconview.enable_delete_key()
 		scroll_box_iconview.add(self.iconview)
 		box_iconview = containers.Box(containers.Box.VERTICAL)
 		toolbar_iconview = containers.Toolbar(containers.Toolbar.HORIZONTAL,
@@ -133,7 +179,8 @@ class linux_intelligent_ocr_solution():
 
 		
 		#Editor
-		self.textview = editor.BasicTextView()
+		self.textview_with_lines = TextViewWithLineNumbers()
+		self.textview = self.textview_with_lines.textview
 		self.textview.set_vexpand(True)
 		self.textview.set_hexpand(True)		
 		self.textview.set_accepts_tab(False)
@@ -154,10 +201,24 @@ class linux_intelligent_ocr_solution():
 			(_("Go-To-Page"),self.go_to_page),
 			
 			])
-		box_editor.add(toolbar_editor)
+		label_shortcut = widget.Label(_("Press Alt+D to remove selection"))
+		label_shortcut.set_xalign(1)  # Align label content right
+
+		hbox_toolbar = containers.Box(containers.Box.HORIZONTAL)
+		hbox_toolbar.set_hexpand(True)
+		spacer = containers.Box(containers.Box.HORIZONTAL)  
+		spacer.set_hexpand(True)
+		
+		hbox_toolbar.add(toolbar_editor)
+		hbox_toolbar.add(spacer)
+		hbox_toolbar.add(label_shortcut)  
+
+		box_editor.add(hbox_toolbar)
+
 		scroll_box_editor = containers.ScrollBox()
-		scroll_box_editor.add(self.textview)
+		scroll_box_editor.add(self.textview_with_lines)
 		box_editor.add(scroll_box_editor)
+
 
 		#Load TextCleaner List
 		if(not self.textview.set_text_cleaner_list_from_file(macros.local_text_cleaner_list_file_path)):
@@ -180,6 +241,8 @@ class linux_intelligent_ocr_solution():
 		#Load Preferences
 		self.preferences = preferences.lios_preferences()
 		self.preferences.set_from_file(macros.preferences_file_path)
+		self.textview.set_theme(self.preferences.theme, self.preferences.theme_list)
+
 		self.preferences.set_default_speech_module_and_language()
 		self.preferences.set_avalable_scanner_drivers([ item.name for item in self.available_scanner_driver_list])
 		self.preferences.set_avalable_ocr_engines([ (item.name, item.get_available_languages(),item.support_multiple_languages())
@@ -1391,11 +1454,13 @@ pacman -S aspell-{1}""").format(lang, langdict, langdict, langdict, langdict))
 		self.preferences.__init__()
 		self.preferences.set_default_speech_module_and_language()
 		self.make_preferences_effective()
+		self.textview.set_theme(self.preferences.theme, self.preferences.theme_list)
 		self.notify_information(_("Preferences Restored"),0)
 	
 	def open_preferences_general_page(self,*data):
 		if(self.preferences.open_configure_dialog(0)):
 			self.make_preferences_effective()
+			self.textview.set_theme(self.preferences.theme, self.preferences.theme_list)
 			self.preferences.save_to_file(macros.preferences_file_path)		
 
 	def open_preferences_recognition_page(self,*data):
@@ -1540,7 +1605,7 @@ pacman -S aspell-{1}""").format(lang, langdict, langdict, langdict, langdict))
 	def scan_using_cam(self,widget):
 		devices = cam.Cam.get_available_devices()
 		if(devices):
-			ob = cam.Cam(devices[-1],1024,768)
+			ob = cam.Cam(devices[0],1024,768)
 			ob.connect_image_captured(self.cam_image_captured)
 		
 	def cam_image_captured(self,widget,filename):
@@ -1552,13 +1617,17 @@ pacman -S aspell-{1}""").format(lang, langdict, langdict, langdict, langdict))
 		dlg.set_program_name(_("Linux-Intelligent-Ocr-Solution"))
 		dlg.set_version(macros.version)
 		dlg.set_logo_from_file(macros.logo_file)
-		dlg.set_comments(_("Lios is a free and open source software\n \
-			for converting print into text using a scanner or camara.\n\
-			It can also produce text from other sources. Such as images,\n\
-			Pdf, or screenshot. Program is given total accessibility \n\
-			for visually impaired. Lios is written in python3 and we release \n\
-			it under GPL3 licence. There are great many possibilities\n\
-			for this program. Feedback is the key to it."))
+		dlg.set_comments(
+    _("Lios is a free and open source software\n"
+      "for converting print into text using a scanner or camera.\n"
+      "It can also produce text from other sources such as images,\n"
+      "PDF, or screenshot. The program is fully accessible\n"
+      "for visually impaired users. Lios is written in Python 3 and is released\n"
+      "under the GPL-3 license. There are great many possibilities\n"
+      "for this program. Feedback is the key to it.\n\n"
+      "Brought to you by Zendalona")
+)
+
 		dlg.set_copyright("Copyright (C) 2011-2015 Nalin.x.Linux")
 		dlg.set_license("GPL-V3")
 		dlg.set_website(macros.home_page_link)

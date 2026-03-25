@@ -24,6 +24,8 @@ gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk
 from gi.repository import Gdk
 from gi.repository import GdkPixbuf
+from lios.ui.gtk import dialog
+
 import os
 
 
@@ -52,6 +54,28 @@ class IconView(Gtk.IconView):
 			self.liststore_images.append([buff, filename])
 			self.queue_draw()
 			del buff
+	def enable_delete_key(self):
+		def on_key_press(widget, event):
+			from gi.repository import Gdk
+
+			if event.keyval == Gdk.KEY_Delete:
+				selected_items = self.get_selected_items()
+				if not selected_items:
+					return
+
+				dlg = dialog.Dialog("Delete Images?",
+					("Cancel", dialog.Dialog.BUTTON_ID_1, "Yes Delete", dialog.Dialog.BUTTON_ID_2))
+				label = Gtk.Label("Are you sure you want to delete selected image(s)?")
+				label.show()
+				dlg.add_widget(label)
+				response = dlg.run()
+				dlg.destroy()
+
+				if response == dialog.Dialog.BUTTON_ID_2:
+					self.remove_selected_items()
+
+		self.connect("key-press-event", on_key_press)
+
 
 	def remove_selected_items(self,remove_file_too=True):
 		for item in self.get_selected_items():
