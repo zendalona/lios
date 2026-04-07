@@ -20,6 +20,11 @@
 import os
 import subprocess
 from lios.ocr.ocr_engine_base import OcrEngineBase
+from lios.ocr.tesseract_path_finder import FastTessdataFinder
+
+finder = FastTessdataFinder()
+path_finder =  finder.find_tessdata_paths()
+print(path_finder)
 
 TESSDATA_POSSIBLE_PATHS = [
 	"/usr/share/tesseract-ocr/tessdata",
@@ -34,6 +39,8 @@ TESSDATA_POSSIBLE_PATHS = [
 	"/usr/local/share/tesseract-ocr/4.00/tessdata",
 	"/usr/local/share/tesseract-ocr/5.00/tessdata",
 	"/usr/local/share/tesseract-ocr/5/tessdata"]
+
+TESSDATA_POSSIBLE_PATHS = TESSDATA_POSSIBLE_PATHS + path_finder
 
 TESSDATA_EXTENSION = ".traineddata"
 

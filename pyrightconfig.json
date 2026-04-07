@@ -1,0 +1,7 @@
+{
+  "include": ["lios", "Tests"],
+  "extraPaths": ["."],
+  "pythonVersion": "3.14",
+  "typeCheckingMode": "basic",
+  "reportMissingImports": "warning"
+}

@@ -1,0 +1,57 @@
+name: LIOS Test Suite
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main, LIOS-test ]
+  pull_request:
+    branches: [ main, LIOS-test ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.10", "3.11"]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Cache pip
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements*.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y tesseract-ocr imagemagick xvfb gir1.2-gtk-3.0 libenchant-2-dev libcairo2-dev libgirepository-2.0-dev pkg-config python3-gi
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest pytest-cov pytest-xvfb Pillow pyenchant pycairo PyGObject
+
+      - name: Run tests
+        run: |
+          PYTHONPATH=. pytest Tests/ -v --tb=short
+
+      - name: Generate coverage HTML
+        run: |
+          PYTHONPATH=. pytest Tests/ --cov=lios --cov-report=html
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report-${{ matrix.python-version }}
+          path: Tests/coverage_html/

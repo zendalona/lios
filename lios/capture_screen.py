@@ -18,10 +18,29 @@
 ###########################################################################
 
 import os
+import time
+import subprocess
 
 def capture_entire_screen(filename):
-	os.system("import -window root {} -delay 2".format(filename))
-	
+    """Capture the full screen to filename. Uses scrot, gnome-screenshot or import."""
+    time.sleep(1)  # Give window time to minimize before capturing
+    # Try scrot first (most reliable), then gnome-screenshot, then ImageMagick import
+    if subprocess.run(["which", "scrot"], capture_output=True).returncode == 0:
+        result = subprocess.run(["scrot", filename], capture_output=True)
+    elif subprocess.run(["which", "gnome-screenshot"], capture_output=True).returncode == 0:
+        result = subprocess.run(["gnome-screenshot", "-f", filename], capture_output=True)
+    else:
+        result = subprocess.run(["import", "-window", "root", filename], capture_output=True)
+    return os.path.exists(filename)
+
 def capture_rectangle_selection(filename):
-	os.system("import {}".format(filename))
-	
+    """Capture a user-selected rectangle to filename."""
+    time.sleep(1)  # Wait for window minimization to complete before capturing
+    # Try scrot first (interactive rectangle selection)
+    if subprocess.run(["which", "scrot"], capture_output=True).returncode == 0:
+        result = subprocess.run(["scrot", "-s", filename], capture_output=True)
+    elif subprocess.run(["which", "gnome-screenshot"], capture_output=True).returncode == 0:
+        result = subprocess.run(["gnome-screenshot", "-a", "-f", filename], capture_output=True)
+    else:
+        result = subprocess.run(["import", filename], capture_output=True)
+    return os.path.exists(filename)

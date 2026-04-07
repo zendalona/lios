@@ -23,7 +23,9 @@ import time
 import shutil
 import re
 from functools import wraps
-
+import gi
+gi.require_version("Gtk", "3.0")
+from gi.repository import Gtk, Pango, PangoCairo
 from lios import scanner, editor, imageview, cam, ocr, preferences, speech
 from lios.ui.gtk import widget, containers, loop, menu, \
 	window, icon_view, dialog, about
@@ -36,6 +38,7 @@ from lios import dictionary
 from lios import localization
 _ = localization._
 
+from lios import mp_compat  # Fix Python 3.14+ multiprocessing lambda compatibility
 import multiprocessing
 import threading
 
@@ -49,7 +52,49 @@ def on_thread(function):
 		threading.Thread(target=function,args=args).start()
 	return inner
 
+class TextViewWithLineNumbers(Gtk.Box):
+    def __init__(self):
+        super().__init__(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
 
+        self.textview = editor.BasicTextView()
+        self.line_numbers = Gtk.TextView()
+        self.line_numbers.set_editable(False)
+        self.line_numbers.set_cursor_visible(False)
+        self.line_numbers.set_justification(Gtk.Justification.RIGHT)
+
+        # Set a fixed width for the line numbers
+        self.line_numbers.set_size_request(50, -1)  # 50 pixels wide
+
+        # Set monospace font for line numbers
+        font_desc = Pango.FontDescription('Georgia 14')
+        self.line_numbers.override_font(font_desc)
+
+        # Add a separator for visual separation
+        separator = Gtk.Separator(orientation=Gtk.Orientation.VERTICAL)
+
+        # Pack the widgets into the Box
+        self.pack_start(self.line_numbers, False, False, 0)
+        self.pack_start(separator, False, False, 5)  # 5 pixels space for separation
+        self.pack_start(self.textview, True, True, 0)
+
+        self.textview.get_buffer().connect("changed", self.update_line_numbers)
+        self.textview.connect("size-allocate", self.update_line_numbers)
+
+    def update_line_numbers(self, *args):
+        buffer = self.textview.get_buffer()
+        text = buffer.get_text(buffer.get_start_iter(), buffer.get_end_iter(), True)
+        lines = text.split('\n')
+
+        line_numbers = []
+        number = 1
+        for line in lines:
+            if line.strip():  # Only number non-empty lines
+                line_numbers.append(f"{number:4d}")  # Right-aligned, 4 digits wide
+                number += 1
+            else:
+                line_numbers.append('')  # Empty string for empty lines
+
+        self.line_numbers.get_buffer().set_text('\n'.join(line_numbers))
 class linux_intelligent_ocr_solution():
 	def __init__ (self,file_list=[]):
 		try:
@@ -70,7 +115,10 @@ class linux_intelligent_ocr_solution():
 		#Icon View
 		scroll_box_iconview = containers.ScrollBox()
 		self.iconview = icon_view.IconView()
+		# Wire invert-list announcement (LIOS_92)
+		self.iconview.on_invert_list_callback = lambda: self.notify_information(_(\"Image list order reversed\"), 0)
 		self.iconview.set_vexpand(True)
+		self.iconview.enable_delete_key()
 		scroll_box_iconview.add(self.iconview)
 		box_iconview = containers.Box(containers.Box.VERTICAL)
 		toolbar_iconview = containers.Toolbar(containers.Toolbar.HORIZONTAL,
@@ -133,7 +181,8 @@ class linux_intelligent_ocr_solution():
 
 		
 		#Editor
-		self.textview = editor.BasicTextView()
+		self.textview_with_lines = TextViewWithLineNumbers()
+		self.textview = self.textview_with_lines.textview
 		self.textview.set_vexpand(True)
 		self.textview.set_hexpand(True)		
 		self.textview.set_accepts_tab(False)
@@ -154,15 +203,34 @@ class linux_intelligent_ocr_solution():
 			(_("Go-To-Page"),self.go_to_page),
 			
 			])
-		box_editor.add(toolbar_editor)
+		label_shortcut = widget.Label(_("Press Alt+D to remove selection"))
+		label_shortcut.set_xalign(1)  # Align label content right
+
+		hbox_toolbar = containers.Box(containers.Box.HORIZONTAL)
+		hbox_toolbar.set_hexpand(True)
+		spacer = containers.Box(containers.Box.HORIZONTAL)  
+		spacer.set_hexpand(True)
+		
+		hbox_toolbar.add(toolbar_editor)
+		hbox_toolbar.add(spacer)
+		hbox_toolbar.add(label_shortcut)  
+
+		box_editor.add(hbox_toolbar)
+
 		scroll_box_editor = containers.ScrollBox()
-		scroll_box_editor.add(self.textview)
+		scroll_box_editor.add(self.textview_with_lines)
 		box_editor.add(scroll_box_editor)
+
 
 		#Load TextCleaner List
 		if(not self.textview.set_text_cleaner_list_from_file(macros.local_text_cleaner_list_file_path)):
 			self.textview.set_text_cleaner_list_from_file(macros.default_text_cleaner_list_file_path)
 			self.textview.save_text_cleaner_list_to_file(macros.local_text_cleaner_list_file_path)
+
+		# Wire save announcement callback (LIOS_13,15,16,17,18,19)
+		self.textview.on_save_success = self._on_file_saved
+		# Wire text cleaner announcement callback (LIOS_97, 98, 102)
+		self.textview.on_text_cleaner_action = self._on_text_cleaner_action
 
 
 
@@ -180,6 +248,8 @@ class linux_intelligent_ocr_solution():
 		#Load Preferences
 		self.preferences = preferences.lios_preferences()
 		self.preferences.set_from_file(macros.preferences_file_path)
+		self.textview.set_theme(self.preferences.theme, self.preferences.theme_list)
+
 		self.preferences.set_default_speech_module_and_language()
 		self.preferences.set_avalable_scanner_drivers([ item.name for item in self.available_scanner_driver_list])
 		self.preferences.set_avalable_ocr_engines([ (item.name, item.get_available_languages(),item.support_multiple_languages())
@@ -265,7 +335,7 @@ class linux_intelligent_ocr_solution():
 			menu.SEPARATOR,	(_("Save"),self.save_preferences,"None"),
 			(_("Load"),self.load_preferences,"None"),
 			(_("Restore"),self.restore_preferences,"None")],
-		[_("Help"),(_("Open Readme"),self.open_readme,"None"),
+		[_("_Help"),(_("Open Readme"),self.open_readme,"None"),
 			(_("Video Tutorials"),self.open_video_tutorials,"None"),
 			(_("Open Home Page"),self.open_home_page,"None"),
 			(_("Get Source Code"),self.get_source_code,"None"),
@@ -369,6 +439,14 @@ class linux_intelligent_ocr_solution():
 			self.progressbar.set_pulse_mode(False)
 			self.progressbar.set_fraction(percentage)
 
+	def _on_file_saved(self, path):
+		"""Callback: announce file save location (LIOS_13,15,16,17,18,19)."""
+		self.notify_information(_("File saved to {}").format(path), 0)
+
+	def _on_text_cleaner_action(self, message):
+		"""Callback: announce text cleaner actions (LIOS_97,98,102)."""
+		self.notify_information(message, 0)
+
 	def list_updated_event_handler(self,*data):
 		filename = self.imageview.get_filename()
 		if(filename == macros.logo_file):
@@ -402,7 +480,8 @@ class linux_intelligent_ocr_solution():
 		self.textview.audio_converter(voice=self.preferences.speech_language)
 
 	def go_to_page(self,*data):
-		spinbutton_page = widget.SpinButton(0,0,self.preferences.starting_page_number,1,5,0)
+		# Fix LIOS_84/85/86: spin range starts at 1 (not 0)
+		spinbutton_page = widget.SpinButton(1,1,self.preferences.starting_page_number,1,5,0)
 		dlg = dialog.Dialog(_("Go to page"),(_("Go"), dialog.Dialog.BUTTON_ID_1,_("Close!"), dialog.Dialog.BUTTON_ID_2))
 		dlg.add_widget_with_label(spinbutton_page,_("Page Number: "))
 		spinbutton_page.grab_focus()
@@ -509,8 +588,12 @@ class linux_intelligent_ocr_solution():
 	def take_full_screenshot(self,data):
 		destination = self.get_feesible_filename_from_filename("{}{}.png".format(macros.tmp_dir,self.preferences.starting_page_number))
 		self.window.iconify() #minimize
-		os.system("sleep 1") #Time to minimize lios window
-		capture_screen.capture_entire_screen(destination)
+		captured = capture_screen.capture_entire_screen(destination)
+		if not captured:
+			loop.acquire_lock()
+			self.notify_information(_("Screenshot failed – please install scrot or gnome-screenshot"), 0)
+			loop.release_lock()
+			return
 		loop.acquire_lock()
 		self.iconview.add_item(destination)
 		loop.release_lock()
@@ -520,7 +603,12 @@ class linux_intelligent_ocr_solution():
 	def take_rectangle_screenshot(self,data):
 		destination = self.get_feesible_filename_from_filename("{}{}.png".format(macros.tmp_dir,self.preferences.starting_page_number))
 		self.window.iconify() #minimize
-		capture_screen.capture_rectangle_selection(destination)
+		captured = capture_screen.capture_rectangle_selection(destination)
+		if not captured:
+			loop.acquire_lock()
+			self.notify_information(_("Screenshot failed – please install scrot or gnome-screenshot"), 0)
+			loop.release_lock()
+			return
 		loop.acquire_lock()
 		self.iconview.add_item(destination)
 		loop.release_lock()
@@ -530,8 +618,12 @@ class linux_intelligent_ocr_solution():
 	def take_and_recognize_full_screenshot(self,data):
 		destination = self.get_feesible_filename_from_filename("{}{}.png".format(macros.tmp_dir,self.preferences.starting_page_number))
 		self.window.iconify() #minimize
-		os.system("sleep 1") #Time to minimize lios window
-		capture_screen.capture_entire_screen(destination)
+		captured = capture_screen.capture_entire_screen(destination)
+		if not captured:
+			loop.acquire_lock()
+			self.notify_information(_("Screenshot failed – please install scrot or gnome-screenshot"), 0)
+			loop.release_lock()
+			return
 		loop.acquire_lock()
 		self.iconview.add_item(destination)
 		loop.release_lock()
@@ -543,7 +635,12 @@ class linux_intelligent_ocr_solution():
 	def take_and_recognize_rectangle_screenshot(self,data):
 		destination = self.get_feesible_filename_from_filename("{}{}.png".format(macros.tmp_dir,self.preferences.starting_page_number))
 		self.window.iconify() #minimize
-		capture_screen.capture_rectangle_selection(destination)
+		captured = capture_screen.capture_rectangle_selection(destination)
+		if not captured:
+			loop.acquire_lock()
+			self.notify_information(_("Screenshot failed – please install scrot or gnome-screenshot"), 0)
+			loop.release_lock()
+			return
 		loop.acquire_lock()
 		self.iconview.add_item(destination)
 		loop.release_lock()
@@ -1390,12 +1487,20 @@ pacman -S aspell-{1}""").format(lang, langdict, langdict, langdict, langdict))
 	def restore_preferences(self,*data):
 		self.preferences.__init__()
 		self.preferences.set_default_speech_module_and_language()
+		# Fix LIOS_80: clamp scan_driver index to valid range to prevent IndexError
+		max_driver_idx = len(self.available_scanner_driver_list) - 1
+		if max_driver_idx < 0:
+			self.preferences.scan_driver = 0
+		else:
+			self.preferences.scan_driver = min(self.preferences.scan_driver, max_driver_idx)
 		self.make_preferences_effective()
+		self.textview.set_theme(self.preferences.theme, self.preferences.theme_list)
 		self.notify_information(_("Preferences Restored"),0)
 	
 	def open_preferences_general_page(self,*data):
 		if(self.preferences.open_configure_dialog(0)):
 			self.make_preferences_effective()
+			self.textview.set_theme(self.preferences.theme, self.preferences.theme_list)
 			self.preferences.save_to_file(macros.preferences_file_path)		
 
 	def open_preferences_recognition_page(self,*data):
@@ -1540,7 +1645,7 @@ pacman -S aspell-{1}""").format(lang, langdict, langdict, langdict, langdict))
 	def scan_using_cam(self,widget):
 		devices = cam.Cam.get_available_devices()
 		if(devices):
-			ob = cam.Cam(devices[-1],1024,768)
+			ob = cam.Cam(devices[0],1024,768)
 			ob.connect_image_captured(self.cam_image_captured)
 		
 	def cam_image_captured(self,widget,filename):
@@ -1552,13 +1657,17 @@ pacman -S aspell-{1}""").format(lang, langdict, langdict, langdict, langdict))
 		dlg.set_program_name(_("Linux-Intelligent-Ocr-Solution"))
 		dlg.set_version(macros.version)
 		dlg.set_logo_from_file(macros.logo_file)
-		dlg.set_comments(_("Lios is a free and open source software\n \
-			for converting print into text using a scanner or camara.\n\
-			It can also produce text from other sources. Such as images,\n\
-			Pdf, or screenshot. Program is given total accessibility \n\
-			for visually impaired. Lios is written in python3 and we release \n\
-			it under GPL3 licence. There are great many possibilities\n\
-			for this program. Feedback is the key to it."))
+		dlg.set_comments(
+    _("Lios is a free and open source software\n"
+      "for converting print into text using a scanner or camera.\n"
+      "It can also produce text from other sources such as images,\n"
+      "PDF, or screenshot. The program is fully accessible\n"
+      "for visually impaired users. Lios is written in Python 3 and is released\n"
+      "under the GPL-3 license. There are great many possibilities\n"
+      "for this program. Feedback is the key to it.\n\n"
+      "Brought to you by Zendalona")
+)
+
 		dlg.set_copyright("Copyright (C) 2011-2015 Nalin.x.Linux")
 		dlg.set_license("GPL-V3")
 		dlg.set_website(macros.home_page_link)
